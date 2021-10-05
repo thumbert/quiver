@@ -1,0 +1,78 @@
+name: flutter_quiver
+description: Keep all your arrows in one place
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 0.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  collection: ^1.15.0
+  date:
+    git:
+      url: git://github.com/thumbert/date.git
+  elec_server:
+    git:
+      url: git://github.com/thumbert/elec-server.git
+  flutter_dotenv: ^5.0.0
+  flutter_svg: ^0.22.0
+  flutter_web_plotly:
+    git:
+      url: git://github.com/thumbert/flutter_web_plotly.git
+  google_fonts: ^2.1.0
+  http: '>=0.12.0 <1.0.0'
+  intl: ^0.17.0
+  provider: ^5.0.0
+  timeseries:
+    git:
+      url: git://github.com/thumbert/timeseries.git
+  timezone: '>=0.5.5 <1.0.0'
+  tuple: ^2.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/quiver.svg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Raleway-Bold.ttf
+          weight: 700
+    - family: Tangerine
+      fonts:
+        - asset: assets/fonts/Tangerine-Regular.ttf
+          weight: 300
+        - asset: assets/fonts/Tangerine-Bold.ttf
+          weight: 600
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/Ubuntu-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Ubuntu-Bold.ttf
+          weight: 700
