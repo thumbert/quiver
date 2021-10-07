@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 
 class EntityModel extends ChangeNotifier {
-  EntityModel() {
-    _entity = entities().first;
+  EntityModel({required String entity, required String subaccount}) {
+    _entity = entity;
+    _subaccount = subaccount;
   }
 
   late String _entity;
@@ -18,20 +19,20 @@ class EntityModel extends ChangeNotifier {
   };
 
   /// Get the list of all accounts
-  static List<String> entities() => <String>[
+  List<String> entities() => <String>[
         '(All)',
         ..._data.keys,
       ];
 
-  static List<String> subaccounts(String entity) => <String>[
+  List<String> subaccounts(String entity) => <String>[
         '(All)',
         ..._data[entity]!,
       ];
 
-  void init({required String entity, required String subaccount}) {
-    _entity = entity;
-    _subaccount = subaccount;
-  }
+  // void init({required String entity, required String subaccount}) {
+  //   _entity = entity;
+  //   _subaccount = subaccount;
+  // }
 
   set entity(String entity) {
     _entity = entity;

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 
 class LoadZoneModel extends ChangeNotifier {
-  LoadZoneModel() {
-    _zone = zones.first;
+  LoadZoneModel({required String zone}) {
+    _zone = zone;
   }
 
   late String _zone;
@@ -22,9 +22,6 @@ class LoadZoneModel extends ChangeNotifier {
     'WCMA',
     'NEMA',
   ];
-
-  /// Set the _zone without triggering a notification.
-  void init(String zone) => _zone = zone;
 
   set zone(String zone) {
     _zone = zone;

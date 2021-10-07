@@ -132,7 +132,7 @@ packages:
     source: hosted
     version: "3.0.0"
   elec:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "."
       ref: HEAD
@@ -222,6 +222,11 @@ packages:
       url: "git://github.com/thumbert/flutter_web_plotly.git"
     source: git
     version: "0.1.1"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
@@ -241,13 +246,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  group_button:
-    dependency: "direct main"
-    description:
-      name: group_button
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.2.0"
   grpc:
     dependency: transitive
     description:
@@ -316,13 +314,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
-  lint:
-    dependency: transitive
-    description:
-      name: lint
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.7.2"
   lints:
     dependency: transitive
     description:
@@ -644,6 +635,13 @@ packages:
     dependency: transitive
     description:
       name: unorm_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
+  url_strategy:
+    dependency: "direct main"
+    description:
+      name: url_strategy
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"

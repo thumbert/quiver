@@ -2,13 +2,8 @@ library screens.demand_bids.demand_bids_ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/entity_model.dart';
-import 'package:flutter_quiver/models/common/load_aggregation_model.dart';
-import 'package:group_button/group_button.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_quiver/models/common/asset_id_model.dart';
-import 'package:flutter_quiver/screens/common/asset_id.dart';
 import 'package:flutter_quiver/screens/common/entity.dart';
-import 'package:flutter_quiver/screens/common/load_aggregation.dart';
 import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
 
@@ -20,7 +15,9 @@ class DemandBidsUi extends StatefulWidget {
 }
 
 class _DemandBidsUiState extends State<DemandBidsUi> {
-  var _buttonSelection = 0;
+  final _variableCheck = <bool>[true, true, true, true, false];
+  final _temperatureCheck = List.filled(6, false);
+  final _tempShocks = <String>['-9F', '-6F', '-3F', '+3F', '+6F', '+9F'];
 
   @override
   Widget build(BuildContext context) {
@@ -36,77 +33,102 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const TermUi(),
+                const Entity(),
+                const LoadZone(),
+                const SizedBox(
+                  height: 12,
+                ),
+                Wrap(
+                  spacing: 10,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      child: CheckboxListTile(
+                        title: const Text('RT load'),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: _variableCheck[0],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _variableCheck[0] = value!;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 180,
+                      child: CheckboxListTile(
+                        title: const Text('Demand bid'),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: _variableCheck[1],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _variableCheck[1] = value!;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 180,
+                      child: CheckboxListTile(
+                        title: const Text('QA forecast'),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: _variableCheck[2],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _variableCheck[2] = value!;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 180,
+                      child: CheckboxListTile(
+                        title: const Text('WT forecast'),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: _variableCheck[3],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _variableCheck[3] = value!;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 Wrap(
                   direction: Axis.horizontal,
-                  spacing: 10,
+                  spacing: 5,
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    _buttonSelection == 0
-                        ? ElevatedButton(
-                            onPressed: () {
+                    const Text(
+                      'Temperature',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    ...[
+                      for (var i = 0; i < 6; i++)
+                        SizedBox(
+                          width: 80,
+                          child: CheckboxListTile(
+                            title: Text(_tempShocks[i]),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            contentPadding: const EdgeInsets.all(0),
+                            value: _temperatureCheck[i],
+                            onChanged: (bool? value) {
                               setState(() {
-                                _buttonSelection = 0;
+                                _temperatureCheck[i] = value!;
                               });
                             },
-                            child: const Text('Entity'),
-                          )
-                        : OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _buttonSelection = 0;
-                              });
-                            },
-                            child: const Text('Entity'),
                           ),
-                    _buttonSelection == 1
-                        ? ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _buttonSelection = 1;
-                              });
-                            },
-                            child: const Text('Aggregation'),
-                          )
-                        : OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _buttonSelection = 1;
-                              });
-                            },
-                            child: const Text('Aggregation'),
-                          ),
-                    _buttonSelection == 2
-                        ? ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _buttonSelection = 2;
-                              });
-                            },
-                            child: const Text('Asset Id'),
-                          )
-                        : OutlinedButton(
-                            onPressed: () {
-                              setState(() {
-                                _buttonSelection = 2;
-                              });
-                            },
-                            child: const Text('Asset Id'),
-                          ),
+                        ),
+                    ],
                   ],
                 ),
                 const SizedBox(
                   height: 12,
-                ),
-                _buttonSelection == 0
-                    ? const Entity()
-                    : _buttonSelection == 1
-                        ? const LoadAggregation()
-                        : const AssetId(),
-                if (_buttonSelection < 2) const LoadZone(),
-                const SizedBox(
-                  height: 12,
-                ),
-                const SizedBox(
-                  height: 20,
                 ),
                 Text('Selected: ${getSelection(context)}'),
               ],
@@ -117,17 +139,9 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
 
   String getSelection(BuildContext context) {
     var selection = '';
-    if (_buttonSelection == 0) {
-      final entityModel = context.read<EntityModel>();
-      selection +=
-          'Entity: ${entityModel.entity}, Subaccount: ${entityModel.subaccount}';
-    } else if (_buttonSelection == 1) {
-      final aggregationModel = context.read<LoadAggregationModel>();
-      selection += 'Aggregation: ${aggregationModel.aggregationName}';
-    } else if (_buttonSelection == 2) {
-      final assetIdModel = context.read<AssetIdModel>();
-      selection += 'AssetId: ${assetIdModel.ids.join(', ')}';
-    }
+    final entityModel = context.read<EntityModel>();
+    selection +=
+        'Entity: ${entityModel.entity}, Subaccount: ${entityModel.subaccount}';
     return selection;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -123,7 +125,6 @@ class _QuiverScreenState extends State<QuiverScreen>
           bottom: 0,
           left: (_drawerAnimation.value - 1) * _drawerWidth,
           child: Theme(
-            // data: ThemeData.dark(),
             data: Theme.of(context)
                 .copyWith(backgroundColor: Colors.blueGrey.shade300),
             child: Material(
@@ -143,29 +144,34 @@ class _QuiverScreenState extends State<QuiverScreen>
   }
 
   Widget _buildDrawerOverhang() {
-    return Container(
-      padding: const EdgeInsets.only(top: 8),
-      width: _drawerOverhangWidth,
-      child: Column(
-        children: [
-          SvgPicture.asset(
-            'assets/images/quiver.svg',
-            semanticsLabel: 'Quiver',
-            color: Colors.white,
-            height: 48,
-            width: 48,
-          ),
-          Expanded(
-            child: Center(
-              child: IconButton(
-                icon: Icon(_drawerAnimation.value > 0
-                    ? Icons.chevron_left
-                    : Icons.chevron_right),
-                onPressed: _toggleDrawer,
+    return InkWell(
+      onTap: () {
+        _toggleDrawer();
+      },
+      child: Container(
+        padding: const EdgeInsets.only(top: 8),
+        width: _drawerOverhangWidth,
+        child: Column(
+          children: [
+            SvgPicture.asset(
+              'assets/images/quiver.svg',
+              semanticsLabel: 'Quiver',
+              color: Colors.white,
+              height: 48,
+              width: 48,
+            ),
+            Expanded(
+              child: Center(
+                child: IconButton(
+                  icon: Icon(_drawerAnimation.value > 0
+                      ? Icons.chevron_left
+                      : Icons.chevron_right),
+                  onPressed: _toggleDrawer,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

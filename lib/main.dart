@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/quiver.dart';
+import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -38,6 +42,10 @@ class MyApp extends StatelessWidget {
             // shadowColor: Colors.white,
           ),
         ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStateProperty.all(Colors.blueGrey.shade300),
+          // overlayColor: MaterialStateProperty.all(Colors.green),
+        ),
       ),
       home: QuiverScreen(
           menu: menu, initialActiveMenuItem: menu.first.items.first),
@@ -50,14 +58,16 @@ class MyApp extends StatelessWidget {
         title: 'Load',
         items: [
           DemoMenuItem(
-              title: 'Demand bids', pageBuilder: (_) => const DemandBids()),
+              title: 'Demand bids, Forecast, RT load',
+              pageBuilder: (_) => const DemandBids()),
           DemoMenuItem(
               title: 'Load settlements',
               pageBuilder: (_) => Center(child: Text('Settle'))),
           DemoMenuItem(
               title: 'Historical PLC',
               pageBuilder: (_) => const HistoricalPlc()),
-          DemoMenuItem(title: 'VLR Stage 2', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(
+              title: 'VLR Stage 2', pageBuilder: (_) => const VlrStage2()),
         ],
       ),
       DemoMenuGroup(
@@ -65,7 +75,8 @@ class MyApp extends StatelessWidget {
         items: [
           DemoMenuItem(
               title: 'Realized ancillaries', pageBuilder: (_) => Text('TODO')),
-          DemoMenuItem(title: 'Monthly LMPs', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(
+              title: 'Monthly LMP', pageBuilder: (_) => const MonthlyLmp()),
         ],
       ),
       DemoMenuGroup(

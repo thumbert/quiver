@@ -16,6 +16,9 @@ dependencies:
   date:
     git:
       url: git://github.com/thumbert/date.git
+  elec:
+    git:
+      url: git://github.com/thumbert/elec.git
   elec_server:
     git:
       url: git://github.com/thumbert/elec-server.git
@@ -33,6 +36,7 @@ dependencies:
       url: git://github.com/thumbert/timeseries.git
   timezone: '>=0.5.5 <1.0.0'
   tuple: ^2.0.0
+  url_strategy: ^0.2.0
 
 
 dev_dependencies:
@@ -50,12 +54,6 @@ flutter:
 
   assets:
     - assets/images/quiver.svg
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
     - family: Raleway

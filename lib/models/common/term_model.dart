@@ -5,21 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 
 class TermModel extends ChangeNotifier {
-  TermModel();
+  TermModel({required Term term}) {
+    _term = term;
+  }
 
   late Term _term;
 
-  /// Set the _term without triggering a notification.
-  /// Useful to set the term to the calculator term.
-  void init(Term term) => _term = term;
-
-  // static Term _defaultTerm() {
-  //   return Term.parse('Jul21', UTC);
-  // }
-
   set term(Term term) {
     _term = term;
-    // propagate the changes from the UI
     notifyListeners();
   }
 

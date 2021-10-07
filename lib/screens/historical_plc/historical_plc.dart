@@ -31,15 +31,14 @@ class _HistoricalPlcState extends State<HistoricalPlc> {
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
       ChangeNotifierProvider(
-          create: (context) => TermModel()..init(initialTerm())),
+          create: (context) => TermModel(term: initialTerm())),
       ChangeNotifierProvider(
           create: (context) =>
-              EntityModel()..init(entity: 'Invertase', subaccount: '(All)')),
+              EntityModel(entity: 'Invertase', subaccount: '(All)')),
       ChangeNotifierProvider(
           create: (context) => LoadAggregationModel()..init('(All)')),
       ChangeNotifierProvider(create: (context) => AssetIdModel()..init([2481])),
-      ChangeNotifierProvider(
-          create: (context) => LoadZoneModel()..init('(All)')),
+      ChangeNotifierProvider(create: (context) => LoadZoneModel(zone: '(All)')),
     ], child: const HistoricalPlcUi());
   }
 }

@@ -3,6 +3,7 @@ library screens.historical_plc.historical_plc_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/entity_model.dart';
 import 'package:flutter_quiver/models/common/load_aggregation_model.dart';
+import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/common/asset_id_model.dart';
 import 'package:flutter_quiver/screens/common/asset_id.dart';
@@ -122,9 +123,13 @@ class _HistoricalPlcUiState extends State<HistoricalPlcUi> {
       final entityModel = context.read<EntityModel>();
       selection +=
           'Entity: ${entityModel.entity}, Subaccount: ${entityModel.subaccount}';
+      final zoneModel = context.read<LoadZoneModel>();
+      selection += ', Zone: ${zoneModel.zone}';
     } else if (_buttonSelection == 1) {
       final aggregationModel = context.read<LoadAggregationModel>();
       selection += 'Aggregation: ${aggregationModel.aggregationName}';
+      final zoneModel = context.read<LoadZoneModel>();
+      selection += ', Zone: ${zoneModel.zone}';
     } else if (_buttonSelection == 2) {
       final assetIdModel = context.read<AssetIdModel>();
       selection += 'AssetId: ${assetIdModel.ids.join(', ')}';

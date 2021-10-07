@@ -1,20 +1,20 @@
-library screens.common.entity;
+library screens.common.entity_with_checkbox;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/common/entity_with_checkbox_model.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_quiver/models/common/entity_model.dart';
 
-class Entity extends StatefulWidget {
-  const Entity({Key? key}) : super(key: key);
+class EntityWithCheckbox extends StatefulWidget {
+  const EntityWithCheckbox({Key? key}) : super(key: key);
 
   @override
-  _EntityState createState() => _EntityState();
+  _EntityWithCheckboxState createState() => _EntityWithCheckboxState();
 }
 
-class _EntityState extends State<Entity> {
+class _EntityWithCheckboxState extends State<EntityWithCheckbox> {
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<EntityModel>();
+    final model = context.watch<EntityWithCheckboxModel>();
 
     return Column(
       children: [
@@ -22,11 +22,18 @@ class _EntityState extends State<Entity> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              width: 120,
-              child: Text(
-                'Entity',
-                style: TextStyle(fontSize: 16),
+            SizedBox(
+              width: 150,
+              child: CheckboxListTile(
+                title: const Text('Entity'),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: const EdgeInsets.all(0),
+                value: model.checkboxEntity,
+                onChanged: (bool? value) {
+                  setState(() {
+                    model.checkboxEntity = value!;
+                  });
+                },
               ),
             ),
             SizedBox(
@@ -45,7 +52,8 @@ class _EntityState extends State<Entity> {
                     model.entity = newValue!;
                   });
                 },
-                items: model.entities()
+                items: model
+                    .entities()
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
               ),
@@ -56,11 +64,18 @@ class _EntityState extends State<Entity> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              width: 120,
-              child: Text(
-                'Subaccount',
-                style: TextStyle(fontSize: 16),
+            SizedBox(
+              width: 150,
+              child: CheckboxListTile(
+                title: const Text('Subaccount'),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: const EdgeInsets.all(0),
+                value: model.checkboxSubaccount,
+                onChanged: (bool? value) {
+                  setState(() {
+                    model.checkboxSubaccount = value!;
+                  });
+                },
               ),
             ),
             SizedBox(
@@ -79,7 +94,8 @@ class _EntityState extends State<Entity> {
                     model.subaccount = newValue!;
                   });
                 },
-                items: model.subaccounts(model.entity)
+                items: model
+                    .subaccounts(model.entity)
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
               ),
