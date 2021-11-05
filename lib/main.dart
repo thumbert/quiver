@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/quiver.dart';
 import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
+import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-void main() {
+void main() async {
   setPathUrlStrategy();
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
             foregroundColor: Colors.black),
         fontFamily: 'Ubuntu', //'Raleway',
         primarySwatch: Colors.blueGrey,
+        // primaryColor: Colors.blueGrey.shade300,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
@@ -33,6 +38,11 @@ class MyApp extends StatelessWidget {
           primary: Colors.blueGrey.shade100,
           onPrimary: Colors.black,
         )),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(color: Colors.blueGrey.shade300),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueGrey.shade300)),
+        ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(140, 40),
@@ -47,6 +57,7 @@ class MyApp extends StatelessWidget {
           // overlayColor: MaterialStateProperty.all(Colors.green),
         ),
       ),
+      // home: const MonthlyAssetNcpc(),
       home: QuiverScreen(
           menu: menu, initialActiveMenuItem: menu.first.items.first),
     );
@@ -77,12 +88,15 @@ class MyApp extends StatelessWidget {
               title: 'Realized ancillaries', pageBuilder: (_) => Text('TODO')),
           DemoMenuItem(
               title: 'Monthly LMP', pageBuilder: (_) => const MonthlyLmp()),
+          DemoMenuItem(
+              title: 'Monthly Asset NCPC',
+              pageBuilder: (_) => const MonthlyAssetNcpc()),
         ],
       ),
       DemoMenuGroup(
         title: 'Other',
         items: [
-          DemoMenuItem(title: 'Weather', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(title: 'Weather', pageBuilder: (_) => const Weather()),
           DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
           DemoMenuItem(
               title: 'Peaking option calls', pageBuilder: (_) => Text('TODO')),

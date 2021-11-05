@@ -54,35 +54,33 @@ class _TermUiState extends State<TermUi> {
   Widget build(BuildContext context) {
     final model = context.watch<TermModel>();
 
-    return SizedBox(
-        width: 140.0,
-        child: TextFormField(
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            labelText: 'Term',
-            labelStyle: TextStyle(color: Theme.of(context).primaryColor),
-            helperText: '',
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Theme.of(context).primaryColor),
-            ),
-            errorText: _error,
-          ),
-          controller: controller,
+    return TextFormField(
+      focusNode: focusNode,
+      decoration: InputDecoration(
+        labelText: 'Term',
+        labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+        helperText: '',
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        errorText: _error,
+      ),
+      controller: controller,
 
-          /// validate when Enter is pressed
-          onEditingComplete: () {
-            setState(() {
-              try {
-                model.term = date.Term.parse(controller.text, UTC);
-                _error = null; // all good
-              } on ArgumentError catch (e) {
-                print(e);
-                _error = 'Parsing error';
-              } catch (e) {
-                print(e);
-              }
-            });
-          },
-        ));
+      /// validate when Enter is pressed
+      onEditingComplete: () {
+        setState(() {
+          try {
+            model.term = date.Term.parse(controller.text, UTC);
+            _error = null; // all good
+          } on ArgumentError catch (e) {
+            print(e);
+            _error = 'Parsing error';
+          } catch (e) {
+            print(e);
+          }
+        });
+      },
+    );
   }
 }

@@ -51,7 +51,7 @@ class _LoadZoneWithCheckboxState extends State<LoadZoneWithCheckbox> {
                 model.zone = newValue!;
               });
             },
-            items: LoadZoneModel.zones
+            items: LoadZoneModel.zones.keys
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
           ),

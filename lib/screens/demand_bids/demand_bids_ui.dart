@@ -32,9 +32,20 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TermUi(),
+                const SizedBox(width: 140, child: TermUi()),
                 const Entity(),
-                const LoadZone(),
+                Row(
+                  children: const [
+                    SizedBox(
+                      width: 120,
+                      child: Text(
+                        'Zone',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    LoadZone(),
+                  ],
+                ),
                 const SizedBox(
                   height: 12,
                 ),

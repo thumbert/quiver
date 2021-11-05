@@ -11,17 +11,17 @@ class LoadZoneModel extends ChangeNotifier {
 
   late String _zone;
 
-  static const List<String> zones = <String>[
-    '(All)',
-    'Maine',
-    'NH',
-    'VT',
-    'CT',
-    'RI',
-    'SEMA',
-    'WCMA',
-    'NEMA',
-  ];
+  static const zones = <String, int?>{
+    '(All)': null,
+    'Maine': 4001,
+    'NH': 4002,
+    'VT': 4003,
+    'CT': 4004,
+    'RI': 4005,
+    'SEMA': 4006,
+    'WCMA': 4007,
+    'NEMA': 4008,
+  };
 
   set zone(String zone) {
     _zone = zone;
@@ -30,4 +30,6 @@ class LoadZoneModel extends ChangeNotifier {
   }
 
   String get zone => _zone;
+
+  int? get zoneId => zones[_zone];
 }
