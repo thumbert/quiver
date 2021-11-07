@@ -19,70 +19,70 @@ class WeatherModel extends ChangeNotifier {
     num maxPayoff = 20000000,
     num strike = 1000,
   }) {
-    _airportCode = airportCode;
-    _term = term;
-    _underlying = underlying;
-    _instrument = instrument;
-    _notional = notional;
-    _maxPayoff = maxPayoff;
-    _strike = strike;
+    // _airportCode = airportCode;
+    // _term = term;
+    // _underlying = underlying;
+    // _instrument = instrument;
+    // _notional = notional;
+    // _maxPayoff = maxPayoff;
+    // _strike = strike;
     client = NoaaDailySummary(Client(), rootUrl: dotenv.env['rootUrl']!);
   }
 
   late NoaaDailySummary client;
-  late String _airportCode;
-  late String _term;
-  late String _underlying;
-  late String _instrument;
-  late num _notional;
-  late num _maxPayoff;
-  late num _strike;
+  // late String _airportCode;
+  // late String _term;
+  // late String _underlying;
+  // late String _instrument;
+  // late num _notional;
+  // late num _maxPayoff;
+  // late num _strike;
 
   /// airportCode -> 30 years of history
   final _cacheTemps = <String, TimeSeries<num>>{};
   // late Iterable<Map<String,dynamic>> _tableData;
 
-  set term(String value) {
-    _term = value;
-    notifyListeners();
-  }
-
-  String get term => _term;
-
-  set underlying(String value) {
-    _underlying = value;
-    notifyListeners();
-  }
-
-  String get underlying => _underlying;
-
-  set instrument(String value) {
-    _instrument = value;
-    notifyListeners();
-  }
-
-  String get instrument => _instrument;
-
-  set notional(num value) {
-    _notional = value;
-    notifyListeners();
-  }
-
-  num get notional => _notional;
-
-  set maxPayoff(num value) {
-    _maxPayoff = value;
-    notifyListeners();
-  }
-
-  num get maxPayoff => _maxPayoff;
-
-  set strike(num value) {
-    _strike = value;
-    notifyListeners();
-  }
-
-  num get strike => _strike;
+  // set term(String value) {
+  //   _term = value;
+  //   notifyListeners();
+  // }
+  //
+  // String get term => _term;
+  //
+  // set underlying(String value) {
+  //   _underlying = value;
+  //   notifyListeners();
+  // }
+  //
+  // String get underlying => _underlying;
+  //
+  // set instrument(String value) {
+  //   _instrument = value;
+  //   notifyListeners();
+  // }
+  //
+  // String get instrument => _instrument;
+  //
+  // set notional(num value) {
+  //   _notional = value;
+  //   notifyListeners();
+  // }
+  //
+  // num get notional => _notional;
+  //
+  // set maxPayoff(num value) {
+  //   _maxPayoff = value;
+  //   notifyListeners();
+  // }
+  //
+  // num get maxPayoff => _maxPayoff;
+  //
+  // set strike(num value) {
+  //   _strike = value;
+  //   notifyListeners();
+  // }
+  //
+  // num get strike => _strike;
 
   /// Get 30 years data from the webservice.
   Future<TimeSeries<num>> getHistoricalTemperature(String airportCode) async {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_quiver/screens/weather/airport.dart';
+import 'package:flutter_quiver/screens/weather/instrument_row.dart';
 import 'package:flutter_quiver/screens/weather/month_range.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,40 +21,24 @@ class WeatherUi extends StatefulWidget {
 class _WeatherUiState extends State<WeatherUi> {
   var fmt = NumberFormat.currency(decimalDigits: 0, symbol: '\$');
   late ScrollController _scrollController;
-  final notionalController = TextEditingController();
-  final maxPayoffController = TextEditingController();
-  final strikeController = TextEditingController();
-  final focusAirport = FocusNode();
-
-  String? errorNotional;
-  String? errorMaxPayoff;
-  String? errorStrike;
 
   @override
   void initState() {
-    final model = context.read<WeatherModel>();
+    // final model = context.read<WeatherModel>();
     _scrollController = ScrollController();
-    notionalController.text = model.notional.toString();
-    maxPayoffController.text = model.maxPayoff.toString();
-    strikeController.text = model.strike.toString();
-
     super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    notionalController.dispose();
-    maxPayoffController.dispose();
-    strikeController.dispose();
-    focusAirport.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final airportModel = context.watch<AirportModel>();
-    final model = context.watch<WeatherModel>();
+    // final model = context.watch<WeatherModel>();
 
     return Padding(
         padding: const EdgeInsets.only(left: 48),
@@ -94,14 +79,19 @@ class _WeatherUiState extends State<WeatherUi> {
                     ],
                   ),
                   Row(
-                    children: const [
-                      SizedBox(
-                        width: 80,
-                        child: Text('Term', style: TextStyle(fontSize: 16)),
-                      ),
-                      SizedBox(width: 120, child: MonthRange()),
+                    children: [
+                      const InstrumentRow(),
                     ],
                   ),
+                  // Row(
+                  //   children: const [
+                  //     SizedBox(
+                  //       width: 80,
+                  //       child: Text('Term', style: TextStyle(fontSize: 16)),
+                  //     ),
+                  //     SizedBox(width: 120, child: MonthRange()),
+                  //   ],
+                  // ),
 
                   // Row(
                   //   children: [

@@ -17,7 +17,15 @@ class _NotionalState extends State<Notional> {
   final controller = TextEditingController();
   String? error;
   final focus = FocusNode();
-  var fmt = NumberFormat.currency(decimalDigits: 0);
+  var fmt = NumberFormat.currency(decimalDigits: 0, symbol: '');
+
+  final _outlineInputBorder = OutlineInputBorder(
+    borderRadius: const BorderRadius.all(Radius.zero),
+    borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+  );
+  final _errorBorder = const OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.red, width: 2),
+  );
 
   @override
   void initState() {
@@ -41,10 +49,10 @@ class _NotionalState extends State<Notional> {
 
   validate(NotionalModel model) => () {
         error = null;
-        if (model.isValid(controller.text)) {
+        try {
           model.notional = fmt.parse(controller.text);
           error = null; // all good
-        } else {
+        } catch (e) {
           error = 'Not a valid number';
         }
       };
@@ -52,17 +60,26 @@ class _NotionalState extends State<Notional> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<NotionalModel>();
-    return TextFormField(
+    return TextField(
       focusNode: focus,
       controller: controller,
       decoration: InputDecoration(
-        labelText: 'Notional, \$',
-        // helperText: '3 letter airport code',
+        isDense: true,
         errorText: error,
+        contentPadding: const EdgeInsets.all(12),
+        errorBorder: _errorBorder,
+        focusedErrorBorder: _errorBorder,
+        border: _outlineInputBorder,
+        enabledBorder: _outlineInputBorder,
       ),
       onEditingComplete: () {
         setState(validate(model));
       },
+      onChanged: (value) {
+        setState(validate(model));
+      },
+      textAlign: TextAlign.right,
+      scrollPadding: const EdgeInsets.all(5),
     );
   }
 }

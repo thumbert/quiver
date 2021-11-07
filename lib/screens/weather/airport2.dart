@@ -1,17 +1,17 @@
-library weather.airport;
+library weather.airport2;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:provider/provider.dart';
 
-class Airport extends StatefulWidget {
-  const Airport({Key? key}) : super(key: key);
+class Airport2 extends StatefulWidget {
+  const Airport2({Key? key}) : super(key: key);
 
   @override
-  _AirportState createState() => _AirportState();
+  _Airport2State createState() => _Airport2State();
 }
 
-class _AirportState extends State<Airport> {
+class _Airport2State extends State<Airport2> {
   final airportController = TextEditingController();
   String? errorAirport;
   final focusAirport = FocusNode();
@@ -49,10 +49,12 @@ class _AirportState extends State<Airport> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<AirportModel>();
-    return TextField(
+    return TextFormField(
       focusNode: focusAirport,
       controller: airportController,
       decoration: InputDecoration(
+        labelText: 'Airport code',
+        // helperText: '3 letter airport code',
         errorText: errorAirport,
       ),
       onEditingComplete: () {

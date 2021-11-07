@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart' hide Interval;
 import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:flutter_quiver/models/weather/instrument_model.dart';
 import 'package:flutter_quiver/models/weather/month_range_model.dart';
+import 'package:flutter_quiver/models/weather/notional_model.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_quiver/screens/weather/weather_ui.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,8 @@ class _WeatherState extends State<Weather> {
     return MultiProvider(providers: [
       ChangeNotifierProvider(
           create: (context) => AirportModel(airportCode: airportCode)),
+      ChangeNotifierProvider(
+          create: (context) => NotionalModel(notional: 10000)),
       ChangeNotifierProvider(
           create: (context) => MonthRangeModel(monthRange: monthRange)),
       ChangeNotifierProvider(
