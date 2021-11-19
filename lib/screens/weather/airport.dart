@@ -22,10 +22,10 @@ class _AirportState extends State<Airport> {
     airportController.text = model.airportCode;
     focusAirport.addListener(() {
       if (!focusAirport.hasFocus) {
+        airportController.text = airportController.text.toUpperCase();
         setState(validateAirport(model));
       }
     });
-
     super.initState();
   }
 
@@ -39,6 +39,7 @@ class _AirportState extends State<Airport> {
   validateAirport(AirportModel model) => () {
         errorAirport = null;
         if (model.isValid(airportController.text)) {
+          // airportController.text = airportController.text.toUpperCase();
           model.airportCode = airportController.text.toUpperCase();
           errorAirport = null; // all good
         } else {
@@ -49,13 +50,17 @@ class _AirportState extends State<Airport> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<AirportModel>();
+
     return TextField(
       focusNode: focusAirport,
       controller: airportController,
       decoration: InputDecoration(
+        isDense: true,
+        contentPadding: const EdgeInsets.all(12),
         errorText: errorAirport,
+        enabledBorder: InputBorder.none,
       ),
-      onEditingComplete: () {
+      onSubmitted: (String value) {
         setState(validateAirport(model));
       },
     );

@@ -4,6 +4,7 @@ import 'package:date/date.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:flutter/material.dart' hide Interval;
+import 'package:flutter_quiver/models/weather/weather_deal.dart';
 import 'package:http/http.dart';
 import 'package:elec_server/client/weather/noaa_daily_summary.dart';
 import 'package:timeseries/timeseries.dart';
@@ -19,27 +20,16 @@ class WeatherModel extends ChangeNotifier {
     num maxPayoff = 20000000,
     num strike = 1000,
   }) {
-    // _airportCode = airportCode;
-    // _term = term;
-    // _underlying = underlying;
-    // _instrument = instrument;
-    // _notional = notional;
-    // _maxPayoff = maxPayoff;
-    // _strike = strike;
     client = NoaaDailySummary(Client(), rootUrl: dotenv.env['rootUrl']!);
   }
 
+  late List<WeatherDeal> deals;
+  int rows = 1;
   late NoaaDailySummary client;
-  // late String _airportCode;
-  // late String _term;
-  // late String _underlying;
-  // late String _instrument;
-  // late num _notional;
-  // late num _maxPayoff;
-  // late num _strike;
 
   /// airportCode -> 30 years of history
   final _cacheTemps = <String, TimeSeries<num>>{};
+
   // late Iterable<Map<String,dynamic>> _tableData;
 
   // set term(String value) {

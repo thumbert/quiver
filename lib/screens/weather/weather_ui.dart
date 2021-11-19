@@ -4,9 +4,10 @@ import 'package:elec/risk_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
+import 'package:flutter_quiver/models/weather/month_range_model.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_quiver/screens/weather/airport.dart';
-import 'package:flutter_quiver/screens/weather/instrument_row.dart';
+import 'package:flutter_quiver/screens/weather/instrument_rows.dart';
 import 'package:flutter_quiver/screens/weather/month_range.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +38,8 @@ class _WeatherUiState extends State<WeatherUi> {
 
   @override
   Widget build(BuildContext context) {
-    final airportModel = context.watch<AirportModel>();
     // final model = context.watch<WeatherModel>();
+    final model = context.watch<MonthRangeModel>();
 
     return Padding(
         padding: const EdgeInsets.only(left: 48),
@@ -75,189 +76,19 @@ class _WeatherUiState extends State<WeatherUi> {
                 children: [
                   Row(
                     children: const [
-                      SizedBox(width: 120, child: Airport()),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const InstrumentRow(),
+                      SizedBox(width: 120, child: MonthRange()),
+                      SizedBox(width: 120, child: MonthRange()),
                     ],
                   ),
                   // Row(
                   //   children: const [
-                  //     SizedBox(
-                  //       width: 80,
-                  //       child: Text('Term', style: TextStyle(fontSize: 16)),
-                  //     ),
-                  //     SizedBox(width: 120, child: MonthRange()),
+                  //     InstrumentRows(),
                   //   ],
-                  // ),
-
-                  // Row(
-                  //   children: [
-                  //     Checkbox(
-                  //         value: tableModel.byZone,
-                  //         onChanged: (bool? value) {
-                  //           setState(() {
-                  //             tableModel.byZone = value!;
-                  //           });
-                  //         }),
-                  //     const SizedBox(
-                  //       width: 20,
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 80,
-                  //       child: Text('Zone', style: TextStyle(fontSize: 16)),
-                  //     ),
-                  //     const LoadZone(),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   children: [
-                  //     Checkbox(
-                  //         value: tableModel.byMarket,
-                  //         onChanged: (bool? value) {
-                  //           setState(() {
-                  //             tableModel.byMarket = value!;
-                  //           });
-                  //         }),
-                  //     const SizedBox(
-                  //       width: 20,
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 80,
-                  //       child: Text('Market', style: TextStyle(fontSize: 16)),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 150,
-                  //       child: DropdownButtonFormField(
-                  //         value: tableModel.market,
-                  //         icon: const Icon(Icons.expand_more),
-                  //         hint: const Text('Filter'),
-                  //         decoration: InputDecoration(
-                  //             enabledBorder: UnderlineInputBorder(
-                  //                 borderSide: BorderSide(
-                  //                     color: Theme.of(context).primaryColor))),
-                  //         elevation: 16,
-                  //         onChanged: (String? newValue) {
-                  //           setState(() {
-                  //             tableModel.market = newValue!;
-                  //           });
-                  //         },
-                  //         items: ['(All)', 'DA', 'RT']
-                  //             .map((e) =>
-                  //                 DropdownMenuItem(value: e, child: Text(e)))
-                  //             .toList(),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // Row(
-                  //   children: [
-                  //     Checkbox(
-                  //         value: tableModel.byAsset,
-                  //         onChanged: (bool? value) {
-                  //           setState(() {
-                  //             tableModel.byAsset = value!;
-                  //           });
-                  //         }),
-                  //     const SizedBox(
-                  //       width: 20,
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 80,
-                  //       child: Text('Asset', style: TextStyle(fontSize: 16)),
-                  //     ),
-                  //     SizedBox(
-                  //       width: 150,
-                  //       child: DropdownButtonFormField(
-                  //         value: tableModel.assetName,
-                  //         icon: const Icon(Icons.expand_more),
-                  //         hint: const Text('Filter'),
-                  //         decoration: InputDecoration(
-                  //             enabledBorder: UnderlineInputBorder(
-                  //                 borderSide: BorderSide(
-                  //                     color: Theme.of(context).primaryColor))),
-                  //         elevation: 16,
-                  //         onChanged: (String? newValue) {
-                  //           setState(() {
-                  //             tableModel.assetName = newValue!;
-                  //           });
-                  //         },
-                  //         items: [
-                  //           '(All)',
-                  //           'DA',
-                  //           'RT'
-                  //         ] // FIXME: replace with the correct list of assets!
-                  //             .map((e) =>
-                  //                 DropdownMenuItem(value: e, child: Text(e)))
-                  //             .toList(),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // SizedBox(
-                  //   width: 150,
-                  //   child: CheckboxListTile(
-                  //     title: const Text('Month'),
-                  //     controlAffinity: ListTileControlAffinity.leading,
-                  //     contentPadding: const EdgeInsets.all(0),
-                  //     value: tableModel.byMonth,
-                  //     onChanged: (bool? value) {
-                  //       setState(() {
-                  //         tableModel.byMonth = value!;
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
-                  //
-                  // FutureBuilder(
-                  //   future: tableModel.getData(termModel.term),
-                  //   builder: (context, snapshot) {
-                  //     List<Widget> children;
-                  //     if (snapshot.hasData) {
-                  //       // aggregate the data first
-                  //       var aggData = tableModel.client.summary(
-                  //         snapshot.data! as Iterable<Map<String, dynamic>>,
-                  //         zoneId: zoneModel.zoneId,
-                  //         byZoneId: tableModel.byZone,
-                  //         market: tableModel.market == '(All)'
-                  //             ? null
-                  //             : Market.parse(tableModel.market),
-                  //         byMarket: tableModel.byMarket,
-                  //         assetName: tableModel.assetName == '(All)'
-                  //             ? null
-                  //             : tableModel.assetName,
-                  //         byAssetName: tableModel.byAsset,
-                  //         byMonth: tableModel.byMonth,
-                  //       );
-                  //       children = [_makeDataTable(aggData)];
-                  //     } else if (snapshot.hasError) {
-                  //       children = [
-                  //         const Icon(Icons.error_outline, color: Colors.red),
-                  //         Text(
-                  //           snapshot.error.toString(),
-                  //           style: const TextStyle(fontSize: 16),
-                  //         )
-                  //       ];
-                  //     } else {
-                  //       children = [
-                  //         const SizedBox(
-                  //             height: 40,
-                  //             width: 40,
-                  //             child: CircularProgressIndicator(
-                  //               strokeWidth: 2,
-                  //             ))
-                  //       ];
-                  //     }
-                  //     return Row(children: children);
-                  //   },
                   // ),
 
                   const SizedBox(
                     height: 24,
                   ),
-                  // Text('Selected: ${getSelection(market, bucket)}'),
                 ],
               ),
             ),

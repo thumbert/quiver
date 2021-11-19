@@ -1,5 +1,6 @@
 library models.monthly_asset_ncpc;
 
+import 'package:elec/risk_system.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:date/date.dart';
@@ -32,21 +33,45 @@ class MonthlyAssetNcpcModel extends ChangeNotifier {
   late String _assetName;
   late bool _byMonth;
 
+  /// TODO: implement caching
   var _cache = <Map<String, dynamic>>[];
-  // late Iterable<Map<String,dynamic>> _tableData;
+  var tableData = <Map<String, dynamic>>[];
+  late List<String> columns;
+  bool sortAscending = false;
 
   /// Get the data from the webservice.
   Future<Iterable<Map<String, dynamic>>> getData(Term term) async {
     var start = Month.utc(term.startDate.year, term.startDate.month);
     var end = Month.utc(term.endDate.year, term.endDate.month);
-    // if (_cache.isEmpty) {
     _cache = await client.getAllAssets(start, end);
-    // }
-    var _start = start.toIso8601String();
-    var _end = end.toIso8601String();
+    tableData = _cache;
     return _cache;
-    // print(_cache.first);
-    // return _cache.where((e) => e['month'] >= _start && e['month'] <= _end);
+  }
+
+  void aggregateData({required int? zoneId}) {
+    tableData = client.summary(
+      _cache,
+      zoneId: zoneId,
+      byZoneId: byZone,
+      market: market == '(All)' ? null : Market.parse(market),
+      byMarket: byMarket,
+      assetName: assetName == '(All)' ? null : assetName,
+      byAssetName: byAsset,
+      byMonth: byMonth,
+    );
+    columns = tableData.first.keys.toList();
+  }
+
+  void sortByColumn({required String name, required sortAscending}) {
+    print('in sortByColumn');
+    var sign = sortAscending ? 1 : -1;
+    if (name == 'value') {
+      tableData.sort((a, b) => a['value'].compareTo(b['value']) * sign);
+      tableData = List.from(tableData);
+      print(tableData);
+    }
+
+    notifyListeners();
   }
 
   set byZone(bool value) {

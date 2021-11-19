@@ -19,10 +19,6 @@ class _NotionalState extends State<Notional> {
   final focus = FocusNode();
   var fmt = NumberFormat.currency(decimalDigits: 0, symbol: '');
 
-  final _outlineInputBorder = OutlineInputBorder(
-    borderRadius: const BorderRadius.all(Radius.zero),
-    borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
-  );
   final _errorBorder = const OutlineInputBorder(
     borderSide: BorderSide(color: Colors.red, width: 2),
   );
@@ -32,11 +28,13 @@ class _NotionalState extends State<Notional> {
     final model = context.read<NotionalModel>();
     controller.text = fmt.format(model.notional);
     focus.addListener(() {
-      if (!focus.hasFocus) {
+      if (focus.hasFocus) {
+        controller.text = model.notional.toString();
+      } else {
         setState(validate(model));
+        controller.text = fmt.format(model.notional); // format on exit
       }
     });
-
     super.initState();
   }
 
@@ -69,12 +67,8 @@ class _NotionalState extends State<Notional> {
         contentPadding: const EdgeInsets.all(12),
         errorBorder: _errorBorder,
         focusedErrorBorder: _errorBorder,
-        border: _outlineInputBorder,
-        enabledBorder: _outlineInputBorder,
+        enabledBorder: InputBorder.none,
       ),
-      onEditingComplete: () {
-        setState(validate(model));
-      },
       onChanged: (value) {
         setState(validate(model));
       },

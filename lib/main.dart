@@ -5,11 +5,14 @@ import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/quiver.dart';
+import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
+import 'package:timezone/data/latest.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
+  initializeTimeZones();
   setPathUrlStrategy();
   await dotenv.load(fileName: '.env');
   runApp(const MyApp());
@@ -96,6 +99,9 @@ class MyApp extends StatelessWidget {
       DemoMenuGroup(
         title: 'Other',
         items: [
+          DemoMenuItem(
+              title: 'Unmasked Energy Offers',
+              pageBuilder: (_) => const UnmaskedEnergyOffers()),
           DemoMenuItem(title: 'Weather', pageBuilder: (_) => const Weather()),
           DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
           DemoMenuItem(

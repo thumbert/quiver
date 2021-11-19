@@ -20,6 +20,11 @@ class _MonthRangeState extends State<MonthRange> {
       value: model.monthRange,
       icon: const Icon(Icons.expand_more),
       hint: const Text('Filter'),
+      decoration: const InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.only(left: 12, right: 2, top: 9, bottom: 9),
+        enabledBorder: InputBorder.none,
+      ),
       elevation: 16,
       onChanged: (String? newValue) {
         setState(() {

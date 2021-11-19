@@ -31,5 +31,6 @@ class LoadZoneModel extends ChangeNotifier {
 
   String get zone => _zone;
 
+  /// Return [null] for Zone = '(All)'
   int? get zoneId => zones[_zone];
 }

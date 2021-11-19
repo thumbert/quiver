@@ -24,7 +24,7 @@ class InstrumentModel extends ChangeNotifier {
     'CDD swap',
     'CDD call',
     'CDD put',
-    'Daily call',
-    'Daily put',
+    'Daily T call',
+    'Daily T put',
   ];
 }

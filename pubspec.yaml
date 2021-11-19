@@ -31,6 +31,9 @@ dependencies:
   http: '>=0.12.0 <1.0.0'
   intl: ^0.17.0
   provider: ^6.0.1
+  table:
+    git:
+      url: git://github.com/thumbert/table.git
   timeseries:
     git:
       url: git://github.com/thumbert/timeseries.git
