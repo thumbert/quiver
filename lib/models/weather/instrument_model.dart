@@ -1,20 +1,29 @@
 library models.weather.instrument_model;
 
 import 'package:flutter/material.dart';
+import 'package:elec/src/risk_system/pricing/calculators/weather/cdd_hdd.dart';
 
 class InstrumentModel extends ChangeNotifier {
-  InstrumentModel({required String instrument}) {
-    _instrument = instrument;
+  InstrumentModel() {
+    _instruments = <String>[];
   }
 
-  late String _instrument;
+  late List<String> _instruments;
 
-  set instrument(String value) {
-    _instrument = value;
+  void insert(int index, String value) {
+    _instruments.insert(index, value);
+  }
+
+  void removeAt(int index) {
+    _instruments.removeAt(index);
+  }
+
+  String operator [](int i) => _instruments[i];
+
+  operator []=(int i, String value) {
+    _instruments[i] = value;
     notifyListeners();
   }
-
-  String get instrument => _instrument;
 
   /// List of available values in the dropdown
   static final List<String> instruments = [

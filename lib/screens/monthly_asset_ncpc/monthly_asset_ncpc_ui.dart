@@ -1,18 +1,19 @@
 library screens.monthly_asset_ncpc.monthly_asset_ncpc_ui;
 
-import 'dart:io';
+import 'dart:math';
+import 'package:flutter/services.dart';
 
 import 'package:elec/risk_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
-import 'package:flutter_quiver/models/monthly_asset_ncpc.dart';
+import 'package:flutter_quiver/models/monthly_asset_ncpc/asset_autocomplete_model.dart';
+import 'package:flutter_quiver/models/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
+import 'package:flutter_quiver/screens/monthly_asset_ncpc/asset_autocomplete.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table/table_base.dart' as table;
 import 'package:flutter_quiver/utils/empty_download.dart'
@@ -39,59 +40,10 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
   Widget build(BuildContext context) {
     final termModel = context.watch<TermModel>();
     final zoneModel = context.watch<LoadZoneModel>();
+    final assetModel = context.watch<AssetAutocompleteModel>();
     final tableModel = context.watch<MonthlyAssetNcpcModel>();
-
-    PaginatedDataTable _makePaginatedTable() {
-      final names = tableModel.tableData.first.keys.toSet();
-      var columns = [
-        if (names.contains('zone')) const DataColumn(label: Text('Zone Id')),
-        if (names.contains('market')) const DataColumn(label: Text('Market')),
-        if (names.contains('name')) const DataColumn(label: Text('Asset Name')),
-        if (names.contains('month')) const DataColumn(label: Text('Month')),
-        if (names.contains('value'))
-          DataColumn(
-              label: const Text('NCPC'),
-              tooltip: '\$ Credits',
-              numeric: true,
-              onSort: (index, sortAscending) {
-                setState(() {
-                  print('sortAscending: $sortAscending');
-                  tableModel.sortAscending = sortAscending;
-                  tableModel.sortByColumn(
-                      name: 'value', sortAscending: sortAscending);
-                });
-              }),
-      ];
-
-      return PaginatedDataTable(
-        // dataRowHeight: 20,
-        columns: columns,
-        source: _DataTableSource(tableModel),
-        rowsPerPage: 20,
-        sortColumnIndex: 1,
-        sortAscending: tableModel.sortAscending,
-        header: Row(
-          children: [
-            const SizedBox(
-              width: 150,
-            ),
-            //   IconButton(
-            //       tooltip: 'Download',
-            //       onPressed: () {},
-            //       icon: const Icon(Icons.download_outlined))
-            //
-          ],
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                downloadTableToCsv(tableModel.tableData);
-              },
-              tooltip: 'Download',
-              icon: const Icon(Icons.download_outlined))
-        ],
-      );
-    }
+    tableModel.zoneId = zoneModel.zoneId;
+    tableModel.assetName = assetModel.assetName;
 
     return Padding(
         padding: const EdgeInsets.only(left: 48),
@@ -108,7 +60,7 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
                           children: [
                             Text(
                                 'ISO publishes the data every month, with a 4 month lag '
-                                'beginning in Jan19.'),
+                                'beginning in Jan19.\nData has monthly granularity.'),
                           ],
                           contentPadding: EdgeInsets.all(12),
                         );
@@ -124,11 +76,6 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
             child: Scrollbar(
               controller: _controller,
               isAlwaysShown: true,
-              // child: ListView.builder(
-              //     // primary: true,  // works by itself, but not with the app
-              //     // itemCount: 600,
-              //     controller: _controller,
-              //     itemBuilder: _itemBuilder),
               child: ListView(
                 controller: _controller,
                 children: [
@@ -212,31 +159,9 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
                         width: 80,
                         child: Text('Asset', style: TextStyle(fontSize: 16)),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 150,
-                        child: DropdownButtonFormField(
-                          value: tableModel.assetName,
-                          icon: const Icon(Icons.expand_more),
-                          hint: const Text('Filter'),
-                          decoration: InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor))),
-                          elevation: 16,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              tableModel.assetName = newValue!;
-                            });
-                          },
-                          items: [
-                            '(All)',
-                            'DA',
-                            'RT'
-                          ] // FIXME: replace with the correct list of assets!
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                        ),
+                        child: AssetAutocomplete(),
                       ),
                     ],
                   ),
@@ -260,10 +185,35 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
                     builder: (context, snapshot) {
                       List<Widget> children;
                       if (snapshot.hasData) {
-                        // aggregate the data first
-                        // children = [_makeDataTable(aggData)];
-                        tableModel.aggregateData(zoneId: zoneModel.zoneId);
-                        children = [Flexible(child: _makePaginatedTable())];
+                        AssetAutocompleteModel.assetNames =
+                            tableModel.assetNames;
+                        var columns = _makeColumns(tableModel);
+                        children = [
+                          Flexible(
+                              child: PaginatedDataTable(
+                            columns: columns,
+                            source: _DataTableSource(tableModel),
+                            rowsPerPage: min(20, tableModel.data.length),
+                            showFirstLastButtons: true,
+                            header: const Text(''),
+                            actions: [
+                              IconButton(
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: table.Table.from(tableModel.data)
+                                            .toCsv()));
+                                  },
+                                  tooltip: 'Copy',
+                                  icon: const Icon(Icons.content_copy)),
+                              IconButton(
+                                  onPressed: () {
+                                    downloadTableToCsv(tableModel.data);
+                                  },
+                                  tooltip: 'Download',
+                                  icon: const Icon(Icons.download_outlined))
+                            ],
+                          ))
+                        ];
                       } else if (snapshot.hasError) {
                         children = [
                           const Icon(Icons.error_outline, color: Colors.red),
@@ -297,49 +247,70 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
         ));
   }
 
-  /// The data table with a download/copy to clipboard widget.
-  /// Table is sortable by value column
-  DataTable _makeDataTable(Iterable<Map<String, dynamic>> data) {
-    var names = data.first.keys.toSet();
-    var columns = [
+  List<DataColumn> _makeColumns(MonthlyAssetNcpcModel tableModel) {
+    final names = tableModel.data.first.keys.toList();
+    return <DataColumn>[
       if (names.contains('zone')) const DataColumn(label: Text('Zone Id')),
-      if (names.contains('market')) const DataColumn(label: Text('Market')),
+      if (names.contains('market'))
+        DataColumn(
+            label: TextButton(
+                onPressed: () {
+                  setState(() {
+                    tableModel.sortAscending = !tableModel.sortAscending;
+                    tableModel.sortColumn = 'market';
+                  });
+                },
+                child: Row(
+                  children: [
+                    if (tableModel.sortColumn == 'market')
+                      tableModel.sortAscending
+                          ? const Icon(Icons.arrow_upward)
+                          : const Icon(Icons.arrow_downward),
+                    const Text('Market'),
+                  ],
+                ))),
       if (names.contains('name')) const DataColumn(label: Text('Asset Name')),
-      if (names.contains('month')) const DataColumn(label: Text('Month')),
+      if (names.contains('month'))
+        DataColumn(
+            label: TextButton(
+                onPressed: () {
+                  setState(() {
+                    tableModel.sortAscending = !tableModel.sortAscending;
+                    tableModel.sortColumn = 'month';
+                  });
+                },
+                child: Row(
+                  children: [
+                    if (tableModel.sortColumn == 'month')
+                      tableModel.sortAscending
+                          ? const Icon(Icons.arrow_upward)
+                          : const Icon(Icons.arrow_downward),
+                    const Text('Month'),
+                  ],
+                ))),
       if (names.contains('value'))
-        const DataColumn(
-            label: Text('NCPC'), tooltip: '\$ Credits', numeric: true),
+        DataColumn(
+          label: TextButton(
+              onPressed: () {
+                setState(() {
+                  tableModel.sortAscending = !tableModel.sortAscending;
+                  tableModel.sortColumn = 'value';
+                });
+              },
+              child: Row(
+                children: [
+                  if (tableModel.sortColumn == 'value')
+                    tableModel.sortAscending
+                        ? const Icon(Icons.arrow_upward)
+                        : const Icon(Icons.arrow_downward),
+                  const Text('NCPC'),
+                ],
+              )),
+          tooltip: '\$ Credits',
+          numeric: true,
+        ),
     ];
-    var rows = <DataRow>[
-      for (var x in data)
-        DataRow(cells: [
-          if (names.contains('zone')) DataCell(Text(x['zone'].toString())),
-          if (names.contains('market'))
-            DataCell(Text((x['market'] as Market).name)),
-          if (names.contains('name')) DataCell(Text(x['name'])),
-          if (names.contains('month')) DataCell(Text(x['month'])),
-          DataCell(Text(fmt.format(x['value']))),
-        ])
-    ];
-
-    _sortingIndex() {
-      if (names.contains('month')) {
-        return names.length - 2;
-      }
-      return 0;
-    }
-
-    return DataTable(
-      sortColumnIndex: _sortingIndex(),
-      columns: columns,
-      rows: rows,
-    );
   }
-}
-
-Future<void> downloadTableToCsv(List<Map<String, dynamic>> data) async {
-  var tbl = table.Table.from(data);
-  download(tbl.toCsv().codeUnits, downloadName: 'monthly_asset_ncpc_data.csv');
 }
 
 class _DataTableSource extends DataTableSource {
@@ -350,19 +321,7 @@ class _DataTableSource extends DataTableSource {
 
   @override
   DataRow? getRow(int index) {
-    return _makeDataRow(model.tableData[index]);
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => model.tableData.length;
-
-  @override
-  int get selectedRowCount => 0;
-
-  DataRow _makeDataRow(Map<String, dynamic> x) {
+    var x = model.data[index];
     var names = x.keys.toSet();
     return DataRow(cells: [
       if (names.contains('zone')) DataCell(Text(x['zone'].toString())),
@@ -373,4 +332,18 @@ class _DataTableSource extends DataTableSource {
       DataCell(Text(_fmt.format(x['value']))),
     ]);
   }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => model.data.length;
+
+  @override
+  int get selectedRowCount => 0;
+}
+
+Future<void> downloadTableToCsv(List<Map<String, dynamic>> data) async {
+  var tbl = table.Table.from(data);
+  download(tbl.toCsv().codeUnits, downloadName: 'monthly_asset_ncpc_data.csv');
 }

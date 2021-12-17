@@ -3,12 +3,8 @@ library screens.weather.weather_ui;
 import 'package:elec/risk_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/weather/airport_model.dart';
-import 'package:flutter_quiver/models/weather/month_range_model.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
-import 'package:flutter_quiver/screens/weather/airport.dart';
 import 'package:flutter_quiver/screens/weather/instrument_rows.dart';
-import 'package:flutter_quiver/screens/weather/month_range.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +21,6 @@ class _WeatherUiState extends State<WeatherUi> {
 
   @override
   void initState() {
-    // final model = context.read<WeatherModel>();
     _scrollController = ScrollController();
     super.initState();
   }
@@ -38,9 +33,7 @@ class _WeatherUiState extends State<WeatherUi> {
 
   @override
   Widget build(BuildContext context) {
-    // final model = context.watch<WeatherModel>();
-    final model = context.watch<MonthRangeModel>();
-
+    final model = context.watch<WeatherModel>();
     return Padding(
         padding: const EdgeInsets.only(left: 48),
         child: Scaffold(
@@ -54,8 +47,8 @@ class _WeatherUiState extends State<WeatherUi> {
                       builder: (BuildContext context) {
                         return const SimpleDialog(
                           children: [
-                            Text('Screen to get quick stats on weather indices '
-                                'and to price weather instruments.'),
+                            Text(
+                                'Price weather instruments and get quick historical stats on weather indices.'),
                           ],
                           contentPadding: EdgeInsets.all(12),
                         );
@@ -76,19 +69,67 @@ class _WeatherUiState extends State<WeatherUi> {
                 children: [
                   Row(
                     children: const [
-                      SizedBox(width: 120, child: MonthRange()),
-                      SizedBox(width: 120, child: MonthRange()),
+                      InstrumentRows(),
                     ],
                   ),
-                  // Row(
-                  //   children: const [
-                  //     InstrumentRows(),
-                  //   ],
-                  // ),
-
                   const SizedBox(
                     height: 24,
                   ),
+                  // FutureBuilder(
+                  //   future: model.make30YearTable(),
+                  //   builder: (context, snapshot) {
+                  //     List<Widget> children;
+                  //     if (snapshot.hasData) {
+                  //       AssetAutocompleteModel.assetNames =
+                  //           tableModel.assetNames;
+                  //       var columns = _makeColumns(tableModel);
+                  //       children = [
+                  //         Flexible(
+                  //             child: PaginatedDataTable(
+                  //           columns: columns,
+                  //           source: _DataTableSource(tableModel),
+                  //           rowsPerPage: min(20, tableModel.data.length),
+                  //           showFirstLastButtons: true,
+                  //           header: const Text(''),
+                  //           actions: [
+                  //             IconButton(
+                  //                 onPressed: () {
+                  //                   Clipboard.setData(ClipboardData(
+                  //                       text: table.Table.from(tableModel.data)
+                  //                           .toCsv()));
+                  //                 },
+                  //                 tooltip: 'Copy',
+                  //                 icon: const Icon(Icons.content_copy)),
+                  //             IconButton(
+                  //                 onPressed: () {
+                  //                   downloadTableToCsv(tableModel.data);
+                  //                 },
+                  //                 tooltip: 'Download',
+                  //                 icon: const Icon(Icons.download_outlined))
+                  //           ],
+                  //         ))
+                  //       ];
+                  //     } else if (snapshot.hasError) {
+                  //       children = [
+                  //         const Icon(Icons.error_outline, color: Colors.red),
+                  //         Text(
+                  //           snapshot.error.toString(),
+                  //           style: const TextStyle(fontSize: 16),
+                  //         )
+                  //       ];
+                  //     } else {
+                  //       children = [
+                  //         const SizedBox(
+                  //             height: 40,
+                  //             width: 40,
+                  //             child: CircularProgressIndicator(
+                  //               strokeWidth: 2,
+                  //             ))
+                  //       ];
+                  //     }
+                  //     return Row(children: children);
+                  //   },
+                  // ),
                 ],
               ),
             ),

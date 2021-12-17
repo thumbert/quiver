@@ -3,18 +3,26 @@ library models.weather.month_range_model;
 import 'package:flutter/material.dart';
 
 class MonthRangeModel extends ChangeNotifier {
-  MonthRangeModel({required String monthRange}) {
-    _monthRange = monthRange;
+  MonthRangeModel() {
+    _monthRanges = <String>[];
   }
 
-  late String _monthRange;
+  late List<String> _monthRanges;
 
-  set monthRange(String value) {
-    _monthRange = value;
+  void insert(int index, String value) {
+    _monthRanges.insert(index, value);
+  }
+
+  void removeAt(int index) {
+    _monthRanges.removeAt(index);
+  }
+
+  String operator [](int i) => _monthRanges[i];
+
+  operator []=(int i, String value) {
+    _monthRanges[i] = value;
     notifyListeners();
   }
-
-  String get monthRange => _monthRange;
 
   /// List of available values in the dropdown
   static final Map<String, List<int>> ranges = {

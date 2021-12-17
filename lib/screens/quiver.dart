@@ -221,12 +221,10 @@ class _QuiverScreenState extends State<QuiverScreen>
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
-      // color: const Color(0xFF303030), //Color(0xFF202020),
       child: Text(
         title,
         textAlign: TextAlign.left,
         style: const TextStyle(
-          // color: Color(0xFFAAAAAA),
           color: Colors.white,
           fontSize: 20,
         ),
@@ -257,13 +255,20 @@ class _QuiverScreenState extends State<QuiverScreen>
             Icons.label_important_outline,
             color: item.isHighlighted ? Colors.white : Colors.blueGrey.shade400,
           ),
+          // trailing: item.icon,
           title: Transform.translate(
             offset: const Offset(-20, 0),
-            child: Text(
-              item.title,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                if (item.icon != null) item.icon!,
+              ],
             ),
           ),
           onTap: () {
@@ -301,7 +306,7 @@ class DemoMenuItem {
   });
 
   /// Icon that represents the demo.
-  final IconData? icon;
+  final Icon? icon;
 
   /// Title of the demo.
   final String title;

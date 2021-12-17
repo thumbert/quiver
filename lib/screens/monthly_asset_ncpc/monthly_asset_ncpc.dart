@@ -5,7 +5,8 @@ import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
-import 'package:flutter_quiver/models/monthly_asset_ncpc.dart';
+import 'package:flutter_quiver/models/monthly_asset_ncpc/asset_autocomplete_model.dart';
+import 'package:flutter_quiver/models/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc_ui.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp_ui.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,7 @@ class _MonthlyAssetNcpcState extends State<MonthlyAssetNcpc> {
       ChangeNotifierProvider(
           create: (context) => TermModel(term: initialTerm())),
       ChangeNotifierProvider(create: (context) => LoadZoneModel(zone: '(All)')),
+      ChangeNotifierProvider(create: (context) => AssetAutocompleteModel()),
       ChangeNotifierProvider(create: (context) => MonthlyAssetNcpcModel()),
     ], child: const MonthlyAssetNcpcUi());
   }

@@ -3,11 +3,30 @@ library models.weather.airport_model;
 import 'package:flutter/material.dart';
 
 class AirportModel extends ChangeNotifier {
-  AirportModel({required String airportCode}) {
-    _airportCode = airportCode;
+  AirportModel() {
+    _airportCodes = <String>[];
   }
 
-  late String _airportCode;
+  late List<String> _airportCodes;
+
+  List<String> get values => _airportCodes;
+
+  void insert(int index, String value) {
+    _airportCodes.insert(index, value.toUpperCase());
+  }
+
+  void removeAt(int index) {
+    _airportCodes.removeAt(index);
+  }
+
+  void clear() => _airportCodes.clear();
+
+  String operator [](int i) => _airportCodes[i];
+
+  operator []=(int i, String value) {
+    _airportCodes[i] = value;
+    notifyListeners();
+  }
 
   final allLettersRegExp = RegExp(r'[A-Z]{3}', caseSensitive: false);
 
@@ -16,10 +35,10 @@ class AirportModel extends ChangeNotifier {
     return value.length == 3 && allLettersRegExp.hasMatch(value);
   }
 
-  set airportCode(String value) {
-    _airportCode = value;
-    notifyListeners();
-  }
-
-  String get airportCode => _airportCode;
+  // set airportCode(String value) {
+  //   _airportCode = value;
+  //   notifyListeners();
+  // }
+  //
+  // String get airportCode => _airportCode;
 }

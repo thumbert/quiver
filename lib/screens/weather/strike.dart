@@ -1,12 +1,14 @@
 library weather.strike;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/weather/strike_model.dart';
+import 'package:flutter_quiver/models/common/multiple/strike_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Strike extends StatefulWidget {
-  const Strike({Key? key}) : super(key: key);
+  const Strike({this.index = 0, Key? key}) : super(key: key);
+
+  final int index;
 
   @override
   _StrikeState createState() => _StrikeState();
@@ -25,13 +27,15 @@ class _StrikeState extends State<Strike> {
   @override
   void initState() {
     final model = context.read<StrikeModel>();
-    controller.text = fmt.format(model.strike);
+    controller.text = fmt.format(model[widget.index]);
     focus.addListener(() {
       if (focus.hasFocus) {
-        controller.text = model.strike.toString();
+        controller.text = model[widget.index].toString();
       } else {
-        setState(validate(model));
-        controller.text = fmt.format(model.strike); // format on exit
+        setState(() {
+          validate(model);
+        });
+        controller.text = fmt.format(model[widget.index]); // format on exit
       }
     });
     super.initState();
@@ -44,15 +48,15 @@ class _StrikeState extends State<Strike> {
     super.dispose();
   }
 
-  validate(StrikeModel model) => () {
-        error = null;
-        try {
-          model.strike = fmt.parse(controller.text);
-          error = null; // all good
-        } catch (e) {
-          error = 'Not a valid number';
-        }
-      };
+  void validate(StrikeModel model) {
+    error = null;
+    try {
+      model[widget.index] = fmt.parse(controller.text);
+      error = null; // all good
+    } catch (e) {
+      error = 'Not a valid number';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +72,13 @@ class _StrikeState extends State<Strike> {
         focusedErrorBorder: _errorBorder,
         enabledBorder: InputBorder.none,
       ),
-      onChanged: (value) {
-        setState(validate(model));
+      // onChanged: (value) {
+      //   setState(() {
+      //     validate(model);
+      //   });
+      // },
+      onSubmitted: (String value) {
+        setState(() => validate(model));
       },
       textAlign: TextAlign.right,
       scrollPadding: const EdgeInsets.all(5),

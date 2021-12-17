@@ -1,12 +1,14 @@
 library weather.max_payoff;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/weather/maxpayoff_model.dart';
+import 'package:flutter_quiver/models/common/multiple/maxpayoff_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MaxPayoff extends StatefulWidget {
-  const MaxPayoff({Key? key}) : super(key: key);
+  const MaxPayoff({this.index = 0, Key? key}) : super(key: key);
+
+  final int index;
 
   @override
   _MaxPayoffState createState() => _MaxPayoffState();
@@ -29,13 +31,13 @@ class _MaxPayoffState extends State<MaxPayoff> {
   @override
   void initState() {
     final model = context.read<MaxPayoffModel>();
-    controller.text = fmt.format(model.maxPayoff);
+    controller.text = fmt.format(model[widget.index]);
     focus.addListener(() {
       if (focus.hasFocus) {
-        controller.text = model.maxPayoff.toString();
+        controller.text = model[widget.index].toString();
       } else {
-        setState(validate(model));
-        controller.text = fmt.format(model.maxPayoff); // format on exit
+        setState(() => validate(model));
+        controller.text = fmt.format(model[widget.index]); // format on exit
       }
     });
     super.initState();
@@ -48,19 +50,20 @@ class _MaxPayoffState extends State<MaxPayoff> {
     super.dispose();
   }
 
-  validate(MaxPayoffModel model) => () {
-        error = null;
-        try {
-          model.maxPayoff = fmt.parse(controller.text);
-          error = null; // all good
-        } catch (e) {
-          error = 'Not a valid number';
-        }
-      };
+  void validate(MaxPayoffModel model) {
+    error = null;
+    try {
+      model[widget.index] = fmt.parse(controller.text);
+      error = null; // all good
+    } catch (e) {
+      error = 'Not a valid number';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final model = context.watch<MaxPayoffModel>();
+
     return TextField(
       focusNode: focus,
       controller: controller,
@@ -74,7 +77,7 @@ class _MaxPayoffState extends State<MaxPayoff> {
         enabledBorder: _outlineInputBorder,
       ),
       onChanged: (value) {
-        setState(validate(model));
+        setState(() => validate(model));
       },
       textAlign: TextAlign.right,
       scrollPadding: const EdgeInsets.all(5),

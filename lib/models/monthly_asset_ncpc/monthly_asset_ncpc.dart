@@ -14,13 +14,12 @@ class MonthlyAssetNcpcModel extends ChangeNotifier {
       bool byMarket = false,
       String market = '(All)',
       bool byAsset = false,
-      String assetName = '(All)',
+      this.assetName, // autocomplete is empty
       bool byMonth = true}) {
     _byZone = byZone;
     _byMarket = byMarket;
     _market = market;
     _byAsset = byAsset;
-    _assetName = assetName;
     _byMonth = byMonth;
     client = MonthlyAssetNcpc(Client(), rootUrl: dotenv.env['rootUrl']!);
   }
@@ -30,49 +29,48 @@ class MonthlyAssetNcpcModel extends ChangeNotifier {
   late bool _byMarket;
   late String _market;
   late bool _byAsset;
-  late String _assetName;
+  String? assetName;
   late bool _byMonth;
+  Term? _term;
+  int? _zoneId;
 
   /// TODO: implement caching
   var _cache = <Map<String, dynamic>>[];
-  var tableData = <Map<String, dynamic>>[];
-  late List<String> columns;
+  var _tableData = <Map<String, dynamic>>[];
+  var assetNames = <String>{};
+  String sortColumn = 'month';
   bool sortAscending = false;
 
-  /// Get the data from the webservice.
+  /// Get the data from the webservice and aggregate it.
   Future<Iterable<Map<String, dynamic>>> getData(Term term) async {
-    var start = Month.utc(term.startDate.year, term.startDate.month);
-    var end = Month.utc(term.endDate.year, term.endDate.month);
-    _cache = await client.getAllAssets(start, end);
-    tableData = _cache;
-    return _cache;
-  }
-
-  void aggregateData({required int? zoneId}) {
-    tableData = client.summary(
+    if (_term == null || _term != term) {
+      var start = Month.utc(term.startDate.year, term.startDate.month);
+      var end = Month.utc(term.endDate.year, term.endDate.month);
+      _cache = await client.getAllAssets(start, end);
+      assetNames = _cache.map((e) => e['name'] as String).toSet();
+    }
+    _term = term;
+    _tableData = client.summary(
       _cache,
-      zoneId: zoneId,
+      zoneId: _zoneId,
       byZoneId: byZone,
       market: market == '(All)' ? null : Market.parse(market),
       byMarket: byMarket,
-      assetName: assetName == '(All)' ? null : assetName,
+      assetName: assetName,
       byAssetName: byAsset,
       byMonth: byMonth,
     );
-    columns = tableData.first.keys.toList();
-  }
-
-  void sortByColumn({required String name, required sortAscending}) {
-    print('in sortByColumn');
     var sign = sortAscending ? 1 : -1;
-    if (name == 'value') {
-      tableData.sort((a, b) => a['value'].compareTo(b['value']) * sign);
-      tableData = List.from(tableData);
-      print(tableData);
+    if (_tableData.first.keys.contains(sortColumn)) {
+      /// there may be no sorted column in your aggregated table
+      _tableData.sort((a, b) => a[sortColumn].compareTo(b[sortColumn]) * sign);
     }
-
-    notifyListeners();
+    return _tableData;
   }
+
+  List<Map<String, dynamic>> get data => _tableData;
+
+  set zoneId(int? value) => _zoneId = value;
 
   set byZone(bool value) {
     _byZone = value;
@@ -101,13 +99,6 @@ class MonthlyAssetNcpcModel extends ChangeNotifier {
   }
 
   bool get byAsset => _byAsset;
-
-  set assetName(String value) {
-    _assetName = value;
-    notifyListeners();
-  }
-
-  String get assetName => _assetName;
 
   set byMonth(bool value) {
     _byMonth = value;

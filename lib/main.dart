@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/quiver.dart';
@@ -99,13 +100,17 @@ class MyApp extends StatelessWidget {
       DemoMenuGroup(
         title: 'Other',
         items: [
+          DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(
+              title: 'Peaking option calls', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(
+              title: 'MCC surfer',
+              icon: const Icon(Icons.surfing),
+              pageBuilder: (_) => const MccSurfer()),
           DemoMenuItem(
               title: 'Unmasked Energy Offers',
               pageBuilder: (_) => const UnmaskedEnergyOffers()),
           DemoMenuItem(title: 'Weather', pageBuilder: (_) => const Weather()),
-          DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
-          DemoMenuItem(
-              title: 'Peaking option calls', pageBuilder: (_) => Text('TODO')),
         ],
       ),
     ];

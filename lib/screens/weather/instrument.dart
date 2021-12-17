@@ -5,7 +5,9 @@ import 'package:flutter_quiver/models/weather/instrument_model.dart';
 import 'package:provider/provider.dart';
 
 class Instrument extends StatefulWidget {
-  const Instrument({Key? key}) : super(key: key);
+  const Instrument({this.index = 0, Key? key}) : super(key: key);
+
+  final int index;
 
   @override
   _InstrumentState createState() => _InstrumentState();
@@ -17,7 +19,7 @@ class _InstrumentState extends State<Instrument> {
     final model = context.watch<InstrumentModel>();
 
     return DropdownButtonFormField(
-      value: model.instrument,
+      value: model[widget.index],
       icon: const Icon(Icons.expand_more),
       hint: const Text('Filter'),
       decoration: const InputDecoration(
@@ -28,7 +30,7 @@ class _InstrumentState extends State<Instrument> {
       elevation: 16,
       onChanged: (String? newValue) {
         setState(() {
-          model.instrument = newValue!;
+          model[widget.index] = newValue!;
         });
       },
       items: InstrumentModel.instruments

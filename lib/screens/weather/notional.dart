@@ -2,12 +2,14 @@ library weather.notional;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
-import 'package:flutter_quiver/models/weather/notional_model.dart';
+import 'package:flutter_quiver/models/common/multiple/notional_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Notional extends StatefulWidget {
-  const Notional({Key? key}) : super(key: key);
+  const Notional({this.index = 0, Key? key}) : super(key: key);
+
+  final int index;
 
   @override
   _NotionalState createState() => _NotionalState();
@@ -26,13 +28,13 @@ class _NotionalState extends State<Notional> {
   @override
   void initState() {
     final model = context.read<NotionalModel>();
-    controller.text = fmt.format(model.notional);
+    controller.text = fmt.format(model[widget.index]);
     focus.addListener(() {
       if (focus.hasFocus) {
-        controller.text = model.notional.toString();
+        controller.text = model[widget.index].toString();
       } else {
-        setState(validate(model));
-        controller.text = fmt.format(model.notional); // format on exit
+        setState(() => validate(model));
+        controller.text = fmt.format(model[widget.index]); // format on exit
       }
     });
     super.initState();
@@ -45,19 +47,21 @@ class _NotionalState extends State<Notional> {
     super.dispose();
   }
 
-  validate(NotionalModel model) => () {
-        error = null;
-        try {
-          model.notional = fmt.parse(controller.text);
-          error = null; // all good
-        } catch (e) {
-          error = 'Not a valid number';
-        }
-      };
+  void validate(NotionalModel model) {
+    error = null;
+    try {
+      model[widget.index] = fmt.parse(controller.text).round();
+      error = null; // all good
+    } catch (e) {
+      error = 'Not a valid number';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final model = context.watch<NotionalModel>();
+    controller.text = fmt.format(model[widget.index]);
+
     return TextField(
       focusNode: focus,
       controller: controller,
@@ -69,8 +73,8 @@ class _NotionalState extends State<Notional> {
         focusedErrorBorder: _errorBorder,
         enabledBorder: InputBorder.none,
       ),
-      onChanged: (value) {
-        setState(validate(model));
+      onSubmitted: (value) {
+        setState(() => validate(model));
       },
       textAlign: TextAlign.right,
       scrollPadding: const EdgeInsets.all(5),

@@ -5,7 +5,9 @@ import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:provider/provider.dart';
 
 class Airport extends StatefulWidget {
-  const Airport({Key? key}) : super(key: key);
+  const Airport({this.index = 0, Key? key}) : super(key: key);
+
+  final int index;
 
   @override
   _AirportState createState() => _AirportState();
@@ -13,17 +15,20 @@ class Airport extends StatefulWidget {
 
 class _AirportState extends State<Airport> {
   final airportController = TextEditingController();
-  String? errorAirport;
+  String? error;
   final focusAirport = FocusNode();
 
   @override
   void initState() {
     final model = context.read<AirportModel>();
-    airportController.text = model.airportCode;
+    // print('in airport init for ${widget.index} value ${model[widget.index]}');
+    airportController.text = model[widget.index];
     focusAirport.addListener(() {
       if (!focusAirport.hasFocus) {
         airportController.text = airportController.text.toUpperCase();
-        setState(validateAirport(model));
+        setState(() {
+          validateAirport(model);
+        });
       }
     });
     super.initState();
@@ -36,32 +41,32 @@ class _AirportState extends State<Airport> {
     super.dispose();
   }
 
-  validateAirport(AirportModel model) => () {
-        errorAirport = null;
-        if (model.isValid(airportController.text)) {
-          // airportController.text = airportController.text.toUpperCase();
-          model.airportCode = airportController.text.toUpperCase();
-          errorAirport = null; // all good
-        } else {
-          errorAirport = 'Error: Only 3 letters allowed';
-        }
-      };
+  void validateAirport(AirportModel model) {
+    error = null;
+    if (model.isValid(airportController.text)) {
+      model[widget.index] = airportController.text.toUpperCase();
+      error = null; // all good
+    } else {
+      error = 'Error: Only 3 letters allowed';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final model = context.watch<AirportModel>();
-
     return TextField(
       focusNode: focusAirport,
       controller: airportController,
       decoration: InputDecoration(
         isDense: true,
         contentPadding: const EdgeInsets.all(12),
-        errorText: errorAirport,
+        errorText: error,
         enabledBorder: InputBorder.none,
       ),
       onSubmitted: (String value) {
-        setState(validateAirport(model));
+        setState(() {
+          validateAirport(model);
+        });
       },
     );
   }

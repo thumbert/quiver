@@ -2,13 +2,13 @@ library screens.weather.weather;
 
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
-import 'package:flutter_quiver/models/common/buysell_model.dart';
+import 'package:flutter_quiver/models/common/multiple/buysell_model.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:flutter_quiver/models/weather/instrument_model.dart';
-import 'package:flutter_quiver/models/weather/maxpayoff_model.dart';
+import 'package:flutter_quiver/models/common/multiple/maxpayoff_model.dart';
 import 'package:flutter_quiver/models/weather/month_range_model.dart';
-import 'package:flutter_quiver/models/weather/notional_model.dart';
-import 'package:flutter_quiver/models/weather/strike_model.dart';
+import 'package:flutter_quiver/models/common/multiple/notional_model.dart';
+import 'package:flutter_quiver/models/common/multiple/strike_model.dart';
 import 'package:flutter_quiver/models/weather/weather_deal.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_quiver/screens/weather/weather_ui.dart';
@@ -22,28 +22,16 @@ class Weather extends StatefulWidget {
 }
 
 class _WeatherState extends State<Weather> {
-  final airportCode = 'BOS';
-  final monthRange = 'Jan-Feb';
-  final strike = 1250;
-  final notional = 10000;
-  final maxPayoff = 3000000;
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => BuySellModel(buySell: 'Buy')),
-      ChangeNotifierProvider(
-          create: (context) => MonthRangeModel(monthRange: monthRange)),
-      ChangeNotifierProvider(
-          create: (context) =>
-              InstrumentModel(instrument: InstrumentModel.instruments.first)),
-      ChangeNotifierProvider(
-          create: (context) => AirportModel(airportCode: airportCode)),
-      ChangeNotifierProvider(create: (context) => StrikeModel(strike: strike)),
-      ChangeNotifierProvider(
-          create: (context) => NotionalModel(notional: notional)),
-      ChangeNotifierProvider(
-          create: (context) => MaxPayoffModel(maxPayoff: maxPayoff)),
+      ChangeNotifierProvider(create: (context) => BuySellModel()),
+      ChangeNotifierProvider(create: (context) => MonthRangeModel()),
+      ChangeNotifierProvider(create: (context) => InstrumentModel()),
+      ChangeNotifierProvider(create: (context) => AirportModel()),
+      ChangeNotifierProvider(create: (context) => StrikeModel()),
+      ChangeNotifierProvider(create: (context) => NotionalModel()),
+      ChangeNotifierProvider(create: (context) => MaxPayoffModel()),
       ChangeNotifierProvider(
           create: (context) => WeatherModel()
             ..deals = [
@@ -54,7 +42,15 @@ class _WeatherState extends State<Weather> {
                   airport: 'BOS',
                   strike: 1250,
                   notional: 10000,
-                  maxPayoff: 3000000)
+                  maxPayoff: 3000000),
+              WeatherDeal(
+                  buySell: 'Sell',
+                  monthRange: 'Dec-Mar',
+                  instrumentType: 'Daily T call',
+                  airport: 'LGA',
+                  strike: 45,
+                  notional: 30000,
+                  maxPayoff: 5000000),
             ]),
     ], child: const WeatherUi());
   }
