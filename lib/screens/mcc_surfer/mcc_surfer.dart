@@ -61,7 +61,7 @@ class _CongestionViewerState extends State<MccSurfer> {
                           return const SimpleDialog(
                             children: [
                               Text(
-                                  'Visualize all the nodes in the pool at once, '
+                                  'Visualize ALL the nodes in the pool at once, '
                                   'select constraints to see when they bind '
                                   '\nto find the nodes that are affected the most.'),
                             ],
@@ -83,6 +83,8 @@ class _CongestionViewerState extends State<MccSurfer> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Text(
+                          'TODO: capture selection events from the plot and recalculate the constraint table'),
                       const SizedBox(width: 120, child: TermUi()),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -90,8 +92,8 @@ class _CongestionViewerState extends State<MccSurfer> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
                             SizedBox(
-                                width: 1000,
-                                height: 700,
+                                width: 900,
+                                height: 600,
                                 child: CongestionChart()),
                             ConstraintTable(),
                           ],

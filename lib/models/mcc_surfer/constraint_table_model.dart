@@ -1,4 +1,4 @@
-library models.constraint_table_model;
+library models.mcc_surfer.constraint_table_model;
 
 import 'package:collection/collection.dart';
 import 'package:date/date.dart' as date;
@@ -9,10 +9,14 @@ import 'package:timezone/timezone.dart';
 import 'package:tuple/tuple.dart';
 
 class ConstraintTableModel extends ChangeNotifier {
+  ConstraintTableModel({this.rootUrl = 'http://127.0.0.1:8080'}) {
+    client = BindingConstraintsApi(http.Client(), rootUrl: rootUrl);
+  }
+
   final String rootUrl;
   late final BindingConstraintsApi client;
   final location = getLocation('America/New_York');
-  final h1 = Duration(hours: 1);
+  var h1 = const Duration(hours: 1);
 
   static var maxConstraints = 40;
 
@@ -27,10 +31,6 @@ class ConstraintTableModel extends ChangeNotifier {
 
   /// cache the hourly constraints for a given term
   var cache = <date.Interval, List<Map<String, dynamic>>>{};
-
-  ConstraintTableModel({this.rootUrl = 'http://127.0.0.1:8080'}) {
-    client = BindingConstraintsApi(http.Client(), rootUrl: rootUrl);
-  }
 
   void clickConstraint(int i) {
     selected[i] = !selected[i];

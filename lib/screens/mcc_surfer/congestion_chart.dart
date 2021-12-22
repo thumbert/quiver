@@ -1,12 +1,13 @@
-library screens.congestion_chart;
+library screens.mcc_surfer.congestion_chart;
 
+import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/constraint_table_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
-import 'package:timezone/browser.dart';
+import 'package:timezone/timezone.dart';
 
 class CongestionChart extends StatefulWidget {
   const CongestionChart({Key? key}) : super(key: key);
@@ -16,22 +17,18 @@ class CongestionChart extends StatefulWidget {
 }
 
 class _CongestionChartState extends State<CongestionChart> {
-  final layout = {
-    'height': 700,
-    'width': 1000,
-    'margin': {
-      't': 10,
-      'l': 50,
-      'r': 20,
-      'pad': 4,
-    },
-    'yaxis': {
-      'title': 'Congestion price, \$/MWh',
-    },
-    'showlegend': false,
-    'hovermode': 'closest',
-    'shapes': [],
-  };
+  late Future<List<Map<String, dynamic>>> traces;
+  bool initialPlot = true;
+
+  // @override
+  // void initState() {
+  //   final termModel = context.read<TermModel>();
+  //   final chartModel = context.read<CongestionChartModel>();
+  //   term = termModel.term;
+  //   traces = chartModel.makeHourlyTraces(
+  //       termModel.term.startDate, termModel.term.endDate);
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,7 @@ class _CongestionChartState extends State<CongestionChart> {
             // highlight the selected constraints
             var aux = constraintTableModel.getHighlightedBlocks();
             // print(aux);
-            layout['shapes'] = [
+            chartModel.layout['shapes'] = [
               for (var x in aux)
                 {
                   'type': 'rect',
@@ -67,16 +64,26 @@ class _CongestionChartState extends State<CongestionChart> {
                 }
             ];
 
-            children = [
-              SizedBox(
-                  width: 700,
-                  height: 1000,
-                  child: Plotly(
-                    viewId: 'mydiv',
-                    data: traces,
-                    layout: layout,
-                  )),
-            ];
+            if (initialPlot) {
+              /// first time create the plot
+              children = [
+                SizedBox(
+                    width: chartModel.layout['width'] as double,
+                    height: chartModel.layout['height'] as double,
+                    child: Plotly(
+                      viewId: 'mcc-surfer-div',
+                      data: traces,
+                      layout: chartModel.layout,
+                    )),
+              ];
+              // setState(() {
+              //   initial = false;
+              // });
+            } else {
+              /// plot is already created, just needs an update
+              // TODO: continue here
+              children = [];
+            }
           } else if (snapshot.hasError) {
             children = [
               const Icon(Icons.error_outline, color: Colors.red),

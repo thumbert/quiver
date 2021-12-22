@@ -55,7 +55,8 @@ class _ConstraintTable extends State<ConstraintTable> {
                     children: [
                       const Text(
                         'Top 20 constraints',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       DataTable(
                           columnSpacing: 14,
