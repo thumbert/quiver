@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
 
 class LoadZoneModel extends ChangeNotifier {
-  LoadZoneModel({required String zone}) {
+  LoadZoneModel({String zone = '(All)'}) {
     _zone = zone;
   }
 

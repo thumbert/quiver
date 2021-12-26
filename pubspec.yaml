@@ -13,6 +13,9 @@ dependencies:
     sdk: flutter
 
   collection: ^1.15.0
+  dama:
+    git:
+      url: git://github.com/thumbert/dama.git
   date:
     git:
       url: git://github.com/thumbert/date.git
@@ -48,6 +51,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  flutter_native_splash: ^1.3.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -78,3 +82,10 @@ flutter:
           weight: 400
         - asset: assets/fonts/Ubuntu-Bold.ttf
           weight: 700
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/loading.png
+  android: false
+  ios: false
+  web: true

@@ -19,21 +19,25 @@ class ConstraintTableModel extends ChangeNotifier {
   var h1 = const Duration(hours: 1);
 
   static var maxConstraints = 40;
+  // date.Term? _term;
 
   /// show only 20 top constraints for the selected term
   List<bool> selected = <bool>[];
 
   /// reuse the table
-  late List<Map<String, dynamic>> table;
+  List<Map<String, dynamic>>? table;
+
+  bool hasChangedHighlight = false;
 
   /// current term
-  late date.Term currentTerm;
+  date.Term? currentTerm;
 
   /// cache the hourly constraints for a given term
   var cache = <date.Interval, List<Map<String, dynamic>>>{};
 
   void clickConstraint(int i) {
     selected[i] = !selected[i];
+    hasChangedHighlight = true;
     notifyListeners();
   }
 
@@ -54,8 +58,8 @@ class ConstraintTableModel extends ChangeNotifier {
     var out = <Map<String, dynamic>>[];
 
     for (var i in ind) {
-      var constraintName = table[i]['Constraint Name'];
-      var obs = cache[currentTerm.interval]!
+      var constraintName = table![i]['Constraint Name'];
+      var obs = cache[currentTerm!.interval]!
           .where((e) => e['Constraint Name'] == constraintName);
       // obs.map((e) => e['hourBeginning']).forEach(print);
       var one = <String, dynamic>{};
@@ -90,38 +94,43 @@ class ConstraintTableModel extends ChangeNotifier {
     return out;
   }
 
-  /// Show the top constraints in the focusTerm.  The [focusTerm] can be a sub
-  /// interval of the [term] that you get from zooming into the plot.
-  Future<List<Map<String, dynamic>>> topConstraints(date.Term term,
+  /// Get the constraints for the [term] from the database.
+  /// Show the top constraints in the focusTerm.
+  /// [focusTerm] can be a sub-interval of the [term] that you get from
+  /// zooming into the plot.
+  ///
+  Future<List<Map<String, dynamic>>> getTopConstraints(date.Term term,
       {date.Term? focusTerm}) async {
-    var xs = await getData(term.interval);
-    currentTerm = term;
+    if (term != currentTerm || table == null) {
+      hasChangedHighlight = false; // restart it
+      var xs = await getData(term.interval);
+      var groups = groupBy(
+          xs,
+          (Map e) => Tuple2(e['Constraint Name'].toString(),
+              e['Contingency Name'].toString()));
+      var _table = <Map<String, dynamic>>[
+        for (var group in groups.entries)
+          {
+            'Constraint Name': group.key.item1,
+            'Contingency Name': group.key.item2,
+            'Marginal Value':
+                group.value.map((Map e) => e['Marginal Value'] as num).sum,
+            'Hours Count': group.value.length,
+          }
+      ];
 
-    var groups = groupBy(
-        xs,
-        (Map e) => Tuple2(
-            e['Constraint Name'].toString(), e['Contingency Name'].toString()));
-    var table = [
-      for (var group in groups.entries)
-        {
-          'Constraint Name': group.key.item1,
-          'Contingency Name': group.key.item2,
-          'Marginal Value':
-              group.value.map((Map e) => e['Marginal Value'] as num).sum,
-          'Hours Count': group.value.length,
-        }
-    ];
+      /// sort descending by absolute Marginal Value
+      _table.sort((a, b) =>
+          (a['Marginal Value'] as num).compareTo(b['Marginal Value'] as num));
 
-    /// sort descending by absolute Marginal Value
-    table.sort((a, b) =>
-        (a['Marginal Value'] as num).compareTo(b['Marginal Value'] as num));
-
-    if (selected.isEmpty) {
-      selected = List.filled(table.length, false);
+      if (selected.isEmpty) {
+        selected = List.filled(_table.length, false);
+      }
+      table = _table;
+      currentTerm = term;
     }
-    this.table = table;
 
-    return table;
+    return table!;
   }
 
   /// Get the data from the cache or from Db

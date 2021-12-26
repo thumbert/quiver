@@ -2,6 +2,7 @@ library screens.mcc_surfer.congestion_chart;
 
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/constraint_table_model.dart';
@@ -17,28 +18,34 @@ class CongestionChart extends StatefulWidget {
 }
 
 class _CongestionChartState extends State<CongestionChart> {
-  late Future<List<Map<String, dynamic>>> traces;
+  // late Future<List<Map<String, dynamic>>> traces;
   bool initialPlot = true;
+  late Plotly plotly;
+  bool showHighlights = true;
 
-  // @override
-  // void initState() {
-  //   final termModel = context.read<TermModel>();
-  //   final chartModel = context.read<CongestionChartModel>();
-  //   term = termModel.term;
-  //   traces = chartModel.makeHourlyTraces(
-  //       termModel.term.startDate, termModel.term.endDate);
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    final chartModel = context.read<CongestionChartModel>();
+    // chartModel.ptidClient.getPtidTable();
+    plotly = Plotly(
+      viewId: 'mcc-surfer-div',
+      data: const [],
+      layout: chartModel.layout,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final termModel = context.watch<TermModel>();
+    final zoneModel = context.watch<LoadZoneModel>();
     final chartModel = context.watch<CongestionChartModel>();
     final constraintTableModel = context.watch<ConstraintTableModel>();
 
     return FutureBuilder(
         future: chartModel.makeHourlyTraces(
-            termModel.term.startDate, termModel.term.endDate),
+            termModel.term.startDate, termModel.term.endDate,
+            loadZonePtid: zoneModel.zoneId, projectionCount: 100),
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -63,27 +70,20 @@ class _CongestionChartState extends State<CongestionChart> {
                   }
                 }
             ];
-
-            if (initialPlot) {
-              /// first time create the plot
-              children = [
-                SizedBox(
-                    width: chartModel.layout['width'] as double,
-                    height: chartModel.layout['height'] as double,
-                    child: Plotly(
-                      viewId: 'mcc-surfer-div',
-                      data: traces,
-                      layout: chartModel.layout,
-                    )),
-              ];
-              // setState(() {
-              //   initial = false;
-              // });
+            if (constraintTableModel.hasChangedHighlight) {
+              plotly.relayout(chartModel.layout);
             } else {
-              /// plot is already created, just needs an update
-              // TODO: continue here
-              children = [];
+              plotly.plot.react(traces, chartModel.layout);
             }
+            children = [
+              SizedBox(
+                  width: chartModel.layout['width'] as double,
+                  height: chartModel.layout['height'] as double,
+                  child: plotly),
+              Text('Curve resolution: \$${chartModel.resolution}.  '
+                  'Curves displayed: ${chartModel.displayedCurvesCount} '
+                  'out of ${chartModel.traceCount}.'),
+            ];
           } else if (snapshot.hasError) {
             children = [
               const Icon(Icons.error_outline, color: Colors.red),
@@ -106,7 +106,8 @@ class _CongestionChartState extends State<CongestionChart> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: children);
           }
-          return Row(children: children);
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start, children: children);
         });
   }
 }

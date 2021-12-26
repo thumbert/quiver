@@ -20,23 +20,16 @@ class _LoadZoneState extends State<LoadZone> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // const SizedBox(
-        //   width: 120,
-        //   child: Text(
-        //     'Zone',
-        //     style: TextStyle(fontSize: 16),
-        //   ),
-        // ),
         SizedBox(
           width: 150,
           child: DropdownButtonFormField(
             value: model.zone,
             icon: const Icon(Icons.expand_more),
             hint: const Text('Filter'),
-            // decoration: InputDecoration(
-            //     enabledBorder: UnderlineInputBorder(
-            //         borderSide:
-            //             BorderSide(color: Theme.of(context).primaryColor))),
+            decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor))),
             elevation: 16,
             onChanged: (String? newValue) {
               setState(() {

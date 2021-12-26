@@ -19,7 +19,7 @@ class _ConstraintTable extends State<ConstraintTable> {
     final constraintModel = context.watch<ConstraintTableModel>();
 
     return FutureBuilder(
-        future: constraintModel.topConstraints(termModel.term),
+        future: constraintModel.getTopConstraints(termModel.term),
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -53,9 +53,9 @@ class _ConstraintTable extends State<ConstraintTable> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Top 20 constraints',
-                        style: TextStyle(
+                      Text(
+                        'Top 40 constraints for ${termModel.term}',
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       DataTable(

@@ -9,7 +9,6 @@ import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:elec/src/weather/lib_weather_utils.dart';
 
 Future<void> tests(String rootUrl) async {
   group('Weather model test', () {
