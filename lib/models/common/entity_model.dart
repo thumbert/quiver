@@ -29,11 +29,6 @@ class EntityModel extends ChangeNotifier {
         ..._data[entity]!,
       ];
 
-  // void init({required String entity, required String subaccount}) {
-  //   _entity = entity;
-  //   _subaccount = subaccount;
-  // }
-
   set entity(String entity) {
     _entity = entity;
 

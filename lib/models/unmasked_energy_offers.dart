@@ -40,6 +40,9 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
   Future<void> getMaskedAssetIds() async {
     assetData = await maskedAssetsApi.getAssets(type: 'generator');
     checkboxes = List.filled(assetData.length, false);
+    // select Kleen on init
+    var index = assetData.indexWhere((e) => e['name'] == 'KLEEN ENERGY');
+    checkboxes[index] = true;
     notifyListeners();
   }
 
@@ -57,6 +60,7 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
       assetData.whereIndexed((index, e) => checkboxes[index]).toList();
 
   /// Make the line traces for Plotly.  Update cache if needed.
+  ///
   Future<List<Map<String, dynamic>>> makeTraces(Term term) async {
     if (!cache.containsKey(term)) {
       cache[term] = <int, List<Map<String, dynamic>>>{};
@@ -124,6 +128,7 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
       }
       out.add({
         'x': x,
+        // 'x': List.generate(price.length, (index) => index),
         'y': price,
         'text': text,
         'name': 'price $i',

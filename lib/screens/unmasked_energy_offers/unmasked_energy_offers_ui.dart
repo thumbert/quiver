@@ -26,16 +26,18 @@ class UnmaskedEnergyOffersUi extends StatefulWidget {
 class _UnmaskedEnergyOffersUiState extends State<UnmaskedEnergyOffersUi> {
   var fmt = NumberFormat.currency(decimalDigits: 0, symbol: '\$');
   late ScrollController _scrollController;
+  late Plotly plotly;
 
   @override
   void initState() {
     _scrollController = ScrollController();
     final model = context.read<UnmaskedEnergyOffersModel>();
-    model.getMaskedAssetIds().then((value) {
-      // Select Kleen
-      model
-          .clickCheckbox(model.assetData.indexWhere((e) => e['ptid'] == 14614));
-    });
+    model.getMaskedAssetIds();
+    plotly = Plotly(
+      viewId: 'plotly-unmasked-energy-offers',
+      data: const [],
+      layout: model.layout,
+    );
     super.initState();
   }
 
@@ -83,138 +85,93 @@ class _UnmaskedEnergyOffersUiState extends State<UnmaskedEnergyOffersUi> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 12.0, top: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: const [
-                  SizedBox(width: 120, child: TermUi()),
-                ],
-              ),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 300,
-                      child: ListView.builder(
-                        // shrinkWrap: true,
-                        controller: _scrollController,
-                        itemCount: model.assetData.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CheckboxListTile(
-                            title: Text(_assets[index]),
-                            dense: true,
-                            onChanged: (bool? value) =>
-                                model.clickCheckbox(index),
-                            value: model.checkboxes[index],
-                          );
-                        },
-                        // children: [
-                        // ],
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    // Flexible(
-                    //   child: Container(
-                    //     width: 700,
-                    //     height: 500,
-                    //     color: Colors.greenAccent,
-                    //   ),
-                    // ),
-                    FutureBuilder(
-                        future: model.makeTraces(termModel.term),
-                        builder: (context, snapshot) {
-                          List<Widget> children;
-                          if (snapshot.hasData) {
-                            var traces = snapshot.data! as List;
-                            var layout = model.layout;
-                            if (traces.length == 1) {
-                              layout['title'] =
-                                  'MW weighted Energy Offer price';
-                            }
-                            children = [
-                              SizedBox(
-                                  width: model.layout['width'] as double,
-                                  height: model.layout['height'] as double,
-                                  child: Plotly(
-                                    viewId: 'plotly-unmasked-energy-offers',
-                                    data: traces,
-                                    layout: layout,
-                                  )),
-                            ];
-                          } else if (snapshot.hasError) {
-                            children = [
-                              const Icon(Icons.error_outline,
-                                  color: Colors.red),
-                              Text(
-                                snapshot.error.toString(),
-                                style: const TextStyle(fontSize: 16),
-                              )
-                            ];
-                          } else {
-                            children = [
-                              const SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 4,
-                                  )),
-                            ];
-                            // the only way I found to keep the progress indicator centered
-                            return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: children);
-                          }
-                          return Row(children: children);
-                        }),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: const [
+                    SizedBox(width: 120, child: TermUi()),
                   ],
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: ListView.builder(
+                          // shrinkWrap: true,
+                          controller: _scrollController,
+                          itemCount: model.assetData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CheckboxListTile(
+                              title: Text(_assets[index]),
+                              dense: true,
+                              onChanged: (bool? value) =>
+                                  model.clickCheckbox(index),
+                              value: model.checkboxes[index],
+                            );
+                          },
+                          // children: [
+                          // ],
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      FutureBuilder(
+                          future: model.makeTraces(termModel.term),
+                          builder: (context, snapshot) {
+                            List<Widget> children;
+                            if (snapshot.hasData) {
+                              var traces = snapshot.data! as List;
+                              var layout = model.layout;
+                              if (traces.length == 1) {
+                                layout['title'] =
+                                    'MW weighted Energy Offer price';
+                              }
+                              plotly.plot.react(traces, layout);
+                              children = [
+                                SizedBox(
+                                    // width: model.layout['width'] as double,
+                                    // height: model.layout['height'] as double,
+                                    width: 750,
+                                    height: 550,
+                                    child: plotly),
+                              ];
+                            } else if (snapshot.hasError) {
+                              children = [
+                                const Icon(Icons.error_outline,
+                                    color: Colors.red),
+                                Text(
+                                  snapshot.error.toString(),
+                                  style: const TextStyle(fontSize: 16),
+                                )
+                              ];
+                            } else {
+                              children = [
+                                const SizedBox(
+                                    height: 50,
+                                    width: 50,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 4,
+                                    )),
+                              ];
+                              // the only way I found to keep the progress indicator centered
+                              return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: children);
+                            }
+                            return Row(children: children);
+                          }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
-
-  /// The data table with a download/copy to clipboard widget.
-  /// Table is sortable by value column
-  DataTable _makeDataTable(Iterable<Map<String, dynamic>> data) {
-    data.forEach(print);
-    var names = data.first.keys.toSet();
-    var columns = [
-      if (names.contains('zone')) const DataColumn(label: Text('Zone Id')),
-      if (names.contains('market')) const DataColumn(label: Text('Market')),
-      if (names.contains('name')) const DataColumn(label: Text('Asset Name')),
-      if (names.contains('month')) const DataColumn(label: Text('Month')),
-      if (names.contains('value'))
-        const DataColumn(
-            label: Text('NCPC'), tooltip: '\$ Credits', numeric: true),
-    ];
-    var rows = <DataRow>[
-      for (var x in data)
-        DataRow(cells: [
-          if (names.contains('zone')) DataCell(Text(x['zone'].toString())),
-          if (names.contains('market'))
-            DataCell(Text((x['market'] as Market).name)),
-          if (names.contains('name')) DataCell(Text(x['name'])),
-          if (names.contains('month')) DataCell(Text(x['month'])),
-          DataCell(Text(fmt.format(x['value']))),
-        ])
-    ];
-
-    _sortingIndex() {
-      if (names.contains('month')) {
-        return names.length - 2;
-      }
-      return 0;
-    }
-
-    return DataTable(
-      sortColumnIndex: _sortingIndex(),
-      columns: columns,
-      rows: rows,
     );
   }
 }

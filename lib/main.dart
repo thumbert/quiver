@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/quiver.dart';
+import 'package:flutter_quiver/screens/test_page/test_page.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
@@ -101,12 +103,15 @@ class MyApp extends StatelessWidget {
         title: 'Other',
         items: [
           DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
+          DemoMenuItem(title: 'FTR path', pageBuilder: (_) => const FtrPath()),
           DemoMenuItem(
               title: 'Peaking option calls', pageBuilder: (_) => Text('TODO')),
           DemoMenuItem(
               title: 'MCC surfer',
               icon: const Icon(Icons.surfing),
               pageBuilder: (_) => const MccSurfer()),
+          DemoMenuItem(
+              title: 'Test page', pageBuilder: (_) => const TestPage()),
           DemoMenuItem(
               title: 'Unmasked Energy Offers',
               pageBuilder: (_) => const UnmaskedEnergyOffers()),

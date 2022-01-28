@@ -1,6 +1,5 @@
 library screens.mcc_surfer.congestion_chart;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
@@ -26,7 +25,6 @@ class _CongestionChartState extends State<CongestionChart> {
   @override
   void initState() {
     final chartModel = context.read<CongestionChartModel>();
-    // chartModel.ptidClient.getPtidTable();
     plotly = Plotly(
       viewId: 'mcc-surfer-div',
       data: const [],

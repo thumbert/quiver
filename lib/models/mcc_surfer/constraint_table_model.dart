@@ -7,13 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:timezone/timezone.dart';
 import 'package:tuple/tuple.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ConstraintTableModel extends ChangeNotifier {
-  ConstraintTableModel({this.rootUrl = 'http://127.0.0.1:8080'}) {
-    client = BindingConstraintsApi(http.Client(), rootUrl: rootUrl);
+  ConstraintTableModel() {
+    client =
+        BindingConstraintsApi(http.Client(), rootUrl: dotenv.env['rootUrl']!);
   }
 
-  final String rootUrl;
   late final BindingConstraintsApi client;
   final location = getLocation('America/New_York');
   var h1 = const Duration(hours: 1);

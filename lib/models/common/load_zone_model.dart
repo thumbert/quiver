@@ -1,8 +1,6 @@
 library models.load_zone_model;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
 class LoadZoneModel extends ChangeNotifier {
   LoadZoneModel({String zone = '(All)'}) {

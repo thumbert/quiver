@@ -38,8 +38,8 @@ Future<void> tests(String rootUrl) async {
       var t0 = traces.first;
       expect(t0.keys.toSet(), {'x', 'y', 'text', 'name', 'mode', 'line'});
       expect((t0['x'] as List).first, TZDateTime(location, 2018, 4, 1));
-      expect((t0['y'] as List).first, 25.71);
-      expect(t0['name'], 'YARMOUTH 4');
+      expect((t0['y'] as List).first, 27.098096774193547); // volume weighted
+      expect(t0['name'], 'KLEEN ENERGY');
       expect(t0['mode'], 'lines');
     });
   });

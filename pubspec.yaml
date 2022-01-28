@@ -14,32 +14,25 @@ dependencies:
 
   collection: ^1.15.0
   dama:
-    git:
-      url: git://github.com/thumbert/dama.git
+    git: https://github.com/thumbert/dama.git
   date:
-    git:
-      url: git://github.com/thumbert/date.git
+    git: https://github.com/thumbert/date.git
   elec:
-    git:
-      url: git://github.com/thumbert/elec.git
+    git: https://github.com/thumbert/elec.git
   elec_server:
-    git:
-      url: git://github.com/thumbert/elec-server.git
+    git: https://github.com/thumbert/elec-server.git
   flutter_dotenv: ^5.0.0
   flutter_svg: ^0.22.0
   flutter_web_plotly:
-    git:
-      url: git://github.com/thumbert/flutter_web_plotly.git
+    git: https://github.com/thumbert/flutter_web_plotly.git
   google_fonts: ^2.1.0
   http: '>=0.12.0 <1.0.0'
   intl: ^0.17.0
   provider: ^6.0.1
   table:
-    git:
-      url: git://github.com/thumbert/table.git
+    git: https://github.com/thumbert/table.git
   timeseries:
-    git:
-      url: git://github.com/thumbert/timeseries.git
+    git: https://github.com/thumbert/timeseries.git
   timezone: '>=0.5.5 <1.0.0'
   tuple: ^2.0.0
   url_strategy: ^0.2.0

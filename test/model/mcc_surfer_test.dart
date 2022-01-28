@@ -22,7 +22,7 @@ Future<void> tests(String rootUrl) async {
       //
       var rTraces = model.reduceTraces(traces, 100);
       expect(rTraces.length, 100);
-      expect(rTraces.first['name'], 69257);
+      expect(rTraces.first['ptid'], 69257);
     });
   });
 }
