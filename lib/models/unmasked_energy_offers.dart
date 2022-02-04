@@ -11,7 +11,7 @@ import 'package:timeseries/timeseries.dart';
 
 class UnmaskedEnergyOffersModel extends ChangeNotifier {
   UnmaskedEnergyOffersModel() {
-    rootUrl = dotenv.env['rootUrl']!;
+    rootUrl = dotenv.env['ROOT_URL']!;
     api = DaEnergyOffers(_client, rootUrl: rootUrl);
     maskedAssetsApi = IsoNewEnglandMaskedAssets(_client, rootUrl: rootUrl);
   }

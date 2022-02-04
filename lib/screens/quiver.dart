@@ -182,35 +182,37 @@ class _QuiverScreenState extends State<QuiverScreen>
       decoration: const BoxDecoration(color: Colors.blueGrey),
       child: SizedBox(
         width: _drawerWidth,
-        child: Column(
-          children: [
-            const Text(
-              'Quiver',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Tangerine',
-                  fontSize: 48,
-                  fontWeight: FontWeight.w600),
-            ),
-            SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (final group in widget.menu) ...[
-                    Container(
-                      height: 24,
-                      color: Colors.blueGrey,
-                    ),
-                    _buildMenuGroupHeader(title: group.title),
-                    for (final item in group.items) ...[
-                      _buildMenuItem(item),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Text(
+                'Quiver',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Tangerine',
+                    fontSize: 48,
+                    fontWeight: FontWeight.w600),
+              ),
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final group in widget.menu) ...[
+                      Container(
+                        height: 24,
+                        color: Colors.blueGrey,
+                      ),
+                      _buildMenuGroupHeader(title: group.title),
+                      for (final item in group.items) ...[
+                        _buildMenuItem(item),
+                      ],
                     ],
                   ],
-                ],
-              ),
-            )
-          ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

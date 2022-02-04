@@ -1,5 +1,6 @@
 library models.ftr_path.region_source_sink_model;
 
+import 'package:elec/elec.dart';
 import 'package:http/http.dart' as http;
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class RegionSourceSinkModel extends ChangeNotifier {
   RegionSourceSinkModel({
     String region = 'ISONE',
-    String sourceName = '4000',
-    String sinkName = '4008',
   }) {
     _region = region;
-    client = PtidsApi(http.Client(), rootUrl: dotenv.env['rootUrl']!);
+    if (region == 'ISONE') {
+      _bucket = Bucket.b5x16;
+    } else {
+      // NYISO
+      _bucket = Bucket.atc;
+    }
+    client = PtidsApi(http.Client(), rootUrl: dotenv.env['ROOT_URL']!);
   }
 
   late final PtidsApi client;
@@ -22,6 +27,12 @@ class RegionSourceSinkModel extends ChangeNotifier {
   /// region -> name -> ptid
   final _cacheNameMap = <String, Map<String, int>>{};
 
+  late String _region;
+  String? _sourceName;
+  String? _sinkName;
+  late Bucket _bucket;
+
+
   Future<Map<String, int>> getNameMap() async {
     if (!_cacheNameMap.containsKey(region)) {
       var aux = await client.getPtidTable(region: region.toLowerCase());
@@ -30,30 +41,51 @@ class RegionSourceSinkModel extends ChangeNotifier {
     return _cacheNameMap[region]!;
   }
 
-  late String _region;
-  late String _sourceName;
-  late String _sinkName;
+  List<String> allowedBuckets() {
+    if (region == 'ISONE') {
+      return ['5x16', 'Offpeak'];
+    } else {
+      return ['7x24'];
+    }
+  }
 
   set region(String value) {
     _region = value;
+    _sourceName = null;
+    _sinkName = null;
+    if (_region == 'ISONE') {
+      _bucket = Bucket.b5x16;
+    } else {
+      _bucket = Bucket.atc;
+    }
     notifyListeners();
   }
 
   String get region => _region;
 
-  set sourceName(String value) {
+  set sourceName(String? value) {
     _sourceName = value;
     notifyListeners();
   }
 
-  String get sourceName => _sourceName;
+  String? get sourceName => _sourceName;
 
-  set sinkName(String value) {
+  set sinkName(String? value) {
     _sinkName = value;
     notifyListeners();
   }
 
-  String get sinkName => _sinkName;
+  String? get sinkName => _sinkName;
 
+  /// A map from name -> ptid
   Map<String, int> get nameMap => _cacheNameMap[region]!;
+
+  set bucket(String bucket) {
+    _bucket = Bucket.parse(bucket);
+    notifyListeners();
+  }
+
+  String get bucket => _bucket.toString();
+
+
 }

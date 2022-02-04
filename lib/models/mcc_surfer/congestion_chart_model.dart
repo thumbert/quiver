@@ -6,16 +6,16 @@ import 'package:elec_server/client/isoexpress/dacongestion_compact.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CongestionChartModel extends ChangeNotifier {
-  final String rootUrl;
   late final DaCongestion mccClient;
   late final PtidsApi ptidClient;
   final _client = http.Client();
 
-  CongestionChartModel({this.rootUrl = 'http://127.0.0.1:8080'}) {
-    mccClient = DaCongestion(_client, rootUrl: rootUrl);
-    ptidClient = PtidsApi(_client, rootUrl: rootUrl);
+  CongestionChartModel() {
+    mccClient = DaCongestion(_client, rootUrl: dotenv.env['ROOT_URL']!);
+    ptidClient = PtidsApi(_client, rootUrl: dotenv.env['ROOT_URL']!);
     _getPtidMap = ptidClient.getPtidTable();
   }
 
