@@ -107,7 +107,6 @@ class DataModel extends ChangeNotifier {
         .add(const Duration(days: 1));
     var start = today.subtract(const Duration(days: 420));
     var interval = Interval(start, today);
-    print(interval);
     return Term.fromInterval(interval);
   }
 }

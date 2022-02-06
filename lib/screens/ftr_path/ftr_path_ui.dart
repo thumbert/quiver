@@ -121,7 +121,6 @@ class _FtrPathUiState extends State<FtrPathUi> {
                                   value: dataModel.checkboxesTerm[term],
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      print('clicked $term');
                                       dataModel.checkboxesTerm[term] = value!;
                                       dataModel.checkboxModified();
                                     });
