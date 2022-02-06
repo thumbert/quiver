@@ -12,7 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ConstraintTableModel extends ChangeNotifier {
   ConstraintTableModel() {
     client =
-        BindingConstraintsApi(http.Client(), rootUrl: dotenv.env['rootUrl']!);
+        BindingConstraintsApi(http.Client(), rootUrl: dotenv.env['ROOT_URL']!);
   }
 
   late final BindingConstraintsApi client;

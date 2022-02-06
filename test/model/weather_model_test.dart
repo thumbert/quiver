@@ -51,8 +51,6 @@ Future<void> tests(String rootUrl) async {
       expect(x04['value'], moreOrLessEquals(3000000, epsilon: 1e-6));
       var x20 = s0.firstWhere((e) => e['term'] == 'Jan20-Feb20');
       expect(x20['value'], moreOrLessEquals(-3000000, epsilon: 1e-6));
-
-      print(s0);
     });
   });
 }
@@ -60,7 +58,7 @@ Future<void> tests(String rootUrl) async {
 Future<void> main() async {
   initializeTimeZones();
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
-  final rootUrl = dotenv.env['rootUrl'] as String;
+  final rootUrl = dotenv.env['ROOT_URL'] as String;
 
   await tests(rootUrl);
 }

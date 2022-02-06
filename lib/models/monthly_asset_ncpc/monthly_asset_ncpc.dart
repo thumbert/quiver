@@ -21,7 +21,7 @@ class MonthlyAssetNcpcModel extends ChangeNotifier {
     _market = market;
     _byAsset = byAsset;
     _byMonth = byMonth;
-    client = MonthlyAssetNcpc(Client(), rootUrl: dotenv.env['rootUrl']!);
+    client = MonthlyAssetNcpc(Client(), rootUrl: dotenv.env['ROOT_URL']!);
   }
 
   late MonthlyAssetNcpc client;

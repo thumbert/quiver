@@ -20,7 +20,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
 
   final _background = Colors.orange[100]!;
   final maxOptionsHeight = 350.0;
-  
+
   @override
   void initState() {
     final model = context.read<RegionSourceSinkModel>();
@@ -29,7 +29,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
         /// validate when you lose focus (Tab out of the field)
         setState(() {
           if (!model.nameMap.keys.contains(sourceEditingController.text)) {
-            model.sourceName = null;  // wrong input, reset the field to empty
+            model.sourceName = null; // wrong input, reset the field to empty
           }
         });
       }
@@ -39,7 +39,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
         /// validate when you lose focus (Tab out of the field)
         setState(() {
           if (!model.nameMap.keys.contains(sinkEditingController.text)) {
-            model.sinkName = null;  // wrong input, reset the field to empty
+            model.sinkName = null; // wrong input, reset the field to empty
           }
         });
       }
@@ -100,7 +100,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                           model.region = newValue!;
                         });
                       },
-                      items: model.allowedRegions
+                      items: model.allowedRegions.keys
                           .map(
                               (e) => DropdownMenuItem(value: e, child: Text(e)))
                           .toList(),
@@ -143,8 +143,9 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                         if (textEditingValue == TextEditingValue.empty) {
                           return const Iterable<String>.empty();
                         }
-                        return nameToPtid.keys.where((e) =>
-                            e.contains(textEditingValue.text.toUpperCase()));
+                        return nameToPtid.keys.where((e) => e
+                            .toUpperCase()
+                            .contains(textEditingValue.text.toUpperCase()));
                       },
                       onSelected: (String selection) {
                         setState(() {
@@ -197,25 +198,6 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                                 },
                               ),
                             ),
-
-                            // child: SizedBox(
-                            //   height: 350.0,
-                            //   child: ListView.builder(
-                            //     padding: const EdgeInsets.all(8.0),
-                            //     itemCount: options.length,
-                            //     itemBuilder: (BuildContext context, int index) {
-                            //       final String option = options.elementAt(index);
-                            //       return GestureDetector(
-                            //         onTap: () {
-                            //           onSelected(option);
-                            //         },
-                            //         child: ListTile(
-                            //           title: Text(option),
-                            //         ),
-                            //       );
-                            //     },
-                            //   ),
-                            // ),
                           ),
                         );
                       },
@@ -243,21 +225,22 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                       focusNode: sinkFocusNode,
                       textEditingController: sinkEditingController,
                       fieldViewBuilder: (BuildContext context,
-                          TextEditingController textEditingController,
-                          FocusNode focusNode,
-                          VoidCallback onFieldSubmitted) =>
+                              TextEditingController textEditingController,
+                              FocusNode focusNode,
+                              VoidCallback onFieldSubmitted) =>
                           _AutocompleteField(
-                            focusNode: focusNode,
-                            textEditingController: textEditingController,
-                            onFieldSubmitted: onFieldSubmitted,
-                            options: nameToPtid.keys,
-                          ),
+                        focusNode: focusNode,
+                        textEditingController: textEditingController,
+                        onFieldSubmitted: onFieldSubmitted,
+                        options: nameToPtid.keys,
+                      ),
                       optionsBuilder: (TextEditingValue textEditingValue) {
                         if (textEditingValue == TextEditingValue.empty) {
                           return const Iterable<String>.empty();
                         }
-                        return nameToPtid.keys.where((e) =>
-                            e.contains(textEditingValue.text.toUpperCase()));
+                        return nameToPtid.keys.where((e) => e
+                            .toUpperCase()
+                            .contains(textEditingValue.text.toUpperCase()));
                       },
                       onSelected: (String selection) {
                         setState(() {
@@ -273,7 +256,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                             elevation: 4.0,
                             child: ConstrainedBox(
                               constraints:
-                              BoxConstraints(maxHeight: maxOptionsHeight),
+                                  BoxConstraints(maxHeight: maxOptionsHeight),
                               child: ListView.builder(
                                 padding: EdgeInsets.zero,
                                 shrinkWrap: true,
@@ -286,26 +269,26 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                                     },
                                     child: Builder(
                                         builder: (BuildContext context) {
-                                          final bool highlight =
-                                              AutocompleteHighlightedOption.of(
+                                      final bool highlight =
+                                          AutocompleteHighlightedOption.of(
                                                   context) ==
-                                                  index;
-                                          if (highlight) {
-                                            SchedulerBinding.instance!
-                                                .addPostFrameCallback(
-                                                    (Duration timeStamp) {
-                                                  Scrollable.ensureVisible(context,
-                                                      alignment: 0.5);
-                                                });
-                                          }
-                                          return Container(
-                                            color: highlight
-                                                ? Theme.of(context).focusColor
-                                                : null,
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Text(option),
-                                          );
-                                        }),
+                                              index;
+                                      if (highlight) {
+                                        SchedulerBinding.instance!
+                                            .addPostFrameCallback(
+                                                (Duration timeStamp) {
+                                          Scrollable.ensureVisible(context,
+                                              alignment: 0.5);
+                                        });
+                                      }
+                                      return Container(
+                                        color: highlight
+                                            ? Theme.of(context).focusColor
+                                            : null,
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(option),
+                                      );
+                                    }),
                                   );
                                 },
                               ),
@@ -348,7 +331,8 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                           model.bucket = newValue!;
                         });
                       },
-                      items: model.allowedBuckets()
+                      items: model
+                          .allowedBuckets()
                           .map(
                               (e) => DropdownMenuItem(value: e, child: Text(e)))
                           .toList(),
@@ -356,7 +340,6 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                   ),
                 ],
               ),
-
             ];
           } else if (snapshot.hasError) {
             children = [

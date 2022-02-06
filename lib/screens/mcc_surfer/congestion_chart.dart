@@ -17,7 +17,6 @@ class CongestionChart extends StatefulWidget {
 }
 
 class _CongestionChartState extends State<CongestionChart> {
-  // late Future<List<Map<String, dynamic>>> traces;
   bool initialPlot = true;
   late Plotly plotly;
   bool showHighlights = true;

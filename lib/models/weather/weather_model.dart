@@ -17,7 +17,7 @@ import 'package:elec/src/weather/lib_weather_utils.dart';
 
 class WeatherModel extends ChangeNotifier {
   WeatherModel() {
-    client = NoaaDailySummary(Client(), rootUrl: dotenv.env['rootUrl']!);
+    client = NoaaDailySummary(Client(), rootUrl: dotenv.env['ROOT_URL']!);
   }
 
   late List<WeatherDeal> deals;

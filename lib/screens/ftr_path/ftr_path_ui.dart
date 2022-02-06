@@ -2,8 +2,12 @@ library screens.ftr_path.ftr_path_ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Interval;
+import 'package:flutter_quiver/models/ftr_path/data_model.dart';
+import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
+import 'package:flutter_quiver/screens/ftr_path/congestion_chart.dart';
 import 'package:flutter_quiver/screens/ftr_path/region_source_sink.dart';
+import 'package:flutter_quiver/screens/ftr_path/table_cpsp.dart';
 import 'package:provider/provider.dart';
 
 class FtrPathUi extends StatefulWidget {
@@ -30,7 +34,8 @@ class _FtrPathUiState extends State<FtrPathUi> {
 
   @override
   Widget build(BuildContext context) {
-    // final chartModel = context.watch<CongestionChartModel>();
+    final pathModel = context.watch<RegionSourceSinkModel>();
+    final dataModel = context.watch<DataModel>();
 
     return Padding(
       padding: const EdgeInsets.only(left: 48.0),
@@ -50,26 +55,9 @@ class _FtrPathUiState extends State<FtrPathUi> {
                             child: Column(
                               children: const [
                                 Text(
-                                    'Visualize ALL the nodes in the pool at once, '
-                                    'select constraints to see when they bind '
-                                    '\nto find the nodes that are affected the most.\n'),
-                                Text(
-                                    'Because a lot of the nodes have the same prices '
-                                    'for the term, a simple reduction algorithm is applied '
-                                    'to reduce the numbers of curves displayed.  This keeps '
-                                    'the UI responsive without taking any of the visual information '
-                                    'away.  By default, at most 100 curves are displayed. '
-                                    'The accuracy of the reduction algorithm is quantified '
-                                    'by its resolution, measured in \$.  The resolution '
-                                    'is a threshold value such that curves closer to one '
-                                    'another below this threshold are not displayed.  '
-                                    'Therefore, a resolution of \$0 displays all the curves, '
-                                    'and a lower resolution means better curve details '
-                                    'are visible.\n'),
-                                Text('By using the zone filter, you reduce '
-                                    'the universe of curves to display and the '
-                                    'reduction algorithm '
-                                    'is applied to the curves from this zone only.')
+                                    'Visualize the congestion associated with an '
+                                    'FTR path, display the clearing prices and the settled prices '
+                                    'for a recent set of auctions, and the relevant binding constraints.\n'),
                               ],
                             ),
                           )
@@ -91,23 +79,59 @@ class _FtrPathUiState extends State<FtrPathUi> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  RegionSourceSink(),
-                  SizedBox(width: 150, child: TermUi()),
-                  SizedBox(
+                children: [
+                  const RegionSourceSink(),
+                  const SizedBox(
                     height: 4,
                   ),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: const [
-                  //       SizedBox(
-                  //           width: 900, height: 700, child: CongestionChart()),
-                  //       ConstraintTable(),
-                  //     ],
-                  //   ),
-                  // ),
+                  if (pathModel.isValid())
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          SizedBox(
+                              width: 900,
+                              height: 600,
+                              child: CongestionChart()),
+                          // ConstraintTable(),
+                        ],
+                      ),
+                    ),
+                  // checkboxes
+                  if (pathModel.isValid())
+                    Wrap(
+                      spacing: 10,
+                      alignment: WrapAlignment.start,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const Text(
+                          'Auction term',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        ...[
+                          for (var term in dataModel.checkboxesTerm.keys)
+                            SizedBox(
+                              width: 120,
+                              child: CheckboxListTile(
+                                  title: Text(term),
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: dataModel.checkboxesTerm[term],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      print('clicked $term');
+                                      dataModel.checkboxesTerm[term] = value!;
+                                      dataModel.checkboxModified();
+                                    });
+                                  }),
+                            )
+                        ],
+                      ],
+                    ),
+                  // table with cp and sp
+                  if (pathModel.isValid()) const TableCpsp(),
                 ],
               )),
         ),

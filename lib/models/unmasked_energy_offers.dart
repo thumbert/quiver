@@ -128,7 +128,6 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
       }
       out.add({
         'x': x,
-        // 'x': List.generate(price.length, (index) => index),
         'y': price,
         'text': text,
         'name': 'price $i',

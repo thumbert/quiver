@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 
 import 'package:elec/risk_system.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
@@ -180,6 +179,8 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
                     ),
                   ),
 
+                  // table with costs
+                  //
                   FutureBuilder(
                     future: tableModel.getData(termModel.term),
                     builder: (context, snapshot) {

@@ -48,7 +48,7 @@ Future<void> tests(String rootUrl) async {
 Future<void> main() async {
   initializeTimeZones();
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
-  final rootUrl = dotenv.env['rootUrl'] as String;
+  final rootUrl = dotenv.env['ROOT_URL'] as String;
 
   await tests(rootUrl);
 }

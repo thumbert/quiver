@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:elec/ftr.dart';
 
 class RegionSourceSinkModel extends ChangeNotifier {
   RegionSourceSinkModel({
-    String region = 'ISONE',
+    String region = 'NYISO',
   }) {
     _region = region;
     if (region == 'ISONE') {
@@ -22,9 +23,12 @@ class RegionSourceSinkModel extends ChangeNotifier {
 
   late final PtidsApi client;
 
-  final allowedRegions = <String>['ISONE', 'NYISO'];
+  final allowedRegions = <String, Iso>{
+    'ISONE': Iso.newEngland,
+    'NYISO': Iso.newYork
+  };
 
-  /// region -> name -> ptid
+  /// region -> nodeName -> ptid
   final _cacheNameMap = <String, Map<String, int>>{};
 
   late String _region;
@@ -32,14 +36,49 @@ class RegionSourceSinkModel extends ChangeNotifier {
   String? _sinkName;
   late Bucket _bucket;
 
+  /// when things are set properly, this is non-null.
+  FtrPath? ftrPath;
 
+  /// Check that the form is completed and set the ftrPath.
+  bool isValid() {
+    if (_sourceName != null && _sinkName != null) {
+      ftrPath = FtrPath(
+          sourcePtid: sourcePtid,
+          sinkPtid: sinkPtid,
+          bucket: _bucket,
+          iso: iso,
+          rootUrl: dotenv.env['ROOT_URL']!);
+      return true;
+    }
+    return false;
+  }
+
+  /// Map the String that shows up in the TextField to the ptid
   Future<Map<String, int>> getNameMap() async {
     if (!_cacheNameMap.containsKey(region)) {
+      _cacheNameMap[region] = <String, int>{};
       var aux = await client.getPtidTable(region: region.toLowerCase());
-      _cacheNameMap[region] = {for (var e in aux) e['name']: e['ptid']};
+      if (region == 'NYISO') {
+        /// add the zones first, in a spoken form
+        var _zones = aux.where((e) => e['type'] == 'zone');
+        for (var _zone in _zones) {
+          if (_zone.containsKey('spokenName')) {
+            var label = '${_zone['spokenName']}, ptid: ${_zone['ptid']}';
+            _cacheNameMap[region]![label] = _zone['ptid'];
+          }
+        }
+      }
+      _cacheNameMap[region]!.addAll(
+          {for (var e in aux) '${e['name']}, ptid: ${e['ptid']}': e['ptid']});
     }
     return _cacheNameMap[region]!;
   }
+
+  int get sourcePtid => _cacheNameMap[_region]![_sourceName]!;
+
+  int get sinkPtid => _cacheNameMap[_region]![_sinkName]!;
+
+  Iso get iso => allowedRegions[region]!;
 
   List<String> allowedBuckets() {
     if (region == 'ISONE') {
@@ -87,5 +126,5 @@ class RegionSourceSinkModel extends ChangeNotifier {
 
   String get bucket => _bucket.toString();
 
-
+  Bucket get bucketObject => _bucket;
 }

@@ -2,8 +2,8 @@ library screens.ftr_path.ftr_path;
 
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
-import 'package:flutter_quiver/models/common/bucket_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
+import 'package:flutter_quiver/models/ftr_path/data_model.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path_ui.dart';
 import 'package:provider/provider.dart';
@@ -25,11 +25,10 @@ class _FtrPathState extends State<FtrPath> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      // ChangeNotifierProvider(
-      //     create: (context) => BucketModel(bucket: 'Peak')),
       ChangeNotifierProvider(
           create: (context) => TermModel(term: initialTerm())),
-      ChangeNotifierProvider(create: (context) => RegionSourceSinkModel())
+      ChangeNotifierProvider(create: (context) => RegionSourceSinkModel()),
+      ChangeNotifierProvider(create: (context) => DataModel()),
     ], child: const FtrPathUi());
   }
 }
