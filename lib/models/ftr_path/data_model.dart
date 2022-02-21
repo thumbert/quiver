@@ -2,11 +2,22 @@ library models.ftr_path.data_model;
 
 import 'package:date/date.dart';
 import 'package:elec/ftr.dart';
+import 'package:elec_server/client/binding_constraints.dart';
 import 'package:flutter/material.dart' hide Interval;
+import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class DataModel extends ChangeNotifier {
-  DataModel();
+  DataModel() {
+    _focusTerm = defaultTerm();
+  }
+
+  // late Term _term;
+
+  /// what you get from the plotly relayout
+  Term? _focusTerm;
 
   /// Keep track fo the checkboxes on the screen
   Map<String, bool> checkboxesTerm = {
@@ -23,11 +34,16 @@ class DataModel extends ChangeNotifier {
     'NYISO': ['2 year', '1 year', '6 month', 'monthly', 'monthly bopp'],
   };
 
-  /// A cache with CpSp prices
-  var _cacheCpSp = <Map<String, dynamic>>[];
+  FtrPath? _currentFtrPath;
+
+  /// A cache with historical binding constraints for the current path
+  var _cacheBindingConstraints = <String, TimeSeries<num>>{};
 
   /// What gets displayed on the screen after the filtering
   var _tableCpSp = <Map<String, dynamic>>[];
+
+  /// What gets displayed on the screen for binding constraint cost
+  var _tableConstraintCost = <Map<String, dynamic>>[];
 
   final location = getLocation('America/New_York');
   final layout = <String, dynamic>{
@@ -45,12 +61,13 @@ class DataModel extends ChangeNotifier {
     },
     'showlegend': false,
     'hovermode': 'closest',
+    'displaylogo': false,
   };
 
   /// Get the data and make the Plotly hourly traces.
   ///
   Future<List<Map<String, dynamic>>> makeHourlyTrace(FtrPath ftrPath) async {
-    var sp = await ftrPath.getDailySettlePrices(term: getTerm());
+    var sp = await ftrPath.getDailySettlePrices(term: defaultTerm());
     return [
       {
         'x': sp.intervals.map((e) => e.start).toList(),
@@ -63,8 +80,10 @@ class DataModel extends ChangeNotifier {
   /// Prepare the CpSp table for display.
   /// Only pull from the database if the path changes.
   Future<List<Map<String, dynamic>>> getCpSpTable(FtrPath ftrPath) async {
-    /// Get the data with Clearing prices and Settled prices
-    _cacheCpSp = await ftrPath.makeTableCpSp(fromDate: getTerm().startDate);
+    /// Get the data with Clearing prices and Settled prices.
+    /// TODO: should this be cached?
+    var _cacheCpSp =
+        await ftrPath.makeTableCpSp(fromDate: defaultTerm().startDate);
     Iterable<Map<String, dynamic>> cpsp = [..._cacheCpSp];
 
     /// Any sorting and filtering here
@@ -77,8 +96,8 @@ class DataModel extends ChangeNotifier {
           cpsp.where((e) => (e['auction'] as FtrAuction) is! AnnualFtrAuction);
     }
     if (checkboxesTerm['6 month']! == false) {
-      cpsp =
-          cpsp.where((e) => (e['auction'] as FtrAuction) is! TwoYearFtrAuction);
+      cpsp = cpsp
+          .where((e) => (e['auction'] as FtrAuction) is! SixMonthFtrAuction);
     }
     if (checkboxesTerm['monthly']! == false) {
       cpsp =
@@ -94,19 +113,50 @@ class DataModel extends ChangeNotifier {
     return _tableCpSp;
   }
 
+  /// Input [term] can be used to control the constraints table based on the
+  /// chart selection.
+  Future<List<Map<String, dynamic>>> getRelevantBindingConstraints(
+      {required FtrPath ftrPath}) async {
+    if (_currentFtrPath == null || _currentFtrPath != ftrPath) {
+      /// get the binding constraints for the default term
+      var client = BindingConstraints(http.Client(),
+          iso: ftrPath.iso, rootUrl: dotenv.env['ROOT_URL']!);
+      _cacheBindingConstraints =
+          await client.getDaBindingConstraints(defaultTerm().interval);
+      _currentFtrPath = ftrPath;
+    }
+
+    /// get the relevant constraints
+    var aux = await ftrPath.calculateRelevantConstraints(focusTerm!,
+        bindingConstraints: _cacheBindingConstraints);
+    aux.sort((a, b) => -(a['cost'].abs()).compareTo(b['cost'].abs()));
+    _tableConstraintCost = aux;
+    return _tableConstraintCost;
+  }
+
   List<Map<String, dynamic>> get tableCpSp => _tableCpSp;
+
+  List<Map<String, dynamic>> get tableConstraintCost => _tableConstraintCost;
+
+  set focusTerm(Term? value) {
+    _focusTerm = value;
+    notifyListeners();
+  }
+
+  Term? get focusTerm => _focusTerm;
 
   void checkboxModified() {
     notifyListeners();
   }
 
-  /// historical term to plot
-  Term getTerm() {
+  /// the default historical term to plot
+  Term defaultTerm() {
     var now = TZDateTime.now(location);
     var today = TZDateTime(location, now.year, now.month, now.day)
         .add(const Duration(days: 1));
-    var start = today.subtract(const Duration(days: 420));
-    var interval = Interval(start, today);
+    var start = today.subtract(const Duration(days: 480));
+    var interval =
+        Interval(TZDateTime(location, start.year, start.month), today);
     return Term.fromInterval(interval);
   }
 }

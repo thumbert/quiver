@@ -26,8 +26,8 @@ class _CongestionViewerState extends State<MccSurfer> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(
-          create: (context) => TermModel(term: initialTerm())),
+      // ChangeNotifierProvider(
+      //     create: (context) => TermModel(term: initialTerm())),
       ChangeNotifierProvider(create: (context) => ConstraintTableModel()),
       ChangeNotifierProvider(create: (context) => LoadZoneModel()),
       ChangeNotifierProvider(create: (context) => CongestionChartModel())

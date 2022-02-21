@@ -1,7 +1,6 @@
 library screens.ftr_path.table_csps;
 
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +26,7 @@ class _TableCpspState extends State<TableCpsp> {
     final dataModel = context.watch<DataModel>();
 
     return FutureBuilder(
-      future: dataModel.getCpSpTable(pathModel.ftrPath!),
+      future: dataModel.getCpSpTable(pathModel.ftrPath),
       builder: (context, snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
@@ -35,7 +34,10 @@ class _TableCpspState extends State<TableCpsp> {
             /// sometimes no data is left if all checkboxes are unticked.
             children = [
               const Text(
-                'No data found!  Filters may be too restrictive.',
+                'No auctions found!  This can happen because: \n'
+                ' \u{2022} Auction filters are too restrictive, \n'
+                ' \u{2022} Source/sink node may not be participating in FTR/TCC auctions, \n'
+                ' \u{2022} Database or server may be unresponsive',
                 style: TextStyle(fontSize: 16),
               ),
             ];
@@ -43,30 +45,31 @@ class _TableCpspState extends State<TableCpsp> {
             /// if you have data to show in the table
             var columns = _makeColumns(dataModel);
             children = [
-              Flexible(
+              LimitedBox(
+                  maxWidth: 500,
                   child: PaginatedDataTable(
-                columns: columns,
-                source: _DataTableSource(dataModel),
-                rowsPerPage: min(30, dataModel.tableCpSp.length),
-                showFirstLastButtons: true,
-                header: const Text(''),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(
-                            text:
-                                table.Table.from(dataModel.tableCpSp).toCsv()));
-                      },
-                      tooltip: 'Copy',
-                      icon: const Icon(Icons.content_copy)),
-                  IconButton(
-                      onPressed: () {
-                        downloadTableToCsv(dataModel.tableCpSp);
-                      },
-                      tooltip: 'Download',
-                      icon: const Icon(Icons.download_outlined))
-                ],
-              ))
+                    columns: columns,
+                    source: _DataTableSource(dataModel),
+                    rowsPerPage: min(30, dataModel.tableCpSp.length),
+                    showFirstLastButtons: true,
+                    header: const Text(''),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(
+                                text: table.Table.from(dataModel.tableCpSp)
+                                    .toCsv()));
+                          },
+                          tooltip: 'Copy',
+                          icon: const Icon(Icons.content_copy)),
+                      IconButton(
+                          onPressed: () {
+                            downloadTableToCsv(dataModel.tableCpSp);
+                          },
+                          tooltip: 'Download',
+                          icon: const Icon(Icons.download_outlined))
+                    ],
+                  ))
             ];
           }
         } else if (snapshot.hasError) {

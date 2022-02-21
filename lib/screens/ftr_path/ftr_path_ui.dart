@@ -3,10 +3,9 @@ library screens.ftr_path.ftr_path_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/models/ftr_path/data_model.dart';
-import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
-import 'package:flutter_quiver/screens/common/term.dart';
 import 'package:flutter_quiver/screens/ftr_path/congestion_chart.dart';
 import 'package:flutter_quiver/screens/ftr_path/region_source_sink.dart';
+import 'package:flutter_quiver/screens/ftr_path/table_binding_constraints.dart';
 import 'package:flutter_quiver/screens/ftr_path/table_cpsp.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +33,6 @@ class _FtrPathUiState extends State<FtrPathUi> {
 
   @override
   Widget build(BuildContext context) {
-    final pathModel = context.watch<RegionSourceSinkModel>();
     final dataModel = context.watch<DataModel>();
 
     return Padding(
@@ -73,18 +71,18 @@ class _FtrPathUiState extends State<FtrPathUi> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 12, top: 12.0),
-          child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              controller: _scrollController,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const RegionSourceSink(),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  if (pathModel.isValid())
+          child: Scrollbar(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                controller: _scrollController,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const RegionSourceSink(),
+                    const SizedBox(
+                      height: 4,
+                    ),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -94,12 +92,14 @@ class _FtrPathUiState extends State<FtrPathUi> {
                               width: 900,
                               height: 600,
                               child: CongestionChart()),
-                          // ConstraintTable(),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          TableBindingConstraints(),
                         ],
                       ),
                     ),
-                  // checkboxes
-                  if (pathModel.isValid())
+                    // checkboxes
                     Wrap(
                       spacing: 10,
                       alignment: WrapAlignment.start,
@@ -129,10 +129,12 @@ class _FtrPathUiState extends State<FtrPathUi> {
                         ],
                       ],
                     ),
-                  // table with cp and sp
-                  if (pathModel.isValid()) const TableCpsp(),
-                ],
-              )),
+                    // table with cp and sp
+                    const TableCpsp(),
+                    // if (pathModel.isValid()) const TableBindingConstraints(),
+                  ],
+                )),
+          ),
         ),
       ),
     );

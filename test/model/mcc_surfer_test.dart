@@ -1,4 +1,4 @@
-library test.models.weather_model_test;
+library test.models.mcc_surfer_test;
 
 import 'dart:io';
 

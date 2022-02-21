@@ -8,50 +8,54 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:elec/ftr.dart';
 
 class RegionSourceSinkModel extends ChangeNotifier {
-  RegionSourceSinkModel({
-    String region = 'NYISO',
-  }) {
-    _region = region;
-    if (region == 'ISONE') {
-      _bucket = Bucket.b5x16;
-    } else {
-      // NYISO
-      _bucket = Bucket.atc;
-    }
+  RegionSourceSinkModel() {
+    _region = 'NYISO';
+    _sourceName = initialValues[region]!['sourceName'] as String;
+    _sinkName = initialValues[region]!['sinkName'] as String;
+    _bucket = initialValues[region]!['bucket'] as Bucket;
     client = PtidsApi(http.Client(), rootUrl: dotenv.env['ROOT_URL']!);
+    ftrPath = FtrPath(
+        sourcePtid: initialValues[region]!['sourcePtid'] as int,
+        sinkPtid: initialValues[region]!['sinkPtid'] as int,
+        bucket: _bucket,
+        iso: iso,
+        rootUrl: dotenv.env['ROOT_URL']!);
   }
 
   late final PtidsApi client;
+  late FtrPath ftrPath;
 
   final allowedRegions = <String, Iso>{
     'ISONE': Iso.newEngland,
     'NYISO': Iso.newYork
   };
 
+  final initialValues = {
+    'ISONE': {
+      'sourceName': '.H.INTERNAL HUB, ptid: 4000',
+      'sourcePtid': 4000,
+      'sinkName': '.Z.MAINE, ptid: 4001',
+      'sinkPtid': 4001,
+      'bucket': Bucket.b5x16,
+    },
+    'NYISO': {
+      'sourceName': 'Zone A, ptid: 61752',
+      'sourcePtid': 61752,
+      'sinkName': 'Zone G, ptid: 61758',
+      'sinkPtid': 61758,
+      'bucket': Bucket.atc,
+    },
+  };
+
   /// region -> nodeName -> ptid
   final _cacheNameMap = <String, Map<String, int>>{};
 
   late String _region;
-  String? _sourceName;
-  String? _sinkName;
+  late String _sourceName;
+  late String _sinkName;
   late Bucket _bucket;
 
-  /// when things are set properly, this is non-null.
-  FtrPath? ftrPath;
-
-  /// Check that the form is completed and set the ftrPath.
-  bool isValid() {
-    if (_sourceName != null && _sinkName != null) {
-      ftrPath = FtrPath(
-          sourcePtid: sourcePtid,
-          sinkPtid: sinkPtid,
-          bucket: _bucket,
-          iso: iso,
-          rootUrl: dotenv.env['ROOT_URL']!);
-      return true;
-    }
-    return false;
-  }
+  /// when all components are set properly, this is non-null.
 
   /// Map the String that shows up in the TextField to the ptid
   Future<Map<String, int>> getNameMap() async {
@@ -74,11 +78,76 @@ class RegionSourceSinkModel extends ChangeNotifier {
     return _cacheNameMap[region]!;
   }
 
-  int get sourcePtid => _cacheNameMap[_region]![_sourceName]!;
+  int get sourcePtid =>
+      _cacheNameMap[_region]![_sourceName] ??
+      initialValues[_region]!['sourcePtid'] as int;
 
-  int get sinkPtid => _cacheNameMap[_region]![_sinkName]!;
+  int get sinkPtid =>
+      _cacheNameMap[_region]![_sinkName] ??
+      initialValues[_region]!['sinkPtid'] as int;
 
   Iso get iso => allowedRegions[region]!;
+
+  /// When the region is reset, populate with the default path
+  set region(String value) {
+    _region = value;
+    _sourceName = initialValues[_region]!['sourceName'] as String;
+    _sinkName = initialValues[_region]!['sinkName'] as String;
+    _bucket = initialValues[_region]!['bucket'] as Bucket;
+    ftrPath = FtrPath(
+        sourcePtid: initialValues[region]!['sourcePtid'] as int,
+        sinkPtid: initialValues[region]!['sinkPtid'] as int,
+        bucket: _bucket,
+        iso: iso,
+        rootUrl: dotenv.env['ROOT_URL']!);
+    notifyListeners();
+  }
+
+  String get region => _region;
+
+  set sourceName(String value) {
+    _sourceName = value;
+    ftrPath = FtrPath(
+        sourcePtid: sourcePtid,
+        sinkPtid: sinkPtid,
+        bucket: _bucket,
+        iso: iso,
+        rootUrl: dotenv.env['ROOT_URL']!);
+    notifyListeners();
+  }
+
+  String get sourceName => _sourceName;
+
+  set sinkName(String value) {
+    _sinkName = value;
+    ftrPath = FtrPath(
+        sourcePtid: sourcePtid,
+        sinkPtid: sinkPtid,
+        bucket: _bucket,
+        iso: iso,
+        rootUrl: dotenv.env['ROOT_URL']!);
+    notifyListeners();
+  }
+
+  String get sinkName => _sinkName;
+
+  /// A map from name -> ptid
+  Map<String, int> get nameMap => _cacheNameMap[region]!;
+
+  set bucket(String bucket) {
+    _bucket = Bucket.parse(bucket);
+    ftrPath = FtrPath(
+        sourcePtid: sourcePtid,
+        sinkPtid: sinkPtid,
+        bucket: _bucket,
+        iso: iso,
+        rootUrl: dotenv.env['ROOT_URL']!);
+    notifyListeners();
+  }
+
+  String get bucket => _bucket.toString();
+
+  Bucket get bucketObject => _bucket;
 
   List<String> allowedBuckets() {
     if (region == 'ISONE') {
@@ -87,44 +156,4 @@ class RegionSourceSinkModel extends ChangeNotifier {
       return ['7x24'];
     }
   }
-
-  set region(String value) {
-    _region = value;
-    _sourceName = null;
-    _sinkName = null;
-    if (_region == 'ISONE') {
-      _bucket = Bucket.b5x16;
-    } else {
-      _bucket = Bucket.atc;
-    }
-    notifyListeners();
-  }
-
-  String get region => _region;
-
-  set sourceName(String? value) {
-    _sourceName = value;
-    notifyListeners();
-  }
-
-  String? get sourceName => _sourceName;
-
-  set sinkName(String? value) {
-    _sinkName = value;
-    notifyListeners();
-  }
-
-  String? get sinkName => _sinkName;
-
-  /// A map from name -> ptid
-  Map<String, int> get nameMap => _cacheNameMap[region]!;
-
-  set bucket(String bucket) {
-    _bucket = Bucket.parse(bucket);
-    notifyListeners();
-  }
-
-  String get bucket => _bucket.toString();
-
-  Bucket get bucketObject => _bucket;
 }

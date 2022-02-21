@@ -2,7 +2,8 @@ library models.mcc_surfer.constraint_table_model;
 
 import 'package:collection/collection.dart';
 import 'package:date/date.dart' as date;
-import 'package:elec_server/client/isoexpress/binding_constraints.dart';
+import 'package:elec/elec.dart';
+import 'package:elec_server/client/binding_constraints.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:timezone/timezone.dart';
@@ -11,11 +12,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ConstraintTableModel extends ChangeNotifier {
   ConstraintTableModel() {
-    client =
-        BindingConstraintsApi(http.Client(), rootUrl: dotenv.env['ROOT_URL']!);
+    client = BindingConstraints(http.Client(),
+        iso: Iso.newEngland, rootUrl: dotenv.env['ROOT_URL']!);
   }
 
-  late final BindingConstraintsApi client;
+  late final BindingConstraints client;
   final location = getLocation('America/New_York');
   var h1 = const Duration(hours: 1);
 
@@ -138,7 +139,7 @@ class ConstraintTableModel extends ChangeNotifier {
   Future<List<Map<String, dynamic>>> getData(date.Interval interval) async {
     if (!cache.containsKey(interval)) {
       selected = <bool>[];
-      cache[interval] = await client.getDaBindingConstraints(interval);
+      cache[interval] = await client.getDaBindingConstraintsDetails(interval);
     }
     return cache[interval]!;
   }
