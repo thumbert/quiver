@@ -17,17 +17,20 @@ class FtrPathUi extends StatefulWidget {
 }
 
 class _FtrPathUiState extends State<FtrPathUi> {
-  late ScrollController _scrollController;
+  late ScrollController _scrollControllerH;
+  late ScrollController _scrollControllerV;
 
   @override
   void initState() {
-    _scrollController = ScrollController();
+    _scrollControllerH = ScrollController();
+    _scrollControllerV = ScrollController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollControllerH.dispose();
+    _scrollControllerV.dispose();
     super.dispose();
   }
 
@@ -36,69 +39,81 @@ class _FtrPathUiState extends State<FtrPathUi> {
     final dataModel = context.watch<DataModel>();
 
     return Padding(
-      padding: const EdgeInsets.only(left: 48.0),
+      padding: const EdgeInsets.only(left: 0.0),
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('FTR path analysis'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return SimpleDialog(
-                        children: [
-                          SizedBox(
-                            width: 500,
-                            child: Column(
-                              children: const [
-                                Text(
-                                    'Visualize the congestion associated with an '
-                                    'FTR path, display the clearing prices and the settled prices '
-                                    'for a recent set of auctions, and the relevant binding constraints.\n'),
-                              ],
-                            ),
-                          )
-                        ],
-                        contentPadding: const EdgeInsets.all(12),
-                      );
-                    });
-              },
-              icon: const Icon(Icons.info_outline),
-              tooltip: 'Info',
-            )
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(left: 12, top: 12.0),
-          child: Scrollbar(
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                controller: _scrollController,
-                child: Column(
+          appBar: AppBar(
+            title: const Text('FTR path analysis'),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SimpleDialog(
+                          children: [
+                            SizedBox(
+                              width: 500,
+                              child: Column(
+                                children: const [
+                                  Text(
+                                      'Visualize the congestion associated with an '
+                                      'FTR path, display the clearing prices and the settled prices '
+                                      'for a recent set of auctions, and the relevant binding constraints.\n'),
+                                ],
+                              ),
+                            )
+                          ],
+                          contentPadding: const EdgeInsets.all(12),
+                        );
+                      });
+                },
+                icon: const Icon(Icons.info_outline),
+                tooltip: 'Info',
+              )
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.only(left: 12, top: 12.0),
+            child: ListView(scrollDirection: Axis.vertical, children: [
+              Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const RegionSourceSink(),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          SizedBox(
-                              width: 900,
-                              height: 600,
-                              child: CongestionChart()),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          TableBindingConstraints(),
-                        ],
+                    Scrollbar(
+                      isAlwaysShown: true,
+                      controller: _scrollControllerH,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollControllerH,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const RegionSourceSink(),
+                            const Divider(
+                              height: 12,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                SizedBox(
+                                    width: 900,
+                                    height: 600,
+                                    child: CongestionChart()),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                TableBindingConstraints(),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    const Divider(
+                      height: 8,
+                    ),
+                    //
+                    //
                     // checkboxes
                     Wrap(
                       spacing: 10,
@@ -129,14 +144,13 @@ class _FtrPathUiState extends State<FtrPathUi> {
                         ],
                       ],
                     ),
+                    //
+                    //
                     // table with cp and sp
                     const TableCpsp(),
-                    // if (pathModel.isValid()) const TableBindingConstraints(),
-                  ],
-                )),
-          ),
-        ),
-      ),
+                  ]),
+            ]),
+          )),
     );
   }
 }

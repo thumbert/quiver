@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/error404.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
-import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/homepage/homepage.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
-import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
-import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
-import 'package:flutter_quiver/screens/quiver.dart';
-import 'package:flutter_quiver/screens/test_page/test_page.dart';
-import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
-import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
-import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -18,18 +12,30 @@ void main() async {
   initializeTimeZones();
   setPathUrlStrategy();
   await dotenv.load(fileName: '.env');
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  final _router = GoRouter(routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+        path: '/ftr_path_analysis',
+        builder: (context, state) => const FtrPath()),
+    GoRoute(
+        path: '/mcc_surfer', builder: (context, state) => const MccSurfer()),
+  ], errorBuilder: (context, state) => const Error404());
 
   @override
   Widget build(BuildContext context) {
-    final menu = _createMenu();
-
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Quiver',
+      routerDelegate: _router.routerDelegate,
+      routeInformationParser: _router.routeInformationParser,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
             backgroundColor: Colors.blueGrey.shade300,
@@ -63,61 +69,6 @@ class MyApp extends StatelessWidget {
           // overlayColor: MaterialStateProperty.all(Colors.green),
         ),
       ),
-      // home: const MonthlyAssetNcpc(),
-      home: QuiverScreen(
-          menu: menu, initialActiveMenuItem: menu.first.items.first),
     );
-  }
-
-  List<DemoMenuGroup> _createMenu() {
-    return [
-      DemoMenuGroup(
-        title: 'Load',
-        items: [
-          DemoMenuItem(
-              title: 'Demand bids, Forecast, RT load',
-              pageBuilder: (_) => const DemandBids()),
-          DemoMenuItem(
-              title: 'Load settlements',
-              pageBuilder: (_) => Center(child: Text('Settle'))),
-          DemoMenuItem(
-              title: 'Historical PLC',
-              pageBuilder: (_) => const HistoricalPlc()),
-          DemoMenuItem(
-              title: 'VLR Stage 2', pageBuilder: (_) => const VlrStage2()),
-        ],
-      ),
-      DemoMenuGroup(
-        title: 'Reports',
-        items: [
-          DemoMenuItem(
-              title: 'Realized ancillaries', pageBuilder: (_) => Text('TODO')),
-          DemoMenuItem(
-              title: 'Monthly LMP', pageBuilder: (_) => const MonthlyLmp()),
-          DemoMenuItem(
-              title: 'Monthly Asset NCPC',
-              pageBuilder: (_) => const MonthlyAssetNcpc()),
-        ],
-      ),
-      DemoMenuGroup(
-        title: 'Other',
-        items: [
-          DemoMenuItem(title: 'EMT', pageBuilder: (_) => Text('TODO')),
-          DemoMenuItem(title: 'FTR path', pageBuilder: (_) => const FtrPath()),
-          DemoMenuItem(
-              title: 'Peaking option calls', pageBuilder: (_) => Text('TODO')),
-          DemoMenuItem(
-              title: 'MCC surfer',
-              icon: const Icon(Icons.surfing),
-              pageBuilder: (_) => const MccSurfer()),
-          DemoMenuItem(
-              title: 'Test page', pageBuilder: (_) => const TestPage()),
-          DemoMenuItem(
-              title: 'Unmasked Energy Offers',
-              pageBuilder: (_) => const UnmaskedEnergyOffers()),
-          DemoMenuItem(title: 'Weather', pageBuilder: (_) => const Weather()),
-        ],
-      ),
-    ];
   }
 }

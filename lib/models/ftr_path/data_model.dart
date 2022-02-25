@@ -44,6 +44,8 @@ class DataModel extends ChangeNotifier {
 
   /// What gets displayed on the screen for binding constraint cost
   var _tableConstraintCost = <Map<String, dynamic>>[];
+  bool sortAscendingBc = false;
+  String sortColumnBc = 'Cumulative Spread';
 
   final location = getLocation('America/New_York');
   final layout = <String, dynamic>{
@@ -127,9 +129,13 @@ class DataModel extends ChangeNotifier {
     }
 
     /// get the relevant constraints
-    var aux = await ftrPath.calculateRelevantConstraints(focusTerm!,
+    var aux = await ftrPath.bindingConstraintEffect(focusTerm!,
         bindingConstraints: _cacheBindingConstraints);
-    aux.sort((a, b) => -(a['cost'].abs()).compareTo(b['cost'].abs()));
+
+    /// sort the table
+    var sign = sortAscendingBc ? 1 : -1;
+    aux.sort((a, b) =>
+        (a[sortColumnBc].abs()).compareTo(b[sortColumnBc].abs()) * sign);
     _tableConstraintCost = aux;
     return _tableConstraintCost;
   }

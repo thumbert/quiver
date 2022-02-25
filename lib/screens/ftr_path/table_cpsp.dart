@@ -46,8 +46,10 @@ class _TableCpspState extends State<TableCpsp> {
             var columns = _makeColumns(dataModel);
             children = [
               LimitedBox(
-                  maxWidth: 500,
+                  maxWidth: 400,
                   child: PaginatedDataTable(
+                    horizontalMargin: 8,
+                    columnSpacing: 24,
                     columns: columns,
                     source: _DataTableSource(dataModel),
                     rowsPerPage: min(30, dataModel.tableCpSp.length),
@@ -97,26 +99,15 @@ class _TableCpspState extends State<TableCpsp> {
 
   List<DataColumn> _makeColumns(DataModel dataModel) {
     return <DataColumn>[
-      // DataColumn(
-      //     label: TextButton(
-      //         onPressed: () {
-      //           setState(() {
-      //             dataModel.sortAscending = !dataModel.sortAscending;
-      //             dataModel.sortColumn = 'auction';
-      //           });
-      //         },
-      //         child: Row(
-      //           children: [
-      //             if (dataModel.sortColumn == 'auction')
-      //               dataModel.sortAscending
-      //                   ? const Icon(Icons.arrow_upward)
-      //                   : const Icon(Icons.arrow_downward),
-      //             const Text('Market'),
-      //           ],
-      //         ))),
-      const DataColumn(label: Text('Auction')),
-      const DataColumn(label: Text('Clearing Price')),
-      const DataColumn(label: Text('Settle Price')),
+      const DataColumn(
+          label:
+              Text('Auction', style: TextStyle(fontWeight: FontWeight.bold))),
+      const DataColumn(
+          label: Text('Clearing Price',
+              style: TextStyle(fontWeight: FontWeight.bold))),
+      const DataColumn(
+          label: Text('Settle Price',
+              style: TextStyle(fontWeight: FontWeight.bold))),
     ];
   }
 }

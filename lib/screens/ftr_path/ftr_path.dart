@@ -12,6 +12,8 @@ import 'package:timezone/timezone.dart';
 class FtrPath extends StatefulWidget {
   const FtrPath({Key? key}) : super(key: key);
 
+  static const String route = '/ftr_path_analysis';
+
   @override
   State<StatefulWidget> createState() => _FtrPathState();
 }

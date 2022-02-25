@@ -26,8 +26,8 @@ class _TableBindingConstraintsState extends State<TableBindingConstraints> {
     final dataModel = context.watch<DataModel>();
 
     return FutureBuilder(
-      future: dataModel.getRelevantBindingConstraints(
-          ftrPath: pathModel.ftrPath),
+      future:
+          dataModel.getRelevantBindingConstraints(ftrPath: pathModel.ftrPath),
       builder: (context, snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
@@ -39,8 +39,9 @@ class _TableBindingConstraintsState extends State<TableBindingConstraints> {
             var columns = _makeColumns(dataModel);
             children = [
               LimitedBox(
-                  maxWidth: 500,
+                  maxWidth: 560,
                   child: PaginatedDataTable(
+                    columnSpacing: 24,
                     columns: columns,
                     source: _DataTableSource(dataModel),
                     rowsPerPage: min(10, dataModel.tableConstraintCost.length),
@@ -78,11 +79,68 @@ class _TableBindingConstraintsState extends State<TableBindingConstraints> {
         'Constraint Name',
         style: TextStyle(fontWeight: FontWeight.bold),
       )),
-      const DataColumn(
-          label: Text(
-        'Cost',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      )),
+      DataColumn(
+          // tooltip: 'Mean value of the spread when this constraint bound',
+          label: TextButton(
+              onPressed: () {
+                setState(() {
+                  dataModel.sortAscendingBc = !dataModel.sortAscendingBc;
+                  dataModel.sortColumnBc = 'hours';
+                });
+              },
+              child: Row(
+                children: [
+                  const Text(
+                    'Hours',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  if (dataModel.sortColumnBc == 'hours')
+                    dataModel.sortAscendingBc
+                        ? const Icon(Icons.arrow_upward)
+                        : const Icon(Icons.arrow_downward),
+                ],
+              ))),
+      DataColumn(
+          // tooltip: 'Mean value of the spread when this constraint bound',
+          label: TextButton(
+              onPressed: () {
+                setState(() {
+                  dataModel.sortAscendingBc = !dataModel.sortAscendingBc;
+                  dataModel.sortColumnBc = 'Mean Spread';
+                });
+              },
+              child: Row(
+                children: [
+                  const Text(
+                    'Mean\nSpread',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  if (dataModel.sortColumnBc == 'Mean Spread')
+                    dataModel.sortAscendingBc
+                        ? const Icon(Icons.arrow_upward)
+                        : const Icon(Icons.arrow_downward),
+                ],
+              ))),
+      DataColumn(
+          label: TextButton(
+              onPressed: () {
+                setState(() {
+                  dataModel.sortAscendingBc = !dataModel.sortAscendingBc;
+                  dataModel.sortColumnBc = 'Cumulative Spread';
+                });
+              },
+              child: Row(
+                children: [
+                  const Text(
+                    'Cumulative\nSpread',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  if (dataModel.sortColumnBc == 'Cumulative Spread')
+                    dataModel.sortAscendingBc
+                        ? const Icon(Icons.arrow_upward)
+                        : const Icon(Icons.arrow_downward),
+                ],
+              ))),
     ];
   }
 }
@@ -91,14 +149,17 @@ class _DataTableSource extends DataTableSource {
   _DataTableSource(this.model);
 
   final DataModel model;
-  final _fmt = NumberFormat.currency(decimalDigits: 0, symbol: '\$');
+  final _fmt0 = NumberFormat.currency(decimalDigits: 0, symbol: '\$');
+  final _fmt2 = NumberFormat.currency(decimalDigits: 2, symbol: '\$');
 
   @override
   DataRow? getRow(int index) {
     var x = model.tableConstraintCost[index];
     return DataRow(cells: [
-      DataCell(Text(x['constraintName'])),
-      DataCell(Text(_fmt.format(x['cost']))),
+      DataCell(Text(x['name'])),
+      DataCell(Text(x['hours'].toString())),
+      DataCell(Text(_fmt2.format(x['Mean Spread']))),
+      DataCell(Text(_fmt0.format(x['Cumulative Spread']))),
     ]);
   }
 
