@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
+import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
+import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
+import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
+import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/screens/error404.dart';
@@ -24,10 +31,25 @@ class MyApp extends StatelessWidget {
       builder: (context, state) => const HomePage(),
     ),
     GoRoute(
-        path: '/ftr_path_analysis',
+        path: DemandBids.route,
+        builder: (context, state) => const DemandBids()),
+    GoRoute(
+        path: FtrPath.route,
         builder: (context, state) => const FtrPath()),
     GoRoute(
-        path: '/mcc_surfer', builder: (context, state) => const MccSurfer()),
+        path: HistoricalPlc.route, builder: (context, state) => const HistoricalPlc()),
+    GoRoute(
+        path: MccSurfer.route, builder: (context, state) => const MccSurfer()),
+    GoRoute(
+        path: MccSurfer.route, builder: (context, state) => const MonthlyAssetNcpc()),
+    GoRoute(
+        path: MccSurfer.route, builder: (context, state) => const MonthlyLmp()),
+    GoRoute(
+        path: MccSurfer.route, builder: (context, state) => const UnmaskedEnergyOffers()),
+    GoRoute(
+        path: MccSurfer.route, builder: (context, state) => const VlrStage2()),
+    GoRoute(
+        path: Weather.route, builder: (context, state) => const Weather()),
   ], errorBuilder: (context, state) => const Error404());
 
   @override

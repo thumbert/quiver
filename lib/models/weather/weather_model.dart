@@ -31,6 +31,7 @@ class WeatherModel extends ChangeNotifier {
   // late Iterable<Map<String,dynamic>> _tableData;
 
   /// Calculate the 30y, 20y, 10y, 5y HDD or CDD averages for this location
+  ///
   Future<List<Map<String, dynamic>>> getSummaryData(
       {required int row, List<Interval>? terms}) async {
     var _airports = deals.map((e) => e.airport).toList();

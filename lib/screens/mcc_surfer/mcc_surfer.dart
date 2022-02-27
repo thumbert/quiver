@@ -13,6 +13,8 @@ import 'package:timezone/timezone.dart';
 class MccSurfer extends StatefulWidget {
   const MccSurfer({Key? key}) : super(key: key);
 
+  static const route = '/mcc_surfer';
+
   @override
   State<StatefulWidget> createState() => _CongestionViewerState();
 }

@@ -1,6 +1,14 @@
 library screens.homepage.calculator_list;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
+import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
+import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
+import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
+import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
+import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
+import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_quiver/models/homepage/homepage_model.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
@@ -12,10 +20,10 @@ class AppGroup extends StatefulWidget {
 
   static final Map<String, List<MenuItem>> groups = {
     'Load': [
-      MenuItem(url: '/demand_bids', title: 'Demand Bids, RT Load & Forecast'),
+      MenuItem(url: DemandBids.route, title: 'Demand Bids, RT Load & Forecast'),
       MenuItem(url: '/load_settlements', title: 'Load Settlements'),
-      MenuItem(url: '/historical_plc', title: 'Historical PLC'),
-      MenuItem(url: '/vlr_stage_2', title: 'Realized Stage 2 VLR'),
+      MenuItem(url: HistoricalPlc.route, title: 'Historical PLC'),
+      MenuItem(url: VlrStage2.route, title: 'Realized Stage 2 VLR'),
     ],
     //
     'Reports': [
@@ -23,18 +31,18 @@ class AppGroup extends StatefulWidget {
           url: '/realized_ancillaries_load',
           title: 'Realized ancillaries load'),
       MenuItem(url: '/gen_revenues', title: 'Generation revenues'),
-      MenuItem(url: '/monthly_asset_ncpc', title: 'Monthly asset NCPC (all)'),
+      MenuItem(url: MonthlyAssetNcpc.route, title: 'Monthly asset NCPC (all)'),
     ],
     //
     'Other': [
       MenuItem(url: FtrPath.route, title: 'FTR path analysis'),
       MenuItem(
-          url: '/mcc_surfer',
+          url: MccSurfer.route,
           title: 'MCC surfer ',
           icon: const Icon(Icons.surfing)),
-      MenuItem(url: '/monthly_lmp', title: 'Monthly LMP'),
-      MenuItem(url: '/unmasked_energy_offers', title: 'Energy Offers (all)'),
-      MenuItem(url: '/weather', title: 'Weather'),
+      MenuItem(url: MonthlyLmp.route, title: 'Monthly LMP'),
+      MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),
+      MenuItem(url: Weather.route, title: 'Weather'),
     ],
   };
 

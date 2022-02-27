@@ -1,12 +1,9 @@
 library screens.ftr_path.region_source_sink;
 
-import 'package:elec/elec.dart';
-import 'package:elec/ftr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RegionSourceSink extends StatefulWidget {
   const RegionSourceSink({Key? key}) : super(key: key);
@@ -207,82 +204,6 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                             ),
                           );
                         }),
-                    // child: Autocomplete(
-                    //   initialValue:
-                    //       TextEditingValue(text: sourceEditingController.text),
-                    //   fieldViewBuilder: (BuildContext context,
-                    //           TextEditingController textEditingController,
-                    //           FocusNode focusNode,
-                    //           VoidCallback onFieldSubmitted) =>
-                    //       _AutocompleteField(
-                    //     focusNode: focusNode,
-                    //     textEditingController: textEditingController,
-                    //     onFieldSubmitted: onFieldSubmitted,
-                    //     options: nameToPtid.keys,
-                    //   ),
-                    //   optionsBuilder: (TextEditingValue textEditingValue) {
-                    //     if (textEditingValue == TextEditingValue.empty) {
-                    //       return const Iterable<String>.empty();
-                    //     }
-                    //     return nameToPtid.keys.where((e) => e
-                    //         .toUpperCase()
-                    //         .contains(textEditingValue.text.toUpperCase()));
-                    //   },
-                    //   onSelected: (String selection) {
-                    //     setState(() {
-                    //       model.sourceName = selection;
-                    //     });
-                    //   },
-                    //   optionsViewBuilder: (BuildContext context,
-                    //       void Function(String) onSelected,
-                    //       Iterable<String> options) {
-                    //     return Align(
-                    //       alignment: Alignment.topLeft,
-                    //       child: Material(
-                    //         elevation: 4.0,
-                    //         child: ConstrainedBox(
-                    //           constraints:
-                    //               BoxConstraints(maxHeight: maxOptionsHeight),
-                    //           child: ListView.builder(
-                    //             padding: EdgeInsets.zero,
-                    //             shrinkWrap: true,
-                    //             itemCount: options.length,
-                    //             itemBuilder: (BuildContext context, int index) {
-                    //               final option = options.elementAt(index);
-                    //               return InkWell(
-                    //                 onTap: () {
-                    //                   onSelected(option);
-                    //                 },
-                    //                 child: Builder(
-                    //                     builder: (BuildContext context) {
-                    //                   final bool highlight =
-                    //                       AutocompleteHighlightedOption.of(
-                    //                               context) ==
-                    //                           index;
-                    //                   if (highlight) {
-                    //                     SchedulerBinding.instance!
-                    //                         .addPostFrameCallback(
-                    //                             (Duration timeStamp) {
-                    //                       Scrollable.ensureVisible(context,
-                    //                           alignment: 0.5);
-                    //                     });
-                    //                   }
-                    //                   return Container(
-                    //                     color: highlight
-                    //                         ? Theme.of(context).focusColor
-                    //                         : null,
-                    //                     padding: const EdgeInsets.all(16.0),
-                    //                     child: Text(option),
-                    //                   );
-                    //                 }),
-                    //               );
-                    //             },
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                   ),
                 ],
               ),

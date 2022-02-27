@@ -14,6 +14,8 @@ import 'package:timezone/timezone.dart';
 class VlrStage2 extends StatefulWidget {
   const VlrStage2({Key? key}) : super(key: key);
 
+  static const route = 'vlr_stage2';
+
   @override
   _VlrStage2State createState() => _VlrStage2State();
 }
