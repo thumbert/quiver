@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 class MonthlyLmp extends StatefulWidget {
   const MonthlyLmp({Key? key}) : super(key: key);
 
+  static const route = '/monthly_lmp';
+
   @override
   _MonthlyLmpState createState() => _MonthlyLmpState();
 }

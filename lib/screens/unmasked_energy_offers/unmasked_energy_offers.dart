@@ -12,6 +12,8 @@ import 'package:timezone/timezone.dart';
 class UnmaskedEnergyOffers extends StatefulWidget {
   const UnmaskedEnergyOffers({Key? key}) : super(key: key);
 
+  static const route = '/unmasked_energy_offers';
+
   @override
   _UnmaskedEnergyOffersState createState() => _UnmaskedEnergyOffersState();
 }

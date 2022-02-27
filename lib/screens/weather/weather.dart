@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 class Weather extends StatefulWidget {
   const Weather({Key? key}) : super(key: key);
 
+  static const route = '/weather';
+
   @override
   _WeatherState createState() => _WeatherState();
 }

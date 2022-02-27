@@ -15,6 +15,8 @@ import 'package:timezone/timezone.dart';
 class HistoricalPlc extends StatefulWidget {
   const HistoricalPlc({Key? key}) : super(key: key);
 
+  static const route = '/historical_plc';
+
   @override
   _HistoricalPlcState createState() => _HistoricalPlcState();
 }

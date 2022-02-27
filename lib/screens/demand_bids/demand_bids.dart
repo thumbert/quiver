@@ -16,6 +16,8 @@ import 'package:timezone/timezone.dart';
 class DemandBids extends StatefulWidget {
   const DemandBids({Key? key}) : super(key: key);
 
+  static const route = '/demand_bids';
+
   @override
   _DemandBidsState createState() => _DemandBidsState();
 }

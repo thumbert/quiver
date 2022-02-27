@@ -15,6 +15,8 @@ import 'package:timezone/timezone.dart';
 class MonthlyAssetNcpc extends StatefulWidget {
   const MonthlyAssetNcpc({Key? key}) : super(key: key);
 
+  static const route = '/monthly_asset_ncpc';
+
   @override
   _MonthlyAssetNcpcState createState() => _MonthlyAssetNcpcState();
 }
