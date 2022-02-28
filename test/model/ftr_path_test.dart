@@ -29,6 +29,22 @@ Future<void> tests(String rootUrl) async {
         'cost': 15223.26000000001,
       });
     });
+    test('get relevant constraints NYISO, short term', () async {
+      var path = FtrPath(
+          sourcePtid: 61752, // A
+          sinkPtid: 61758, // C
+          bucket: Bucket.atc,
+          iso: Iso.newYork);
+      var term =
+          Term.parse('31Dec21-14Jan22', Iso.newYork.preferredTimeZoneLocation);
+      model.focusTerm = term;
+      var bc = await model.getRelevantBindingConstraints(ftrPath: path);
+      expect(bc.length, 19);
+      expect(bc.first, {
+        'constraintName': 'CENTRAL EAST - VC',
+        'cost': 15223.26000000001,
+      });
+    });
     test('get relevant constraints ISONE', () async {
       var path = FtrPath(
           sourcePtid: 4000,

@@ -69,7 +69,7 @@ class DataModel extends ChangeNotifier {
   /// Get the data and make the Plotly hourly traces.
   ///
   Future<List<Map<String, dynamic>>> makeHourlyTrace(FtrPath ftrPath) async {
-    var sp = await ftrPath.getDailySettlePrices(term: defaultTerm());
+    var sp = await ftrPath.getDailySettlePrices(term: focusTerm);
     return [
       {
         'x': sp.intervals.map((e) => e.start).toList(),
@@ -127,6 +127,8 @@ class DataModel extends ChangeNotifier {
           await client.getDaBindingConstraints(defaultTerm().interval);
       _currentFtrPath = ftrPath;
     }
+
+    _focusTerm ??= defaultTerm();
 
     /// get the relevant constraints
     var aux = await ftrPath.bindingConstraintEffect(focusTerm!,
