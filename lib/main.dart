@@ -33,23 +33,24 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: DemandBids.route,
         builder: (context, state) => const DemandBids()),
+    GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
     GoRoute(
-        path: FtrPath.route,
-        builder: (context, state) => const FtrPath()),
-    GoRoute(
-        path: HistoricalPlc.route, builder: (context, state) => const HistoricalPlc()),
+        path: HistoricalPlc.route,
+        builder: (context, state) => const HistoricalPlc()),
     GoRoute(
         path: MccSurfer.route, builder: (context, state) => const MccSurfer()),
     GoRoute(
-        path: MccSurfer.route, builder: (context, state) => const MonthlyAssetNcpc()),
+        path: MonthlyAssetNcpc.route,
+        builder: (context, state) => const MonthlyAssetNcpc()),
     GoRoute(
-        path: MccSurfer.route, builder: (context, state) => const MonthlyLmp()),
+        path: MonthlyLmp.route,
+        builder: (context, state) => const MonthlyLmp()),
     GoRoute(
-        path: MccSurfer.route, builder: (context, state) => const UnmaskedEnergyOffers()),
+        path: UnmaskedEnergyOffers.route,
+        builder: (context, state) => const UnmaskedEnergyOffers()),
     GoRoute(
-        path: MccSurfer.route, builder: (context, state) => const VlrStage2()),
-    GoRoute(
-        path: Weather.route, builder: (context, state) => const Weather()),
+        path: VlrStage2.route, builder: (context, state) => const VlrStage2()),
+    GoRoute(path: Weather.route, builder: (context, state) => const Weather()),
   ], errorBuilder: (context, state) => const Error404());
 
   @override

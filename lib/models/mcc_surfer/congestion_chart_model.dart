@@ -2,27 +2,29 @@ library models.congestion_chart;
 
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
-import 'package:elec_server/client/isoexpress/dacongestion_compact.dart';
+import 'package:elec_server/client/dacongestion.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CongestionChartModel extends ChangeNotifier {
-  late final DaCongestion mccClient;
   late final PtidsApi ptidClient;
   final _client = http.Client();
 
   CongestionChartModel() {
-    mccClient = DaCongestion(_client, rootUrl: dotenv.env['ROOT_URL']!);
+    _currentRegion = 'NYISO';
     ptidClient = PtidsApi(_client, rootUrl: dotenv.env['ROOT_URL']!);
-    _getPtidMap = ptidClient.getPtidTable();
+    getPtidMap(_currentRegion);
   }
 
   Term? _term;
+  late String _currentRegion;
   List<Map<String, dynamic>>? traces;
-  Future<List<Map<String, dynamic>>>? _getPtidMap;
-  Map<int, Map<String, dynamic>>? ptidMap;
+
+  /// A cache with Region -> ptid -> data
+  final _ptidMapCache = <String, Map<int, Map<String, dynamic>>>{};
   late int traceCount;
 
   /// How precise is the series resolution for the selected interval
@@ -30,6 +32,11 @@ class CongestionChartModel extends ChangeNotifier {
 
   /// How many curves are currently displayed
   int displayedCurvesCount = 0;
+
+  ///
+  DaCongestion get mccClient => DaCongestion(_client,
+      iso: RegionLoadZoneModel.allowedRegions[_currentRegion]!,
+      rootUrl: dotenv.env['ROOT_URL']!);
 
   final layout = <String, dynamic>{
     'width': 900.0,
@@ -46,7 +53,18 @@ class CongestionChartModel extends ChangeNotifier {
     'showlegend': false,
     'hovermode': 'closest',
     'shapes': [],
+    'displaylogo': false,
   };
+
+  ///
+  Future<Map<int, Map<String, dynamic>>> getPtidMap(String region) async {
+    if (!_ptidMapCache.containsKey(region)) {
+      var aux = await ptidClient.getPtidTable(region: region.toLowerCase());
+      var _ptidMap = {for (var e in aux) e['ptid'] as int: e};
+      _ptidMapCache[region] = _ptidMap;
+    }
+    return _ptidMapCache[region]!;
+  }
 
   /// Get the data and make the Plotly hourly traces.
   /// For reference, getting one full month takes less than 800 ms, the first
@@ -58,28 +76,29 @@ class CongestionChartModel extends ChangeNotifier {
   /// zone only.
   /// Return only the top [projectionCount] most 'dissimilar' curves.
   ///
-  Future<List<Map<String, dynamic>>> makeHourlyTraces(Date start, Date end,
-      {int? loadZonePtid, required int projectionCount}) async {
-    if (ptidMap == null) {
-      var aux = await _getPtidMap!;
-      ptidMap = {for (var e in aux) e['ptid'] as int: e};
-    }
+  Future<List<Map<String, dynamic>>> makeHourlyTraces(Term term,
+      {required String region,
+      int? loadZonePtid,
+      required int projectionCount}) async {
+    var ptidMap = await getPtidMap(region);
 
-    var currentTerm = Term(start, end);
+    var currentTerm = term;
     _term ??= currentTerm;
-    if (_term != currentTerm || traces == null) {
-      /// Don't make a call to the client unless the term changes.
-      var rawTraces = await mccClient.getHourlyTraces(start, end);
+    if (_term != currentTerm || traces == null || region != _currentRegion) {
+      /// Don't make a call to the client unless the term changes, etc.
+      _currentRegion = region;
+      var rawTraces =
+          await mccClient.getHourlyTraces(term.startDate, term.endDate);
       // customize the display on hover
       for (var e in rawTraces) {
         var ptid = e['ptid'] as int;
-        if (ptidMap!.containsKey(ptid)) {
-          var entry = ptidMap![ptid]!;
+        if (ptidMap.containsKey(ptid)) {
+          var entry = ptidMap[ptid]!;
           e['name'] = '';
           e['text'] = '${entry['name']}, ptid: ${e['ptid']}';
           if (entry.containsKey('zonePtid')) {
             e['zonePtid'] = entry['zonePtid']; // need it for the zone filter
-            e['text'] += ', zone: ${entry['zonePtid']}';
+            e['text'] += ', zone: ${ptidMap[entry['zonePtid']]!['name']}';
           }
           if (entry.containsKey('rspArea')) {
             e['text'] += ', subzone: ${entry['rspArea']}';

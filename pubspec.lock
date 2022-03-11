@@ -136,7 +136,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "3fd69f4c685ba8604b31c9f3b22481b21d46cb20"
+      resolved-ref: ad60561a2ef997cbb0b39d7de3e1442d94d1c195
       url: "https://github.com/thumbert/elec.git"
     source: git
     version: "2.0.1"
@@ -145,7 +145,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "797a7684549360ef82007de4a389f0c22d871160"
+      resolved-ref: dc9d2310428e12faf2d4ed32f43e5e67bdacf270
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"
@@ -225,7 +225,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: bbebc3eb1cd78093c8fc2c29226350651e8f1800
+      resolved-ref: "5440b50e094dfaee98da73f0baacd08288648bc8"
       url: "https://github.com/thumbert/flutter_web_plotly.git"
     source: git
     version: "0.2.0"
@@ -245,7 +245,7 @@ packages:
       name: go_router
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.4"
   google_fonts:
     dependency: "direct main"
     description:
@@ -502,7 +502,7 @@ packages:
       name: pointycastle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.5.1"
+    version: "3.5.2"
   pool:
     dependency: transitive
     description:
@@ -591,7 +591,7 @@ packages:
       name: spreadsheet_decoder
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   stack_trace:
     dependency: transitive
     description:

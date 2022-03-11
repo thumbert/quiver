@@ -41,6 +41,7 @@ class DataModel extends ChangeNotifier {
 
   /// What gets displayed on the screen after the filtering
   var _tableCpSp = <Map<String, dynamic>>[];
+  // bool sortAscendingCpSp = false;
 
   /// What gets displayed on the screen for binding constraint cost
   var _tableConstraintCost = <Map<String, dynamic>>[];

@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';
+import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
   group('MCC surfer model test', () {
@@ -14,9 +15,9 @@ Future<void> tests(String rootUrl) async {
     late List<Map<String, dynamic>> traces;
 
     setUp(() async {
-      traces = await model.makeHourlyTraces(
-          Date.utc(2021, 11, 1), Date.utc(2021, 11, 30),
-          projectionCount: 100);
+      var term = Term.parse('Nov21', UTC);
+      traces = await model.makeHourlyTraces(term,
+          region: 'ISONE', projectionCount: 100);
     });
     test('reduce traces', () {
       //

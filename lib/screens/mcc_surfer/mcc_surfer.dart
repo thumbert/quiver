@@ -3,6 +3,7 @@ library screens.mcc_surfer.mcc_surfer;
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
+import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/constraint_table_model.dart';
@@ -28,10 +29,11 @@ class _CongestionViewerState extends State<MccSurfer> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      // ChangeNotifierProvider(
-      //     create: (context) => TermModel(term: initialTerm())),
-      ChangeNotifierProvider(create: (context) => ConstraintTableModel()),
+      ChangeNotifierProvider(
+          create: (context) => TermModel(term: initialTerm())),
       ChangeNotifierProvider(create: (context) => LoadZoneModel()),
+      ChangeNotifierProvider(create: (context) => RegionLoadZoneModel()),
+      ChangeNotifierProvider(create: (context) => ConstraintTableModel()),
       ChangeNotifierProvider(create: (context) => CongestionChartModel())
     ], child: const MccSurferUi());
   }

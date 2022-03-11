@@ -140,7 +140,7 @@ class _WeatherUiState extends State<WeatherUi> {
   /// The data table with a download/copy to clipboard widget.
   /// Table is sortable by value column
   DataTable _makeDataTable(Iterable<Map<String, dynamic>> data) {
-    data.forEach(print);
+    // data.forEach(print);
     var names = data.first.keys.toSet();
     var columns = [
       if (names.contains('zone')) const DataColumn(label: Text('Zone Id')),
