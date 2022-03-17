@@ -25,8 +25,9 @@ class _CongestionChartState extends State<CongestionChart> {
   @override
   void initState() {
     final chartModel = context.read<CongestionChartModel>();
+    var aux = DateTime.now().hashCode;
     plotly = Plotly(
-      viewId: 'mcc-surfer-div',
+      viewId: 'mcc-surfer-div-$aux',
       data: const [],
       layout: chartModel.layout,
     );

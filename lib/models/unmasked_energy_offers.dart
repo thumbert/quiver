@@ -45,7 +45,9 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
     api = DaEnergyOffers(_client, iso: _iso, rootUrl: rootUrl);
     maskedAssetsApi = MaskedIds(_client, iso: _iso, rootUrl: rootUrl);
     cache.clear();
+    deselectAll();
     getMaskedAssetIds();
+    // notifyListeners();
   }
 
   Iso get iso => _iso;
@@ -59,9 +61,8 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
       // select Kleen on init
       index = assetData.indexWhere((e) => e['name'] == 'KLEEN ENERGY');
     } else if (iso == Iso.newYork) {
-      // select Bethlehem on init
-      index =
-          assetData.indexWhere((e) => e['name'] == 'Bethlehem Energy Center');
+      // select Ravenswood on init
+      index = assetData.indexWhere((e) => e['name'] == 'Ravenswood ST 03');
     }
     checkboxes[index] = true;
     notifyListeners();
@@ -83,9 +84,12 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
   /// Make the line traces for Plotly.  Update cache if needed.
   ///
   Future<List<Map<String, dynamic>>> makeTraces(Term term) async {
+    // print('in makeTraces, iso: $iso');
+
     // make sure that the term is in the right tz!  A constant headache
     var _interval = term.interval.withTimeZone(iso.preferredTimeZoneLocation);
     term = Term.fromInterval(_interval);
+    // print(cache.keys);
     if (!cache.containsKey(term)) {
       cache[term] = <int, List<Map<String, dynamic>>>{};
     }
@@ -99,14 +103,17 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
             asset['Masked Asset ID'], term.startDate, term.endDate);
       }
     }
-
+    // print('selected ptids: $ptids');
+    // print('ptids in cache: ${cache[term]!.keys}');
+    List<Map<String, dynamic>> out;
     if (ptids.length == 1) {
       /// Display all energy offers
-      return _makeTracesOneUnit(term, ptids.first);
+      out = _makeTracesOneUnit(term, ptids.first);
     } else {
       /// Display the volume weighted energy offers
-      return _makeTracesAllUnits(term, ptids);
+      out = _makeTracesAllUnits(term, ptids);
     }
+    return out;
   }
 
   final layout = {

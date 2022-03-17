@@ -23,8 +23,9 @@ class _CongestionChartState extends State<CongestionChart> {
   void initState() {
     final path = context.read<RegionSourceSinkModel>();
     final dataModel = context.read<DataModel>();
+    var aux = DateTime.now().hashCode;
     plotly = Plotly(
-      viewId: 'ftr-path-div',
+      viewId: 'ftr-path-div-$aux',
       data: const [],
       layout: dataModel.layout,
     );

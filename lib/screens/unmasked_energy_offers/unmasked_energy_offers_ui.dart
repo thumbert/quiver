@@ -35,11 +35,15 @@ class _UnmaskedEnergyOffersUiState extends State<UnmaskedEnergyOffersUi> {
     _scrollController = ScrollController();
     final model = context.read<UnmaskedEnergyOffersModel>();
     model.getMaskedAssetIds();
-    plotly = Plotly(
-      viewId: 'plotly-unmasked-energy-offers',
-      data: const [],
-      layout: model.layout,
-    );
+    setState(() {
+      model.cache.clear();
+      var aux = DateTime.now().hashCode;
+      plotly = Plotly(
+        viewId: 'plotly-unmasked-energy-offers-$aux',
+        data: const [],
+        layout: model.layout,
+      );
+    });
     super.initState();
   }
 
@@ -54,11 +58,12 @@ class _UnmaskedEnergyOffersUiState extends State<UnmaskedEnergyOffersUi> {
     final regionModel = context.watch<RegionModel>();
     final termModel = context.watch<TermModel>();
     final model = context.watch<UnmaskedEnergyOffersModel>();
-    if (regionModel.iso != model.iso) {
-      setState(() {
+
+    setState(() {
+      if (regionModel.iso != model.iso) {
         model.iso = regionModel.iso;
-      });
-    }
+      }
+    });
 
     var _assets = model.assetData.map((e) => e['name'] as String).toList();
 
@@ -142,12 +147,7 @@ class _UnmaskedEnergyOffersUiState extends State<UnmaskedEnergyOffersUi> {
                             plotly.plot
                                 .react(traces, layout, displaylogo: false);
                             children = [
-                              SizedBox(
-                                  // width: model.layout['width'] as double,
-                                  // height: model.layout['height'] as double,
-                                  width: 750,
-                                  height: 550,
-                                  child: plotly),
+                              SizedBox(width: 750, height: 550, child: plotly),
                             ];
                           } else if (snapshot.hasError) {
                             children = [
