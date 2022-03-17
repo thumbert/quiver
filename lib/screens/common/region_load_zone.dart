@@ -1,4 +1,4 @@
-library screens.mcc_surfer.inputs;
+library screens.common.region_load_zone;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';

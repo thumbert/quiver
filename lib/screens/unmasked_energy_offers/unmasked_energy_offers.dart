@@ -3,6 +3,7 @@ library screens.unmasked_energy_offers.unmasked_energy_offers;
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
+import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/models/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers_ui.dart';
@@ -25,6 +26,7 @@ class _UnmaskedEnergyOffersState extends State<UnmaskedEnergyOffers> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => RegionModel()),
       ChangeNotifierProvider(create: (context) => TermModel(term: term)),
       ChangeNotifierProvider(create: (context) => UnmaskedEnergyOffersModel()),
     ], child: const UnmaskedEnergyOffersUi());

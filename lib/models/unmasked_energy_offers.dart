@@ -1,10 +1,11 @@
 library models.unmasked_energy_offers_model;
 
 import 'package:date/date.dart';
+import 'package:elec/elec.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:elec_server/client/isoexpress/da_energy_offer.dart';
-import 'package:elec_server/client/isone/masked_ids.dart';
+import 'package:elec_server/client/da_energy_offer.dart';
+import 'package:elec_server/client/masked_ids.dart';
 import 'package:http/http.dart';
 import 'package:collection/collection.dart';
 import 'package:timeseries/timeseries.dart';
@@ -12,14 +13,16 @@ import 'package:timeseries/timeseries.dart';
 class UnmaskedEnergyOffersModel extends ChangeNotifier {
   UnmaskedEnergyOffersModel() {
     rootUrl = dotenv.env['ROOT_URL']!;
-    api = DaEnergyOffers(_client, rootUrl: rootUrl);
-    maskedAssetsApi = IsoNewEnglandMaskedAssets(_client, rootUrl: rootUrl);
+    _iso = Iso.newEngland;
+    api = DaEnergyOffers(_client, iso: Iso.newEngland, rootUrl: rootUrl);
+    maskedAssetsApi = MaskedIds(_client, iso: Iso.newEngland, rootUrl: rootUrl);
   }
 
   final _client = Client();
   late final String rootUrl;
   late DaEnergyOffers api;
-  late IsoNewEnglandMaskedAssets maskedAssetsApi;
+  late MaskedIds maskedAssetsApi;
+  late Iso _iso;
 
   late List<bool> checkboxes;
 
@@ -36,12 +39,30 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
   /// ```
   var assetData = <Map<String, dynamic>>[];
 
+  set iso(Iso value) {
+    _iso = value;
+    // reassign Apis
+    api = DaEnergyOffers(_client, iso: _iso, rootUrl: rootUrl);
+    maskedAssetsApi = MaskedIds(_client, iso: _iso, rootUrl: rootUrl);
+    cache.clear();
+    getMaskedAssetIds();
+  }
+
+  Iso get iso => _iso;
+
   /// Called in the initState() method
   Future<void> getMaskedAssetIds() async {
     assetData = await maskedAssetsApi.getAssets(type: 'generator');
     checkboxes = List.filled(assetData.length, false);
-    // select Kleen on init
-    var index = assetData.indexWhere((e) => e['name'] == 'KLEEN ENERGY');
+    late int index;
+    if (iso == Iso.newEngland) {
+      // select Kleen on init
+      index = assetData.indexWhere((e) => e['name'] == 'KLEEN ENERGY');
+    } else if (iso == Iso.newYork) {
+      // select Bethlehem on init
+      index =
+          assetData.indexWhere((e) => e['name'] == 'Bethlehem Energy Center');
+    }
     checkboxes[index] = true;
     notifyListeners();
   }
@@ -62,6 +83,9 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
   /// Make the line traces for Plotly.  Update cache if needed.
   ///
   Future<List<Map<String, dynamic>>> makeTraces(Term term) async {
+    // make sure that the term is in the right tz!  A constant headache
+    var _interval = term.interval.withTimeZone(iso.preferredTimeZoneLocation);
+    term = Term.fromInterval(_interval);
     if (!cache.containsKey(term)) {
       cache[term] = <int, List<Map<String, dynamic>>>{};
     }
@@ -105,7 +129,7 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> _makeTracesOneUnit(Term term, int ptid) {
     var hData = cache[term]![ptid]!;
-    var series = priceQuantityOffers(hData);
+    var series = priceQuantityOffers(hData, iso: _iso);
 
     // create the indicator series, to populate all hours
     // missing data for unavailable units will show up as null
@@ -144,7 +168,7 @@ class UnmaskedEnergyOffersModel extends ChangeNotifier {
     var series = <int, TimeSeries>{};
     for (var ptid in ptids) {
       if (cache[term]!.containsKey(ptid) && cache[term]![ptid]!.isNotEmpty) {
-        var aux = priceQuantityOffers(cache[term]![ptid]!);
+        var aux = priceQuantityOffers(cache[term]![ptid]!, iso: _iso);
         series[ptid] = averageOfferPrice(aux);
       }
     }

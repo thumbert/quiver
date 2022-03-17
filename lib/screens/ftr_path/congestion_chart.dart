@@ -1,7 +1,6 @@
 library screens.ftr_path.congestion_chart;
 
 import 'package:date/date.dart';
-import 'package:elec/ftr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:flutter_quiver/models/ftr_path/data_model.dart';

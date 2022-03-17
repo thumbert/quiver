@@ -145,7 +145,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: dc9d2310428e12faf2d4ed32f43e5e67bdacf270
+      resolved-ref: "77501914a7db5e3ea2cfd1d04fbd11e8fb29c6f7"
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"

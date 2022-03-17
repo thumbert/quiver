@@ -3,6 +3,7 @@ library test.models.unmasked_energy_offers_test;
 import 'dart:io';
 
 import 'package:date/date.dart';
+import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/unmasked_energy_offers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,6 +43,15 @@ Future<void> tests(String rootUrl) async {
       expect(t0['name'], 'KLEEN ENERGY');
       expect(t0['mode'], 'lines');
     });
+    // test('nyiso asset', () async {
+    //   model.iso = Iso.newYork;
+    //   await model.getMaskedAssetIds(); // selects Bethlehem
+    //   // var ind = model.assetData.indexWhere((e) => e['ptid'] == 323570);
+    //   // model.clickCheckbox(ind);
+    //   term = Term.parse('Jan21', location);
+    //   var traces = await model.makeTraces(term);
+    //   print(traces);
+    // });
   });
 }
 
