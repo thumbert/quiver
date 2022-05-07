@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/grim_spreader/grim_spreader.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
-import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -46,10 +46,13 @@ class MyApp extends StatelessWidget {
         path: MonthlyLmp.route,
         builder: (context, state) => const MonthlyLmp()),
     GoRoute(
+        path: GrimSpreader.route,
+        builder: (context, state) => const GrimSpreader()),
+    GoRoute(
         path: UnmaskedEnergyOffers.route,
         builder: (context, state) => const UnmaskedEnergyOffers()),
-    GoRoute(
-        path: VlrStage2.route, builder: (context, state) => const VlrStage2()),
+    // GoRoute(
+    //     path: VlrStage2.route, builder: (context, state) => const VlrStage2()),
     GoRoute(path: Weather.route, builder: (context, state) => const Weather()),
   ], errorBuilder: (context, state) => const Error404());
 

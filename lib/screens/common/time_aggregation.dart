@@ -12,6 +12,8 @@ class TimeAggregation extends StatefulWidget {
 }
 
 class _TimeAggregationState extends State<TimeAggregation> {
+  final _background = Colors.orange[100]!;
+
   @override
   Widget build(BuildContext context) {
     final model = context.watch<TimeAggregationModel>();
@@ -20,23 +22,23 @@ class _TimeAggregationState extends State<TimeAggregation> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(
-          width: 150,
-          child: Text(
+        Container(
+          padding: const EdgeInsets.only(right: 12),
+          child: const Text(
             'Time aggregation',
             style: TextStyle(fontSize: 16),
           ),
         ),
-        SizedBox(
-          width: 150,
+        Container(
+          color: _background,
           child: DropdownButtonFormField(
             value: model.level,
             icon: const Icon(Icons.expand_more),
             hint: const Text('Filter'),
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Theme.of(context).primaryColor))),
+            decoration: const InputDecoration(
+              isDense: true,
+              enabledBorder: InputBorder.none,
+            ),
             elevation: 16,
             onChanged: (String? newValue) {
               setState(() {

@@ -49,6 +49,36 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
                 const SizedBox(
                   height: 12,
                 ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _variableCheck[0],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _variableCheck[0] = value!;
+                        });
+                      },
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 12, right: 36),
+                      child: const Text('RT load'),
+                    ),
+                    //
+                    //
+                    Checkbox(
+                      value: _variableCheck[1],
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _variableCheck[1] = value!;
+                        });
+                      },
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 12, right: 36),
+                      child: const Text('Demand bids'),
+                    ),
+                  ],
+                ),
                 Wrap(
                   spacing: 10,
                   alignment: WrapAlignment.start,

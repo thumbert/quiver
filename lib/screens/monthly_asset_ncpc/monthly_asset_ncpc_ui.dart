@@ -44,208 +44,205 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
     tableModel.zoneId = zoneModel.zoneId;
     tableModel.assetName = assetModel.assetName;
 
-    return Padding(
-        padding: const EdgeInsets.only(left: 48),
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Historical monthly NCPC by asset'),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const SimpleDialog(
-                          children: [
-                            Text(
-                                'ISO publishes the data every month, with a 4 month lag '
-                                'beginning in Jan19.\nData has monthly granularity.'),
-                          ],
-                          contentPadding: EdgeInsets.all(12),
-                        );
-                      });
-                },
-                icon: const Icon(Icons.info_outline),
-                tooltip: 'Info',
-              )
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.only(left: 12.0, top: 8.0),
-            child: Scrollbar(
-              controller: _controller,
-              isAlwaysShown: true,
-              child: ListView(
-                controller: _controller,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Historical monthly NCPC by asset'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const SimpleDialog(
+                      children: [
+                        Text(
+                            'ISO publishes the data every month, with a 4 month lag '
+                            'beginning in Jan19.\nData has monthly granularity.'),
+                      ],
+                      contentPadding: EdgeInsets.all(12),
+                    );
+                  });
+            },
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Info',
+          )
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 12.0, top: 8.0),
+        child: Scrollbar(
+          controller: _controller,
+          isAlwaysShown: true,
+          child: ListView(
+            controller: _controller,
+            children: [
+              Row(
+                children: const [
+                  SizedBox(width: 140, child: TermUi()),
+                ],
+              ),
+              Row(
                 children: [
-                  Row(
-                    children: const [
-                      SizedBox(width: 140, child: TermUi()),
-                    ],
+                  Checkbox(
+                      value: tableModel.byZone,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          tableModel.byZone = value!;
+                        });
+                      }),
+                  const SizedBox(
+                    width: 20,
                   ),
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: tableModel.byZone,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              tableModel.byZone = value!;
-                            });
-                          }),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const SizedBox(
-                        width: 80,
-                        child: Text('Zone', style: TextStyle(fontSize: 16)),
-                      ),
-                      const LoadZone(),
-                    ],
+                  const SizedBox(
+                    width: 80,
+                    child: Text('Zone', style: TextStyle(fontSize: 16)),
                   ),
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: tableModel.byMarket,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              tableModel.byMarket = value!;
-                            });
-                          }),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const SizedBox(
-                        width: 80,
-                        child: Text('Market', style: TextStyle(fontSize: 16)),
-                      ),
-                      SizedBox(
-                        width: 150,
-                        child: DropdownButtonFormField(
-                          value: tableModel.market,
-                          icon: const Icon(Icons.expand_more),
-                          hint: const Text('Filter'),
-                          decoration: InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor))),
-                          elevation: 16,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              tableModel.market = newValue!;
-                            });
-                          },
-                          items: ['(All)', 'DA', 'RT']
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                        ),
-                      ),
-                    ],
+                  const LoadZone(),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                      value: tableModel.byMarket,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          tableModel.byMarket = value!;
+                        });
+                      }),
+                  const SizedBox(
+                    width: 20,
                   ),
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: tableModel.byAsset,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              tableModel.byAsset = value!;
-                            });
-                          }),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      const SizedBox(
-                        width: 80,
-                        child: Text('Asset', style: TextStyle(fontSize: 16)),
-                      ),
-                      const SizedBox(
-                        width: 150,
-                        child: AssetAutocomplete(),
-                      ),
-                    ],
+                  const SizedBox(
+                    width: 80,
+                    child: Text('Market', style: TextStyle(fontSize: 16)),
                   ),
                   SizedBox(
                     width: 150,
-                    child: CheckboxListTile(
-                      title: const Text('Month'),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: const EdgeInsets.all(0),
-                      value: tableModel.byMonth,
-                      onChanged: (bool? value) {
+                    child: DropdownButtonFormField(
+                      value: tableModel.market,
+                      icon: const Icon(Icons.expand_more),
+                      hint: const Text('Filter'),
+                      decoration: InputDecoration(
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor))),
+                      elevation: 16,
+                      onChanged: (String? newValue) {
                         setState(() {
-                          tableModel.byMonth = value!;
+                          tableModel.market = newValue!;
                         });
                       },
+                      items: ['(All)', 'DA', 'RT']
+                          .map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
                     ),
                   ),
-
-                  // table with costs
-                  //
-                  FutureBuilder(
-                    future: tableModel.getData(termModel.term),
-                    builder: (context, snapshot) {
-                      List<Widget> children;
-                      if (snapshot.hasData) {
-                        AssetAutocompleteModel.assetNames =
-                            tableModel.assetNames;
-                        var columns = _makeColumns(tableModel);
-                        children = [
-                          Flexible(
-                              child: PaginatedDataTable(
-                            columns: columns,
-                            source: _DataTableSource(tableModel),
-                            rowsPerPage: min(20, tableModel.data.length),
-                            showFirstLastButtons: true,
-                            header: const Text(''),
-                            actions: [
-                              IconButton(
-                                  onPressed: () {
-                                    Clipboard.setData(ClipboardData(
-                                        text: table.Table.from(tableModel.data)
-                                            .toCsv()));
-                                  },
-                                  tooltip: 'Copy',
-                                  icon: const Icon(Icons.content_copy)),
-                              IconButton(
-                                  onPressed: () {
-                                    downloadTableToCsv(tableModel.data);
-                                  },
-                                  tooltip: 'Download',
-                                  icon: const Icon(Icons.download_outlined))
-                            ],
-                          ))
-                        ];
-                      } else if (snapshot.hasError) {
-                        children = [
-                          const Icon(Icons.error_outline, color: Colors.red),
-                          Text(
-                            snapshot.error.toString(),
-                            style: const TextStyle(fontSize: 16),
-                          )
-                        ];
-                      } else {
-                        children = [
-                          const SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ))
-                        ];
-                      }
-                      return Row(children: children);
-                    },
-                  ),
-
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  // Text('Selected: ${getSelection(market, bucket)}'),
                 ],
               ),
-            ),
+              Row(
+                children: [
+                  Checkbox(
+                      value: tableModel.byAsset,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          tableModel.byAsset = value!;
+                        });
+                      }),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const SizedBox(
+                    width: 80,
+                    child: Text('Asset', style: TextStyle(fontSize: 16)),
+                  ),
+                  const SizedBox(
+                    width: 150,
+                    child: AssetAutocomplete(),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 150,
+                child: CheckboxListTile(
+                  title: const Text('Month'),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: const EdgeInsets.all(0),
+                  value: tableModel.byMonth,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      tableModel.byMonth = value!;
+                    });
+                  },
+                ),
+              ),
+
+              // table with costs
+              //
+              FutureBuilder(
+                future: tableModel.getData(termModel.term),
+                builder: (context, snapshot) {
+                  List<Widget> children;
+                  if (snapshot.hasData) {
+                    AssetAutocompleteModel.assetNames = tableModel.assetNames;
+                    var columns = _makeColumns(tableModel);
+                    children = [
+                      Flexible(
+                          child: PaginatedDataTable(
+                        columns: columns,
+                        source: _DataTableSource(tableModel),
+                        rowsPerPage: min(20, tableModel.data.length),
+                        showFirstLastButtons: true,
+                        header: const Text(''),
+                        actions: [
+                          IconButton(
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: table.Table.from(tableModel.data)
+                                        .toCsv()));
+                              },
+                              tooltip: 'Copy',
+                              icon: const Icon(Icons.content_copy)),
+                          IconButton(
+                              onPressed: () {
+                                downloadTableToCsv(tableModel.data);
+                              },
+                              tooltip: 'Download',
+                              icon: const Icon(Icons.download_outlined))
+                        ],
+                      ))
+                    ];
+                  } else if (snapshot.hasError) {
+                    children = [
+                      const Icon(Icons.error_outline, color: Colors.red),
+                      Text(
+                        snapshot.error.toString(),
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    ];
+                  } else {
+                    children = [
+                      const SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ))
+                    ];
+                  }
+                  return Row(children: children);
+                },
+              ),
+
+              const SizedBox(
+                height: 24,
+              ),
+              // Text('Selected: ${getSelection(market, bucket)}'),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   List<DataColumn> _makeColumns(MonthlyAssetNcpcModel tableModel) {

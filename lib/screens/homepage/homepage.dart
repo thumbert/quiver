@@ -35,17 +35,10 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppGroup('Load'),
-                AppGroup('Reports'),
-              ]),
-        ),
-        const AppGroup('Other'),
+      body: Wrap(direction: Axis.horizontal, children: const [
+        AppGroup('Load'),
+        AppGroup('Reports'),
+        AppGroup('Other'),
       ]),
     );
   }

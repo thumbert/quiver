@@ -39,7 +39,7 @@ class _HistoricalPlcUiState extends State<HistoricalPlcUi> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TermUi(),
+                  const SizedBox(width: 200, child: TermUi()),
                   Wrap(
                     direction: Axis.horizontal,
                     spacing: 10,

@@ -48,7 +48,7 @@ class _RegionState extends State<Region> {
                 model.region = newValue!;
               });
             },
-            items: RegionModel.allowedRegions.keys
+            items: model.allowedRegions
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
           ),
