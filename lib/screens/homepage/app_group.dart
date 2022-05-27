@@ -1,8 +1,8 @@
 library screens.homepage.calculator_list;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/grim_spreader/grim_spreader.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
@@ -41,7 +41,7 @@ class AppGroup extends StatefulWidget {
           url: MccSurfer.route,
           title: 'MCC surfer ',
           icon: const Icon(Icons.surfing)),
-      MenuItem(url: GrimSpreader.route, title: 'Grim spreader'),
+      MenuItem(url: Polygraph.route, title: 'Polygraph'),
       MenuItem(url: MonthlyLmp.route, title: 'Monthly LMP'),
       MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),
       MenuItem(url: Weather.route, title: 'Weather'),

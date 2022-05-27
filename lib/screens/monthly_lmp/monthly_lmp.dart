@@ -20,8 +20,8 @@ class _MonthlyLmpState extends State<MonthlyLmp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => MarketModel(market: 'DA')),
-      ChangeNotifierProvider(create: (context) => BucketModel(bucket: '7x24')),
+      // ChangeNotifierProvider(create: (context) => MarketModel()),
+      ChangeNotifierProvider(create: (context) => BucketModel()),
     ], child: const MonthlyLmpUi());
   }
 }

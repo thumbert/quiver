@@ -182,7 +182,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                                                     context) ==
                                                 index;
                                         if (highlight) {
-                                          SchedulerBinding.instance!
+                                          SchedulerBinding.instance
                                               .addPostFrameCallback(
                                                   (Duration timeStamp) {
                                             Scrollable.ensureVisible(context,
@@ -277,7 +277,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                                                     context) ==
                                                 index;
                                         if (highlight) {
-                                          SchedulerBinding.instance!
+                                          SchedulerBinding.instance
                                               .addPostFrameCallback(
                                                   (Duration timeStamp) {
                                             Scrollable.ensureVisible(context,

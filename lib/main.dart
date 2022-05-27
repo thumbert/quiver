@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
+import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/grim_spreader/grim_spreader.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/power_location2.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
@@ -12,6 +15,7 @@ import 'package:flutter_quiver/screens/error404.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
 import 'package:flutter_quiver/screens/homepage/homepage.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -46,8 +50,9 @@ class MyApp extends StatelessWidget {
         path: MonthlyLmp.route,
         builder: (context, state) => const MonthlyLmp()),
     GoRoute(
-        path: GrimSpreader.route,
-        builder: (context, state) => const GrimSpreader()),
+      path: Polygraph.route,
+      builder: (context, state) => const Polygraph(),
+    ),
     GoRoute(
         path: UnmaskedEnergyOffers.route,
         builder: (context, state) => const UnmaskedEnergyOffers()),

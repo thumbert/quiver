@@ -1,22 +1,10 @@
 library models.common.region_model;
 
 import 'package:elec/elec.dart';
-import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
-import 'package:elec/ftr.dart';
 
-class RegionModel extends ChangeNotifier {
-  RegionModel({region = 'ISONE', List<String>? allowedRegions}) {
-    _region = region;
-    if (allowedRegions == null) {
-      this.allowedRegions = allRegions.keys.toList();
-    } else {
-      this.allowedRegions = allowedRegions;
-    }
-  }
-
-  late final PtidsApi client;
-  late final List<String> allowedRegions;
+mixin RegionMixin on ChangeNotifier {
+  late List<String> allowedRegions;
 
   static final allRegions = <String, Iso>{
     'ISONE': Iso.newEngland,
@@ -35,5 +23,27 @@ class RegionModel extends ChangeNotifier {
     }
   }
 
+  void setRegion(String region) {
+    _region = region;
+  }
+
   String get region => _region;
+}
+
+class RegionModel extends ChangeNotifier with RegionMixin {
+  RegionModel(String region) {
+    _region = region;
+    allowedRegions = RegionMixin.allRegions.keys.toList();
+  }
+
+  // void init(String region, {List<String>? allowedRegions}) {
+  //   if (allowedRegions == null) {
+  //     this.allowedRegions = RegionMixin.allRegions.keys.toList();
+  //   } else {
+  //     this.allowedRegions = allowedRegions;
+  //   }
+  //   if (this.allowedRegions.contains(region)) {
+  //     _region = region;
+  //   }
+  // }
 }

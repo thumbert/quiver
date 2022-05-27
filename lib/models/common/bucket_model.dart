@@ -1,29 +1,30 @@
 library models.bucket_model;
 
-import 'package:date/date.dart';
+import 'package:elec/elec.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
-class BucketModel extends ChangeNotifier {
-  BucketModel({required String bucket, List<String>? allowedBuckets}) {
-    _bucket = bucket;
-    if (allowedBuckets != null) {
-      this.allowedBuckets = allowedBuckets;
+mixin BucketMixin on ChangeNotifier {
+  late String _bucket;
+
+  static List<String> allowedBuckets = Bucket.buckets.keys.toList();
+
+  set bucket(String value) {
+    if (allowedBuckets.contains(value)) {
+      _bucket = value;
+      notifyListeners();
     }
   }
 
-  late String _bucket;
-
-  List<String> allowedBuckets = <String>[
-    '7x24',
-    'Peak',
-    'Offpeak',
-  ];
-
-  set bucket(String bucket) {
-    _bucket = bucket;
-    notifyListeners();
-  }
-
   String get bucket => _bucket;
+}
+
+class BucketModel extends ChangeNotifier with BucketMixin {
+  BucketModel();
+
+  void init(String value, {List<String>? allowedBuckets}) {
+    _bucket = value;
+    if (allowedBuckets != null) {
+      BucketMixin.allowedBuckets = allowedBuckets;
+    }
+  }
 }

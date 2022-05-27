@@ -43,7 +43,7 @@ class _BucketState extends State<Bucket> {
                 model.bucket = newValue!;
               });
             },
-            items: model.allowedBuckets
+            items: BucketMixin.allowedBuckets
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
           ),

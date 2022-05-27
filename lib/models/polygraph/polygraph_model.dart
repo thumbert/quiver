@@ -1,8 +1,8 @@
-library models.grim_spreader.grim_spreader_model;
+library models.polygraph.polygraph_model;
 
 import 'package:flutter/material.dart';
 
-class GrimSpreaderModel extends ChangeNotifier {
+class PolygraphModel extends ChangeNotifier {
   static final layout = {
     'width': 900,
     'height': 700,

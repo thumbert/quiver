@@ -23,13 +23,14 @@ class _RegionState extends State<Region> {
       children: [
         //
         // Region
-        Container(
-          padding: const EdgeInsets.only(right: 12),
-          child: const Text(
-            'Region',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
+        // if (model.showLabel)
+        //   Container(
+        //     padding: const EdgeInsets.only(right: 12),
+        //     child: const Text(
+        //       'Region',
+        //       style: TextStyle(fontSize: 16),
+        //     ),
+        //   ),
         Container(
           color: _background,
           padding: const EdgeInsetsDirectional.only(start: 6, end: 6),

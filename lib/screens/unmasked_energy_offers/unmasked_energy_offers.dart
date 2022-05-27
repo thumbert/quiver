@@ -26,7 +26,7 @@ class _UnmaskedEnergyOffersState extends State<UnmaskedEnergyOffers> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => RegionModel()),
+      ChangeNotifierProvider(create: (context) => RegionModel('ISONE')),
       ChangeNotifierProvider(create: (context) => TermModel(term: term)),
       ChangeNotifierProvider(create: (context) => UnmaskedEnergyOffersModel()),
     ], child: const UnmaskedEnergyOffersUi());

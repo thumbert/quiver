@@ -80,7 +80,7 @@ class _FtrPathUiState extends State<FtrPathUi> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Scrollbar(
-                      isAlwaysShown: true,
+                      thumbVisibility: true,
                       controller: _scrollControllerH,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
