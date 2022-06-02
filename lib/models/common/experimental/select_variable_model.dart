@@ -111,7 +111,7 @@ class SelectVariableModel extends ChangeNotifier {
           'bucket': '5x16',
           'forwardTerm': '',
         },
-        'label': 'Zone G DA LMP, 5x16',
+        'label': 'Fwd Zone G DA 5x16',
       },
       {
         'category': 'Power',

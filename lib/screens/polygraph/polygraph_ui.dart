@@ -295,66 +295,67 @@ class _PolygraphUiState extends State<PolygraphUi> {
               const SizedBox(
                 height: 24,
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    variableModel.editedIndex = 1;
-                    var y = variableModel.getEditedVariable();
-                    var region = y['region'];
-                    var deliveryPoint = y['deliveryPoint'];
-                    var res = await showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider(
-                                    create: (context) => RegionModel(region)),
-                                ChangeNotifierProvider(
-                                    create: (context) =>
-                                        PowerDeliveryPointModel(deliveryPoint)),
-                              ],
-                              builder: (context, _) => AlertDialog(
-                                    elevation: 24.0,
-                                    title: const Text('Select'),
-                                    content: const PowerLocation2(),
-                                    actions: [
-                                      TextButton(
-                                          child: const Text('CANCEL'),
-                                          onPressed: () {
-                                            /// ignore changes and pop
-                                            Navigator.of(context).pop();
-                                          }),
-                                      ElevatedButton(
-                                          child: const Text('OK'),
-                                          onPressed: () {
-                                            /// harvest the values
-                                            final regionModel =
-                                                context.read<RegionModel>();
-                                            final deliveryPointModel =
-                                                context.read<
-                                                    PowerDeliveryPointModel>();
-                                            Navigator.of(context).pop({
-                                              'region': regionModel.region,
-                                              'deliveryPoint':
-                                                  deliveryPointModel
-                                                      .deliveryPointName,
-                                            });
-                                          }),
-                                    ],
-                                  ));
-                        });
-                    print(res);
-
-                    // Navigator.pushNamed(context, '/editor_power');
-                    // context.go(context.namedLocation(
-                    //   'power_editor',
-                    //   params: <String, String>{
-                    //     'region': y['region'],
-                    //     'deliveryPoint': y['deliveryPoint'],
-                    //   },
-                    // ));
-                  },
-                  child: const Text('Edit Power location')),
+              // ElevatedButton(
+              //     child: const Text('Edit Power location'),
+              //     onPressed: () async {
+              //       variableModel.editedIndex = 1;
+              //       var y = variableModel.getEditedVariable();
+              //       var region = y['region'];
+              //       var deliveryPoint = y['deliveryPoint'];
+              //       var res = await showDialog(
+              //           barrierDismissible: false,
+              //           context: context,
+              //           builder: (context) {
+              //             return MultiProvider(
+              //                 providers: [
+              //                   ChangeNotifierProvider(
+              //                       create: (context) => RegionModel(region)),
+              //                   ChangeNotifierProvider(
+              //                       create: (context) =>
+              //                           PowerDeliveryPointModel(deliveryPoint)),
+              //                 ],
+              //                 builder: (context, _) => AlertDialog(
+              //                       elevation: 24.0,
+              //                       title: const Text('Select'),
+              //                       content: const PowerLocation2(),
+              //                       actions: [
+              //                         TextButton(
+              //                             child: const Text('CANCEL'),
+              //                             onPressed: () {
+              //                               /// ignore changes and pop
+              //                               Navigator.of(context).pop();
+              //                             }),
+              //                         ElevatedButton(
+              //                             child: const Text('OK'),
+              //                             onPressed: () {
+              //                               /// harvest the values
+              //                               final regionModel =
+              //                                   context.read<RegionModel>();
+              //                               final deliveryPointModel =
+              //                                   context.read<
+              //                                       PowerDeliveryPointModel>();
+              //                               Navigator.of(context).pop({
+              //                                 'region': regionModel.region,
+              //                                 'deliveryPoint':
+              //                                     deliveryPointModel
+              //                                         .deliveryPointName,
+              //                               });
+              //                             }),
+              //                       ],
+              //                     ));
+              //           });
+              //       print(res);
+              //
+              //       // Navigator.pushNamed(context, '/editor_power');
+              //       // context.go(context.namedLocation(
+              //       //   'power_editor',
+              //       //   params: <String, String>{
+              //       //     'region': y['region'],
+              //       //     'deliveryPoint': y['deliveryPoint'],
+              //       //   },
+              //       // ));
+              //     },
+              //     ),
             ],
           ),
         ),

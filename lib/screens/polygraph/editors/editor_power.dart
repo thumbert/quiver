@@ -46,7 +46,7 @@ class _EditorPowerState extends State<EditorPower> {
         SizedBox(
           height: 12,
         ),
-        HistoricalForward(),
+        HistoricalOrForward(),
       ],
     );
   }
