@@ -2,22 +2,24 @@ library screens.polygraph.editors.power_market;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/power_location.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 
-class PowerMarket extends StatefulWidget {
+class PowerMarket extends ConsumerStatefulWidget {
   const PowerMarket({Key? key}) : super(key: key);
 
   @override
-  _PowerMarketState createState() => _PowerMarketState();
+  ConsumerState<PowerMarket> createState() => _PowerMarketState();
 }
 
-class _PowerMarketState extends State<PowerMarket> {
+class _PowerMarketState extends ConsumerState<PowerMarket> {
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<MarketModel>();
+    final model = ref.watch(providerOfPowerLocation);
 
     return DropdownButtonFormField(
-      value: model.market,
+      value: model.market.toString(),
       icon: const Icon(Icons.expand_more),
       hint: const Text('Filter'),
       decoration: const InputDecoration(
@@ -28,7 +30,7 @@ class _PowerMarketState extends State<PowerMarket> {
       elevation: 16,
       onChanged: (String? newValue) {
         setState(() {
-          model.market = newValue!;
+          ref.read(providerOfPowerLocation.notifier).market = newValue!;
         });
       },
       items: MarketMixin.allowedValues

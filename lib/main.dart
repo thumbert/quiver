@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/power_location2.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/power_location.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';

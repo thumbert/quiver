@@ -6,7 +6,7 @@ import 'package:flutter_quiver/models/common/experimental/select_variable_model.
 import 'package:flutter_quiver/models/common/lmp_component_model.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_power.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_power/editor_power.dart';
 import 'package:provider/provider.dart';
 
 class EditorMain extends StatefulWidget {
@@ -88,7 +88,7 @@ class _EditorMainState extends State<EditorMain> {
                 create: (context) => MarketModel(ys['market'])),
             ChangeNotifierProvider(
                 create: (context) => LmpComponentModel(ys['component'])),
-          ], child: const EditorPower()),
+          ], child: const EditorPowerUi()),
         //
         //
         const SizedBox(

@@ -2,18 +2,18 @@ library screens.polygraph.editors.power_deliverypoint;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
-import 'package:flutter_quiver/models/common/region_model.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/power_location.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PowerDeliveryPoint extends StatefulWidget {
+class PowerDeliveryPoint extends ConsumerStatefulWidget {
   const PowerDeliveryPoint({Key? key}) : super(key: key);
 
   @override
-  _PowerDeliveryPointState createState() => _PowerDeliveryPointState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _PowerDeliveryPointState();
 }
 
-class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
+class _PowerDeliveryPointState extends ConsumerState<PowerDeliveryPoint> {
   final focusNode = FocusNode();
   final editingController = TextEditingController();
 
@@ -22,17 +22,18 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
 
   @override
   void initState() {
-    final model = context.read<PowerDeliveryPointModel>();
-    editingController.text = model.deliveryPointName;
+    final model = ref.read(providerOfPowerLocation);
+    editingController.text = model.deliveryPoint;
 
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
-        var map = model.cacheNameMap[model.currentRegion]!;
+        var map = model.cacheNameMap[model.region]!;
 
         /// validate when you lose focus (Tab out of the field)
         setState(() {
           if (!map.keys.contains(editingController.text)) {
-            model.deliveryPointName = map.keys.first;
+            ref.read(providerOfPowerLocation.notifier).deliveryPoint =
+                PowerLocation.allRegions[model.region]!.item2;
           }
         });
       }
@@ -49,18 +50,15 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
 
   @override
   Widget build(BuildContext context) {
-    final regionModel = context.watch<RegionModel>();
-    final model = context.watch<PowerDeliveryPointModel>();
-    if (regionModel.region != model.currentRegion) {
-      model.currentRegion = regionModel.region;
-    }
+    final model = ref.watch(providerOfPowerLocation);
+
     return FutureBuilder(
       future: model.getNameMap(),
       builder: (context, snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
           var nameToPtid = snapshot.data! as Map<String, int>;
-          editingController.text = model.deliveryPointName;
+          editingController.text = model.deliveryPoint;
           children = [
             Container(
               color: _background,
@@ -88,7 +86,8 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
                   },
                   onSelected: (String selection) {
                     setState(() {
-                      model.deliveryPointName = selection;
+                      ref.read(providerOfPowerLocation.notifier).deliveryPoint =
+                          selection;
                     });
                   },
                   optionsViewBuilder: (BuildContext context,
@@ -99,8 +98,8 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
                       child: Material(
                         elevation: 4.0,
                         child: ConstrainedBox(
-                          constraints:
-                              BoxConstraints(maxHeight: maxOptionsHeight),
+                          constraints: BoxConstraints(
+                              maxHeight: maxOptionsHeight, maxWidth: 280),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,

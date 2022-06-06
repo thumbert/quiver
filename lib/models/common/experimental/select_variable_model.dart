@@ -92,9 +92,9 @@ class SelectVariableModel extends ChangeNotifier {
             'time': {
               'frequency': {
                 'day',
-              }
+              },
+              'function': 'mean',
             },
-            'function': 'mean',
           }
         },
         'label': 'MassHub DA LMP, 5x16',
