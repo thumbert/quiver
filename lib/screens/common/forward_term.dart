@@ -50,7 +50,7 @@ class _ForwardTermUiState extends ConsumerState<ForwardTermUi> {
             _error = null; // all good
           } on ArgumentError catch (e) {
             print(e);
-            _error = 'Parsing error forward term';
+            _error = 'Error parsing forward term';
           } catch (e) {
             print(e);
           }
@@ -73,6 +73,8 @@ class _ForwardTermUiState extends ConsumerState<ForwardTermUi> {
       decoration: InputDecoration(
         labelText: 'Forward Term',
         labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+        // fillColor: Colors.orange[100]!,
+        // filled: true,
         helperText: '',
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Theme.of(context).primaryColor),

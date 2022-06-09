@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/providers/term_provider.dart';
 import 'package:flutter_quiver/screens/common/term2.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_power/editor_power.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_power/forward_asof_view.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_power/realized_view.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/power_location.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/view_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PolygraphUi extends ConsumerStatefulWidget {
@@ -48,28 +51,60 @@ class _PolygraphUiState extends ConsumerState<PolygraphUi> {
           child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: const [
-                        SizedBox(width: 120, child: TermUi2()),
-                        SizedBox(
-                          width: 36,
-                        ),
-                      ],
-                    ),
-                    const EditorPowerUi(),
-                    const SizedBox(
-                      height: 64,
-                    ),
-                    Text('Term is: ${term.toString()}'),
-                    Text('Selected region: ${deliveryPoint.region}'),
-                    Text(
-                        'Selected deliveryPoint: ${deliveryPoint.deliveryPoint}'),
-                    Text('Selected market: ${deliveryPoint.market}'),
-                    Text('Selected component: ${deliveryPoint.component}'),
-                    Text('Selected tab: ${editorPower.viewEditor.name}'),
-                  ]))),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      SizedBox(width: 150, child: TermUi2()),
+                      SizedBox(
+                        width: 36,
+                      ),
+                    ],
+                  ),
+                  const EditorPowerUi(),
+                  const SizedBox(
+                    height: 64,
+                  ),
+                  Text('Term is: ${term.toString()}'),
+                  Text('Selected region: ${deliveryPoint.region}'),
+                  Text(
+                      'Selected deliveryPoint: ${deliveryPoint.deliveryPoint}'),
+                  Text('Selected market: ${deliveryPoint.market}'),
+                  Text('Selected component: ${deliveryPoint.component}'),
+                  Text('Selected tab: ${editorPower.viewEditor.name}'),
+                  contentsViewEditor(editorPower.viewEditor),
+                ],
+              ))),
     );
+  }
+
+  /// Just to show the selection ...
+  Widget contentsViewEditor(ViewEditor viewEditor) {
+    if (viewEditor is RealizedView) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Historical term: ${viewEditor.term.toString()}'),
+            Text('TimeFilter: ${viewEditor.timeFilter.toString()}'),
+          ],
+        ),
+      );
+    } else if (viewEditor is ForwardAsOfView) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('As of date: ${viewEditor.asOfDate.toString()}'),
+            Text('Forward term: ${viewEditor.forwardTerm.toString()}'),
+            Text('Bucket: ${viewEditor.bucket.toString()}'),
+          ],
+        ),
+      );
+    } else {
+      throw ArgumentError('ViewEditor ${viewEditor.name} not supported');
+    }
   }
 }

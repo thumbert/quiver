@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart';
 
-final asOfDateProvider = StateNotifierProvider<AsOfDateNotifier, Date>(
+final providerOfAsOfDate = StateNotifierProvider<AsOfDateNotifier, Date>(
     (ref) => AsOfDateNotifier(ref));
 
 class AsOfDateNotifier extends StateNotifier<Date> {
@@ -34,8 +34,8 @@ class _AsOfDateUiState extends ConsumerState<AsOfDateUi> {
   void initState() {
     super.initState();
     final fmt = DateFormat('dMMMyy');
-    controller.text = ref.read(asOfDateProvider).toString(fmt);
-    final model = ref.read(asOfDateProvider.notifier);
+    controller.text = ref.read(providerOfAsOfDate).toString(fmt);
+    final model = ref.read(providerOfAsOfDate.notifier);
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
         /// validate when you lose focus (Tab out of the field)
@@ -82,7 +82,7 @@ class _AsOfDateUiState extends ConsumerState<AsOfDateUi> {
       onEditingComplete: () {
         setState(() {
           try {
-            ref.read(asOfDateProvider.notifier).date =
+            ref.read(providerOfAsOfDate.notifier).date =
                 Date.parse(controller.text, location: UTC);
             _error = null; // all good
           } on ArgumentError catch (e) {

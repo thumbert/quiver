@@ -1,48 +1,52 @@
-library screens.common.bucket2;
+library screens.common.maybe_bucket;
 
 import 'package:elec/elec.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final providerOfBucket =
-    StateNotifierProvider<BucketNotifier, Bucket>((ref) => BucketNotifier(ref));
+/// A Bucket autocomplete field that allows for no bucket input (Null value.)
+///
 
-class BucketNotifier extends StateNotifier<Bucket> {
-  BucketNotifier(this.ref) : super(Bucket.atc);
+final providerOfMaybeBucket =
+    StateNotifierProvider<MaybeBucketNotifier, Bucket?>(
+        (ref) => MaybeBucketNotifier(ref));
+
+class MaybeBucketNotifier extends StateNotifier<Bucket?> {
+  MaybeBucketNotifier(this.ref) : super(null);
   final Ref ref;
 
-  static List<String> allowedValues = ['ATC', 'Peak', 'Offpeak'];
+  static List<String> allowedValues = ['', 'ATC', 'Peak', 'Offpeak'];
 
-  set bucket(Bucket value) {
+  set bucket(Bucket? value) {
     state = value;
   }
 }
 
-class BucketUi extends ConsumerStatefulWidget {
-  const BucketUi({Key? key}) : super(key: key);
+class MaybeBucketUi extends ConsumerStatefulWidget {
+  const MaybeBucketUi({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<BucketUi> createState() => _BucketState();
+  ConsumerState<MaybeBucketUi> createState() => _BucketState();
 }
 
-class _BucketState extends ConsumerState<BucketUi> {
+class _BucketState extends ConsumerState<MaybeBucketUi> {
   final focusNode = FocusNode();
   final editingController = TextEditingController();
   final maxOptionsHeight = 350.0;
 
   @override
   void initState() {
-    editingController.text = ref.read(providerOfBucket).toString();
+    editingController.text = '';
 
     focusNode.addListener(() {
       if (!focusNode.hasFocus) {
         /// validate when you lose focus (Tab out of the field)
         setState(() {
-          if (!BucketNotifier.allowedValues.contains(editingController.text)) {
-            ref.read(providerOfBucket.notifier).bucket =
-                Bucket.parse(BucketNotifier.allowedValues.first);
-            editingController.text = BucketNotifier.allowedValues.first;
+          if (!MaybeBucketNotifier.allowedValues
+              .contains(editingController.text)) {
+            ref.read(providerOfMaybeBucket.notifier).bucket = null;
+            editingController.text = '';
           }
         });
       }
@@ -70,19 +74,23 @@ class _BucketState extends ConsumerState<BucketUi> {
               focusNode: focusNode,
               textEditingController: textEditingController,
               onFieldSubmitted: onFieldSubmitted,
-              options: BucketNotifier.allowedValues,
+              options: MaybeBucketNotifier.allowedValues,
             ),
         optionsBuilder: (TextEditingValue textEditingValue) {
           if (textEditingValue == TextEditingValue.empty) {
             return const Iterable<String>.empty();
           }
-          return BucketNotifier.allowedValues.where((e) =>
+          return MaybeBucketNotifier.allowedValues.where((e) =>
               e.toUpperCase().contains(textEditingValue.text.toUpperCase()));
         },
         onSelected: (String selection) {
           setState(() {
-            ref.read(providerOfBucket.notifier).bucket =
-                Bucket.parse(selection);
+            if (selection == '') {
+              ref.read(providerOfMaybeBucket.notifier).bucket = null;
+            } else {
+              ref.read(providerOfMaybeBucket.notifier).bucket =
+                  Bucket.parse(selection);
+            }
           });
         },
         optionsViewBuilder: (BuildContext context,
@@ -175,21 +183,3 @@ class _AutocompleteField extends StatelessWidget {
     );
   }
 }
-
-// child: DropdownButtonFormField(
-//   value: model.bucket,
-//   icon: const Icon(Icons.expand_more),
-//   hint: const Text('Filter'),
-//   decoration: InputDecoration(
-//       enabledBorder: UnderlineInputBorder(
-//           borderSide: BorderSide(color: Theme.of(context).primaryColor))),
-//   elevation: 16,
-//   onChanged: (String? newValue) {
-//     setState(() {
-//       model.bucket = newValue!;
-//     });
-//   },
-//   items: BucketMixin.allowedBuckets
-//       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-//       .toList(),
-// ),

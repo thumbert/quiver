@@ -10,7 +10,7 @@ class Airport extends StatefulWidget {
   final int index;
 
   @override
-  _AirportState createState() => _AirportState();
+  State<Airport> createState() => _AirportState();
 }
 
 class _AirportState extends State<Airport> {
@@ -21,7 +21,6 @@ class _AirportState extends State<Airport> {
   @override
   void initState() {
     final model = context.read<AirportModel>();
-    // print('in airport init for ${widget.index} value ${model[widget.index]}');
     airportController.text = model[widget.index];
     focusAirport.addListener(() {
       if (!focusAirport.hasFocus) {

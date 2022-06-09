@@ -1,10 +1,7 @@
-library screens.polygraph.editors.editor_power.forward_asof;
+library screens.polygraph.editors.editor_power.forward_asof_view;
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_quiver/screens/common/forward_term.dart';
-// import 'package:flutter_quiver/screens/common/term2.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/view_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart';
@@ -72,42 +69,32 @@ class ForwardAsOfViewNotifier extends StateNotifier<ForwardAsOfView> {
   }
 }
 
-class ForwardAsOfUi extends StatefulWidget {
-  const ForwardAsOfUi({Key? key}) : super(key: key);
-  @override
-  State<ForwardAsOfUi> createState() => _ForwardAsOfUiState();
-}
-
-class _ForwardAsOfUiState extends State<ForwardAsOfUi> {
-  final _background = Colors.orange[100]!;
-
-  // @override
-  // void initState() {
-  //   final regionModel = context.read<RegionModel>();
-  //   final deliveryPointModel = context.read<PowerDeliveryPointModel>();
-  //   deliveryPointModel.currentRegion = regionModel.region;
-  //   super.initState();
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    // final regionModel = context.watch<RegionModel>();
-    // final deliveryPointModel = context.watch<PowerDeliveryPointModel>();
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            Text(
-              'Forward Term',
-              style: TextStyle(fontSize: 16),
-            ),
-            ForwardTermUi(),
-          ],
-        ),
-      ],
-    );
-  }
-}
+// class ForwardAsOfUi extends StatefulWidget {
+//   const ForwardAsOfUi({Key? key}) : super(key: key);
+//   @override
+//   State<ForwardAsOfUi> createState() => _ForwardAsOfUiState();
+// }
+//
+// class _ForwardAsOfUiState extends State<ForwardAsOfUi> {
+//   @override
+//   Widget build(BuildContext context) {
+//     // final regionModel = context.watch<RegionModel>();
+//     // final deliveryPointModel = context.watch<PowerDeliveryPointModel>();
+//
+//     return Column(
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.start,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: const [
+//             Text(
+//               'Forward Term',
+//               style: TextStyle(fontSize: 16),
+//             ),
+//             ForwardTermUi(),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }

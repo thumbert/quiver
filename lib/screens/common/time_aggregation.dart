@@ -8,7 +8,7 @@ class TimeAggregation extends StatefulWidget {
   const TimeAggregation({Key? key}) : super(key: key);
 
   @override
-  _TimeAggregationState createState() => _TimeAggregationState();
+  State<TimeAggregation> createState() => _TimeAggregationState();
 }
 
 class _TimeAggregationState extends State<TimeAggregation> {

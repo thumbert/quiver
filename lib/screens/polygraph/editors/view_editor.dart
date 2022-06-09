@@ -1,20 +1,16 @@
 library models.polygraph.editors.view_model;
 
-import 'package:date/date.dart';
 import 'package:flutter_quiver/screens/common/asof_date.dart';
 import 'package:flutter_quiver/screens/common/bucket2.dart';
 import 'package:flutter_quiver/screens/common/forward_term.dart';
+import 'package:flutter_quiver/screens/common/historical_term.dart';
+import 'package:flutter_quiver/screens/common/time_filter.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_power/editor_power.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timezone/timezone.dart';
 import 'package:flutter/material.dart';
 
-final tabProvider =
+final providerOfTabIndexView =
     StateNotifierProvider<_TabNotifier, int>((ref) => _TabNotifier(0));
-
-final providerOfRealizedView =
-    StateNotifierProvider<RealizedViewNotifier, RealizedView>(
-        (ref) => RealizedViewNotifier(ref));
 
 class _TabNotifier extends StateNotifier<int> {
   _TabNotifier(this.index) : super(0);
@@ -28,67 +24,6 @@ abstract class ViewEditor {
   late final String name;
   ViewEditor fromJson(Map<String, dynamic> json);
   Map<String, dynamic> toJson();
-}
-
-class RealizedView extends Object with ViewEditor {
-  RealizedView({required this.term, this.timeFilter, this.timeAggregation}) {
-    name = 'Realized';
-  }
-
-  late final Term term;
-
-  ///```
-  ///{
-  ///  'time': {
-  ///    'bucket': '5x16',
-  ///   },
-  ///}
-  ///```
-  Map<String, dynamic>? timeFilter;
-
-  /// ```
-  /// {
-  ///   'time': {
-  ///     'frequency': {
-  ///        'day',
-  ///     },
-  ///     'function': 'mean',
-  ///   },
-  /// }
-  /// ```
-  Map<String, dynamic>? timeAggregation;
-
-  RealizedView copyWith({Term? term}) {
-    return RealizedView(term: term ?? this.term);
-  }
-
-  @override
-  RealizedView fromJson(Map<String, dynamic> json) {
-    return RealizedView(
-      term: Term.parse(json['term'], UTC),
-      timeFilter: json['filter'],
-      timeAggregation: json['aggregate'],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'name': 'Forward, as of',
-      'term': term.toString(),
-      if (timeFilter != null) 'filter': timeFilter,
-      if (timeAggregation != null) 'filter': timeAggregation,
-    };
-  }
-}
-
-class RealizedViewNotifier extends StateNotifier<RealizedView> {
-  RealizedViewNotifier(this.ref)
-      : super(RealizedView(term: Term.parse('Jan22', UTC)));
-  final Ref ref;
-  set term(Term value) {
-    state = state.copyWith(term: value);
-  }
 }
 
 /// A widget to select between a historical of forward view of the data
@@ -124,14 +59,14 @@ class _ViewEditorUiState extends ConsumerState<ViewEditorUi> {
               child: TextButton(
                   onPressed: () {
                     setState(() {
-                      ref.read(tabProvider.notifier).setValue(0);
+                      ref.read(providerOfTabIndexView.notifier).setValue(0);
                     });
                   },
                   child: Text(
                     'Realized prices',
                     style: TextStyle(
                         fontSize: 16,
-                        color: ref.read(tabProvider) == 0
+                        color: ref.read(providerOfTabIndexView) == 0
                             ? Colors.black
                             : Colors.grey),
                   )),
@@ -151,14 +86,14 @@ class _ViewEditorUiState extends ConsumerState<ViewEditorUi> {
               child: TextButton(
                   onPressed: () {
                     setState(() {
-                      ref.read(tabProvider.notifier).setValue(1);
+                      ref.read(providerOfTabIndexView.notifier).setValue(1);
                     });
                   },
                   child: Text(
                     'Forward curve, as of',
                     style: TextStyle(
                         fontSize: 16,
-                        color: ref.read(tabProvider) == 1
+                        color: ref.read(providerOfTabIndexView) == 1
                             ? Colors.black
                             : Colors.grey),
                   )),
@@ -178,42 +113,122 @@ class _ViewEditorUiState extends ConsumerState<ViewEditorUi> {
               child: TextButton(
                   onPressed: () {
                     setState(() {
-                      ref.read(tabProvider.notifier).setValue(2);
+                      ref.read(providerOfTabIndexView.notifier).setValue(2);
                     });
                   },
                   child: Text(
                     'Historical forward strip',
                     style: TextStyle(
                         fontSize: 16,
-                        color: ref.read(tabProvider) == 2
+                        color: ref.read(providerOfTabIndexView) == 2
                             ? Colors.black
                             : Colors.grey),
                   )),
             ),
           ],
         ),
-        if (ref.read(tabProvider) == 1)
+        tabContents(ref.read(providerOfTabIndexView)),
+      ],
+    );
+  }
+
+  Widget tabContents(int index) {
+    if (index == 0) {
+      /// Realized view
+      ///
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          const SizedBox(width: 150, child: HistoricalTermUi()),
           Row(
-            children: const [
-              SizedBox(width: 120, child: AsOfDateUi()),
-              SizedBox(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Time Filter',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  Row(
+                    children: const [
+                      SizedBox(
+                        width: 16,
+                      ),
+                      TimeFilterUi(),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 36,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Aggregation',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  const Text('Bla-bla'),
+                  // Row(
+                  //   children: const [
+                  //     SizedBox(
+                  //       width: 16,
+                  //     ),
+                  //     TimeFilterUi(),
+                  //   ],
+                  // ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    } else if (index == 1) {
+      /// Forward curve, as of view
+      ///
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              const SizedBox(width: 120, child: AsOfDateUi()),
+              const SizedBox(
                 width: 24,
               ),
-              SizedBox(width: 120, child: ForwardTermUi()),
-              SizedBox(
+              const SizedBox(width: 120, child: ForwardTermUi()),
+              const SizedBox(
                 width: 24,
               ),
-              Text(
+              const Text(
                 'Bucket',
                 style: TextStyle(fontSize: 16),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 6,
               ),
-              BucketUi(),
+              Container(
+                  color: _background, width: 100, child: const BucketUi()),
             ],
-          )
-      ],
-    );
+          ),
+        ],
+      );
+    } else {
+      throw ArgumentError('Tab index $index is not supported');
+    }
   }
 }
