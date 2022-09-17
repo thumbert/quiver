@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
-import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/power_location2.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
+import 'package:flutter_quiver/screens/pool_load_stats/pool_load_stats.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/screens/error404.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
 import 'package:flutter_quiver/screens/homepage/homepage.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
-import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:url_strategy/url_strategy.dart';
+// import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   initializeTimeZones();
-  setPathUrlStrategy();
+  // setPathUrlStrategy();  // doesn't allow me to navigate to the absolute url
   await dotenv.load(fileName: '.env');
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -54,6 +52,10 @@ class MyApp extends StatelessWidget {
       builder: (context, state) => const Polygraph(),
     ),
     GoRoute(
+      path: PoolLoadStats.route,
+      builder: (context, state) => const PoolLoadStats(),
+    ),
+    GoRoute(
         path: UnmaskedEnergyOffers.route,
         builder: (context, state) => const UnmaskedEnergyOffers()),
     // GoRoute(
@@ -77,9 +79,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-          minimumSize: const Size(140, 40),
-          primary: Colors.blueGrey.shade100,
-          onPrimary: Colors.black,
+          foregroundColor: Colors.black,
+              backgroundColor: Colors.blueGrey.shade100, minimumSize: const Size(140, 40),
         )),
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: Colors.blueGrey.shade300),
@@ -88,8 +89,7 @@ class MyApp extends StatelessWidget {
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            minimumSize: const Size(140, 40),
-            primary: Colors.black,
+            foregroundColor: Colors.black, minimumSize: const Size(140, 40),
             backgroundColor: Colors.blueGrey.shade50,
             // onSurface: Colors.white,
             // shadowColor: Colors.white,

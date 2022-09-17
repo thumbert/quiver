@@ -7,6 +7,7 @@ import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
+import 'package:flutter_quiver/screens/pool_load_stats/pool_load_stats.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/vlr_stage2/vlr_stage2.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
@@ -24,6 +25,7 @@ class AppGroup extends StatefulWidget {
       MenuItem(url: DemandBids.route, title: 'Demand Bids, RT Load & Forecast'),
       MenuItem(url: '/load_settlements', title: 'Load Settlements'),
       MenuItem(url: HistoricalPlc.route, title: 'Historical PLC'),
+      MenuItem(url: PoolLoadStats.route, title: 'Pool load statistics'),
       MenuItem(url: VlrStage2.route, title: 'Realized Stage 2 VLR'),
     ],
     //
