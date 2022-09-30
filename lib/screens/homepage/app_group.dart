@@ -125,7 +125,7 @@ class _AppGroupState extends State<AppGroup> {
           visualDensity: const VisualDensity(vertical: -4),
           dense: true,
           leading: Icon(
-            Icons.label_important_outline,
+            item.isHighlighted ? Icons.label_important : Icons.label_important_outline,
             color:
                 item.isHighlighted ? Colors.orange : Colors.blueGrey.shade400,
           ),
@@ -137,8 +137,9 @@ class _AppGroupState extends State<AppGroup> {
               children: [
                 Text(
                   item.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
+                    fontWeight: item.isHighlighted ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
                 if (item.icon != null) item.icon!,

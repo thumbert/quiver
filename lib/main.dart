@@ -21,11 +21,13 @@ void main() async {
   initializeTimeZones();
   // setPathUrlStrategy();  // doesn't allow me to navigate to the absolute url
   await dotenv.load(fileName: '.env');
-  runApp(ProviderScope(child: MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
+
+  static final background = Colors.orange[100]!;
 
   final _router = GoRouter(routes: [
     GoRoute(
@@ -53,7 +55,7 @@ class MyApp extends StatelessWidget {
     ),
     GoRoute(
       path: PoolLoadStats.route,
-      builder: (context, state) => const PoolLoadStats(),
+      builder: (context, state) => const ProviderScope(child: PoolLoadStats()),
     ),
     GoRoute(
         path: UnmaskedEnergyOffers.route,

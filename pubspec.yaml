@@ -22,7 +22,7 @@ dependencies:
   elec_server:
     git: https://github.com/thumbert/elec-server.git
   flutter_dotenv: ^5.0.0
-  flutter_svg: ^0.22.0
+  flutter_svg: ^1.1.5
   flutter_web_plotly:
     git: https://github.com/thumbert/flutter_web_plotly.git
   google_fonts: ^2.1.0
@@ -46,7 +46,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^1.0.0
-  flutter_native_splash: ^1.3.2
+  flutter_native_splash: ^2.2.9
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
