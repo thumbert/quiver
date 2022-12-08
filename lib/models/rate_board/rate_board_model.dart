@@ -32,38 +32,51 @@ final providerOfRetailOffers =
 
 class RateBoardState {
   RateBoardState({
-    required this.term,
     required this.region,
-    required this.state,
+    required this.stateName,
+    required this.loadZone,
     required this.utility,
     required this.accountType,
     required this.billingCycles,
+    required this.term,
   });
 
   /// Historical term to see behavior of offers, in UTC.  Used for the plot
   final Term term;
+
   /// For example ISONE
   final String region;
-  /// An actual state name, e.g. CT.  Don't allow '(All)'
-  final String state;
+
+  /// An actual state name, e.g. 'CT'.  Don't allow '(All)'
+  final String stateName;
+
+  /// An actual load zone, e.g. 'NEMA'.  Don't allow '(All)'
+  final String loadZone;
+
   /// A standard utility name, e.g. Eversource or United Illuminating or '(All)'.
   final String utility;
+
   /// Only the elements 'Business', 'Residential' are allowed.  Can't be empty!
   final List<String> accountType;
+
   /// Either '(All)' something like '12', '24', '33', '36'
   final String billingCycles;
 
   static final definitions = <Map<String, dynamic>>[
-    {'region': 'ISONE', 'state': 'CT', 'utility': 'Eversource'},
-    {'region': 'ISONE', 'state': 'CT', 'utility': 'United Illuminating'},
+    {
+      'region': 'ISONE',
+      'state': 'CT',
+      'loadZone': 'CT',
+      'utility': 'Eversource'
+    },
+    {
+      'region': 'ISONE',
+      'state': 'CT',
+      'loadZone': 'CT',
+      'utility': 'United Illuminating'
+    },
   ];
-
-  // static List<String> allStates = ['CT'];
-  //
-  // static List<String> allUtilities = ['(All)'];
-  //
-  // static List<String> allBillingCycles = ['(All)'];
-
+  
   /// Store the retail offers by region
   static var offersCache = <String, List<RetailSupplyOffer>>{};
 
@@ -79,18 +92,33 @@ class RateBoardState {
     return offersCache[region]!;
   }
 
+  /// Right now only ISONE
+  List<String> getAllRegions() {
+    return ['ISONE'];
+  }
+
   // When I have more states, so far only CT
   List<String> getAllStates() {
     if (offersCache.containsKey(region)) {
       return offersCache[region]!.map((e) => e.state).toSet().toList();
     } else {
-      return ['(All)'];
+      return ['Error'];
+    }
+  }
+
+  List<String> getAllZones() {
+    if (offersCache.containsKey(region)) {
+      return offersCache[region]!
+          .where((e) => e.state == stateName)
+          .map((e) => e.region).toSet().toList();
+    } else {
+      return ['Error'];
     }
   }
 
   List<String> getAllUtilities() {
     if (offersCache.containsKey(region)) {
-      var aux = offersCache[region]!.where((e) => e.state == state);
+      var aux = offersCache[region]!.where((e) => e.state == stateName);
       return aux.map((e) => e.state).toSet().toList();
     } else {
       return ['(All)'];
@@ -99,7 +127,7 @@ class RateBoardState {
 
   List<String> getAllBillingCycles() {
     if (offersCache.containsKey(region)) {
-      var aux = offersCache[region]!.where((e) => e.state == state);
+      var aux = offersCache[region]!.where((e) => e.state == stateName);
       if (utility != '(All)') {
         aux = aux.where((e) => e.utility == utility);
       }
@@ -107,21 +135,23 @@ class RateBoardState {
         // either Residential or Business
         aux = aux.where((e) => e.accountType == accountType.first);
       }
-      return ['(All)',
-        ...aux.map((e) => e.countOfBillingCycles.toString()).toSet()];
+      return [
+        '(All)',
+        ...aux.map((e) => e.countOfBillingCycles.toString()).toSet()
+      ];
     } else {
       return ['(All)'];
     }
   }
 
-
-  List<Map<String,dynamic>> makeOfferTable() {
+  List<Map<String, dynamic>> makeOfferTable() {
     if (!offersCache.containsKey(region)) {
-      return <Map<String,dynamic>>[];
+      return <Map<String, dynamic>>[];
     }
+
     /// get the offers from the cache
     Iterable<RetailSupplyOffer> all = offersCache[region]!;
-    all = all.where((e) => e.state == state);
+    all = all.where((e) => e.state == stateName);
     if (utility != '(All)') {
       all = all.where((e) => e.utility == utility);
     }
@@ -132,26 +162,27 @@ class RateBoardState {
       var term = int.parse(billingCycles);
       all = all.where((e) => e.countOfBillingCycles == term);
     }
-    var data = RetailSuppliersOffers.getCurrentOffers(all.toList(),
-        Date.today(location: UTC));
+    var data = RetailSuppliersOffers.getCurrentOffers(
+        all.toList(), Date.today(location: UTC));
     // sort decreasingly by term and rate
     // var comparator = naturalComparator
 
-    data.sort((a,b) => a.rate.compareTo(b.rate));
+    data.sort((a, b) => a.rate.compareTo(b.rate));
 
-    var res = data.map((e) => {
-      'Utility': e.utility,
-      'Supplier': e.supplierName,
-      'Account Type': e.accountType,
-      'Term': e.countOfBillingCycles,
-      'Recs': e.minimumRecs,
-      'Rate': e.rate,
-      'Posted Date': e.offerPostedOnDate.toString(),
-    }).toList();
+    var res = data
+        .map((e) => {
+              'Utility': e.utility,
+              'Supplier': e.supplierName,
+              'Account Type': e.accountType,
+              'Term': e.countOfBillingCycles,
+              'Recs': e.minimumRecs,
+              'Rate': e.rate,
+              'Posted Date': e.offerPostedOnDate.toString(),
+            })
+        .toList();
 
     return res;
   }
-
 
   // List<Map<String, dynamic>> makeTraces() {
   //   var traces = <Map<String, dynamic>>[];
@@ -222,7 +253,8 @@ class RateBoardState {
   static RateBoardState getDefault() => RateBoardState(
         term: Term(Date.utc(2022, 12, 1), Date.today(location: UTC)),
         region: 'ISONE',
-        state: 'CT',
+        stateName: 'CT',
+        loadZone: 'CT',
         utility: 'Eversource',
         accountType: <String>['Residential'],
         billingCycles: '(All)',
@@ -231,7 +263,8 @@ class RateBoardState {
   RateBoardState copyWith({
     Term? term,
     String? region,
-    String? state,
+    String? stateName,
+    String? loadZone,
     String? utility,
     List<String>? accountType,
     String? billingCycles,
@@ -239,7 +272,8 @@ class RateBoardState {
     return RateBoardState(
       term: term ?? this.term,
       region: region ?? this.region,
-      state: state ?? this.state,
+      stateName: stateName ?? this.stateName,
+      loadZone: loadZone ?? this.loadZone,
       utility: utility ?? this.utility,
       accountType: accountType ?? this.accountType,
       billingCycles: billingCycles ?? this.billingCycles,
@@ -275,9 +309,11 @@ class RateBoardNotifier extends StateNotifier<RateBoardState> {
 
   set region(String value) {
     if (value == 'ISONE') {
-      state =
-          state.copyWith(region: 'ISONE', state: 'CT', 
-              utility: 'Eversource', accountType: ['Residential']);
+      state = state.copyWith(
+          region: 'ISONE',
+          stateName: 'CT',
+          loadZone: 'CT',
+          utility: 'Eversource');
     }
   }
 
@@ -285,9 +321,21 @@ class RateBoardNotifier extends StateNotifier<RateBoardState> {
     var x0 = RateBoardState.definitions.firstWhere((e) => e['state'] == value);
     state = state.copyWith(
       region: x0['region'],
-      state: value,
+      stateName: value,
+      loadZone: x0['loadZone'],
       utility: x0['utility'],
-      accountType: ['Residential'],
+    );
+  }
+
+  set loadZone(String value) {
+    var x0 = RateBoardState.definitions
+        .firstWhere((e) => e['state'] == state.stateName && 
+        e['loadZone'] == state.loadZone);
+    state = state.copyWith(
+      region: x0['region'],
+      stateName: state.stateName,
+      loadZone: value,
+      utility: x0['utility'],
     );
   }
 
