@@ -5,6 +5,7 @@ import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/monthly_lmp/monthly_lmp.dart';
 import 'package:flutter_quiver/screens/pool_load_stats/pool_load_stats.dart';
+import 'package:flutter_quiver/screens/rate_boad/rate_board.dart';
 import 'package:flutter_quiver/screens/unmasked_energy_offers/unmasked_energy_offers.dart';
 import 'package:flutter_quiver/screens/weather/weather.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,11 +52,15 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const MonthlyLmp()),
     GoRoute(
       path: Polygraph.route,
-      builder: (context, state) => const Polygraph(),
+      builder: (context, state) => const ProviderScope(child: Polygraph()),
     ),
     GoRoute(
       path: PoolLoadStats.route,
       builder: (context, state) => const ProviderScope(child: PoolLoadStats()),
+    ),
+    GoRoute(
+      path: RateBoard.route,
+      builder: (context, state) => const ProviderScope(child: RateBoard()),
     ),
     GoRoute(
         path: UnmaskedEnergyOffers.route,
@@ -69,8 +74,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Quiver',
-      routerDelegate: _router.routerDelegate,
-      routeInformationParser: _router.routeInformationParser,
+      routerConfig: _router,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
             backgroundColor: Colors.blueGrey.shade300,

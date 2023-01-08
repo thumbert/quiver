@@ -72,7 +72,7 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
         padding: const EdgeInsets.only(left: 12.0, top: 8.0),
         child: Scrollbar(
           controller: _controller,
-          isAlwaysShown: true,
+          thumbVisibility: true,
           child: ListView(
             controller: _controller,
             children: [

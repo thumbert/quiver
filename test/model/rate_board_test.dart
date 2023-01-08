@@ -18,16 +18,29 @@ Future<void> tests(String rootUrl) async {
   // state = state.copyWith(term: Term.parse('1Jan18-31Aug22', UTC));
   group('Rate board tests', () {
     setUp(() async {
-      await RateBoardState.getOffers('ISONE');
+      await RateBoardState.getOffers('ISONE', 'CT');
     });
-    test('make table as of 2022-11-29', () async {
-      var xs = state.makeOfferTable();
-      expect(xs.length, 6);  // all Residential offers
-      expect(xs.map((e) => e['Account Type']).toSet(), {'Residential'});
-      var x0 = xs.first;
-      expect(x0['Supplier'], 'Constellation NewEnergy, Inc.');
-      expect(x0['Supplier'], 165.9);
+    test('make CT Eversource table as of 2022-12-14', () async {
+      var xs = state.makeOfferTable(asOfDate: Date.utc(2022, 12, 14));
+      // All offers are Residential, per the default state
+      expect(xs.map((e) => e.accountType).toSet(), {'Residential'});
+      // there are several offers by this supplier
+      var x0 = xs.firstWhere((e) => e.supplierName == 'Constellation NewEnergy, Inc.');
+      // offers are returned sorted by # months by default
+      expect(x0.countOfBillingCycles, 24);
+      expect(x0.rate, 169.9);
     });
+    test('dropdowns for default state', () {
+      expect(state.getAllUtilities(), ['Eversource', 'United Illuminating']);
+    });
+    test('make table for MA NEMA NGrid', () async {
+      state = state.copyWith(stateName: 'MA', loadZone: 'NEMA',
+        utility: 'NGrid', accountType: 'Residential', billingCycles: '(All)');
+      await RateBoardState.getOffers('ISONE', 'MA');
+      var xs = state.makeOfferTable(asOfDate: Date.utc(2022, 12, 14));
+      expect(xs.length, 16);
+    });
+
   });
 }
 
