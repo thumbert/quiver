@@ -3,6 +3,7 @@ library screens.polygraph.polygraph;
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
+import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
 import 'package:flutter_quiver/models/common/experimental/select_variable_model.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
@@ -30,6 +31,39 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   late ScrollController _scrollControllerH;
 
   String? _errorTerm;
+  int? _indexLevel0;
+  int? _indexLevel1;
+  bool isSelectionDone = false;
+
+  final levels = <List<String>>[
+    ['Time'],
+    [
+      'Electricity',
+      'Realized',
+    ],
+    [
+      'Electricity',
+      'Forward',
+    ],
+    [
+      'Gas',
+      'Realized',
+    ],
+    [
+      'Gas',
+      'Forward',
+    ],
+    [
+      'Cross Commodity',
+      'Realized',
+    ],
+    [
+      'Cross Commodity',
+      'Forward',
+    ],
+  ];
+
+  var selection = <String>[];
 
   @override
   void initState() {
@@ -64,9 +98,38 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    var levels0 = levels.map((e) => e[0]).toSet().toList();
+    var levels1 = <String>[];
+    if (_indexLevel0 != null) {
+      levels1 = levels
+          .where((e) => e.length > 1 && e[0] == levels0[_indexLevel0!])
+          .map((e) => e[1])
+          .toSet()
+          .toList();
+      if (levels1.isEmpty) {
+        setState(() {
+          isSelectionDone = true;
+        });
+      }
+    }
+    var levels2 = <String>[];
+    if (_indexLevel1 != null) {
+      levels2 = levels
+          .where((e) =>
+              e.length > 2 &&
+              e[0] == levels0[_indexLevel0!] &&
+              e[1] == levels1[_indexLevel1!])
+          .map((e) => e[2])
+          .toSet()
+          .toList();
+      if (levels2.isEmpty) {
+        setState(() {
+          isSelectionDone = true;
+        });
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -84,9 +147,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text(
-                                  'Experimental UI for curve visualization.'
-                                      '\n'),
+                              Text('Experimental UI for curve visualization.'
+                                  '\n'),
                             ],
                           ),
                         )
@@ -114,19 +176,20 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 const SizedBox(
                   height: 8,
                 ),
+
                 /// Historical term
                 SizedBox(
                     width: 140,
                     child: TextFormField(
                       focusNode: focusNodeTerm,
                       decoration: InputDecoration(
-                        labelText: 'Term',
+                        labelText: 'Historical Term',
                         labelStyle:
-                        TextStyle(color: Theme.of(context).primaryColor),
+                            TextStyle(color: Theme.of(context).primaryColor),
                         helperText: '',
                         enabledBorder: UnderlineInputBorder(
                           borderSide:
-                          BorderSide(color: Theme.of(context).primaryColor),
+                              BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         errorText: _errorTerm,
                       ),
@@ -149,200 +212,306 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 const SizedBox(
                   height: 8,
                 ),
-                Wrap(
-                  direction: Axis.horizontal,
-                  spacing: 36,
-                  children: [
-                    // X axis
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 0, bottom: 0),
-                          child: Text(
-                            'X axis',
-                            style:
-                            TextStyle(color: Colors.blueGrey, fontSize: 16),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            variableModel.xAxisLabel(),
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16),
-                          ),
-                          style: TextButton.styleFrom(
-                            padding:
-                            const EdgeInsets.only(left: 0, top: 0, bottom: 0),
-                            alignment: Alignment.centerLeft,
-                            // backgroundColor: Colors.orange,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Y axis
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Y axis',
-                          style: TextStyle(color: Colors.blueGrey, fontSize: 16),
-                        ),
-                        //
-                        //
-                        // Add all the y variables
-                        //
-                        //
-                        ...[
-                          for (var i = 0; i < ys.length; i++)
-                            MouseRegion(
-                              onEnter: (_) {
-                                setState(() {
-                                  variableModel.yVariablesHighlightStatus[i] =
-                                  true;
-                                });
-                              },
-                              onExit: (_) {
-                                setState(() {
-                                  variableModel.yVariablesHighlightStatus[i] =
-                                  false;
-                                });
-                              },
-                              child: Stack(
-                                alignment: AlignmentDirectional.centerEnd,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      variableModel.yAxisLabel(i),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 16),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.only(
-                                          left: 0, right: 90),
-                                      // minimumSize: Size(200, 24),
-                                    ),
-                                  ),
 
-                                  /// show the icons only on hover ...
-                                  if (variableModel.yVariablesHighlightStatus[i])
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          tooltip: 'Edit',
-                                          onPressed: () async {
-                                            setState(() {
-                                              variableModel.editedIndex = i + 1;
-                                            });
-                                            await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) {
-                                                  return ChangeNotifierProvider
-                                                      .value(
-                                                      value: variableModel,
-                                                      builder:
-                                                          (context, _) =>
-                                                          AlertDialog(
-                                                            elevation:
-                                                            24.0,
-                                                            title: const Text(
-                                                                'Select'),
-                                                            content:
-                                                            Column(
-                                                              mainAxisSize:
-                                                              MainAxisSize
-                                                                  .min,
-                                                              children: const [
-                                                                EditorMain(),
-                                                              ],
-                                                            ),
-                                                            actions: [
-                                                              TextButton(
-                                                                  child: const Text(
-                                                                      'CANCEL'),
-                                                                  onPressed:
-                                                                      () {
-                                                                    /// ignore changes the changes
-                                                                    Navigator.of(context)
-                                                                        .pop();
-                                                                  }),
-                                                              ElevatedButton(
-                                                                  child: const Text(
-                                                                      'OK'),
-                                                                  onPressed:
-                                                                      () {
-                                                                    /// harvest the values
-                                                                    Navigator.of(context)
-                                                                        .pop();
-                                                                  }),
-                                                            ],
-                                                          ));
-                                                });
-                                            print(variableModel.yAxisVariables());
-                                          },
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 8, right: 0),
-                                          icon: Icon(
-                                            Icons.edit_outlined,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          tooltip: 'Remove',
-                                          onPressed: () {
-                                            setState(() {
-                                              variableModel.removeVariableAt(i);
-                                            });
-                                          }, // delete the sucker
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 0),
-                                          icon: Icon(
-                                            Icons.delete_forever,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          tooltip: 'Copy',
-                                          onPressed: () {
-                                            setState(() {
-                                              variableModel.copy(i);
-                                            });
-                                          }, // delete the sucker
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 8),
-                                          icon: Icon(
-                                            Icons.copy,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                ],
-                              ),
-                            ),
-                        ],
-                      ],
-                    ),
-                  ],
+                if (selection.isNotEmpty)
+                  Wrap(
+                    spacing: 5.0,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Text('Selection '),
+                      if (_indexLevel0 != null)
+                        InputChip(
+                          label: Text(
+                            levels0[_indexLevel0!],
+                          ),
+                          onDeleted: () {
+                            setState(() {
+                              selection = <String>[];
+                              _indexLevel0 = null;
+                              _indexLevel1 = null;
+                              isSelectionDone = false;
+                            });
+                          },
+                          deleteIcon: const Icon(Icons.close),
+                          backgroundColor: MyApp.background,
+                        ),
+                      if (_indexLevel1 != null)
+                        InputChip(
+                          label: Text(levels1[_indexLevel1!]),
+                          onDeleted: () {
+                            setState(() {
+                              selection = <String>[levels0[_indexLevel0!]];
+                              _indexLevel1 = null;
+                              isSelectionDone = false;
+                            });
+                          },
+                          deleteIcon: const Icon(Icons.close),
+                          backgroundColor: MyApp.background,
+                        )
+                    ],
+                  ),
+
+                const SizedBox(
+                  height: 16,
                 ),
+
+                if (!isSelectionDone) const Text('Choose a category'),
+                const SizedBox(
+                  height: 8,
+                ),
+                if (selection.isEmpty)
+                  Wrap(
+                    spacing: 5.0,
+                    children: List<Widget>.generate(
+                      levels0.length,
+                      (int index) {
+                        return ChoiceChip(
+                          selectedColor: MyApp.background,
+                          label: Text(levels0[index]),
+                          selected: _indexLevel0 == index,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                _indexLevel0 = index;
+                                selection = [levels0[_indexLevel0!]];
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ).toList(),
+                  ),
+                if (selection.length == 1)
+                  Wrap(
+                    spacing: 5.0,
+                    children: List<Widget>.generate(
+                      levels1.length,
+                      (int index) {
+                        return ChoiceChip(
+                          selectedColor: MyApp.background,
+                          label: Text(levels1[index]),
+                          selected: _indexLevel1 == index,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                _indexLevel1 = index;
+                                selection = [
+                                  levels0[_indexLevel0!],
+                                  levels1[_indexLevel1!]
+                                ];
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ).toList(),
+                  ),
+
+                const SizedBox(
+                  height: 48,
+                ),
+
+                if (isSelectionDone)
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('OK'),
+                    // style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.blue[700],
+                    //     foregroundColor: Colors.white),
+                  ),
+
+                // Wrap(
+                //   direction: Axis.horizontal,
+                //   spacing: 36,
+                //   children: [
+                //     // X axis
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         const Padding(
+                //           padding: EdgeInsets.only(top: 0, bottom: 0),
+                //           child: Text(
+                //             'X axis',
+                //             style:
+                //             TextStyle(color: Colors.blueGrey, fontSize: 16),
+                //           ),
+                //         ),
+                //         TextButton(
+                //           onPressed: () {},
+                //           child: Text(
+                //             variableModel.xAxisLabel(),
+                //             style: const TextStyle(
+                //                 color: Colors.black, fontSize: 16),
+                //           ),
+                //           style: TextButton.styleFrom(
+                //             padding:
+                //             const EdgeInsets.only(left: 0, top: 0, bottom: 0),
+                //             alignment: Alignment.centerLeft,
+                //             // backgroundColor: Colors.orange,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //     // Y axis
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         const Text(
+                //           'Y axis',
+                //           style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+                //         ),
+                //         //
+                //         //
+                //         // Add all the y variables
+                //         //
+                //         //
+                //         ...[
+                //           for (var i = 0; i < ys.length; i++)
+                //             MouseRegion(
+                //               onEnter: (_) {
+                //                 setState(() {
+                //                   variableModel.yVariablesHighlightStatus[i] =
+                //                   true;
+                //                 });
+                //               },
+                //               onExit: (_) {
+                //                 setState(() {
+                //                   variableModel.yVariablesHighlightStatus[i] =
+                //                   false;
+                //                 });
+                //               },
+                //               child: Stack(
+                //                 alignment: AlignmentDirectional.centerEnd,
+                //                 children: [
+                //                   TextButton(
+                //                     onPressed: () {},
+                //                     child: Text(
+                //                       variableModel.yAxisLabel(i),
+                //                       style: const TextStyle(
+                //                           color: Colors.black, fontSize: 16),
+                //                     ),
+                //                     style: TextButton.styleFrom(
+                //                       padding: const EdgeInsets.only(
+                //                           left: 0, right: 90),
+                //                       // minimumSize: Size(200, 24),
+                //                     ),
+                //                   ),
+                //
+                //                   /// show the icons only on hover ...
+                //                   if (variableModel.yVariablesHighlightStatus[i])
+                //                     Row(
+                //                       children: [
+                //                         IconButton(
+                //                           tooltip: 'Edit',
+                //                           onPressed: () async {
+                //                             setState(() {
+                //                               variableModel.editedIndex = i + 1;
+                //                             });
+                //                             await showDialog(
+                //                                 barrierDismissible: false,
+                //                                 context: context,
+                //                                 builder: (context) {
+                //                                   return ChangeNotifierProvider
+                //                                       .value(
+                //                                       value: variableModel,
+                //                                       builder:
+                //                                           (context, _) =>
+                //                                           AlertDialog(
+                //                                             elevation:
+                //                                             24.0,
+                //                                             title: const Text(
+                //                                                 'Select'),
+                //                                             content:
+                //                                             Column(
+                //                                               mainAxisSize:
+                //                                               MainAxisSize
+                //                                                   .min,
+                //                                               children: const [
+                //                                                 EditorMain(),
+                //                                               ],
+                //                                             ),
+                //                                             actions: [
+                //                                               TextButton(
+                //                                                   child: const Text(
+                //                                                       'CANCEL'),
+                //                                                   onPressed:
+                //                                                       () {
+                //                                                     /// ignore changes the changes
+                //                                                     Navigator.of(context)
+                //                                                         .pop();
+                //                                                   }),
+                //                                               ElevatedButton(
+                //                                                   child: const Text(
+                //                                                       'OK'),
+                //                                                   onPressed:
+                //                                                       () {
+                //                                                     /// harvest the values
+                //                                                     Navigator.of(context)
+                //                                                         .pop();
+                //                                                   }),
+                //                                             ],
+                //                                           ));
+                //                                 });
+                //                             print(variableModel.yAxisVariables());
+                //                           },
+                //                           visualDensity: VisualDensity.compact,
+                //                           constraints: const BoxConstraints(),
+                //                           padding: const EdgeInsets.only(
+                //                               left: 8, right: 0),
+                //                           icon: Icon(
+                //                             Icons.edit_outlined,
+                //                             color: Colors.blueGrey[300],
+                //                             size: 20,
+                //                           ),
+                //                         ),
+                //                         IconButton(
+                //                           tooltip: 'Remove',
+                //                           onPressed: () {
+                //                             setState(() {
+                //                               variableModel.removeVariableAt(i);
+                //                             });
+                //                           }, // delete the sucker
+                //                           visualDensity: VisualDensity.compact,
+                //                           constraints: const BoxConstraints(),
+                //                           padding: const EdgeInsets.only(
+                //                               left: 0, right: 0),
+                //                           icon: Icon(
+                //                             Icons.delete_forever,
+                //                             color: Colors.blueGrey[300],
+                //                             size: 20,
+                //                           ),
+                //                         ),
+                //                         IconButton(
+                //                           tooltip: 'Copy',
+                //                           onPressed: () {
+                //                             setState(() {
+                //                               variableModel.copy(i);
+                //                             });
+                //                           }, // delete the sucker
+                //                           visualDensity: VisualDensity.compact,
+                //                           constraints: const BoxConstraints(),
+                //                           padding: const EdgeInsets.only(
+                //                               left: 0, right: 8),
+                //                           icon: Icon(
+                //                             Icons.copy,
+                //                             color: Colors.blueGrey[300],
+                //                             size: 20,
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     )
+                //                 ],
+                //               ),
+                //             ),
+                //         ],
+                //       ],
+                //     ),
+                //   ],
+                // ),
 
                 const SizedBox(
                   height: 12,
                 ),
-
-
 
                 // FutureBuilder(
                 //   future:
@@ -424,7 +593,5 @@ class _PolygraphState extends ConsumerState<Polygraph> {
         ),
       ),
     );
-
-
   }
 }

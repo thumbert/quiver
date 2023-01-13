@@ -17,6 +17,8 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
   ForwardElectricityVariable electricityVariable;
   ForwardGasVariable gasVariable;
 
+  String? givenLabel;
+
   @override
   Map<String, dynamic> toJson() {
     throw UnimplementedError();
@@ -24,16 +26,16 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
 
   @override
   String label() {
+    if (givenLabel != null) return givenLabel!;
+
     late String out;
-    out = 'Forward Heatrate ${electricityVariable.deliveryPoint}'
+    var eName = electricityVariable.deliveryPoint;
+    if (ForwardElectricityVariable.shortNames.containsKey(electricityVariable.deliveryPoint)) {
+      eName = ForwardElectricityVariable.shortNames[electricityVariable.deliveryPoint]!;
+     }
 
-
-    if (electricityVariable.deliveryPoint == '.H.INTERNAL_HUB, ptid: 4000') {
-      out = 'Forward ${prettyTerm(strip.interval)} MassHub DA LMP';
-    } else {
-      out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $market $component';
-    }
-    out = '$out, ${bucket.toString()} ';
+    out = 'Forward Heat Rate $eName ${electricityVariable.bucket.toString()} '
+        'vs. ${gasVariable.deliveryPoint}';
     return out;
   }
 }
