@@ -25,15 +25,15 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
   @override
   String label() {
     late String out;
-    out = 'Forward Heatrate ${electricityVariable.deliveryPoint}'
+    out = 'Forward Heatrate ${electricityVariable.deliveryPoint}';
 
 
-    if (electricityVariable.deliveryPoint == '.H.INTERNAL_HUB, ptid: 4000') {
-      out = 'Forward ${prettyTerm(strip.interval)} MassHub DA LMP';
-    } else {
-      out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $market $component';
-    }
-    out = '$out, ${bucket.toString()} ';
+    // if (electricityVariable.deliveryPoint == '.H.INTERNAL_HUB, ptid: 4000') {
+    //   out = 'Forward ${prettyTerm(strip.interval)} MassHub DA LMP';
+    // } else {
+    //   out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $market $component';
+    // }
+    // out = '$out, ${bucket.toString()} ';
     return out;
   }
 }
