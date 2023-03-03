@@ -3,6 +3,7 @@ library models.polygraph.variables.forward_gas_variable;
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
+import 'package:timeseries/src/timeseries_base.dart';
 import 'package:timezone/timezone.dart';
 
 final agtcgFG24 = ForwardGasVariable(
@@ -37,5 +38,11 @@ class ForwardGasVariable extends Object with PolygraphVariable {
   String label() {
     var out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $product';
     return out;
+  }
+
+  @override
+  TimeSeries<num> timeSeries(Term term) {
+    // TODO: implement timeSeries
+    throw UnimplementedError();
   }
 }

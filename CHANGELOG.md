@@ -1,10 +1,24 @@
 
 
-# TODO 
+# TODO
+## Polygraph
+- Define hotkey Ctrl-D to show a table with data underlying 
+  the plot
+- Add Icon.table to show stats for a given curve
+- Implement Load/Save functionality for the plot config
+- Add color to the Y axis variables so you can easily 
+  identify them in the plot
+- Have a way to keep track of what series have changed 
+  and need to be pulled again from the DB
+
+
+
+
+## Release 2023-02-20
 - Rate board table, highlight NewEnergy offers; test that you can
 change utilities, etc. 
 
-## Release 2023-01-xx
+## Release 2023-01-20
 - Work on polygraph.  Convert to riverpod.  
 
 

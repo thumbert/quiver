@@ -1,8 +1,9 @@
 library models.polygraph.variables.realized_electricity_variable;
 
-import 'package:elec/elec.dart';
-import 'package:flutter_quiver/models/polygraph/variables/aggregation.dart';
+import 'package:date/src/term.dart';
+import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
+import 'package:timeseries/src/timeseries_base.dart';
 
 final massHubDa = RealizedElectricityVariable(
     region: 'ISONE',
@@ -16,7 +17,6 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     required this.deliveryPoint,
     required this.market,
     required this.component,
-    this.bucket,
     this.timeAggregation,
   }) {
     name = 'Electricity (Realized)';
@@ -26,12 +26,18 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
   String deliveryPoint;
   String market;
   String component;
-  Bucket? bucket;
   TimeAggregation? timeAggregation;
 
   @override
   Map<String, dynamic> toJson() {
-    throw UnimplementedError();
+    var out = <String,dynamic>{
+      'region': region,
+      'deliveryPoint': deliveryPoint,
+      'market': market,
+      'component': component,
+      if (timeAggregation != null) ...timeAggregation!.toJson(),
+    };
+    return out;
   }
 
   @override
@@ -42,9 +48,21 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     } else {
       out = '$deliveryPoint $market $component';
     }
-    if (bucket != null) {
-      out = '$out, ${bucket.toString()}';
+    if (timeAggregation?.function != 'mean') {
+      out = '$out, ${timeAggregation?.function}';
     }
     return out;
+  }
+
+  @override
+  String id() {
+    var out = 'Elec|Realized|$region|$deliveryPoint|$market|$component';
+    return out;
+  }
+
+  @override
+  TimeSeries<num> timeSeries(Term term) {
+    // TODO: implement timeSeries
+    throw UnimplementedError();
   }
 }

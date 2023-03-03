@@ -145,9 +145,12 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                           if (textEditingValue == TextEditingValue.empty) {
                             return const Iterable<String>.empty();
                           }
-                          return nameToPtid.keys.where((e) => e
+                          var aux = nameToPtid.keys.where((e) => e
                               .toUpperCase()
-                              .contains(textEditingValue.text.toUpperCase()));
+                              .contains(textEditingValue.text.toUpperCase())).toList();
+                          // sort by increasing ptid
+                          aux.sort((a,b) => nameToPtid[a]!.compareTo(nameToPtid[b]!));
+                          return aux;
                         },
                         onSelected: (String selection) {
                           setState(() {

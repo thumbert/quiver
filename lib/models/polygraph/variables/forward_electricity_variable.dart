@@ -3,6 +3,7 @@ library models.polygraph.variables.forward_electricity_variable;
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
+import 'package:timeseries/src/timeseries_base.dart';
 
 final massHubDa5x16LmpCal24 = ForwardElectricityVariable(
     region: 'ISONE',
@@ -50,5 +51,11 @@ class ForwardElectricityVariable extends Object with PolygraphVariable {
     var out = 'Forward ${prettyTerm(strip.interval)} $name $market $component, '
         '${bucket.toString()}';
     return out;
+  }
+
+  @override
+  TimeSeries<num> timeSeries(Term term) {
+    // TODO: implement timeSeries
+    throw UnimplementedError();
   }
 }

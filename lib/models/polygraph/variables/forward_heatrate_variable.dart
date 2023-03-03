@@ -5,6 +5,7 @@ import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/forward_gas_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
+import 'package:timeseries/src/timeseries_base.dart';
 
 class ForwardHeatRateVariable extends Object with PolygraphVariable {
   ForwardHeatRateVariable({
@@ -17,6 +18,8 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
   ForwardElectricityVariable electricityVariable;
   ForwardGasVariable gasVariable;
 
+  String? givenLabel;
+
   @override
   Map<String, dynamic> toJson() {
     throw UnimplementedError();
@@ -24,16 +27,22 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
 
   @override
   String label() {
-    late String out;
-    out = 'Forward Heatrate ${electricityVariable.deliveryPoint}';
+    var out = 'Forward Heatrate ${electricityVariable.deliveryPoint}';
+    if (givenLabel != null) return givenLabel!;
 
+    var eName = electricityVariable.deliveryPoint;
+    if (ForwardElectricityVariable.shortNames.containsKey(electricityVariable.deliveryPoint)) {
+      eName = ForwardElectricityVariable.shortNames[electricityVariable.deliveryPoint]!;
+     }
 
-    // if (electricityVariable.deliveryPoint == '.H.INTERNAL_HUB, ptid: 4000') {
-    //   out = 'Forward ${prettyTerm(strip.interval)} MassHub DA LMP';
-    // } else {
-    //   out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $market $component';
-    // }
-    // out = '$out, ${bucket.toString()} ';
+    out = 'Forward Heat Rate $eName ${electricityVariable.bucket.toString()} '
+        'vs. ${gasVariable.deliveryPoint}';
     return out;
+  }
+
+  @override
+  TimeSeries<num> timeSeries(Term term) {
+    // TODO: implement timeSeries
+    throw UnimplementedError();
   }
 }
