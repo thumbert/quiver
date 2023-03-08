@@ -8,6 +8,7 @@
 - Implement Load/Save functionality for the plot config
 - Have a way to keep track of what series have changed 
   and need to be pulled again from the DB
+- Implement multiple tabs and multiple plots per tab. 
 
 ## Release 2023-03-xx
 - Work on polygraph. 

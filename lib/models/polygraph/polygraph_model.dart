@@ -2,6 +2,7 @@ library models.polygraph.polygraph_model;
 
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/variables/realized_electricity_variable.dart' as rev;
 import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart' as fev;
@@ -17,15 +18,15 @@ final providerOfPolygraph =
 
 class PolygraphState {
   PolygraphState({
-    required this.term,
-    required this.xVariable,
-    required this.yVariables,
+    required this.tabs,
   });
 
-  /// Historical term, in UTC
-  final Term term;
-  final PolygraphVariable xVariable;
-  final List<PolygraphVariable> yVariables;
+  final List<PolygraphTab> tabs;
+
+  ///
+  PolygraphState fromMongo(Map<String,dynamic> x) {
+    return PolygraphState.getDefault();
+  }
 
   static final layout = <String, dynamic>{
     'width': 900.0,
@@ -52,55 +53,27 @@ class PolygraphState {
   };
 
   static final cache = <String,TimeSeries<num>>{};
-  
-  /// Construct the Plotly traces.
-  List<Map<String,dynamic>> makeTraces() {
-    var traces = <Map<String,dynamic>>[];
-    if (xVariable is TimeVariable) {
-      for (var i=0; i<yVariables.length; i++) {
-        var ts = yVariables[i].timeSeries(term);
-        var one = {
-          'x': ts.intervals.map((e) => e.start).toList(),
-          'y': ts.values.toList(),
-          // 'yaxis': 'y2',  // if you want it on the right side
-        };
-        // yVariables[i].config
-        traces.add(one);
-      }
-    } else {
-      /// When you have a scatter plot
-      throw StateError('Need more work to support this!');
-    }
-    return traces;
-  }
 
+  /// What gets serialized to Mongo
+  Map<String,dynamic> toMongo() {
+    return {};
+  }
 
   static PolygraphState getDefault() {
-    var today = Date.today(location: UTC);
-    var term =
-        Term(Month.fromTZDateTime(today.start).subtract(4).startDate, today);
-
-    var xVariable = TimeVariable();
-    var yVariables = [
-      rev.massHubDa..timeAggregation = TimeAggregation(frequency: 'daily', function: 'mean'),
-      fev.massHubDa5x16LmpCal24,
-    ];
-
-    return PolygraphState(
-        term: term, xVariable: xVariable, yVariables: yVariables);
+    return PolygraphState(tabs: [PolygraphTab.getDefault()]);
   }
 
-  PolygraphState copyWith({
-    Term? term,
-    PolygraphVariable? xVariable,
-    List<PolygraphVariable>? yVariables,
-  }) {
-    return PolygraphState(
-      term: term ?? this.term,
-      xVariable: xVariable ?? this.xVariable,
-      yVariables: yVariables ?? this.yVariables,
-    );
-  }
+  // PolygraphState copyWith({
+  //   Term? term,
+  //   PolygraphVariable? xVariable,
+  //   List<PolygraphVariable>? yVariables,
+  // }) {
+  //   return PolygraphState(
+  //     term: term ?? this.term,
+  //     xVariable: xVariable ?? this.xVariable,
+  //     yVariables: yVariables ?? this.yVariables,
+  //   );
+  // }
 }
 
 
