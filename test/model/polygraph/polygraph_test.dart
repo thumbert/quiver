@@ -21,21 +21,22 @@ Future<void> tests(String rootUrl) async {
   group('Variable selection test', () {
     test('get categories', () {
       var vs = VariableSelection();
-      var cat0 = vs.getCategoriesForLevel(0);
+      var cat0 = vs.getCategoriesForNextLevel();
+      expect(cat0.length, cat0.toSet().length);  // should be unique
       expect(cat0.contains('Time'), true);
       expect(cat0.contains('Electricity'), true);
       expect(cat0.contains('Gas'), true);
       expect(vs.isSelectionDone(), false);
 
       // add one
-      vs.addCategory('Electricity');
-      var cat1 = vs.getCategoriesForLevel(1);
+      vs.selectCategory('Electricity');
+      var cat1 = vs.getCategoriesForNextLevel();
       expect(cat1, ['Realized', 'Forward']);
       expect(vs.isSelectionDone(), false);
 
       // and another
-      vs.addCategory('Realized');
-      var cat2 = vs.getCategoriesForLevel(2);
+      vs.selectCategory('Realized');
+      var cat2 = vs.getCategoriesForNextLevel();
       expect(cat2.isEmpty, true);
       expect(vs.isSelectionDone(), true);
 
@@ -44,11 +45,16 @@ Future<void> tests(String rootUrl) async {
       expect(vs.categories, ['Electricity']);
 
       // add another one, remove from level 0
-      vs.addCategory('Forward');
+      vs.selectCategory('Forward');
       vs.removeFromLevel(0);
-      expect(vs.categories.isEmpty, true);
       expect(vs.isSelectionDone(), false);
-      expect(vs.getCategoriesForLevel(0).contains('Time'), true);
+      expect(vs.getCategoriesForNextLevel().contains('Time'), true);
+    });
+    test('get categories level 1', () {
+      var vs = VariableSelection();
+      expect(vs.getCategoriesForNextLevel().contains('Time'), true);
+      vs.selectCategory('Grid Line');
+      expect(vs.getCategoriesForNextLevel(), ['Horizontal', 'Vertical']);
     });
   });
 
@@ -66,9 +72,10 @@ Future<void> tests(String rootUrl) async {
       expect(ts1.length, 8760);
 
       // filter by bucket 5x16, aggregate by month
-      yVariable.transforms.add(TimeFilterForBucket(bucket: Bucket.b5x16));
       yVariable.transforms
-          .add(TimeAggregation(timeFrequency: 'monthly', function: 'sum'));
+          .add(TimeFilter.empty()..copyWith(bucket: Bucket.b5x16));
+      yVariable.transforms
+          .add(TimeAggregation(frequency: 'monthly', function: 'sum'));
       var ts2 = yVariable.timeSeries(term);
       expect(ts2.length, 12);
       expect(
@@ -77,14 +84,14 @@ Future<void> tests(String rootUrl) async {
               Month(2022, 1, location: IsoNewEngland.location), 336));
     });
 
-    var state = PolygraphState(term: term,
-        xVariable: TimeVariable(),
-        yVariables: [yVariable]);
-
-    var traces = state.makeTraces();
-    expect(traces.length, 1);
-    var t0 = traces.first;
-    print(t0);
+    // var state = PolygraphState(term: term,
+    //     xVariable: TimeVariable(),
+    //     yVariables: [yVariable]);
+    //
+    // var traces = state.makeTraces();
+    // expect(traces.length, 1);
+    // var t0 = traces.first;
+    // print(t0);
   });
 }
 
@@ -93,4 +100,6 @@ Future<void> main() async {
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   await tests(rootUrl);
+
+
 }

@@ -6,13 +6,14 @@
   the plot
 - Add Icon.table to show stats for a given curve
 - Implement Load/Save functionality for the plot config
-- Add color to the Y axis variables so you can easily 
-  identify them in the plot
 - Have a way to keep track of what series have changed 
   and need to be pulled again from the DB
 
-
-
+## Release 2023-03-xx
+- Work on polygraph. 
+- Added color to the Y axis variables, so you can easily
+  identify them in the plot.  
+- Added a Show/Hide icon for the Y variables.  If hidden, color becomes gray.
 
 ## Release 2023-02-20
 - Rate board table, highlight NewEnergy offers; test that you can

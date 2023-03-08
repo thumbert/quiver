@@ -5,22 +5,36 @@ class VariableSelection {
     categories = <String>[];
   }
 
+  /// the current selection 
   late List<String> categories;
 
-  static final allCategories = <String>{
-    'Time',
-    'Electricity|Realized',
-    'Electricity|Forward',
-    'Gas|Realized',
-    'Gas|Forward',
-    'Cross Commodity|Realized',
-    'Cross Commodity|Forward',
-    'Shooju',
-    'Line',
-  };
+  // static final allCategories = <String>{
+  //   'Time',
+  //   'Electricity|Realized',
+  //   'Electricity|Forward',
+  //   'Gas|Realized',
+  //   'Gas|Forward',
+  //   'Combo Expression',
+  //   'Shooju',
+  //   'Grid Line|Horizontal',
+  //   'Grid Line|Vertical',
+  // };
+
+  static final allCategories = <List<String>>[
+    ['Time'],
+    ['Electricity', 'Realized'],
+    ['Electricity', 'Forward'],
+    ['Gas', 'Realized'],
+    ['Gas', 'Forward'],
+    ['Combo Expression'],
+    ['Shooju'],
+    ['Line', 'Horizontal'],
+    ['Line', 'Vertical'],
+  ];
+
 
   /// Add at the end of the category list
-  void addCategory(String category) {
+  void selectCategory(String category) {
     categories.add(category);
   }
 
@@ -33,17 +47,21 @@ class VariableSelection {
 
   /// Get the categories for this level.
   /// Level 0 is 'Time', 'Electricity', etc.
-  List<String> getCategoriesForLevel(int level) {
-    return allCategories
-        .map((e) => e.split('|'))
-        .where((xs) => xs.length > level)
-        .map((xs) => xs[level])
-        .toSet().toList();
+  List<String> getCategoriesForNextLevel() {
+    var level = categories.length;
+    var xs = allCategories.where((element) => true);
+    for (var i=0; i<level; i++) {
+      xs = xs.where((e) => e[i] == categories[i]);
+    }
+    // var aux = xs.toList();
+    // print(aux);
+    if (xs.length == 1) return <String>[];  // fully specified
+    return xs.map((e) => e[level]).toSet().toList();
   }
 
   /// to select categories
   bool isSelectionDone() {
-    return allCategories.contains(categories.join('|'));
+    return getCategoriesForNextLevel().isEmpty;
   }
 
 }

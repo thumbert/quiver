@@ -6,6 +6,8 @@ import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_time_filter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:timezone/timezone.dart';
@@ -74,8 +76,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(providerOfPolygraph);
-    var categories = variableSelection
-        .getCategoriesForLevel(variableSelection.categories.length);
+    var categories = variableSelection.getCategoriesForNextLevel();
 
     return Scaffold(
       appBar: AppBar(
@@ -230,7 +231,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                             setState(() {
                               if (selected) {
                                 variableSelection
-                                    .addCategory(categories[index]);
+                                    .selectCategory(categories[index]);
                               }
                             });
                           },
@@ -254,6 +255,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     //     foregroundColor: Colors.white),
                   ),
 
+                const SizedBox(height: 16,),
                 ///
                 /// The variables
                 ///
@@ -324,7 +326,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                     child: Text(
                                       state.yVariables[i].label(),
                                       style: TextStyle(
-                                          color: state.yVariables[i].color ?? VariableDisplayConfig.defaultColors[i],
+                                          color: state.yVariables[i].isHidden ? Colors.grey : state.yVariables[i].color ?? VariableDisplayConfig.defaultColors[i],
                                           decoration: state.yVariables[i].isHidden ? TextDecoration.lineThrough : TextDecoration.none,
                                           fontSize: 16),
                                     ),
@@ -456,7 +458,20 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 const SizedBox(
                   height: 12,
                 ),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                  TimeFilterEditor(),
+                  TimeAggregationEditor(),
+                ],)
+
                 /// The chart
+                // Row(children: const [
+                //   TimeFilterEditor(),
+                //   // SizedBox(width: 24,),
+                //   // TimeFilterEditor(),
+                // ],)
 
 
 
