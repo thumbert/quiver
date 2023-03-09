@@ -19,6 +19,7 @@ class ForwardGasVariable extends Object with PolygraphVariable {
     required this.strip,
   }) {
     name = 'Gas (Forward)';
+    label = _makeLabel();
   }
 
   String deliveryPoint;
@@ -34,8 +35,7 @@ class ForwardGasVariable extends Object with PolygraphVariable {
     throw UnimplementedError();
   }
 
-  @override
-  String label() {
+  String _makeLabel() {
     var out = 'Forward ${prettyTerm(strip.interval)} $deliveryPoint $product';
     return out;
   }

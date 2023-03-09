@@ -24,6 +24,7 @@ class ForwardElectricityVariable extends Object with PolygraphVariable {
     required this.strip,
   }) {
     name = 'Electricity (Forward)';
+    label = _makeLabel();
   }
 
   String region;
@@ -42,8 +43,7 @@ class ForwardElectricityVariable extends Object with PolygraphVariable {
     throw UnimplementedError();
   }
 
-  @override
-  String label() {
+  String _makeLabel() {
     var name = deliveryPoint;
     if (shortNames.containsKey(deliveryPoint)) {
       name = shortNames[deliveryPoint]!;

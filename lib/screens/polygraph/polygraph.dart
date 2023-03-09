@@ -4,6 +4,8 @@ import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
@@ -39,13 +41,13 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     _scrollControllerH = ScrollController();
     _scrollControllerV = ScrollController();
 
-    controllerTerm.text = ref.read(providerOfPolygraph).term.toString();
+    controllerTerm.text = ref.read(providerOfPolygraphWindow).term.toString();
     focusNodeTerm.addListener(() {
       if (!focusNodeTerm.hasFocus) {
         /// validate when you lose focus
         setState(() {
           try {
-            ref.read(providerOfPolygraph.notifier).term =
+            ref.read(providerOfPolygraphWindow.notifier).term =
                 Term.parse(controllerTerm.text, UTC);
             _errorTerm = null; // all good
           } catch (e) {
@@ -75,7 +77,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
 
   @override
   Widget build(BuildContext context) {
-    var state = ref.watch(providerOfPolygraph);
+    var state = ref.watch(providerOfPolygraphWindow);
     var categories = variableSelection.getCategoriesForNextLevel();
 
     return Scaffold(
@@ -172,7 +174,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                       onEditingComplete: () {
                         setState(() {
                           try {
-                            ref.read(providerOfPolygraph.notifier).term =
+                            ref.read(providerOfPolygraphWindow.notifier).term =
                                 Term.parse(controllerTerm.text, UTC);
                             _errorTerm = null; // all good
                           } catch (e) {
@@ -324,7 +326,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                   TextButton(
                                     onPressed: () {},
                                     child: Text(
-                                      state.yVariables[i].label(),
+                                      state.yVariables[i].label,
                                       style: TextStyle(
                                           color: state.yVariables[i].isHidden ? Colors.grey : state.yVariables[i].color ?? VariableDisplayConfig.defaultColors[i],
                                           decoration: state.yVariables[i].isHidden ? TextDecoration.lineThrough : TextDecoration.none,

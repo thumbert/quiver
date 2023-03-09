@@ -1,27 +1,34 @@
 library models.polygraph.polygraph_model;
 
-import 'package:date/date.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
-import 'package:flutter_quiver/models/polygraph/variables/realized_electricity_variable.dart' as rev;
-import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart' as fev;
-import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
-import 'package:timezone/timezone.dart';
 
 final providerOfPolygraph =
     StateNotifierProvider<PolygraphNotifier, PolygraphState>(
         (ref) => PolygraphNotifier(ref));
 
+class PolygraphConfig {
+  PolygraphConfig({required this.canvasWidth, required this.canvasHeight});
+
+  final int canvasWidth;
+  final int canvasHeight;
+}
 
 class PolygraphState {
   PolygraphState({
+    required this.config,
     required this.tabs,
   });
 
+  final PolygraphConfig config;
+
+  /// Each sheet has at least one tab, can have multiple.
+  /// Each tab has at least one window, can have multiple.
+  /// Each window has its own variables to plot.
   final List<PolygraphTab> tabs;
+
+
 
   ///
   PolygraphState fromMongo(Map<String,dynamic> x) {
@@ -56,11 +63,19 @@ class PolygraphState {
 
   /// What gets serialized to Mongo
   Map<String,dynamic> toMongo() {
-    return {};
+    return <String,dynamic>{
+      'config': {
+        'canvasSize': [config.canvasWidth, config.canvasHeight],
+      },
+      'tabs': [for (var tab in tabs) tab.toMongo()],
+    };
   }
 
   static PolygraphState getDefault() {
-    return PolygraphState(tabs: [PolygraphTab.getDefault()]);
+    return PolygraphState(
+        config: PolygraphConfig(canvasWidth: 1200, canvasHeight: 950),
+        tabs: [PolygraphTab.getDefault()],
+    );
   }
 
   // PolygraphState copyWith({
@@ -83,16 +98,16 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
 
   final Ref ref;
 
-  set term(Term value) {
-    state = state.copyWith(term: value);
-  }
-
-  set xVariable(PolygraphVariable value) {
-    state = state.copyWith(xVariable: value);
-  }
-
-  set yVariables(List<PolygraphVariable> values) {
-    state = state.copyWith(yVariables: values);
-  }
+  // set term(Term value) {
+  //   state = state.copyWith(term: value);
+  // }
+  //
+  // set xVariable(PolygraphVariable value) {
+  //   state = state.copyWith(xVariable: value);
+  // }
+  //
+  // set yVariables(List<PolygraphVariable> values) {
+  //   state = state.copyWith(yVariables: values);
+  // }
 }
 

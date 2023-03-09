@@ -12,12 +12,14 @@ class SlopeInterceptVariable extends Object with PolygraphVariable {
     required this.intercept,
   }) {
     name = 'slope*time + intercept line';
+    label = _makeLabel();
   }
 
   num slope;
   num intercept;
 
   /// Apply all the transforms
+  @override
   TimeSeries<num> timeSeries(Term term) {
     Iterable<IntervalTuple<num>> out = [IntervalTuple(term.interval, intercept)];
     for (var tr in transforms) {
@@ -35,8 +37,7 @@ class SlopeInterceptVariable extends Object with PolygraphVariable {
     return out;
   }
 
-  @override
-  String label() {
+  String _makeLabel() {
     if (slope == 0) {
       return 'h: $intercept';
     }
@@ -44,5 +45,5 @@ class SlopeInterceptVariable extends Object with PolygraphVariable {
   }
 
   @override
-  String id() => label();
+  String id() => _makeLabel();
 }

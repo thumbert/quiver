@@ -23,7 +23,8 @@ mixin PolygraphVariable {
   TimeSeries<num> timeSeries(Term term);
 
   /// What gets displayed on the screen
-  String label();
+  late String label;
+
   bool isMouseOver = false;
   /// Should the variable be displayed on the plot?
   bool isHidden = false;
@@ -49,6 +50,7 @@ mixin PolygraphVariable {
 class TimeVariable extends Object with PolygraphVariable {
   TimeVariable({this.skipWeekends = false}) {
     name = 'Time';
+    label = 'Time';
   }
 
   bool skipWeekends;
@@ -60,9 +62,6 @@ class TimeVariable extends Object with PolygraphVariable {
       'skipWeekends': skipWeekends,
     }
   };
-
-  @override
-  String label() => 'Time';
 
   @override
   TimeSeries<num> timeSeries(Term term) {

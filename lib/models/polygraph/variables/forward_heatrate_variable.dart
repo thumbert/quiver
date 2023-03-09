@@ -13,6 +13,7 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
     required this.gasVariable,
   }) {
     name = 'Heat Rate (Forward)';
+    label = _makeLabel();
   }
 
   ForwardElectricityVariable electricityVariable;
@@ -25,8 +26,7 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
     throw UnimplementedError();
   }
 
-  @override
-  String label() {
+  String _makeLabel() {
     var out = 'Forward Heatrate ${electricityVariable.deliveryPoint}';
     if (givenLabel != null) return givenLabel!;
 

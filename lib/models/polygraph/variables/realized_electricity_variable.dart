@@ -20,6 +20,7 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     this.timeAggregation,
   }) {
     name = 'Electricity (Realized)';
+    label = _makeLabel();
   }
 
   String region;
@@ -40,8 +41,7 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     return out;
   }
 
-  @override
-  String label() {
+  String _makeLabel() {
     late String out;
     if (deliveryPoint == '.H.INTERNAL_HUB, ptid: 4000') {
       out = 'Realized MassHub DA LMP';

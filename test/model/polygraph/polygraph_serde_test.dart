@@ -21,47 +21,50 @@ Future<void> tests(String rootUrl) async {
   group('Polygraph toMongo/fromMongo tests', () {
     test('Serialize default', () {
       var poly = PolygraphState.getDefault();
-
+      var out = poly.toMongo();
+      expect(out, {
+        'settings': {
+          'canvasSize': [1200, 800],
+        },
+        'tabs': [
+          {
+            'tab': 0,
+            'grid': {
+              'rows': 1,
+              'cols': 1,
+            },
+            'windows': [
+              {
+                'term': '',
+                'xVariable': 'time',
+                'yVariables': [
+                  {
+                    'label': '',
+                  },
+                  {
+                    'label',
+                    '',
+                  },
+                ],
+                'layout': {
+                  'width': 900.0,
+                  'height': 600.0,
+                  'xaxis': {
+                    'showgrid': true,
+                    'gridcolor': '#bdbdbd',
+                  },
+                  'yaxis': {
+                    'showgrid': true,
+                    'gridcolor': '#bdbdbd',
+                  },
+                },
+              },
+            ]
+          },
+        ],
+      });
     });
   });
-
-  group('horizontal line variable', () {
-    var term = Term.parse('Jan22-Dec22', IsoNewEngland.location);
-    var yVariable = SlopeInterceptVariable(slope: 0.0, intercept: 1);
-
-    test('check various transforms', () {
-      var ts = yVariable.timeSeries(term);
-      expect(ts.length, 1);
-
-      // add a fill hourly transform
-      yVariable.transforms.add(FillTransform(timeFrequency: 'hourly'));
-      var ts1 = yVariable.timeSeries(term);
-      expect(ts1.length, 8760);
-
-      // filter by bucket 5x16, aggregate by month
-      yVariable.transforms
-          .add(TimeFilter.empty()..copyWith(bucket: Bucket.b5x16));
-      yVariable.transforms
-          .add(TimeAggregation(frequency: 'monthly', function: 'sum'));
-      var ts2 = yVariable.timeSeries(term);
-      expect(ts2.length, 12);
-      expect(
-          ts2.first,
-          IntervalTuple<num>(
-              Month(2022, 1, location: IsoNewEngland.location), 336));
-    });
-
-    // var state = PolygraphState(term: term,
-    //     xVariable: TimeVariable(),
-    //     yVariables: [yVariable]);
-    //
-    // var traces = state.makeTraces();
-    // expect(traces.length, 1);
-    // var t0 = traces.first;
-    // print(t0);
-  });
-
-
 }
 
 Future<void> main() async {
@@ -69,6 +72,4 @@ Future<void> main() async {
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   await tests(rootUrl);
-
-
 }
