@@ -10,6 +10,7 @@ import 'package:flutter_quiver/models/polygraph/variables/variable_display_confi
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_filter.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:timezone/timezone.dart';
@@ -461,12 +462,15 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                   height: 12,
                 ),
 
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                  TimeFilterEditor(),
-                  TimeAggregationEditor(),
-                ],)
+
+                const HorizontalLineEditor(),
+
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: const [
+                //   TimeFilterEditor(),
+                //   TimeAggregationEditor(),
+                // ],)
 
                 /// The chart
                 // Row(children: const [
