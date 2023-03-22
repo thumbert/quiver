@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/variables/realized_electricity_variable.dart' as rev;
 import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart' as fev;
+import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
@@ -17,13 +18,17 @@ final providerOfPolygraphWindow =
 
 class PolygraphWindow {
   PolygraphWindow({
-    required this.term,
+    required term,
+    required this.timezone,
     required this.xVariable,
     required this.yVariables,
-  });
+  }) {
+    this.term = Term.fromInterval(term.interval.withTimeZone(timezone));
+  }
 
-  /// Historical term, in UTC
-  final Term term;
+  /// Historical term in the given timezone
+  late final Term term;
+  final Location timezone;
   final PolygraphVariable xVariable;
   final List<PolygraphVariable> yVariables;
 
@@ -84,8 +89,6 @@ class PolygraphWindow {
     return {};
   }
 
-
-
   static PolygraphWindow getDefault() {
     var today = Date.today(location: UTC);
     var term =
@@ -98,16 +101,20 @@ class PolygraphWindow {
     ];
 
     return PolygraphWindow(
-        term: term, xVariable: xVariable, yVariables: yVariables);
+        term: term,
+        timezone: UTC,
+        xVariable: xVariable, yVariables: yVariables);
   }
 
   PolygraphWindow copyWith({
     Term? term,
+    Location? timezone,
     PolygraphVariable? xVariable,
     List<PolygraphVariable>? yVariables,
   }) {
     return PolygraphWindow(
       term: term ?? this.term,
+      timezone: timezone ?? this.timezone,
       xVariable: xVariable ?? this.xVariable,
       yVariables: yVariables ?? this.yVariables,
     );
@@ -123,6 +130,10 @@ class PolygraphWindowNotifier extends StateNotifier<PolygraphWindow> {
 
   set term(Term value) {
     state = state.copyWith(term: value);
+  }
+
+  set timezone(Location value) {
+    state = state.copyWith(timezone: value);
   }
 
   set xVariable(PolygraphVariable value) {

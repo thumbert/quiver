@@ -8,28 +8,17 @@ class VariableSelection {
   /// the current selection 
   late List<String> categories;
 
-  // static final allCategories = <String>{
-  //   'Time',
-  //   'Electricity|Realized',
-  //   'Electricity|Forward',
-  //   'Gas|Realized',
-  //   'Gas|Forward',
-  //   'Combo Expression',
-  //   'Shooju',
-  //   'Grid Line|Horizontal',
-  //   'Grid Line|Vertical',
-  // };
-
   static final allCategories = <List<String>>[
-    ['Time'],
+    ['Combo Expression'],
     ['Electricity', 'Realized'],
     ['Electricity', 'Forward'],
     ['Gas', 'Realized'],
     ['Gas', 'Forward'],
-    ['Combo Expression'],
-    ['Shooju'],
     ['Line', 'Horizontal'],
     ['Line', 'Vertical'],
+    ['Shooju'],
+    ['Time'],
+    ['Weather', 'Temperature'],
   ];
 
 

@@ -28,7 +28,6 @@ class HorizontalLine extends Object with PolygraphVariable {
       timeFilter: TimeFilter.empty(),
       timeAggregation: TimeAggregation.empty());
 
-
   @override
   TimeSeries<num> timeSeries(Term term) {
     late TimeSeries<num> ts, aux;
@@ -64,10 +63,12 @@ class HorizontalLine extends Object with PolygraphVariable {
 
   HorizontalLine copyWith(
           {num? yIntercept,
+          String? label,
           TimeFilter? timeFilter,
           TimeAggregation? timeAggregation}) =>
       HorizontalLine(
           yIntercept: yIntercept ?? this.yIntercept,
+          label: label ?? this.label,
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
 }
@@ -79,6 +80,10 @@ class HorizontalLineNotifier extends StateNotifier<HorizontalLine> {
 
   set yIntercept(num value) {
     state = state.copyWith(yIntercept: value);
+  }
+
+  set label(String value) {
+    state = state.copyWith(label: value);
   }
 
   set timeFilter(TimeFilter value) {

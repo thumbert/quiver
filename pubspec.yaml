@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
 
   collection: ^1.15.0
+  contextmenu: ^3.0.0
   dama:
     git: https://github.com/thumbert/dama.git
   date:

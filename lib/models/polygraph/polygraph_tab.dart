@@ -24,6 +24,8 @@ class WindowLayout {
 }
 
 class PolygraphTab {
+
+  /// A workbook can have several tabs.  A tab can have several windows.
   PolygraphTab({
     required this.tab,
     required this.name,
@@ -57,7 +59,7 @@ class PolygraphTab {
   static PolygraphTab getDefault() {
     return PolygraphTab(
       tab: 0,
-      name: '',
+      name: 'Tab 1',
       windowLayout: WindowLayout(rows: 1, cols: 1),
       windows: [PolygraphWindow.getDefault()],
     );
@@ -83,15 +85,8 @@ class PolygraphTabNotifier extends StateNotifier<PolygraphTab> {
 
   final Ref ref;
 
-  // set term(Term value) {
-  //   state = state.copyWith(term: value);
-  // }
-  //
-  // set xVariable(PolygraphVariable value) {
-  //   state = state.copyWith(xVariable: value);
-  // }
-  //
-  // set yVariables(List<PolygraphVariable> values) {
-  //   state = state.copyWith(yVariables: values);
-  // }
+  set name(String value) {
+    state = state.copyWith(name: value);
+  }
+
 }

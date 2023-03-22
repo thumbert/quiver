@@ -47,29 +47,4 @@ mixin PolygraphVariable {
 
 
 
-class TimeVariable extends Object with PolygraphVariable {
-  TimeVariable({this.skipWeekends = false}) {
-    name = 'Time';
-    label = 'Time';
-  }
-
-  bool skipWeekends;
-
-  @override
-  Map<String,dynamic> toJson() => {
-    'category': 'Time',
-    'config': {
-      'skipWeekends': skipWeekends,
-    }
-  };
-
-  @override
-  TimeSeries<num> timeSeries(Term term) {
-    // TODO: implement timeSeries
-    throw UnimplementedError();
-  }
-}
-
-
-
 

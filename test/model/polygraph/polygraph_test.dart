@@ -18,11 +18,30 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
+  group('Tabs', () {
+    test('Add/Remove tabs', () {
+      var poly = PolygraphState.getDefault();
+      poly.addTab();
+      poly.addTab();
+      expect(poly.tabs.length, 3);
+      expect(
+          poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2', 'Tab 3']);
+
+      // delete tab
+      poly.deleteTab(1);
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3']);
+
+      // add another tab, tabs get added at the end
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3', 'Tab 4']);
+    });
+  });
+
   group('Variable selection test', () {
     test('get categories', () {
       var vs = VariableSelection();
       var cat0 = vs.getCategoriesForNextLevel();
-      expect(cat0.length, cat0.toSet().length);  // should be unique
+      expect(cat0.length, cat0.toSet().length); // should be unique
       expect(cat0.contains('Time'), true);
       expect(cat0.contains('Electricity'), true);
       expect(cat0.contains('Gas'), true);
@@ -93,8 +112,6 @@ Future<void> tests(String rootUrl) async {
     // var t0 = traces.first;
     // print(t0);
   });
-
-
 }
 
 Future<void> main() async {
@@ -102,6 +119,4 @@ Future<void> main() async {
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   await tests(rootUrl);
-
-
 }

@@ -1,19 +1,15 @@
 library screens.polygraph.polygraph;
 
-import 'package:date/date.dart';
+import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_time_filter.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
-import 'package:timezone/timezone.dart';
 
 class Polygraph extends ConsumerStatefulWidget {
   const Polygraph({Key? key}) : super(key: key);
@@ -25,14 +21,25 @@ class Polygraph extends ConsumerStatefulWidget {
 }
 
 class _PolygraphState extends ConsumerState<Polygraph> {
-  final controllerTerm = TextEditingController();
+  final controllerTab = TextEditingController();
   final focusNodeTerm = FocusNode();
   late ScrollController _scrollControllerV;
   late ScrollController _scrollControllerH;
   late Plotly plotly;
 
-
   String? _errorTerm;
+
+  /// Which tab is active and needs to be underlined in orange.  The variables
+  /// for this tab get displayed and so is the chart
+  int activeTabIndex = 0;
+
+  /// If the mouse is over the tab button, this will be non null and have the
+  /// value of its tab index
+  int? hoveringTabIndex;
+
+  /// If the tab becomes editable, this will be non null and have the value
+  /// of its tab index
+  int? editableTabIndex;
 
   final variableSelection = VariableSelection();
 
@@ -41,35 +48,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     super.initState();
     _scrollControllerH = ScrollController();
     _scrollControllerV = ScrollController();
-
-    controllerTerm.text = ref.read(providerOfPolygraphWindow).term.toString();
-    focusNodeTerm.addListener(() {
-      if (!focusNodeTerm.hasFocus) {
-        /// validate when you lose focus
-        setState(() {
-          try {
-            ref.read(providerOfPolygraphWindow.notifier).term =
-                Term.parse(controllerTerm.text, UTC);
-            _errorTerm = null; // all good
-          } catch (e) {
-            debugPrint(e.toString());
-            _errorTerm = 'Parsing error';
-          }
-        });
-      }
-    });
-
-    var aux = DateTime.now().hashCode;
-    plotly = Plotly(
-      viewId: 'polygraph-div-$aux',
-      data: const [],
-      layout: PolygraphState.layout,
-    );
   }
 
   @override
   void dispose() {
-    controllerTerm.dispose();
+    controllerTab.dispose();
     focusNodeTerm.dispose();
     _scrollControllerH.dispose();
     _scrollControllerV.dispose();
@@ -78,13 +61,30 @@ class _PolygraphState extends ConsumerState<Polygraph> {
 
   @override
   Widget build(BuildContext context) {
-    var state = ref.watch(providerOfPolygraphWindow);
+    var poly = ref.watch(providerOfPolygraph);
+    print('in polygraph build: ${poly.tabs.map((e) => e.name)}');
+    // var tab = ref.watch(providerOfPolygraphTab);
+
     var categories = variableSelection.getCategoriesForNextLevel();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Polygraph'),
         actions: [
+          PopupMenuButton(
+            tooltip: 'More',
+            icon: const Icon(Icons.menu),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'raw_data',
+                child: Text('Open file'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'raw_data',
+                child: Text('Save'),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: () {
               showDialog(
@@ -96,10 +96,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           width: 500,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextButton(
-                                  onPressed: () {},
-                                  child: const Text('Load/Save')),
+                            children: const [
+                              Text('Experimental UI for curve visualization.'
+                                  '\n'),
                             ],
                           ),
                         )
@@ -108,8 +107,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     );
                   });
             },
-            icon: const Icon(Icons.archive_outlined),
-            tooltip: 'Load/Save page',
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
           ),
           IconButton(
             onPressed: () {
@@ -149,45 +148,235 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 8,
+                ///
+                /// Tabs
+                ///
+                Wrap(
+                  spacing: 8.0,
+                  children: [
+                    for (var i = 0; i < poly.tabs.length; i++)
+                      activeTabIndex == i
+                          ? ContextMenuArea(
+                              verticalPadding: 4.0,
+                              width: 200,
+                              builder: (context) {
+                                return [
+                                  /// Add tab
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.add,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Add tab'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        poly.addTab();
+                                      });
+                                    },
+                                  ),
+
+                                  /// Delete tab
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.delete_forever,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Delete tab'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        poly.deleteTab(activeTabIndex);
+                                      });
+                                    },
+                                  ),
+
+                                  /// Rename
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.edit,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Rename'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        editableTabIndex = i;
+                                      });
+                                    },
+                                  ),
+
+                                  /// Move left
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.arrow_back,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Move Left'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Whatever'),
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                  /// Move right
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Move Right'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Whatever'),
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                  /// Add window
+                                  ListTile(
+                                    dense: true,
+                                    horizontalTitleGap: 0.0,
+                                    leading: Icon(
+                                      Icons.square_outlined,
+                                      color: Colors.blueGrey[300],
+                                    ),
+                                    title: const Text('Add window'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Whatever'),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ];
+                              },
+                              child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero),
+                                  onPressed: () {
+                                    setState(() {
+                                      activeTabIndex = i;
+                                    });
+                                  },
+                                  onLongPress: () {
+                                    setState(() {
+                                      editableTabIndex = i;
+                                      print('editableTabIndex = $i');
+                                    });
+                                  },
+                                  child: Container(
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              width: 2,
+                                              color: activeTabIndex == i
+                                                  ? Colors.deepOrange
+                                                  : Colors.grey[300]!),
+                                        ),
+                                      ),
+                                      child: Center(
+                                          child: editableTabIndex == i
+                                              ? TextField(
+                                                  autofocus: true,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          isDense: true),
+                                                  textAlign: TextAlign.center,
+                                                  controller: controllerTab,
+                                                  enabled: true,
+                                                  onSubmitted: (String value) {
+                                                    setState(() {
+                                                      var tabs = [...poly.tabs];
+                                                      tabs[i] = tabs[i]
+                                                          .copyWith(
+                                                              name: value);
+                                                      ref
+                                                          .read(
+                                                              providerOfPolygraph
+                                                                  .notifier)
+                                                          .tabs = tabs;
+                                                      editableTabIndex = null;
+                                                    });
+                                                  },
+                                                )
+                                              : Text(
+                                                  poly.tabs[i].name,
+                                                  // tab.name,
+                                                  style: const TextStyle(
+                                                      fontSize: 18),
+                                                )))),
+                            )
+                          : TextButton(
+                              style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero),
+                              onPressed: () {
+                                setState(() {
+                                  activeTabIndex = i;
+                                });
+                              },
+                              child: Container(
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          width: 2,
+                                          color: activeTabIndex == i
+                                              ? Colors.deepOrange
+                                              : Colors.grey[300]!),
+                                    ),
+                                  ),
+                                  child: Center(
+                                      child: editableTabIndex == i
+                                          ? TextField(
+                                              controller: controllerTab,
+                                              enabled: true,
+                                              onSubmitted: (String value) {
+                                                setState(() {
+                                                  ref
+                                                      .read(
+                                                          providerOfPolygraphTab
+                                                              .notifier)
+                                                      .name = value;
+                                                  editableTabIndex = null;
+                                                });
+                                              },
+                                            )
+                                          : Text(
+                                              poly.tabs[i].name,
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                            )))),
+                  ],
                 ),
 
-                /// Term
-                SizedBox(
-                    width: 140,
-                    child: TextFormField(
-                      focusNode: focusNodeTerm,
-                      decoration: InputDecoration(
-                        labelText: 'Term',
-                        labelStyle:
-                            TextStyle(color: Theme.of(context).primaryColor),
-                        helperText: '',
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Theme.of(context).primaryColor),
-                        ),
-                        errorText: _errorTerm,
-                      ),
-                      controller: controllerTerm,
-
-                      /// validate when Enter is pressed
-                      onEditingComplete: () {
-                        setState(() {
-                          try {
-                            ref.read(providerOfPolygraphWindow.notifier).term =
-                                Term.parse(controllerTerm.text, UTC);
-                            _errorTerm = null; // all good
-                          } catch (e) {
-                            debugPrint(e.toString());
-                            _errorTerm = 'Parsing error';
-                          }
-                        });
-                      },
-                    )),
                 const SizedBox(
-                  height: 8,
+                  height: 16,
                 ),
+                const PolygraphWindowUi(),
 
                 if (variableSelection.categories.isNotEmpty)
                   Wrap(
@@ -258,219 +447,21 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     //     foregroundColor: Colors.white),
                   ),
 
-                const SizedBox(height: 16,),
-                ///
-                /// The variables
-                ///
-                Wrap(
-                  direction: Axis.horizontal,
-                  spacing: 36,
-                  children: [
-                    // X axis
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 0, bottom: 0),
-                          child: Text(
-                            'X axis',
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            state.xVariable.name,
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 16),
-                          ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.only(
-                                left: 0, top: 0, bottom: 0),
-                            alignment: Alignment.centerLeft,
-                            // backgroundColor: Colors.orange,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Y axis
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Y axis',
-                          style:
-                              TextStyle(color: Colors.blueGrey, fontSize: 16),
-                        ),
-                        //
-                        //
-                        // Add all the y variables
-                        //
-                        //
-                        ...[
-                          for (var i = 0; i < state.yVariables.length; i++)
-                            MouseRegion(
-                              onEnter: (_) {
-                                setState(() {
-                                  state.yVariables[i].isMouseOver = true;
-                                });
-                              },
-                              onExit: (_) {
-                                setState(() {
-                                  state.yVariables[i].isMouseOver = false;
-                                });
-                              },
-                              child: Stack(
-                                alignment: AlignmentDirectional.centerEnd,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      state.yVariables[i].label,
-                                      style: TextStyle(
-                                          color: state.yVariables[i].isHidden ? Colors.grey : state.yVariables[i].color ?? VariableDisplayConfig.defaultColors[i],
-                                          decoration: state.yVariables[i].isHidden ? TextDecoration.lineThrough : TextDecoration.none,
-                                          fontSize: 16),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.only(
-                                          left: 0, right: 120),
-                                      // minimumSize: Size(200, 24),
-                                    ),
-                                  ),
-
-                                  /// show the icons only on hover ...
-                                  if (state.yVariables[i].isMouseOver)
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          tooltip: 'Edit',
-                                          onPressed: () async {
-                                            setState(() {
-                                              // variableModel.editedIndex = i + 1;
-                                            });
-                                            await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                      elevation: 24.0,
-                                                      title:
-                                                          const Text('Select'),
-                                                      content: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: const [
-                                                          Text('Boo'),
-                                                        ],
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                            child: const Text(
-                                                                'CANCEL'),
-                                                            onPressed: () {
-                                                              /// ignore changes the changes
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            }),
-                                                        ElevatedButton(
-                                                            child: const Text(
-                                                                'OK'),
-                                                            onPressed: () {
-                                                              /// harvest the values
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            }),
-                                                      ]);
-                                                });
-                                          },
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 8, right: 0),
-                                          icon: Icon(
-                                            Icons.edit_outlined,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          tooltip: 'Remove',
-                                          onPressed: () {
-                                            setState(() {
-                                              // variableModel.removeVariableAt(i);
-                                            });
-                                          }, // delete the sucker
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 0),
-                                          icon: Icon(
-                                            Icons.delete_forever,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          tooltip: 'Copy',
-                                          onPressed: () {
-                                            setState(() {
-                                              // variableModel.copy(i);
-                                            });
-                                          }, // delete the sucker
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 8),
-                                          icon: Icon(
-                                            Icons.copy,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          tooltip: 'Hide/Show',
-                                          onPressed: () {
-                                            setState(() {
-                                              state.yVariables[i].isHidden = !state.yVariables[i].isHidden;
-                                            });
-                                          },
-                                          visualDensity: VisualDensity.compact,
-                                          constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.only(
-                                              left: 0, right: 8),
-                                          icon: Icon(
-                                            Icons.format_strikethrough,
-                                            color: Colors.blueGrey[300],
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                ],
-                              ),
-                            ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
                 const SizedBox(
-                  height: 12,
+                  height: 16,
                 ),
-
 
                 const HorizontalLineEditor(),
 
-                // Row(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: const [
-                //   TimeFilterEditor(),
-                //   TimeAggregationEditor(),
-                // ],)
+                const SizedBox(
+                  height: 32,
+                ),
+
+                /// put this one here so we have sidebar
+                const SizedBox(
+                  width: 1200,
+                  height: 1,
+                ),
 
                 /// The chart
                 // Row(children: const [
@@ -478,9 +469,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 //   // SizedBox(width: 24,),
                 //   // TimeFilterEditor(),
                 // ],)
-
-
-
               ],
             ),
           ),

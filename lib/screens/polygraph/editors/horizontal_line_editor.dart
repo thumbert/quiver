@@ -33,46 +33,33 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
   String? _errorYValue;
   int activeTab = 0;
 
-  final tabs = [
-    //{'Main': MainTab()},
-    {'Time Filter': const TimeFilterEditor()},
-    {'Time Aggregation': const TimeAggregationEditor()},
-  ];
-
   @override
   void initState() {
     super.initState();
     controllerYValue.text = '0.0';
     controllerLabel.text = '';
 
-    // focusFrequency.addListener(() {
-    //   if (!focusFrequency.hasFocus) {
-    //     setState(() {
-    //       if (needsFrequency || needsFunction) {
-    //         // don't get yourself in a weird state
-    //         ref.read(providerOfTimeAggregation.notifier).frequency = '';
-    //         ref.read(providerOfTimeAggregation.notifier).function = '';
-    //       } else {
-    //         ref.read(providerOfTimeAggregation.notifier).frequency = controllerFrequency.text;
-    //         ref.read(providerOfTimeAggregation.notifier).function = controllerFunction.text;
-    //       }
-    //     });
-    //   }
-    // });
-    // focusFunction.addListener(() {
-    //   if (!focusFunction.hasFocus) {
-    //     setState(() {
-    //       if (needsFrequency || needsFunction) {
-    //         // don't get yourself in a weird state
-    //         ref.read(providerOfTimeAggregation.notifier).frequency = '';
-    //         ref.read(providerOfTimeAggregation.notifier).function = '';
-    //       } else {
-    //         ref.read(providerOfTimeAggregation.notifier).frequency = controllerFrequency.text;
-    //         ref.read(providerOfTimeAggregation.notifier).function = controllerFunction.text;
-    //       }
-    //     });
-    //   }
-    // });
+    focusYValue.addListener(() {
+      if (!focusYValue.hasFocus) {
+        setState(() {
+          try {
+            var value = num.parse(controllerYValue.text);
+            ref.read(providerOfHorizontalLine.notifier).yIntercept = value;
+            ref.read(providerOfHorizontalLine.notifier).label = 'h=$value';
+          } catch (_) {
+            _errorYValue = 'Field needs to be a number';
+            ref.read(providerOfHorizontalLine.notifier).yIntercept = 0.0;
+          }
+        });
+      }
+    });
+    focusLabel.addListener(() {
+      if (!focusLabel.hasFocus) {
+        setState(() {
+            ref.read(providerOfHorizontalLine.notifier).label = controllerLabel.text;
+        });
+      }
+    });
   }
 
   @override
@@ -178,8 +165,74 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 8),
                       child: const Text(
-                        'Frequency',
+                        'Y intercept',
                       ),
+                    ),
+                    Container(
+                      color: MyApp.background,
+                      width: 120,
+                      child: TextField(
+                        controller: controllerYValue,
+                        focusNode: focusYValue,
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(8),
+                          enabledBorder: InputBorder.none,
+                        ),
+                        onEditingComplete: () {
+                          setState(() {
+                            try {
+                              var value = num.parse(controllerYValue.text);
+                              ref.read(providerOfHorizontalLine.notifier).yIntercept = value;
+                              ref.read(providerOfHorizontalLine.notifier).label = 'h=$value';
+                            } catch (_) {
+                              _errorYValue = 'Field needs to be a number';
+                              ref.read(providerOfHorizontalLine.notifier).yIntercept = 0.0;
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    Text(
+                      _errorYValue ?? '',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 120,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 8),
+                      child: const Text(
+                        'Label',
+                      ),
+                    ),
+                    Container(
+                      color: MyApp.background,
+                      width: 120,
+                      child: TextField(
+                        controller: controllerLabel,
+                        focusNode: focusLabel,
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(8),
+                          enabledBorder: InputBorder.none,
+                        ),
+                        onEditingComplete: () {
+                          setState(() {
+                              ref.read(providerOfHorizontalLine.notifier).label = controllerLabel.text;
+                          });
+                        },
+                      ),
+                    ),
+                    Text(
+                      _errorYValue ?? '',
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ],
                 ),
