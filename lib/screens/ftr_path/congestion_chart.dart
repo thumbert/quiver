@@ -64,7 +64,7 @@ class _CongestionChartState extends State<CongestionChart> {
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
-            var traces = snapshot.data! as List;
+            var traces = snapshot.data!;
             plotly.plot.react(traces, dataModel.layout, displaylogo: false);
             children = [
               SizedBox(

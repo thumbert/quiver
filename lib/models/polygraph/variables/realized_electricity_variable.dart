@@ -1,6 +1,7 @@
 library models.polygraph.variables.realized_electricity_variable;
 
 import 'package:date/src/term.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/src/timeseries_base.dart';
@@ -11,7 +12,7 @@ final massHubDa = RealizedElectricityVariable(
     market: 'DA',
     component: 'LMP');
 
-class RealizedElectricityVariable extends Object with PolygraphVariable {
+class RealizedElectricityVariable extends PolygraphVariable {
   RealizedElectricityVariable({
     required this.region,
     required this.deliveryPoint,
@@ -19,7 +20,7 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     required this.component,
     this.timeAggregation,
   }) {
-    name = 'Electricity (Realized)';
+    id = 'Electricity (Realized)';
     label = _makeLabel();
   }
 
@@ -30,7 +31,7 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
   TimeAggregation? timeAggregation;
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMongo() {
     var out = <String,dynamic>{
       'region': region,
       'deliveryPoint': deliveryPoint,
@@ -54,15 +55,27 @@ class RealizedElectricityVariable extends Object with PolygraphVariable {
     return out;
   }
 
-  @override
-  String id() {
-    var out = 'Elec|Realized|$region|$deliveryPoint|$market|$component';
-    return out;
-  }
+  // @override
+  // String id() {
+  //   var out = 'Elec|Realized|$region|$deliveryPoint|$market|$component';
+  //   return out;
+  // }
 
   @override
   TimeSeries<num> timeSeries(Term term) {
     // TODO: implement timeSeries
+    throw UnimplementedError();
+  }
+
+  @override
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
     throw UnimplementedError();
   }
 }

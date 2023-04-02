@@ -21,6 +21,8 @@ class WindowLayout {
   WindowLayout({required this.rows, required this.cols});
   final int rows;
   final int cols;
+
+  static WindowLayout getDefault() => WindowLayout(rows: 1, cols: 1);
 }
 
 class PolygraphTab {
@@ -55,6 +57,16 @@ class PolygraphTab {
       'windows': [for (var window in windows) window.toMongo()],
     };
   }
+
+  static PolygraphTab empty() {
+    return PolygraphTab(
+      tab: 0,
+      name: 'Tab 1',
+      windowLayout: WindowLayout(rows: 1, cols: 1),
+      windows: [PolygraphWindow.getDefault()],
+    );
+  }
+
 
   static PolygraphTab getDefault() {
     return PolygraphTab(

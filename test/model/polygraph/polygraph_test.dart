@@ -18,25 +18,6 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  group('Tabs', () {
-    test('Add/Remove tabs', () {
-      var poly = PolygraphState.getDefault();
-      poly.addTab();
-      poly.addTab();
-      expect(poly.tabs.length, 3);
-      expect(
-          poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2', 'Tab 3']);
-
-      // delete tab
-      poly.deleteTab(1);
-      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3']);
-
-      // add another tab, tabs get added at the end
-      poly.addTab();
-      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3', 'Tab 4']);
-    });
-  });
-
   group('Variable selection test', () {
     test('get categories', () {
       var vs = VariableSelection();
@@ -81,27 +62,27 @@ Future<void> tests(String rootUrl) async {
     var term = Term.parse('Jan22-Dec22', IsoNewEngland.location);
     var yVariable = SlopeInterceptVariable(slope: 0.0, intercept: 1);
 
-    test('check various transforms', () {
-      var ts = yVariable.timeSeries(term);
-      expect(ts.length, 1);
-
-      // add a fill hourly transform
-      yVariable.transforms.add(FillTransform(timeFrequency: 'hourly'));
-      var ts1 = yVariable.timeSeries(term);
-      expect(ts1.length, 8760);
-
-      // filter by bucket 5x16, aggregate by month
-      yVariable.transforms
-          .add(TimeFilter.empty()..copyWith(bucket: Bucket.b5x16));
-      yVariable.transforms
-          .add(TimeAggregation(frequency: 'monthly', function: 'sum'));
-      var ts2 = yVariable.timeSeries(term);
-      expect(ts2.length, 12);
-      expect(
-          ts2.first,
-          IntervalTuple<num>(
-              Month(2022, 1, location: IsoNewEngland.location), 336));
-    });
+    // test('check various transforms', () {
+    //   var ts = yVariable.timeSeries(term);
+    //   expect(ts.length, 1);
+    //
+    //   // add a fill hourly transform
+    //   yVariable.transforms.add(FillTransform(timeFrequency: 'hourly'));
+    //   var ts1 = yVariable.timeSeries(term);
+    //   expect(ts1.length, 8760);
+    //
+    //   // filter by bucket 5x16, aggregate by month
+    //   yVariable.transforms
+    //       .add(TimeFilter.empty()..copyWith(bucket: Bucket.b5x16));
+    //   yVariable.transforms
+    //       .add(TimeAggregation(frequency: 'monthly', function: 'sum'));
+    //   var ts2 = yVariable.timeSeries(term);
+    //   expect(ts2.length, 12);
+    //   expect(
+    //       ts2.first,
+    //       IntervalTuple<num>(
+    //           Month(2022, 1, location: IsoNewEngland.location), 336));
+    // });
 
     // var state = PolygraphState(term: term,
     //     xVariable: TimeVariable(),

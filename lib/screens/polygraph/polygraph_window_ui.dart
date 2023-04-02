@@ -13,6 +13,17 @@ import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:timezone/timezone.dart';
 
+final providerOfPolygraphWindow =
+StateNotifierProvider<PolygraphWindowNotifier, PolygraphWindow>(
+        (ref) => PolygraphWindowNotifier(ref));
+
+final providerOfPolygraphWindowCache = FutureProvider((ref) async {
+  var window = ref.watch(providerOfPolygraphWindow);
+  await window.updateCache();
+  return window.cache;
+});
+
+
 class PolygraphWindowUi extends ConsumerStatefulWidget {
   const PolygraphWindowUi({Key? key}) : super(key: key);
 
@@ -34,9 +45,9 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
   void initState() {
     super.initState();
 
-    controllerTerm.text = ref.read(providerOfPolygraphWindow).term.toString();
-    controllerTimezone.text = ref.read(providerOfPolygraphWindow).timezone.toString();
-
+    var window = ref.read(providerOfPolygraphWindow);
+    controllerTerm.text = window.term.toString();
+    controllerTimezone.text = window.tzLocation.toString();
 
     focusNodeTerm.addListener(() {
       if (!focusNodeTerm.hasFocus) {
@@ -56,20 +67,35 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
 
     var aux = DateTime.now().hashCode;
     plotly = Plotly(
-      viewId: 'polygraph-div-$aux',
+      viewId: 'polygraph-div-w-$aux',
       data: const [],
-      layout: PolygraphState.layout, // TODO:  move it from here!
+      layout: window.layout,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    var state = ref.watch(providerOfPolygraphWindow);
+    var window = ref.watch(providerOfPolygraphWindow);
+    var asyncCache = ref.watch(providerOfPolygraphWindowCache);
+    controllerTimezone.text = window.tzLocation.toString();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(width: 700, height: 550, color: Colors.grey[200],),
+        Container(width: 908, height: 608, color: Colors.grey[200], child:
+        Center(
+          child: asyncCache.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (err, stack) => Text('Error: $err'),
+            data: (cache) {
+              var traces = window.makeTraces();
+              // print(traces.first);
+              plotly.plot.react(traces, window.layout, displaylogo: false);
+              return plotly;
+            }),
+        ),
+        ),
+
         const SizedBox(
           height: 12,
         ),
@@ -83,7 +109,7 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                 width: 140,
                 child: TextField(
                   focusNode: focusNodeTerm,
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.all(10),
@@ -139,7 +165,7 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                   onSelected: (String selection) {
                     setState(() {
                       var location = selection == 'UTC' ? UTC : getLocation(selection);
-                      ref.read(providerOfPolygraphWindow.notifier).timezone = location;
+                      ref.read(providerOfPolygraphWindow.notifier).tzLocation = location;
                     });
                   },
                   optionsViewBuilder: (BuildContext context,
@@ -217,7 +243,7 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                       );
                     });
               },
-              icon: const Icon(Icons.table_rows),
+              icon: Icon(Icons.table_rows, color: Colors.blueGrey[600]),
               tooltip: 'View data',
             ),
             IconButton(
@@ -243,13 +269,13 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                       );
                     });
               },
-              icon: const Icon(Icons.summarize),
+              icon: Icon(Icons.summarize, color: Colors.blueGrey[600],),
               tooltip: 'View data summary',
             ),
 
-
             PopupMenuButton<String>(
               tooltip: 'More',
+              child: Icon(Icons.more_vert, color: Colors.blueGrey[600],),
               onSelected: (String item) {
                 setState(() {
                   // selectedMenu = item;
@@ -266,10 +292,10 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                     ],
                   ),
                 ),
-                const PopupMenuItem<String>(
-                  value: 'raw_data',
-                  child: Text('Raw Data'),
-                ),
+                // const PopupMenuItem<String>(
+                //   value: 'raw_data',
+                //   child: Text('Raw Data'),
+                // ),
               ],
             ),
 
@@ -294,14 +320,14 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                   padding: EdgeInsets.only(top: 0, bottom: 0),
                   child: Text(
                     'X axis',
-                    style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+                    style: TextStyle(color: Colors.blueGrey, fontSize: 18),
                   ),
                 ),
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    state.xVariable.name,
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    window.xVariable.id,
+                    style: const TextStyle(color: Colors.black, fontSize: 14),
                   ),
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.only(left: 0, top: 0, bottom: 0),
@@ -317,7 +343,7 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
               children: [
                 const Text(
                   'Y axis',
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 18),
                 ),
                 //
                 //
@@ -325,16 +351,16 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                 //
                 //
                 ...[
-                  for (var i = 0; i < state.yVariables.length; i++)
+                  for (var i = 0; i < window.yVariables.length; i++)
                     MouseRegion(
                       onEnter: (_) {
                         setState(() {
-                          state.yVariables[i].isMouseOver = true;
+                          window.yVariables[i].isMouseOver = true;
                         });
                       },
                       onExit: (_) {
                         setState(() {
-                          state.yVariables[i].isMouseOver = false;
+                          window.yVariables[i].isMouseOver = false;
                         });
                       },
                       child: Stack(
@@ -343,17 +369,17 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                           TextButton(
                             onPressed: () {},
                             child: Text(
-                              state.yVariables[i].label,
+                              window.yVariables[i].label,
                               style: TextStyle(
-                                  color: state.yVariables[i].isHidden
+                                  color: window.yVariables[i].isHidden
                                       ? Colors.grey
-                                      : state.yVariables[i].color ??
+                                      : window.yVariables[i].color ??
                                           VariableDisplayConfig
                                               .defaultColors[i],
-                                  decoration: state.yVariables[i].isHidden
+                                  decoration: window.yVariables[i].isHidden
                                       ? TextDecoration.lineThrough
                                       : TextDecoration.none,
-                                  fontSize: 16),
+                                  fontSize: 14),
                             ),
                             style: TextButton.styleFrom(
                               padding:
@@ -362,7 +388,7 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                           ),
 
                           /// show the icons only on hover ...
-                          if (state.yVariables[i].isMouseOver)
+                          if (window.yVariables[i].isMouseOver)
                             Row(
                               children: [
                                 /// Add
@@ -506,8 +532,8 @@ class _PolygraphWindowState extends ConsumerState<PolygraphWindowUi> {
                                   tooltip: 'Hide/Show',
                                   onPressed: () {
                                     setState(() {
-                                      state.yVariables[i].isHidden =
-                                          !state.yVariables[i].isHidden;
+                                      window.yVariables[i].isHidden =
+                                          !window.yVariables[i].isHidden;
                                     });
                                   },
                                   visualDensity: VisualDensity.compact,

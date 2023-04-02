@@ -1,6 +1,8 @@
 library models.polygraph.polygraph_model;
 
 import 'package:date/date.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
@@ -18,6 +20,9 @@ class PolygraphConfig {
 
   final int canvasWidth;
   final int canvasHeight;
+
+  static PolygraphConfig getDefault() =>
+      PolygraphConfig(canvasWidth: 1200, canvasHeight: 950);
 }
 
 class PolygraphState {
@@ -33,13 +38,15 @@ class PolygraphState {
   /// Each window has its own variables to plot.
   final List<PolygraphTab> tabs;
 
+  static final DataService service = DataServiceLocal();
+
+
   /// Add tab at the end
   void addTab() {
     var i = tabs.length+1;
     while (tabs.any((e) => e.name == 'Tab $i')) {
       i = i + 1;
     }
-    print(i);
     var tab = PolygraphTab(
         tab: tabs.length,
         name: 'Tab $i',
@@ -47,7 +54,7 @@ class PolygraphState {
         windows: [
           PolygraphWindow(
               term: Term.parse('-10d', UTC),
-              timezone: UTC,
+              tzLocation: UTC,
               xVariable: TimeVariable(),
               yVariables: <PolygraphVariable>[])
         ]);
@@ -65,29 +72,6 @@ class PolygraphState {
     return PolygraphState.getDefault();
   }
 
-  static final layout = <String, dynamic>{
-    'width': 900.0,
-    'height': 600.0,
-    'xaxis': {
-      'showgrid': true,
-      'gridcolor': '#bdbdbd',
-    },
-    'yaxis': {
-      'showgrid': true,
-      'gridcolor': '#bdbdbd',
-      // 'zeroline': false,
-    },
-    // if you need a secondary axis on the right add
-    // 'yaxis2': {
-    //   'anchor': 'x', // 'free'
-    //   'overlaying': 'y',
-    //   'side': 'right',
-    // },
-
-    'showlegend': true,
-    'hovermode': 'closest',
-    'displaylogo': false,
-  };
 
   static final cache = <String, TimeSeries<num>>{};
 
@@ -101,9 +85,17 @@ class PolygraphState {
     };
   }
 
+  /// An empty state containing one tab with an empty window.
+  static PolygraphState empty() {
+    return PolygraphState(
+      config: PolygraphConfig.getDefault(),
+      tabs: [PolygraphTab.empty()],
+    );
+  }
+
   static PolygraphState getDefault() {
     return PolygraphState(
-      config: PolygraphConfig(canvasWidth: 1200, canvasHeight: 950),
+      config: PolygraphConfig.getDefault(),
       tabs: [PolygraphTab.getDefault()],
     );
   }

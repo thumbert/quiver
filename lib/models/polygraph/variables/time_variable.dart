@@ -1,13 +1,15 @@
 library models.polygraph.variables.time_variable;
 
 import 'package:date/date.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:timeseries/timeseries.dart';
 import 'variable.dart';
 
-class TimeVariable extends Object with PolygraphVariable {
+class TimeVariable extends PolygraphVariable {
   TimeVariable({this.skipWeekends = false}) {
-    name = 'Time';
+    id = 'Time';
     label = 'Time';
+    isDirty = false;
   }
 
   bool skipWeekends;
@@ -21,7 +23,7 @@ class TimeVariable extends Object with PolygraphVariable {
   ];
 
   @override
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMongo() => {
         'category': 'Time',
         'config': {
           'skipWeekends': skipWeekends,
@@ -29,8 +31,14 @@ class TimeVariable extends Object with PolygraphVariable {
       };
 
   @override
-  TimeSeries<num> timeSeries(Term term) {
-    // TODO: implement timeSeries
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
     throw UnimplementedError();
   }
 }

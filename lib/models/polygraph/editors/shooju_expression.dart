@@ -1,7 +1,7 @@
 library models.polygraph.editors.shooju_expression;
 
 import 'package:date/date.dart';
-import 'package:flutter_quiver/models/polygraph/dataprovider/data_provider.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
@@ -28,7 +28,7 @@ enum PeriodConvention {
   }
 }
 
-class ShoojuExpression extends Object with PolygraphVariable {
+class ShoojuExpression extends PolygraphVariable {
   ShoojuExpression({
     required this.expression,
     // required this.periodConvention,
@@ -46,7 +46,6 @@ class ShoojuExpression extends Object with PolygraphVariable {
   final TimeAggregation timeAggregation;
 
   ///
-  static late DataProvider dataProvider;
 
   static getDefault() => ShoojuExpression(
       expression: '',
@@ -85,7 +84,7 @@ class ShoojuExpression extends Object with PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMongo() {
     // TODO: implement toJson
     throw UnimplementedError();
   }
@@ -101,6 +100,18 @@ class ShoojuExpression extends Object with PolygraphVariable {
           label: label ?? this.label,
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
+
+  @override
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
+    throw UnimplementedError();
+  }
 }
 
 class ShoojuExpressionNotifier extends StateNotifier<ShoojuExpression> {

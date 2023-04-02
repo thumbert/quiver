@@ -7,6 +7,7 @@ import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
@@ -62,7 +63,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   @override
   Widget build(BuildContext context) {
     var poly = ref.watch(providerOfPolygraph);
-    print('in polygraph build: ${poly.tabs.map((e) => e.name)}');
+    // print('in polygraph build: ${poly.tabs.map((e) => e.name)}');
     // var tab = ref.watch(providerOfPolygraphTab);
 
     var categories = variableSelection.getCategoriesForNextLevel();
@@ -148,6 +149,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(
+                  width: 1500,
+                  // height: 1,
+                ),
                 ///
                 /// Tabs
                 ///
@@ -378,6 +383,17 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 ),
                 const PolygraphWindowUi(),
 
+                const SizedBox(
+                  height: 48,
+                ),
+                // const HorizontalLineEditor(),
+                const TransformedVariableEditor(),
+                const SizedBox(
+                  height: 48,
+                ),
+
+
+
                 if (variableSelection.categories.isNotEmpty)
                   Wrap(
                     spacing: 5.0,
@@ -451,16 +467,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                   height: 16,
                 ),
 
-                const HorizontalLineEditor(),
 
                 const SizedBox(
                   height: 32,
-                ),
-
-                /// put this one here so we have sidebar
-                const SizedBox(
-                  width: 1200,
-                  height: 1,
                 ),
 
                 /// The chart
