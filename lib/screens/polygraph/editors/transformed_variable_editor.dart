@@ -1,5 +1,7 @@
 library screens.polygraph.editors.transformed_variable_editor;
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.d
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_filter.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +33,8 @@ class _TransformedVariableEditorState
   final focusLabel = FocusNode();
   final focusExpression = FocusNode();
 
-  String? _errorExpression;
+  String _errorMessage = '';
+  bool pressedOk = false;
   int activeTab = 0;
 
   @override
@@ -39,27 +43,30 @@ class _TransformedVariableEditorState
     controllerExpression.text = '';
     controllerLabel.text = '';
 
-    // focusExpression.addListener(() {
-    //   if (!focusExpression.hasFocus) {
-    //     setState(() {
-    //       try {
-    //         var value = num.parse(controllerExpression.text);
-    //         ref.read(providerOfTransformedVariable.notifier).yIntercept = value;
-    //         ref.read(providerOfHorizontalLine.notifier).label = 'h=$value';
-    //       } catch (_) {
-    //         _errorYValue = 'Field needs to be a number';
-    //         ref.read(providerOfHorizontalLine.notifier).yIntercept = 0.0;
-    //       }
-    //     });
-    //   }
-    // });
-    // focusLabel.addListener(() {
-    //   if (!focusLabel.hasFocus) {
-    //     setState(() {
-    //       ref.read(providerOfHorizontalLine.notifier).label = controllerLabel.text;
-    //     });
-    //   }
-    // });
+    focusLabel.addListener(() {
+      if (!focusLabel.hasFocus) {
+        setState(() {
+          ref.read(providerOfTransformedVariable.notifier).label =
+              controllerLabel.text;
+          if (controllerLabel.text == '') {
+            _errorMessage =
+                'Label can\'t be empty.  Please provide a variable name';
+          }
+        });
+      }
+    });
+    focusExpression.addListener(() {
+      if (!focusExpression.hasFocus) {
+        var state = ref.read(providerOfTransformedVariable);
+        var window = ref.read(providerOfPolygraphWindow);
+        setState(() {
+          ref.read(providerOfTransformedVariable.notifier).expression =
+              controllerExpression.text;
+          state.eval(window.cache);
+          _errorMessage = state.error;
+        });
+      }
+    });
   }
 
   @override
@@ -77,6 +84,8 @@ class _TransformedVariableEditorState
     var state = ref.watch(providerOfTransformedVariable);
     controllerExpression.text = state.expression;
     controllerLabel.text = state.label;
+    _errorMessage = state.error;
+    // print('_errorMessage: $_errorMessage');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -130,7 +139,6 @@ class _TransformedVariableEditorState
                           ),
                         ),
                         child: const Center(child: Text('Display')))),
-
               ],
             ),
             const SizedBox(
@@ -142,10 +150,13 @@ class _TransformedVariableEditorState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ///
+                    /// Label row
+                    ///
                     Row(
                       children: [
                         Container(
-                          width: 80,
+                          width: 100,
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.only(right: 8),
                           child: const Text(
@@ -154,15 +165,19 @@ class _TransformedVariableEditorState
                         ),
                         Container(
                           color: MyApp.background,
-                          width: 120,
+                          width: 180,
                           child: TextField(
                             style: const TextStyle(fontSize: 14),
                             controller: controllerLabel,
                             focusNode: focusLabel,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.all(8),
-                              enabledBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(8),
+                              enabledBorder: (pressedOk &&
+                                      controllerLabel.text == '')
+                                  ? const OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red))
+                                  : InputBorder.none,
                             ),
                             onEditingComplete: () {
                               setState(() {
@@ -170,23 +185,24 @@ class _TransformedVariableEditorState
                                     .read(
                                         providerOfTransformedVariable.notifier)
                                     .label = controllerLabel.text;
+                                // pressedOk = false;
                               });
                             },
                           ),
-                        ),
-                        Text(
-                          _errorExpression ?? '',
-                          style: const TextStyle(color: Colors.red),
                         ),
                       ],
                     ),
                     const SizedBox(
                       height: 8,
                     ),
+
+                    ///
+                    /// Expression row
+                    ///
                     Row(
                       children: [
                         Container(
-                          width: 80,
+                          width: 100,
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.only(right: 8),
                           child: const Text(
@@ -195,33 +211,51 @@ class _TransformedVariableEditorState
                         ),
                         Container(
                           color: MyApp.background,
-                          width: 300,
+                          width: 400,
                           // height: 32,
                           child: TextField(
                             controller: controllerExpression,
                             focusNode: focusExpression,
                             style: const TextStyle(fontSize: 14),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               isDense: true,
-                              contentPadding: EdgeInsets.all(8),
-                              enabledBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(8),
+                              enabledBorder: state.error != ''
+                                  ? const OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red))
+                                  : InputBorder.none,
                             ),
                             onEditingComplete: () {
+                              var window = ref.read(providerOfPolygraphWindow);
                               setState(() {
-                                try {
-                                  ref
-                                      .read(providerOfTransformedVariable
-                                          .notifier)
-                                      .expression = controllerExpression.text;
-                                } catch (_) {
-                                  _errorExpression = 'Wrong expression';
-                                }
+                                ref
+                                    .read(
+                                        providerOfTransformedVariable.notifier)
+                                    .expression = controllerExpression.text;
+                                state.eval(window.cache);
                               });
                             },
                           ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+
+                    ///
+                    /// Error row
+                    ///
+                    Row(
+                      children: [
+                        Container(
+                          width: 80,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 8),
+                          child: const Text(''),
+                        ),
                         Text(
-                          _errorExpression ?? '',
+                          _errorMessage != '' ? 'Error: $_errorMessage' : '',
                           style: const TextStyle(color: Colors.red),
                         ),
                       ],
@@ -231,14 +265,24 @@ class _TransformedVariableEditorState
               ),
           ],
         ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              /// blah
-            });
-          },
-          child: const Text('OK'),
-        ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     var window = ref.read(providerOfPolygraphWindow);
+        //     setState(() {
+        //       pressedOk = true;
+        //       if (controllerLabel.text == '') {
+        //         state.error =
+        //             'Label can\'t be empty.  Please provide a variable name';
+        //         return;
+        //       }
+        //       state.eval(window.cache);
+        //       var yVariables = [...window.yVariables, state];
+        //       ref.read(providerOfPolygraphWindow.notifier).yVariables = yVariables;
+        //       // Navigator.of(context).pop(result);
+        //     });
+        //   },
+        //   child: const Text('OK'),
+        // ),
       ],
     );
   }

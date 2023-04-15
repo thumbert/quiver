@@ -18,45 +18,83 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  group('Variable selection test', () {
-    test('get categories', () {
-      var vs = VariableSelection();
-      var cat0 = vs.getCategoriesForNextLevel();
-      expect(cat0.length, cat0.toSet().length); // should be unique
-      expect(cat0.contains('Time'), true);
-      expect(cat0.contains('Electricity'), true);
-      expect(cat0.contains('Gas'), true);
-      expect(vs.isSelectionDone(), false);
 
-      // add one
-      vs.selectCategory('Electricity');
-      var cat1 = vs.getCategoriesForNextLevel();
-      expect(cat1, ['Realized', 'Forward']);
-      expect(vs.isSelectionDone(), false);
+  group('Polygraph tab tests', () {
+    test('get valid tab name', (){
+      var poly = PolygraphState.getDefault();
+      expect(poly.tabs.length, 1);
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 1');
+      // 'Tab 2' is a valid name for tab index 0
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 2'), 'Tab 2');
+      poly = poly.copyWith(tabs: [poly.tabs.first.copyWith(name: 'Boo')]);
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 1');
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: ''), 'Tab 1');
+      /// add another tab
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Boo', 'Tab 1']);
+      // can't rename tab index 0 to 'Tab 1', but you can to 'Tab 2'
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 2');
 
-      // and another
-      vs.selectCategory('Realized');
-      var cat2 = vs.getCategoriesForNextLevel();
-      expect(cat2.isEmpty, true);
-      expect(vs.isSelectionDone(), true);
+      /// Rename tab to existing tab name, maintains name
+      poly = PolygraphState.getDefault();
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2']);
+      // can't rename tab index 1 to 'Tab 1', but you stay at 'Tab 2'
+      expect(poly.getValidTabName(tabIndex: 1, suggestedName: 'Tab 1'), 'Tab 2');
 
-      // remove level 1
-      vs.removeFromLevel(1);
-      expect(vs.categories, ['Electricity']);
+      /// Delete tabs
+      poly = PolygraphState.getDefault();
+      poly.addTab();
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2', 'Tab 3']);
+      poly.deleteTab(1);
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3', 'Tab 2']);
 
-      // add another one, remove from level 0
-      vs.selectCategory('Forward');
-      vs.removeFromLevel(0);
-      expect(vs.isSelectionDone(), false);
-      expect(vs.getCategoriesForNextLevel().contains('Time'), true);
-    });
-    test('get categories level 1', () {
-      var vs = VariableSelection();
-      expect(vs.getCategoriesForNextLevel().contains('Time'), true);
-      vs.selectCategory('Grid Line');
-      expect(vs.getCategoriesForNextLevel(), ['Horizontal', 'Vertical']);
+
+
     });
   });
+
+  // group('Variable selection test', () {
+  //   test('get categories', () {
+  //     var vs = VariableSelection();
+  //     var cat0 = vs.getCategoriesForNextLevel();
+  //     expect(cat0.length, cat0.toSet().length); // should be unique
+  //     expect(cat0.contains('Time'), true);
+  //     expect(cat0.contains('Electricity'), true);
+  //     expect(cat0.contains('Gas'), true);
+  //     expect(vs.isSelectionDone(), false);
+  //
+  //     // add one
+  //     vs.selectCategory('Electricity');
+  //     var cat1 = vs.getCategoriesForNextLevel();
+  //     expect(cat1, ['Realized', 'Forward']);
+  //     expect(vs.isSelectionDone(), false);
+  //
+  //     // and another
+  //     vs.selectCategory('Realized');
+  //     var cat2 = vs.getCategoriesForNextLevel();
+  //     expect(cat2.isEmpty, true);
+  //     expect(vs.isSelectionDone(), true);
+  //
+  //     // remove level 1
+  //     vs.removeFromLevel(1);
+  //     expect(vs.categories, ['Electricity']);
+  //
+  //     // add another one, remove from level 0
+  //     vs.selectCategory('Forward');
+  //     vs.removeFromLevel(0);
+  //     expect(vs.isSelectionDone(), false);
+  //     expect(vs.getCategoriesForNextLevel().contains('Time'), true);
+  //   });
+  //   test('get categories level 1', () {
+  //     var vs = VariableSelection();
+  //     expect(vs.getCategoriesForNextLevel().contains('Time'), true);
+  //     vs.selectCategory('Grid Line');
+  //     expect(vs.getCategoriesForNextLevel(), ['Horizontal', 'Vertical']);
+  //   });
+  // });
 
   group('horizontal line variable', () {
     var term = Term.parse('Jan22-Dec22', IsoNewEngland.location);

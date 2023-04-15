@@ -11,10 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
-final providerOfPolygraph =
-    StateNotifierProvider<PolygraphNotifier, PolygraphState>(
-        (ref) => PolygraphNotifier(ref));
-
 class PolygraphConfig {
   PolygraphConfig({required this.canvasWidth, required this.canvasHeight});
 
@@ -29,59 +25,56 @@ class PolygraphState {
   PolygraphState({
     required this.config,
     required this.tabs,
+    required this.activeTabIndex,
   });
 
   final PolygraphConfig config;
 
-  /// Each sheet has at least one tab, can have multiple.
-  /// Each tab has at least one window, can have multiple.
+  /// Each sheet has at least one tab, can have multiple tabs.
+  /// Each tab has at least one window, can have multiple windows.
   /// Each window has its own variables to plot.
   final List<PolygraphTab> tabs;
 
-  static final DataService service = DataServiceLocal();
+  final int activeTabIndex;
 
+  static final DataService service = DataServiceLocal();
 
   /// Add tab at the end
   void addTab() {
-    var i = tabs.length+1;
-    while (tabs.any((e) => e.name == 'Tab $i')) {
-      i = i + 1;
-    }
+    var name = _getNextDefaultTabName();
     var tab = PolygraphTab(
-        tab: tabs.length,
-        name: 'Tab $i',
-        windowLayout: WindowLayout(rows: 1, cols: 1),
-        windows: [
-          PolygraphWindow(
-              term: Term.parse('-10d', UTC),
-              tzLocation: UTC,
-              xVariable: TimeVariable(),
-              yVariables: <PolygraphVariable>[])
-        ]);
+      name: name,
+      windowLayout: WindowLayout(rows: 1, cols: 1),
+      windows: [
+        PolygraphWindow(
+            term: Term.parse('-10d', UTC),
+            xVariable: TimeVariable(),
+            yVariables: <PolygraphVariable>[])
+      ],
+      activeWindowIndex: 0,
+    );
     tabs.add(tab);
   }
 
-  /// No doubts
+  /// No opportunity to ask 'Are you sure?'.  Just delete it.
   void deleteTab(int index) {
     tabs.removeAt(index);
   }
 
-
   ///
-  PolygraphState fromMongo(Map<String, dynamic> x) {
+  PolygraphState fromMap(Map<String, dynamic> x) {
     return PolygraphState.getDefault();
   }
-
 
   static final cache = <String, TimeSeries<num>>{};
 
   /// What gets serialized to Mongo
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'config': {
         'canvasSize': [config.canvasWidth, config.canvasHeight],
       },
-      'tabs': [for (var tab in tabs) tab.toMongo()],
+      'tabs': [for (var tab in tabs) tab.toMap()],
     };
   }
 
@@ -90,6 +83,7 @@ class PolygraphState {
     return PolygraphState(
       config: PolygraphConfig.getDefault(),
       tabs: [PolygraphTab.empty()],
+      activeTabIndex: 0,
     );
   }
 
@@ -97,16 +91,57 @@ class PolygraphState {
     return PolygraphState(
       config: PolygraphConfig.getDefault(),
       tabs: [PolygraphTab.getDefault()],
+      activeTabIndex: 0,
     );
+  }
+
+  /// Return a valid tab name for tab at position [tabIndex].
+  /// If you pass in a [suggestedName] that is not allowed ('' or an already
+  /// existing tab name at a different location), it will
+  /// generate a new name.  This is used in the [addTab] method.
+  ///
+  String getValidTabName({required int tabIndex, required String suggestedName}) {
+    if (tabs[tabIndex].name == suggestedName) {
+      return suggestedName;
+    }
+    // match existing name in different position
+    bool matchExistingName = false;
+    for (var i=0; i<tabs.length; i++) {
+      if (i != tabIndex && tabs[i].name == suggestedName) {
+        matchExistingName = true;
+        break;
+      }
+    }
+
+    if (suggestedName == '' || matchExistingName) {
+      var names = tabs.map((e) => e.name).toList();
+      names.removeAt(tabIndex);
+      var i = 1;
+      while (names.any((e) => e == 'Tab $i')) {
+        i = i + 1;
+      }
+      return 'Tab $i';
+    }
+    return suggestedName;
+  }
+
+  String _getNextDefaultTabName() {
+    var i = 1;
+    while (tabs.any((e) => e.name == 'Tab $i')) {
+      i = i + 1;
+    }
+    return 'Tab $i';
   }
 
   PolygraphState copyWith({
     List<PolygraphTab>? tabs,
     PolygraphConfig? config,
+    int? activeTabIndex,
   }) {
     return PolygraphState(
       tabs: tabs ?? this.tabs,
       config: config ?? this.config,
+      activeTabIndex: activeTabIndex ?? this.activeTabIndex,
     );
   }
 }
@@ -120,16 +155,11 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     state = state.copyWith(tabs: values);
   }
 
-  // set term(Term value) {
-  //   state = state.copyWith(term: value);
-  // }
+  set config(PolygraphConfig value) {
+    state = state.copyWith(config: value);
+  }
 
-  //
-  // set xVariable(PolygraphVariable value) {
-  //   state = state.copyWith(xVariable: value);
-  // }
-  //
-  // set yVariables(List<PolygraphVariable> values) {
-  //   state = state.copyWith(yVariables: values);
-  // }
+  set activeTabIndex(int value) {
+    state = state.copyWith(activeTabIndex: value);
+  }
 }

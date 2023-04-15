@@ -51,7 +51,7 @@ class VariableLmp extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     // TODO: implement toMongo
     throw UnimplementedError();
   }

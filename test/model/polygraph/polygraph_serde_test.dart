@@ -21,7 +21,7 @@ Future<void> tests(String rootUrl) async {
   group('Polygraph toMongo/fromMongo tests', () {
     test('Serialize default', () {
       var poly = PolygraphState.getDefault();
-      var out = poly.toMongo();
+      var out = poly.toMap();
       expect(out, {
         'settings': {
           'canvasSize': [1200, 800],

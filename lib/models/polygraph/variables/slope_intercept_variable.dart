@@ -30,7 +30,7 @@ class SlopeInterceptVariable extends PolygraphVariable {
   // }
 
   @override
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     var out = <String,dynamic>{
       'slope': slope,
       'intercept': intercept,

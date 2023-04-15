@@ -9,16 +9,17 @@ class VariableSelection {
   late List<String> categories;
 
   static final allCategories = <List<String>>[
-    ['Combo Expression'],
-    ['Electricity', 'Realized'],
-    ['Electricity', 'Forward'],
-    ['Gas', 'Realized'],
-    ['Gas', 'Forward'],
+    // ['Combo Expression'],
+    // ['Electricity', 'Realized'],
+    // ['Electricity', 'Forward'],
+    ['Expression'],
     ['Line', 'Horizontal'],
     ['Line', 'Vertical'],
+    ['Marks', 'Prices'],
+    ['Marks', 'Vols'],
     ['Shooju'],
     ['Time'],
-    ['Weather', 'Temperature'],
+    // ['Weather', 'Temperature'],
   ];
 
 
@@ -48,7 +49,7 @@ class VariableSelection {
     return xs.map((e) => e[level]).toSet().toList();
   }
 
-  /// to select categories
+  ///
   bool isSelectionDone() {
     return getCategoriesForNextLevel().isEmpty;
   }

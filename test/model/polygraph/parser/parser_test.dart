@@ -25,7 +25,7 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  var service = DataServiceLocal(rootUrl: rootUrl);
+  // var service = DataServiceLocal(rootUrl: rootUrl);
   group('Polygraph parser test', () {
     // test('parser functions', () {
     //   var res = parser.parse('sum2(2,3)');
@@ -39,7 +39,6 @@ Future<void> tests(String rootUrl) async {
       var term = Term.parse('Jan20-Dec21', location);
       var window = PolygraphWindow(
           term: term,
-          tzLocation: location,
           xVariable: TimeVariable(),
           yVariables: [
             TemperatureVariable(
@@ -58,14 +57,34 @@ Future<void> tests(String rootUrl) async {
       expect(window.cache.keys.toSet(), {'bos_daily_temp', 'bos_monthly_temp'});
       var ts = window.cache['bos_monthly_temp'] as TimeSeries<num>;
       expect(ts.observationAt(Month(2020, 4, location: location)).value, 44.55);
-      // generate an error on a transformed variable
+      //
+      // generate an error on a transformed variable, unknown function
       window.yVariables[1] = TransformedVariable(
           expression: 'toMonthly(bos_daily_temp, mix)',
           id: 'bos_monthly_temp');
       await window.updateCache();
       expect(window.cache.keys.toSet(), {'bos_daily_temp'});
       var tv = window.yVariables[1] as TransformedVariable;
-      expect(tv.error, 'Unsupported function: mix');
+      expect(tv.error, 'Unsupported aggregation function: mix');
+      //
+      // generate an error on a transformed variable, wrong arity
+      window.yVariables[1] = TransformedVariable(
+          expression: 'toMonthly(bos_daily_temp)',
+          id: 'bos_monthly_temp');
+      await window.updateCache();
+      expect(window.cache.keys.toSet(), {'bos_daily_temp'});
+      tv = window.yVariables[1] as TransformedVariable;
+      expect(tv.error, 'Bad state: Can\'t find function toMonthly among '
+          'list of functions with one argument.');
+      //
+      // generate an error on a transformed variable, wrong syntax
+      window.yVariables[1] = TransformedVariable(
+          expression: 'toMonthly(bos_daily_temp',
+          id: 'bos_monthly_temp');
+      await window.updateCache();
+      expect(window.cache.keys.toSet(), {'bos_daily_temp'});
+      tv = window.yVariables[1] as TransformedVariable;
+      expect(tv.error, '")" expected');
     });
   });
 }

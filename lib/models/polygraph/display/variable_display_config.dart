@@ -1,13 +1,19 @@
 library models.polygraph.variables.variable_display_config;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class VariableDisplayConfig {
   String mode = 'lines'; // 'lines+markers',
   String? color;
   int? width; // default is 1
-  String? dash; // 'solid', 'dot', 'dashdot'
+  DashStyle? dash;
   bool? connectGaps;
+  String visible = 'true';
+
+  static final allModes = ['lines', 'lines+markers', ''];
+  static final allShapes = ['linear', 'spline', 'hv', 'vh', 'hvh', 'vhv'];
+  static final allVisible = ['true', 'false', 'legendonly'];
 
   /// taken from plotly
   static final defaultColors = <Color>[

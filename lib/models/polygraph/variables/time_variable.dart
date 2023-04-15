@@ -9,7 +9,6 @@ class TimeVariable extends PolygraphVariable {
   TimeVariable({this.skipWeekends = false}) {
     id = 'Time';
     label = 'Time';
-    isDirty = false;
   }
 
   bool skipWeekends;
@@ -23,7 +22,7 @@ class TimeVariable extends PolygraphVariable {
   ];
 
   @override
-  Map<String, dynamic> toMongo() => {
+  Map<String, dynamic> toMap() => {
         'category': 'Time',
         'config': {
           'skipWeekends': skipWeekends,

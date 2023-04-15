@@ -102,10 +102,22 @@ Expression _createFunction1(String name, Expression expression) {
 
 Expression _createFunctionN(String name, List<Expression> args) {
   if (args.length == 1) {
+    if (!functions1.containsKey(name)) {
+      throw 'Can\'t find function $name among list of functions with one argument.';
+    }
     return Unary(name, args.first, functions1[name]!);
+    ///
+    ///
+    ///
   } else if (args.length == 2) {
+    if (!functions2.containsKey(name)) {
+      throw 'Can\'t find function $name among list of functions with two arguments.';
+    }
     return Binary(name, args[0], args[1], functions2[name]!);
+    ///
+    ///
+    ///
   } else {
-    throw StateError('Arity ${args.length} not yet supported!');
+    throw 'Arity ${args.length} not yet supported!';
   }
 }

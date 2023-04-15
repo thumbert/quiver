@@ -23,7 +23,7 @@ class ForwardHeatRateVariable extends PolygraphVariable {
   String? givenLabel;
 
   @override
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     throw UnimplementedError();
   }
 

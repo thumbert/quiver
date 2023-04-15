@@ -62,14 +62,14 @@ class TemperatureVariable extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMongo() {
-    // TODO: implement toMongo
-    throw UnimplementedError();
+  Map<String, dynamic> toMap() {
+    return {
+      'variableType': 'TemperatureVariable',
+      'airportCode': airportCode,
+      'variable': variable,
+      'frequency': frequency,
+      'bool': isForecast,
+      'dataSource': dataSource,
+    };
   }
-
-  // @override
-  // TimeSeries<num> timeSeries(Term term) {
-  //   // TODO: implement timeSeries
-  //   throw UnimplementedError();
-  // }
 }

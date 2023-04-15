@@ -25,9 +25,11 @@ class DataServiceLocal extends DataService {
   // }
 
   @override
-  Future<TimeSeries<num>> getLmp(VariableLmp variable, Term term) {
-    // TODO: implement getLmp
-    throw UnimplementedError();
+  Future<TimeSeries<num>> getLmp(VariableLmp variable, Term term) async {
+    var data = await clientDaLmp.getHourlyLmp(variable.iso, variable.ptid,
+        variable.lmpComponent,
+        term.startDate, term.endDate);
+    return data;
   }
 
 

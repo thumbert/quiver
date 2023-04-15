@@ -4,13 +4,24 @@
 ## Polygraph
 - Define hotkey Ctrl-D to show a table with data underlying 
   the plot
-- Add Icon.table to show stats for a given curve
+- Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
 - Have a way to keep track of what series have changed 
   and need to be pulled again from the DB
 - Implement multiple tabs and multiple plots per tab. 
 
-## Release 2023-03-xx
+
+## Release 2023-04-14
+- Polygraph changes
+    - Added tabs and windows.  Right context menus for tabs are working.  Added some tests 
+    - Added LMP prices to LocalService
+    - Started a major effort to provide a type safe wrappers for plotly elements. 
+      Currently, I have layout, axes, titles, etc.  I can use it for serialization too.
+    - Some parser improvements, especially for error reporting.
+    - Variable summary is now working in a separate window, each variable in a card. 
+    - Window caching is now better, don't do a trip to the DB if not *needed*
+
+## Release 2023-03-11
 - Work on polygraph. 
 - Added color to the Y axis variables, so you can easily
   identify them in the plot.  

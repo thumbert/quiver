@@ -15,12 +15,20 @@ class TransformedVariable extends PolygraphVariable {
     required String id,
   }) {
     this.id = id;
-    isDirty = true;
     label = id;
   }
 
   /// For example, 'toMonthly(bos_temp, mean)'
   final String expression;
+
+  /// The concept of [isDirty] only applies to a [TransformedVariable].
+  /// It is used to force the [updateCache] method in polygraph_window to
+  /// evaluate the variable.
+  ///
+  /// How does a variable become dirty?  In two ways:
+  /// 1) A variable becomes [isDirty] at creation, or
+  /// 2) When the expression changes
+  bool isDirty = true;
 
   static TransformedVariable getDefault() =>
       TransformedVariable(expression: '', id: '');
@@ -39,7 +47,12 @@ class TransformedVariable extends PolygraphVariable {
   /// If the parsing fails, set the error message and don't store anything
   /// in the cache.
   void eval(Map<String, dynamic> cache) {
-    var res = juice.parser.parse(expression);
+    Result res;
+    try {
+      res = juice.parser.parse(expression);
+    } catch (e) {
+      res = Failure('', 0, e.toString());
+    }
     if (res.isFailure) {
       error = res.message;
     } else {
@@ -70,7 +83,7 @@ class TransformedVariable extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     // TODO: implement toMongo
     throw UnimplementedError();
   }
@@ -89,4 +102,8 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
   set expression(String value) {
     state = state.copyWith(expression: value);
   }
+
+  // set error(String value) {
+  //   state = state.copyWith()
+  // }
 }

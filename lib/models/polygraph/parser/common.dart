@@ -51,7 +51,7 @@ final functions2 = <String, dynamic Function(dynamic, dynamic)> {
     if (baseFunctions.containsKey(functionName)) {
       return Success('', 0, toDaily(ts as TimeSeries<num>, baseFunctions[functionName]!));
     } else {
-      return Failure('', 0, 'Unsupported function: $functionName');
+      return Failure('', 0, 'Unsupported aggregation function: $functionName');
     }
   },
   //
@@ -63,7 +63,7 @@ final functions2 = <String, dynamic Function(dynamic, dynamic)> {
     if (baseFunctions.containsKey(functionName)) {
       return Success('', 0, toMonthly(ts as TimeSeries<num>, baseFunctions[functionName]!));
     } else {
-      return Failure('', 0, 'Unsupported function: $functionName');
+      return Failure('', 0, 'Unsupported aggregation function: $functionName');
     }
   },
 };

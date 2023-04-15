@@ -4,7 +4,8 @@ import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_quiver/models/polygraph/variables/slope_intercept_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable_display_config.dart';
+import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
+import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:flutter/material.dart' hide Transform;
 
@@ -12,9 +13,6 @@ import 'package:flutter/material.dart' hide Transform;
 abstract class PolygraphVariable {
   /// Internal representation used for the cache key
   late final String id;
-
-  /// If true, it needs refresh
-  bool isDirty = true;
 
   /// What gets displayed on the screen
   late String label;
@@ -26,10 +24,13 @@ abstract class PolygraphVariable {
   /// What gets applied to this variable
   final transforms = <Transform>[];
 
-
+  ///
   bool isMouseOver = false;
+
   /// Should the variable be displayed on the plot?
   bool isHidden = false;
+
+  /// Gets a color at creation
   Color? color;
 
   /// For the yAxis only.  If you want it displayed on the right,
@@ -43,7 +44,7 @@ abstract class PolygraphVariable {
   Future<TimeSeries<num>> get(DataService service, Term term);
 
   /// How it's going to be persisted to the database
-  Map<String,dynamic> toMongo();
+  Map<String,dynamic> toMap();
 
   PolygraphVariable fromMongo(Map<String,dynamic> x);
 }

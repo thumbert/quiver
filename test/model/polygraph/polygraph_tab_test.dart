@@ -44,10 +44,11 @@ Future<void> tests(String rootUrl) async {
     test('Simple tab with temperature data', () {
       var location = getLocation('America/New_York');
       var poly = PolygraphState(
-          config: PolygraphConfig.getDefault(), tabs: [PolygraphTab.empty()]);
+          config: PolygraphConfig.getDefault(),
+          tabs: [PolygraphTab.empty()],
+          activeTabIndex: 0);
       poly.tabs.first.windows.first = PolygraphWindow(
           term: Term.parse('Jan20-Dec21', location),
-          tzLocation: location,
           xVariable: TimeVariable(),
           yVariables: [
             TemperatureVariable(
