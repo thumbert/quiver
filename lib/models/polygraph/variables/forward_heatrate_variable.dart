@@ -2,17 +2,18 @@ library models.polygraph.variables.forward_heatrate_variable;
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/forward_gas_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/src/timeseries_base.dart';
 
-class ForwardHeatRateVariable extends Object with PolygraphVariable {
+class ForwardHeatRateVariable extends PolygraphVariable {
   ForwardHeatRateVariable({
     required this.electricityVariable,
     required this.gasVariable,
   }) {
-    name = 'Heat Rate (Forward)';
+    id = 'Heat Rate (Forward)';
     label = _makeLabel();
   }
 
@@ -22,7 +23,7 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
   String? givenLabel;
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     throw UnimplementedError();
   }
 
@@ -43,6 +44,18 @@ class ForwardHeatRateVariable extends Object with PolygraphVariable {
   @override
   TimeSeries<num> timeSeries(Term term) {
     // TODO: implement timeSeries
+    throw UnimplementedError();
+  }
+
+  @override
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
     throw UnimplementedError();
   }
 }

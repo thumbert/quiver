@@ -13,67 +13,85 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
-final providerOfPolygraphTab =
-    StateNotifierProvider<PolygraphTabNotifier, PolygraphTab>(
-        (ref) => PolygraphTabNotifier(ref));
 
 class WindowLayout {
+  /// The window layout for this tab, number of rows and columns.
+  /// maybe even custom size at some time ...
   WindowLayout({required this.rows, required this.cols});
   final int rows;
   final int cols;
+
+  static WindowLayout getDefault() => WindowLayout(rows: 1, cols: 1);
 }
 
 class PolygraphTab {
+  /// A workbook can have several tabs.  A tab can have several windows.
   PolygraphTab({
-    required this.tab,
     required this.name,
     required this.windowLayout,
     required this.windows,
+    required this.activeWindowIndex,
   });
 
-  final int tab;
+  // final int tab;
   final String name;
   final WindowLayout windowLayout;
   final List<PolygraphWindow> windows;
+  final int activeWindowIndex;
 
-  PolygraphTab fromMongo(Map<String, dynamic> x) {
+  PolygraphTab fromMap(Map<String, dynamic> x) {
     /// TODO: implement serialization
     return PolygraphTab.getDefault();
   }
 
   /// What gets serialized to Mongo
-  Map<String, dynamic> toMongo() {
+  Map<String, dynamic> toMap() {
     return {
-      'tab': tab,
+      // 'tab': tab,
       'name': name,
       'grid': {
         'rows': windowLayout.rows,
         'cols': windowLayout.cols,
       },
-      'windows': [for (var window in windows) window.toMongo()],
+      'windows': [for (var window in windows) window.toMap()],
     };
+  }
+
+  static PolygraphTab empty() {
+    return PolygraphTab(
+      name: 'Tab 1',
+      windowLayout: WindowLayout(rows: 1, cols: 1),
+      windows: [PolygraphWindow.getDefault()],
+      activeWindowIndex: 1,
+    );
   }
 
   static PolygraphTab getDefault() {
     return PolygraphTab(
-      tab: 0,
-      name: '',
+      name: 'Tab 1',
       windowLayout: WindowLayout(rows: 1, cols: 1),
-      windows: [PolygraphWindow.getDefault()],
+      windows: [
+        // PolygraphWindow.getDefault(),
+        PolygraphWindow.getLmpWindow(),
+      ],
+      activeWindowIndex: 0,
     );
   }
+
+
 
   PolygraphTab copyWith({
     int? tab,
     String? name,
     WindowLayout? windowLayout,
     List<PolygraphWindow>? windows,
+    int? activeWindowIndex,
   }) {
     return PolygraphTab(
-      tab: tab ?? this.tab,
       name: name ?? this.name,
       windowLayout: windowLayout ?? this.windowLayout,
       windows: windows ?? this.windows,
+      activeWindowIndex: activeWindowIndex ?? this.activeWindowIndex,
     );
   }
 }
@@ -83,15 +101,19 @@ class PolygraphTabNotifier extends StateNotifier<PolygraphTab> {
 
   final Ref ref;
 
-  // set term(Term value) {
-  //   state = state.copyWith(term: value);
-  // }
-  //
-  // set xVariable(PolygraphVariable value) {
-  //   state = state.copyWith(xVariable: value);
-  // }
-  //
-  // set yVariables(List<PolygraphVariable> values) {
-  //   state = state.copyWith(yVariables: values);
-  // }
+  set name(String value) {
+    state = state.copyWith(name: value);
+  }
+
+  set windowLayout(WindowLayout value) {
+    state = state.copyWith(windowLayout: value);
+  }
+
+  set windows(List<PolygraphWindow> values) {
+    state = state.copyWith(windows: values);
+  }
+
+  set activeWindowIndex(int value) {
+    state = state.copyWith(activeWindowIndex: value);
+  }
 }

@@ -122,7 +122,7 @@ class _DataTableSource extends DataTableSource {
   DataRow? getRow(int index) {
     var x = model.tableCpSp[index];
     return DataRow(cells: [
-      DataCell(Text(x['auction'].name)),
+      DataCell(Text(x['auction'].id)),
       DataCell(Text(_fmt.format(x['clearingPrice']))),
       DataCell(Text(_fmt.format(x['settlePrice']))),
     ]);

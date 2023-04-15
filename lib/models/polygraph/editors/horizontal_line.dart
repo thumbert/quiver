@@ -1,6 +1,7 @@
 library models.polygraph.editors.horizontal_line;
 
 import 'package:date/date.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
-class HorizontalLine extends Object with PolygraphVariable {
+class HorizontalLine extends PolygraphVariable {
   HorizontalLine({
     required this.yIntercept,
     String? label,
@@ -27,7 +28,6 @@ class HorizontalLine extends Object with PolygraphVariable {
       label: 'h=0',
       timeFilter: TimeFilter.empty(),
       timeAggregation: TimeAggregation.empty());
-
 
   @override
   TimeSeries<num> timeSeries(Term term) {
@@ -57,19 +57,33 @@ class HorizontalLine extends Object with PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     // TODO: implement toJson
     throw UnimplementedError();
   }
 
   HorizontalLine copyWith(
           {num? yIntercept,
+          String? label,
           TimeFilter? timeFilter,
           TimeAggregation? timeAggregation}) =>
       HorizontalLine(
           yIntercept: yIntercept ?? this.yIntercept,
+          label: label ?? this.label,
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
+
+  @override
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
+    throw UnimplementedError();
+  }
 }
 
 class HorizontalLineNotifier extends StateNotifier<HorizontalLine> {
@@ -79,6 +93,10 @@ class HorizontalLineNotifier extends StateNotifier<HorizontalLine> {
 
   set yIntercept(num value) {
     state = state.copyWith(yIntercept: value);
+  }
+
+  set label(String value) {
+    state = state.copyWith(label: value);
   }
 
   set timeFilter(TimeFilter value) {

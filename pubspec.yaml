@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
 
   collection: ^1.15.0
+  contextmenu: ^3.0.0
   dama:
     git: https://github.com/thumbert/dama.git
   date:
@@ -30,6 +31,8 @@ dependencies:
   http: '>=0.12.0 <1.0.0'
   intl: ^0.17.0
   more: ^3.8.5
+  petitparser: '>=5.1.0 <6.0.0'
+  pointer_interceptor: '>=0.9.3+4 <1.0.0'
   provider: ^6.0.1
   flutter_riverpod: ^2.0.0-dev.9
   table:

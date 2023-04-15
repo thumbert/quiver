@@ -2,6 +2,7 @@ library models.polygraph.variables.forward_gas_variable;
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/src/timeseries_base.dart';
 import 'package:timezone/timezone.dart';
@@ -12,13 +13,13 @@ final agtcgFG24 = ForwardGasVariable(
   strip: Term.parse('F24-G24', UTC),
 );
 
-class ForwardGasVariable extends Object with PolygraphVariable {
+class ForwardGasVariable extends PolygraphVariable {
   ForwardGasVariable({
     required this.deliveryPoint,
     required this.product,
     required this.strip,
   }) {
-    name = 'Gas (Forward)';
+    id = 'Gas (Forward)';
     label = _makeLabel();
   }
 
@@ -31,7 +32,7 @@ class ForwardGasVariable extends Object with PolygraphVariable {
   ];
 
   @override
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     throw UnimplementedError();
   }
 
@@ -41,8 +42,14 @@ class ForwardGasVariable extends Object with PolygraphVariable {
   }
 
   @override
-  TimeSeries<num> timeSeries(Term term) {
-    // TODO: implement timeSeries
+  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+    // TODO: implement fromMongo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<TimeSeries<num>> get(DataService service, Term term) {
+    // TODO: implement get
     throw UnimplementedError();
   }
 }
