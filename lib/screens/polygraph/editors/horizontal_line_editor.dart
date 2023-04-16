@@ -249,14 +249,14 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
                 child: TimeAggregationEditor()),
           ],
         ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              /// blah
-            });
-          },
-          child: const Text('OK'),
-        ),
+        // ElevatedButton(
+        //   onPressed: () {
+        //     setState(() {
+        //       /// blah
+        //     });
+        //   },
+        //   child: const Text('OK'),
+        // ),
       ],
     );
   }

@@ -4,12 +4,16 @@ import 'package:date/date.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
+import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
+import 'package:flutter_quiver/models/polygraph/editors/ok_button.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_summary_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
-import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
@@ -18,6 +22,7 @@ import 'package:timezone/timezone.dart';
 
 final providerOfPolygraphTab = StateNotifierProvider<PolygraphTabNotifier, PolygraphTab>(
         (ref) => PolygraphTabNotifier(ref));
+
 
 class PolygraphTabUi extends ConsumerStatefulWidget {
   const PolygraphTabUi({Key? key}) : super(key: key);
@@ -87,6 +92,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     var tab = ref.watch(providerOfPolygraphTab);
     var window = tab.windows[tab.activeWindowIndex];
     var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
+    var transformedVariable = ref.watch(providerOfTransformedVariable);
+
     controllerTimezone.text = window.term.location.toString();
 
     return Column(
@@ -275,21 +282,31 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                 setState(() {
                   // variableModel.editedIndex = i + 1;
                 });
+                final container = ProviderScope.containerOf(context);
                 await showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
-                      print('in showDialog');
-                      print(window.yVariables.first.label);
+                      var selection = ref.watch(providerOfVariableSelection);
+                      var mapOfVariables = {
+                        'Line,Horizontal': providerOfHorizontalLine,
+                        'Expression' : providerOfTransformedVariable,
+                      };
+                      // print('in showDialog');
+                      // print(window.yVariables.first.label);
                       return PointerInterceptor(
                         child: AlertDialog(
                             elevation: 24.0,
                             title: const Text('Select a variable'),
-                            content: const ProviderScope(child: VariableSelectionUi()),
+                            content: ProviderScope(
+                                parent: container,
+                                child: const VariableSelectionUi()),
                             actions: [
                               TextButton(
                                   child: const Text('CANCEL'),
                                   onPressed: () {
+                                    selection.categories.clear();
+                                    // ref.read(providerOfClickedOk.notifier).pushed = false;
                                     /// ignore changes the changes
                                     Navigator.of(context)
                                         .pop();
@@ -297,9 +314,26 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                               ElevatedButton(
                                   child: const Text('OK'),
                                   onPressed: () {
+                                    // ref.read(providerOfClickedOk.notifier).pushed = true;
                                     /// harvest the values
-                                    Navigator.of(context)
-                                        .pop();
+                                    print('Selected: ${selection.selection}');
+                                    var provider = mapOfVariables[selection.selection]!;
+                                    var res = container.read(provider);
+                                    if (res is TransformedVariable) {
+                                      debugPrint(res.expression);
+                                      var window = ref.read(providerOfPolygraphWindow);
+                                      res.validate(window);
+                                      print(res.error);
+                                      // force a new repaint
+                                      ref.read(providerOfTransformedVariable.notifier).error = res.error;
+                                    } else if (res is HorizontalLine) {
+                                      debugPrint(res.yIntercept.toString());
+                                    }
+                                    if (res.error == '') {
+                                      selection.categories.clear();
+                                      // ref.read(providerOfClickedOk.notifier).pushed = false;
+                                      Navigator.of(context).pop();
+                                    }
                                   }),
                             ]),
                       );

@@ -180,10 +180,10 @@ class PolygraphWindow {
     return {
       'term': term.toString(),
       'tzLocation': term.location.name,
-      'xVariable': xVariable.toMap(),
-      'yVariables': [
-        for (var variable in yVariables) variable.toMap()
-      ]
+      // 'xVariable': xVariable.toMap(),
+      // 'yVariables': [
+      //   for (var variable in yVariables) variable.toMap()
+      // ]
     };
   }
 

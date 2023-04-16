@@ -1,5 +1,7 @@
 library models.polygraph.variables.variable_selection;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 class VariableSelection {
   VariableSelection() {
     categories = <String>[];
@@ -7,6 +9,8 @@ class VariableSelection {
 
   /// the current selection 
   late List<String> categories;
+
+  String get selection => categories.join(',');
 
   static final allCategories = <List<String>>[
     // ['Combo Expression'],

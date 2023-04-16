@@ -3,6 +3,7 @@ library models.polygraph.variables.transformed_variable;
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart' as juice;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,9 +14,11 @@ class TransformedVariable extends PolygraphVariable {
   TransformedVariable({
     required this.expression,
     required String id,
+    String? error,
   }) {
     this.id = id;
     label = id;
+    this.error = error ?? '';
   }
 
   /// For example, 'toMonthly(bos_temp, mean)'
@@ -36,10 +39,12 @@ class TransformedVariable extends PolygraphVariable {
   TransformedVariable copyWith({
     String? expression,
     String? id,
+    String? error,
   }) =>
       TransformedVariable(
         expression: expression ?? this.expression,
         id: id ?? this.id,
+        error: error ?? this.error,
       );
 
   /// The [cache] should already contain all variables needed for the eval
@@ -69,6 +74,18 @@ class TransformedVariable extends PolygraphVariable {
         error = '';
       }
     }
+  }
+
+  void validate(PolygraphWindow window) {
+    if (label == '') {
+      error = 'Label can\'t be empty';
+      return;
+    }
+    if (expression == '') {
+      error = 'Expression can\'t be empty';
+      return;
+    }
+    eval(window.cache);
   }
 
   @override
@@ -103,7 +120,7 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
     state = state.copyWith(expression: value);
   }
 
-  // set error(String value) {
-  //   state = state.copyWith()
-  // }
+  set error(String value) {
+    state = state.copyWith(error: value);
+  }
 }

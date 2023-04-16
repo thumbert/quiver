@@ -9,6 +9,7 @@
 - Have a way to keep track of what series have changed 
   and need to be pulled again from the DB
 - Implement multiple tabs and multiple plots per tab. 
+- When variable selection is made, the OK button needs to do the widget validation.
 
 
 ## Release 2023-04-14
