@@ -415,7 +415,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                   height: 48,
                 ),
 
-                const VariableSelectionUi(),
+                // const VariableSelectionUi(),
 
                 const SizedBox(
                   height: 48,

@@ -123,4 +123,9 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
   set error(String value) {
     state = state.copyWith(error: value);
   }
+
+  void reset() {
+    state = TransformedVariable.getDefault();
+  }
+
 }

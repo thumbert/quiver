@@ -6,6 +6,8 @@ import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/risk_system.dart';
+import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
+import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
@@ -35,7 +37,7 @@ class PolygraphWindow {
   /// 2) When a new transformed variable is added to the window
   /// 3) An existing transformed variable has its expression modified
   /// 4) When the window term is modified beyond the existing term
-  // bool isCacheStale = true;
+  // bool isCacheStale = true;  /// NOT NEEDED I THINK!
 
   /// Should we make a trip to the database when updating the cache?  This
   /// needs to happen when
@@ -103,15 +105,23 @@ class PolygraphWindow {
       if (variable is TransformedVariable) {
         if (variable.isDirty) {
           variable.eval(cache);
+          /// TODO: the lines below should not be needed.  There should be
+          /// NO parsing error here.  Parsing errors need to be checked at
+          /// variable creation only.
           if (variable.error != '') {
             // parsing has failed, remove the variable from the cache
             cache.remove(variable.id);
           }
         }
+      } else if (variable is HorizontalLine) {
+        /// TODO:  I don't need to recalculate these every time!
+        var ts = variable.timeSeries(term);
+        cache[variable.id] = ts;
       }
     }
     refreshDataFromDb = false;
   }
+
 
   /// Construct the Plotly traces.
   /// Note that the cache may contain more history than needed for the plot.
@@ -119,10 +129,14 @@ class PolygraphWindow {
     var traces = <Map<String, dynamic>>[];
     if (xVariable is TimeVariable) {
       for (var i = 0; i < yVariables.length; i++) {
+        // print(i);
+        if (yVariables[i].isHidden) continue;
         var ts = cache[yVariables[i].id] ?? TimeSeries<num>();
         if (ts is TimeSeries<num>) {
           ts = TimeSeries.fromIterable(ts.window(term.interval));
         }
+
+        var color = (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
 
         /// show a stepwise function (default)
         var one = {
@@ -132,11 +146,14 @@ class PolygraphWindow {
           'y': ts.values.expand((e) => [e, e]).toList(),
           'name': yVariables[i].id,
           'mode': 'lines',
+          'line': {
+            'color': VariableDisplayConfig.colorToHex(color),
+          },
           // 'line': {'shape': 'hv'},
 
           // 'yaxis': 'y2',  // if you want it on the right side
         };
-        // print(one);
+        // print(one['line']);
         // yVariables[i].config
         traces.add(one);
       }
@@ -217,12 +234,10 @@ class PolygraphWindow {
             id: 'bos_monthly_max'),
       ],
     );
-    print('done');
     return window;
   }
 
   static PolygraphWindow getLmpWindow() {
-    print('in getLmpWindow()');
     var window = PolygraphWindow(
         term:
             Term.parse('Jan21-Dec21', Iso.newEngland.preferredTimeZoneLocation),
@@ -235,6 +250,8 @@ class PolygraphWindow {
               lmpComponent: LmpComponent.lmp)
             ..id = 'hub_da_lmp'
             ..label = 'hub_da_lmp',
+          TransformedVariable(expression: 'toMonthly(hub_da_lmp, mean)',
+              id: 'monthly_mean'),
         ]);
     // print(window.toMap());
     return window;

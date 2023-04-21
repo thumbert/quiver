@@ -17,6 +17,7 @@ class HorizontalLine extends PolygraphVariable {
     required this.timeAggregation,
   }) {
     this.label = label ?? 'h=$yIntercept';
+    id = this.label;
   }
 
   final num yIntercept;
@@ -29,7 +30,7 @@ class HorizontalLine extends PolygraphVariable {
       timeFilter: TimeFilter.empty(),
       timeAggregation: TimeAggregation.empty());
 
-  @override
+
   TimeSeries<num> timeSeries(Term term) {
     late TimeSeries<num> ts, aux;
     if (timeFilter.isNotEmpty()) {
@@ -48,12 +49,23 @@ class HorizontalLine extends PolygraphVariable {
         aux = TimeSeries.fill(term.hours(), yIntercept);
       }
       ts = TimeSeries.fromIterable(timeFilter.apply(aux));
+    } else {
+      ts = TimeSeries.from([term.interval], [yIntercept]);
     }
+
+    /// Apply any aggregation
     if (timeAggregation.isNotEmpty()) {
       ts = TimeSeries.fromIterable(timeAggregation.apply(ts));
     }
 
     return ts;
+  }
+
+
+  void validate() {
+    timeAggregation.validate();
+    error = timeAggregation.error;
+    print('in horizontal_line validate(), error=$error');
   }
 
   @override

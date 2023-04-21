@@ -40,6 +40,12 @@ class VariableDisplayConfig {
     const Color(0xFFFECB52),
   ];
 
+
+  /// From [Color(0xFF1f77b4)] return '#1f77b4'.
+  static String colorToHex(Color color) {
+    return '#${(0x00ffffff & color.value).toRadixString(16)}';
+  }
+
   /// TODO:  Maybe set line['shape'] = 'hv' for period beginning, and 'vh' for
   /// period ending.
   Map<String, dynamic>? line;

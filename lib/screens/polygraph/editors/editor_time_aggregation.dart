@@ -26,9 +26,9 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
   final focusFrequency = FocusNode();
   final focusFunction = FocusNode();
 
-  bool needsFrequency = false;
-  bool needsFunction = false;
-  String? _errorFrequency, _errorFunction;
+  // bool needsFrequency = false;
+  // bool needsFunction = false;
+  // String? _errorFrequency, _errorFunction;
 
   @override
   void initState() {
@@ -36,11 +36,13 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
     controllerFrequency.text = '';
     controllerFunction.text = '';
 
+
     // focusFrequency.addListener(() {
     //   if (!focusFrequency.hasFocus) {
+    //     var state = ref.read(providerOfTimeAggregation);
     //     setState(() {
-    //       if (needsFrequency || needsFunction) {
-    //         // don't get yourself in a weird state
+    //       if (state.error != '') {
+    //         // don't get yourself into a weird state
     //         ref.read(providerOfTimeAggregation.notifier).frequency = '';
     //         ref.read(providerOfTimeAggregation.notifier).function = '';
     //       } else {
@@ -52,8 +54,9 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
     // });
     // focusFunction.addListener(() {
     //   if (!focusFunction.hasFocus) {
+    //     var state = ref.read(providerOfTimeAggregation);
     //     setState(() {
-    //       if (needsFrequency || needsFunction) {
+    //       if (state.error != '') {
     //         // don't get yourself in a weird state
     //         ref.read(providerOfTimeAggregation.notifier).frequency = '';
     //         ref.read(providerOfTimeAggregation.notifier).function = '';
@@ -80,6 +83,7 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
   @override
   Widget build(BuildContext context) {
     var state = ref.watch(providerOfTimeAggregation);
+    state.validate();
     controllerFrequency.text = state.frequency;
     controllerFunction.text = state.function;
 
@@ -100,7 +104,7 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
               ),
             ),
             Container(
-              color: needsFrequency ? Colors.pink[100] : MyApp.background,
+              color: MyApp.background,
               width: 120,
               child: RawAutocomplete(
                   focusNode: focusFrequency,
@@ -109,11 +113,21 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                       TextEditingController textEditingController,
                       FocusNode focusNode,
                       VoidCallback onFieldSubmitted) =>
-                      AutocompleteField(
+                      TextField(
                         focusNode: focusNode,
-                        textEditingController: textEditingController,
-                        onFieldSubmitted: onFieldSubmitted,
-                        options: TimeAggregation.allFrequencies,
+                        controller: textEditingController,
+                        onEditingComplete: onFieldSubmitted,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.all(10),
+                          enabledBorder: state.error != '' && controllerFrequency.text == '' ?
+                          const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.red))
+                              : InputBorder.none,
+                          fillColor: MyApp.background,
+                          filled: true,
+                        ),
                       ),
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     if (textEditingValue == TextEditingValue.empty) {
@@ -127,13 +141,16 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                   onSelected: (String selection) {
                     setState(() {
                       ref.read(providerOfTimeAggregation.notifier).frequency = selection;
-                      if (selection != '') {
-                        needsFunction = state.function == '';
-                      } else {
-                        ref.read(providerOfTimeAggregation.notifier).function = '';
-                        needsFunction = false;
-                      }
-                      needsFrequency = false;
+                      // state.validate();
+                      // print('in editor_time_aggregation onSelected(), state.error=${state.error}');
+                      // ref.read(providerOfTimeAggregation.notifier).error = state.error;
+                    //   if (selection != '') {
+                    //     needsFunction = state.function == '';
+                    //   } else {
+                    //     ref.read(providerOfTimeAggregation.notifier).function = '';
+                    //     needsFunction = false;
+                    //   }
+                    //   needsFrequency = false;
                     });
                   },
                   optionsViewBuilder: (BuildContext context,
@@ -187,9 +204,12 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                     );
                   }),
             ),
-            Text(
-              _errorFrequency ?? '',
-              style: const TextStyle(color: Colors.red),
+            const SizedBox(
+              width: 8,
+            ),
+            if (controllerFrequency.text == '') Text(
+              state.error,
+              style: const TextStyle(color: Colors.red, fontSize: 10),
             ),
           ],
         ),
@@ -210,7 +230,8 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
               ),
             ),
             Container(
-              color: needsFunction ? Colors.pink[100] : MyApp.background,
+              color: MyApp.background,
+              // color: needsFunction ? Colors.pink[100] : MyApp.background,
               width: 120,
               child: RawAutocomplete(
                   focusNode: focusFunction,
@@ -219,11 +240,21 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                       TextEditingController textEditingController,
                       FocusNode focusNode,
                       VoidCallback onFieldSubmitted) =>
-                      AutocompleteField(
+                      TextField(
                         focusNode: focusNode,
-                        textEditingController: textEditingController,
-                        onFieldSubmitted: onFieldSubmitted,
-                        options: ['', ...Transform.aggregations.keys],
+                        controller: textEditingController,
+                        onEditingComplete: onFieldSubmitted,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.all(10),
+                          enabledBorder: state.error != '' && controllerFunction.text == '' ?
+                          const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.red))
+                              : InputBorder.none,
+                          fillColor: MyApp.background,
+                          filled: true,
+                        ),
                       ),
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     if (textEditingValue == TextEditingValue.empty) {
@@ -236,13 +267,7 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                   onSelected: (String selection) {
                     setState(() {
                       ref.read(providerOfTimeAggregation.notifier).function = selection;
-                      if (selection != '') {
-                        needsFrequency = state.frequency == '';
-                      } else {
-                        ref.read(providerOfTimeAggregation.notifier).frequency = '';
-                        needsFrequency = false;
-                      }
-                      needsFunction = false;
+                      // state.validate();
                     });
                   },
                   optionsViewBuilder: (BuildContext context,
@@ -296,13 +321,22 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                     );
                   }),
             ),
-            Text(
-              _errorFunction ?? '',
-              style: const TextStyle(color: Colors.red),
+            const SizedBox(
+                width: 8,
+              ),
+            if (controllerFunction.text == '') Text(
+              state.error,
+              style: const TextStyle(color: Colors.red, fontSize: 10),
             ),
           ],
         ),
-
+        // const SizedBox(
+        //   height: 4,
+        // ),
+        // Text(
+        //   state.error,
+        //   style: const TextStyle(color: Colors.red),
+        // ),
       ],
     );
   }

@@ -156,7 +156,7 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
             ),
             const SizedBox(height: 16,),
             if (activeTab == 0) SizedBox(
-              height: 200,
+              height: 240,
               child: Column(children: [
                 Row(
                   children: [
@@ -242,10 +242,10 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
               ],),
             ),
             if (activeTab == 1) const SizedBox(
-                height: 200,
+                height: 240,
                 child: TimeFilterEditor()),
             if (activeTab == 2) const SizedBox(
-              height: 200,
+              height: 240,
                 child: TimeAggregationEditor()),
           ],
         ),

@@ -9,6 +9,7 @@ import 'package:flutter_quiver/models/polygraph/editors/ok_button.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
@@ -56,8 +57,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
         /// validate when you lose focus
         setState(() {
           try {
-            ref.read(providerOfPolygraphWindow.notifier).term =
-                Term.parse(controllerTerm.text, UTC);
+            var tab = ref.read(providerOfPolygraphTab);
+            var window = tab.windows[tab.activeWindowIndex];
+            window = window.copyWith(term: Term.parse(controllerTerm.text, UTC));
+            var windows = [...tab.windows];
+            windows[tab.activeWindowIndex] = window;
+            ref.read(providerOfPolygraphTab.notifier).windows = windows;
             _errorTerm = null; // all good
           } catch (e) {
             debugPrint(e.toString());
@@ -92,7 +97,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     var tab = ref.watch(providerOfPolygraphTab);
     var window = tab.windows[tab.activeWindowIndex];
     var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
-    var transformedVariable = ref.watch(providerOfTransformedVariable);
 
     controllerTimezone.text = window.term.location.toString();
 
@@ -112,8 +116,14 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   // print('window.term = ${window.term}');
                   // print('asyncCache keys: ${cache.keys}');
                   var traces = window.makeTraces();
+                  // print('traces.length = ${traces.length}');
                   // print(traces.first['x'].take(10));
-                  plotly[tab.activeWindowIndex].plot.react(traces, window.layout, displaylogo: false);
+                  // if (traces.length == 3) {
+                  //   print(traces[2]);
+                  // }
+                  plotly[tab.activeWindowIndex].plot.react(traces,
+                      window.layout,
+                      displaylogo: false);
                   return plotly[tab.activeWindowIndex];
                 }),
           ),
@@ -282,21 +292,23 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                 setState(() {
                   // variableModel.editedIndex = i + 1;
                 });
+                var selection = ref.watch(providerOfVariableSelection);
                 final container = ProviderScope.containerOf(context);
                 await showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
-                      var selection = ref.watch(providerOfVariableSelection);
                       var mapOfVariables = {
                         'Line,Horizontal': providerOfHorizontalLine,
                         'Expression' : providerOfTransformedVariable,
                       };
-                      // print('in showDialog');
-                      // print(window.yVariables.first.label);
+                      // print('in builder of showDialog:');
+                      // print('label: ${container.read(providerOfTransformedVariable).label}');
+
                       return PointerInterceptor(
                         child: AlertDialog(
                             elevation: 24.0,
+                            scrollable: true,
                             title: const Text('Select a variable'),
                             content: ProviderScope(
                                 parent: container,
@@ -306,62 +318,55 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   child: const Text('CANCEL'),
                                   onPressed: () {
                                     selection.categories.clear();
-                                    // ref.read(providerOfClickedOk.notifier).pushed = false;
-                                    /// ignore changes the changes
+                                    /// ignore the changes
                                     Navigator.of(context)
                                         .pop();
                                   }),
                               ElevatedButton(
                                   child: const Text('OK'),
                                   onPressed: () {
-                                    // ref.read(providerOfClickedOk.notifier).pushed = true;
+                                    var tab = container.read(providerOfPolygraphTab);
+                                    var window = tab.windows[tab.activeWindowIndex];
+                                    // print(window.yVariables.map((e) => e.label));
                                     /// harvest the values
-                                    print('Selected: ${selection.selection}');
+                                    // print('Selected: ${selection.selection}');
                                     var provider = mapOfVariables[selection.selection]!;
                                     var res = container.read(provider);
                                     if (res is TransformedVariable) {
                                       debugPrint(res.expression);
-                                      var window = ref.read(providerOfPolygraphWindow);
                                       res.validate(window);
                                       print(res.error);
                                       // force a new repaint
                                       ref.read(providerOfTransformedVariable.notifier).error = res.error;
+                                      if (res.error == '') {
+                                        // reset the UI
+                                        ref.read(providerOfTransformedVariable.notifier).reset();
+                                      }
                                     } else if (res is HorizontalLine) {
                                       debugPrint(res.yIntercept.toString());
+                                      var ta = ref.read(providerOfTimeAggregation);
+                                      ref.read(providerOfHorizontalLine.notifier).timeAggregation = ta;
+                                      print(res.timeAggregation.toJson());
+                                      res.validate();
+                                      print(res.error);
+
+                                    } else {
+                                      print('Need to implement this type of variable in polygraph_tab_ui, onPresed() OK');
                                     }
+
                                     if (res.error == '') {
+                                      /// We are done here.  Ready to pop.
+                                      var yVariables = [...window.yVariables, res];
+                                      window = window.copyWith(yVariables: yVariables);
+                                      var windows = [...tab.windows];
+                                      windows[tab.activeWindowIndex] = window;
+                                      ref.read(providerOfPolygraphTab.notifier).windows = windows;
                                       selection.categories.clear();
-                                      // ref.read(providerOfClickedOk.notifier).pushed = false;
                                       Navigator.of(context).pop();
                                     }
                                   }),
                             ]),
                       );
-                      // return AlertDialog(
-                      //     elevation: 24.0,
-                      //     title: const Text('Select'),
-                      //     content: Column(
-                      //       mainAxisSize: MainAxisSize.min,
-                      //       children: const [
-                      //         Text('Boo'),
-                      //       ],
-                      //     ),
-                      //     actions: [
-                      //       TextButton(
-                      //           child: const Text('CANCEL'),
-                      //           onPressed: () {
-                      //             /// ignore changes the changes
-                      //             Navigator.of(context)
-                      //                 .pop();
-                      //           }),
-                      //       ElevatedButton(
-                      //           child: const Text('OK'),
-                      //           onPressed: () {
-                      //             /// harvest the values
-                      //             Navigator.of(context)
-                      //                 .pop();
-                      //           }),
-                      //     ]);
                     });
               },
               // visualDensity: VisualDensity.compact,
@@ -400,6 +405,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
               icon: const Icon(Icons.table_rows, color: Colors.blueGrey),
               tooltip: 'View data',
             ),
+
 
             /// View summary
             IconButton(
@@ -497,16 +503,19 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                     style: TextStyle(color: Colors.blueGrey, fontSize: 18),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    window.xVariable.id,
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.only(left: 0, top: 0, bottom: 0),
-                    alignment: Alignment.centerLeft,
-                    // backgroundColor: Colors.orange,
+                SizedBox(
+                  height: 28,
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      window.xVariable.id,
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.only(left: 0, top: 0, bottom: 0),
+                      alignment: Alignment.centerLeft,
+                      // backgroundColor: Colors.orange,
+                    ),
                   ),
                 ),
               ],
@@ -540,28 +549,33 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       child: Stack(
                         alignment: AlignmentDirectional.centerEnd,
                         children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              window.yVariables[i].label,
-                              style: TextStyle(
-                                  color: window.yVariables[i].isHidden
-                                      ? Colors.grey
-                                      : window.yVariables[i].color ??
-                                      VariableDisplayConfig
-                                          .defaultColors[i],
-                                  decoration: window.yVariables[i].isHidden
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none,
-                                  fontSize: 14),
-                            ),
-                            style: TextButton.styleFrom(
-                              padding:
-                              const EdgeInsets.only(left: 0, right: 150),
+                          SizedBox(
+                            height: 28,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                window.yVariables[i].label,
+                                style: TextStyle(
+                                    color: window.yVariables[i].isHidden
+                                        ? Colors.grey
+                                        : window.yVariables[i].color ??
+                                        VariableDisplayConfig
+                                            .defaultColors[i],
+                                    decoration: window.yVariables[i].isHidden
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                    fontSize: 14),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding:
+                                const EdgeInsets.only(left: 0, right: 150),
+                              ),
                             ),
                           ),
 
-                          /// show the icons only on hover ...
+                          ///
+                          /// Show the icons only on hover ...
+                          ///
                           if (window.yVariables[i].isMouseOver)
                             Row(
                               children: [
@@ -659,6 +673,9 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                     setState(() {
                                       window.yVariables[i].isHidden =
                                       !window.yVariables[i].isHidden;
+                                      var windows = [...tab.windows];
+                                      windows[tab.activeWindowIndex] = window;
+                                      ref.read(providerOfPolygraphTab.notifier).windows = windows;
                                     });
                                   },
                                   visualDensity: VisualDensity.compact,
@@ -694,3 +711,30 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   // }
 
 }
+
+
+// return AlertDialog(
+//     elevation: 24.0,
+//     title: const Text('Select'),
+//     content: Column(
+//       mainAxisSize: MainAxisSize.min,
+//       children: const [
+//         Text('Boo'),
+//       ],
+//     ),
+//     actions: [
+//       TextButton(
+//           child: const Text('CANCEL'),
+//           onPressed: () {
+//             /// ignore changes the changes
+//             Navigator.of(context)
+//                 .pop();
+//           }),
+//       ElevatedButton(
+//           child: const Text('OK'),
+//           onPressed: () {
+//             /// harvest the values
+//             Navigator.of(context)
+//                 .pop();
+//           }),
+//     ]);

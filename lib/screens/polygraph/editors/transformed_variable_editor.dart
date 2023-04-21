@@ -4,9 +4,8 @@ library screens.polygraph.editors.transformed_variable_editor;
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
-import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfTransformedVariable =
@@ -16,9 +15,6 @@ final providerOfTransformedVariable =
 class TransformedVariableEditor extends ConsumerStatefulWidget {
   const TransformedVariableEditor(
       {Key? key}) : super(key: key);
-
-  // final PolygraphWindow window;
-  // final bool pressedOk;
 
   @override
   ConsumerState<TransformedVariableEditor> createState() =>
@@ -33,6 +29,7 @@ class _TransformedVariableEditorState
   final focusLabel = FocusNode();
   final focusExpression = FocusNode();
 
+  /// Have this here too for convenience
   String _errorMessage = '';
   bool pressedOk = false;
   int activeTab = 0;
@@ -42,6 +39,12 @@ class _TransformedVariableEditorState
     super.initState();
     controllerExpression.text = '';
     controllerLabel.text = '';
+
+    // print('in initState() of transformed_variable_editor');
+    // print('label: ${ref.read(providerOfTransformedVariable).label}');
+
+    // ref.read(providerOfTransformedVariable.notifier).label = '';
+    // ref.read(providerOfTransformedVariable.notifier).expression = '';
 
     focusLabel.addListener(() {
       if (!focusLabel.hasFocus) {
@@ -58,7 +61,8 @@ class _TransformedVariableEditorState
     focusExpression.addListener(() {
       if (!focusExpression.hasFocus) {
         var state = ref.read(providerOfTransformedVariable);
-        var window = ref.read(providerOfPolygraphWindow);
+        var tab = ref.read(providerOfPolygraphTab);
+        var window = tab.windows[tab.activeWindowIndex];
         setState(() {
           ref.read(providerOfTransformedVariable.notifier).expression =
               controllerExpression.text;
@@ -84,15 +88,10 @@ class _TransformedVariableEditorState
     var state = ref.watch(providerOfTransformedVariable);
     controllerExpression.text = state.expression;
     controllerLabel.text = state.label;
-    // pressedOk = ref.watch(providerOfClickedOk).pushed;
-    // if (pressedOk) {
-    //   print('Validating........................................');
-    //   // validateForm(state);  // can't do this here, needs to run in an onPressed() method!
-    // }
     _errorMessage = state.error;
     print('_errorMessage: $_errorMessage');
 
-    /// TODO: Need to do validation on the change of tab too
+    /// TODO: Should do validation when the tab changes too
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -233,7 +232,8 @@ class _TransformedVariableEditorState
                                   : InputBorder.none,
                             ),
                             onEditingComplete: () {
-                              var window = ref.read(providerOfPolygraphWindow);
+                              var tab = ref.read(providerOfPolygraphTab);
+                              var window = tab.windows[tab.activeWindowIndex];
                               print('in transformed_variable_editor, build, onEditingComplete:');
                               print('${window.yVariables.map((e) => e.label)}');
                               setState(() {

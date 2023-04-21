@@ -17,9 +17,9 @@ import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:timezone/timezone.dart';
 
-final providerOfPolygraphWindow =
-    StateNotifierProvider<PolygraphWindowNotifier, PolygraphWindow>(
-        (ref) => PolygraphWindowNotifier(ref));
+// final providerOfPolygraphWindow =
+//     StateNotifierProvider<PolygraphWindowNotifier, PolygraphWindow>(
+//         (ref) => PolygraphWindowNotifier(ref));
 
 final providerOfPolygraphWindowCache =
     FutureProvider.family<Map<String, dynamic>, PolygraphWindow>(

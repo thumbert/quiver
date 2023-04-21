@@ -1,6 +1,5 @@
 library models.polygraph.variables.variable_selection;
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class VariableSelection {
   VariableSelection() {

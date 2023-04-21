@@ -27,12 +27,10 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
   @override
   Widget build(BuildContext context) {
     final variableSelection = ref.watch(providerOfVariableSelection);
-    // final window = ref.watch(providerOfPolygraphWindow);
     var categories = variableSelection.getCategoriesForNextLevel();
 
     Widget widget = const Text('');
     if (variableSelection.isSelectionDone()) {
-      /// TODO: reset the clickedOk provider
       var path = variableSelection.selection;
       if (path == 'Expression') {
         widget = const TransformedVariableEditor();
@@ -44,7 +42,6 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
       }
     }
 
-    /// SizedWidget, width 700
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -59,7 +56,7 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
           //   spacing: 5.0,
           Row(
             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List<Widget>.generate(
               categories.length,
                   (int index) {

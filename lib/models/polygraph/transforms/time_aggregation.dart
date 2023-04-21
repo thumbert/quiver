@@ -8,14 +8,17 @@ class TimeAggregation extends Object with Transform {
   TimeAggregation({
     required this.frequency,
     required this.function,
-  });
+    String? error,
+  }) {
+    this.error = error ?? '';
+  }
 
   final String frequency;
   final String function;
+  String error = '';
 
   TimeAggregation.empty() : frequency = '', function = '';
 
-  /// TODO: how to support Nov-Mar? or Jun-Sep term by year?
   static final allFrequencies = [
     '',
     'hour',
@@ -28,6 +31,17 @@ class TimeAggregation extends Object with Transform {
 
   bool isEmpty() => frequency == '' && function == '';
   bool isNotEmpty() => !isEmpty();
+
+  void validate() {
+    error = '';
+    if (frequency == '' && function != '') {
+      error = 'Frequency can\'t be empty';
+    }
+    if (function == '' && frequency != '') {
+      error = 'Function can\'t be empty';
+    }
+    print('in time_aggregation validate(), error=$error');
+  }
 
   Map<String,dynamic> toMongo() {
     return {
@@ -64,9 +78,9 @@ class TimeAggregation extends Object with Transform {
     }
   }
   
-  TimeAggregation copyWith({String? frequency, String? function}) => 
+  TimeAggregation copyWith({String? frequency, String? function, String? error}) =>
       TimeAggregation(frequency: frequency ?? this.frequency, 
-          function: function ?? this.function);
+          function: function ?? this.function, error: error ?? this.error);
 }
 
 
@@ -81,5 +95,9 @@ class TimeAggregationNotifier extends StateNotifier<TimeAggregation> {
 
   set function(String value) {
     state = state.copyWith(function: value);
+  }
+
+  set error(String value) {
+    state = state.copyWith(error: value);
   }
 }

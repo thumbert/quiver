@@ -130,7 +130,7 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
               child: const Text(
@@ -172,11 +172,14 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
-              child: const Text(
-                'Months',
+              child: const Tooltip(
+                message: 'A number from 1 to 12, or a range e.g. 1-3,12',
+                child: Text(
+                  'Months',
+                ),
               ),
             ),
             Container(
@@ -213,11 +216,14 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
-              child: const Text(
-                'Days of month',
+              child: const Tooltip(
+                message: 'A number from 1 to 31, or a range e.g. 5-10,15,20-23',
+                child: Text(
+                  'Days of month',
+                ),
               ),
             ),
             Container(
@@ -254,11 +260,14 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
-              child: const Text(
-                'Days of week',
+              child: const Tooltip(
+                message: 'A number from 1 (Mon) to 7 (Sun), or a range e.g. 3,6-7.',
+                child: Text(
+                  'Days of week',
+                ),
               ),
             ),
             Container(
@@ -295,11 +304,14 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
-              child: const Text(
-                'Hours beginning',
+              child: const Tooltip(
+                message: 'A number from 0 to 23, or a range e.g. 1-6,12',
+                child: Text(
+                  'Hours beginning',
+                ),
               ),
             ),
             Container(
@@ -336,7 +348,7 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         Row(
           children: [
             Container(
-              width: 120,
+              width: 140,
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
               child: const Text(
