@@ -6,11 +6,18 @@
   the plot
 - Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
-- Have a way to keep track of what series have changed 
-  and need to be pulled again from the DB
 - Implement multiple tabs and multiple plots per tab. 
 - When variable selection is made, the OK button needs to do the widget validation.
+- When tabs are added, they can stretch outside the screen.  How to scroll to them?
 
+## Release 2023-04-23
+- Polygraph changes
+  - Tabs can now be rearranged into a different position by dragging
+  - Deleting Y variables now works
+  - Selection widget looks to be the hardest to implement.  Selecting an expression 
+    now works.  Horizontal line variable almost works with selection.
+  - When new variables are added, match the variable color with the trace 
+    on the screen 
 
 ## Release 2023-04-14
 - Polygraph changes

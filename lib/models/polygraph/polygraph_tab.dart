@@ -57,11 +57,11 @@ class PolygraphTab {
     };
   }
 
-  static PolygraphTab empty() {
+  static PolygraphTab empty({required String name}) {
     return PolygraphTab(
-      name: 'Tab 1',
+      name: name,
       windowLayout: WindowLayout(rows: 1, cols: 1),
-      windows: [PolygraphWindow.getDefault()],
+      windows: [PolygraphWindow.empty()],
       activeWindowIndex: 1,
     );
   }

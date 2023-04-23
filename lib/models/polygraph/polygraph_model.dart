@@ -41,18 +41,7 @@ class PolygraphState {
 
   /// Add tab at the end
   void addTab() {
-    var name = _getNextDefaultTabName();
-    var tab = PolygraphTab(
-      name: name,
-      windowLayout: WindowLayout(rows: 1, cols: 1),
-      windows: [
-        PolygraphWindow(
-            term: Term.parse('-10d', UTC),
-            xVariable: TimeVariable(),
-            yVariables: <PolygraphVariable>[])
-      ],
-      activeWindowIndex: 0,
-    );
+    var tab = PolygraphTab.empty(name: _getNextDefaultTabName());
     tabs.add(tab);
   }
 
@@ -82,7 +71,7 @@ class PolygraphState {
   static PolygraphState empty() {
     return PolygraphState(
       config: PolygraphConfig.getDefault(),
-      tabs: [PolygraphTab.empty()],
+      tabs: [PolygraphTab.empty(name: 'Tab 1')],
       activeTabIndex: 0,
     );
   }
@@ -90,7 +79,11 @@ class PolygraphState {
   static PolygraphState getDefault() {
     return PolygraphState(
       config: PolygraphConfig.getDefault(),
-      tabs: [PolygraphTab.getDefault()],
+      tabs: [
+        PolygraphTab.getDefault(),
+        PolygraphTab.empty(name: 'Tab 2'),
+        PolygraphTab.empty(name: 'Tab 3'),
+      ],
       activeTabIndex: 0,
     );
   }

@@ -49,7 +49,7 @@ Future<void> tests(String rootUrl) async {
       var location = getLocation('America/New_York');
       var poly = PolygraphState(
           config: PolygraphConfig.getDefault(),
-          tabs: [PolygraphTab.empty()],
+          tabs: [PolygraphTab.empty(name: 'Tab 1')],
           activeTabIndex: 0);
       poly.tabs.first.windows.first = PolygraphWindow(
           term: Term.parse('Jan20-Dec21', location),

@@ -9,10 +9,9 @@ import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 
-final providerOfPolygraph =
-StateNotifierProvider<PolygraphNotifier, PolygraphState>(
-        (ref) => PolygraphNotifier(ref));
+import '../../models/polygraph/polygraph_tab.dart';
 
+final providerOfPolygraph = StateNotifierProvider<PolygraphNotifier, PolygraphState>((ref) => PolygraphNotifier(ref));
 
 class Polygraph extends ConsumerStatefulWidget {
   const Polygraph({Key? key}) : super(key: key);
@@ -36,10 +35,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   /// for this tab get displayed and so is the chart
   int activeTabIndex = 0;
 
-  /// If the mouse is over the tab button, this will be non null and have the
-  /// value of its tab index
-  int? hoveringTabIndex;
-
   /// If the tab becomes editable, this will be non-null and have the value
   /// of its tab index
   int? editableTabIndex;
@@ -60,7 +55,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           var tabs = [...poly.tabs];
           var value = controllerTab.text;
           value = poly.getValidTabName(tabIndex: activeTabIndex, suggestedName: value);
-          print('tab name is: $value');
+          // print('tab name is: $value');
           tabs[activeTabIndex] = tabs[activeTabIndex].copyWith(name: value);
           ref.read(providerOfPolygraph.notifier).tabs = tabs;
           controllerTab.text = value;
@@ -79,14 +74,71 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     super.dispose();
   }
 
+  TextButton _makeTabTextButton(int i, PolygraphState poly) {
+    return TextButton(
+        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+        onPressed: () {
+          setState(() {
+            activeTabIndex = i;
+          });
+        },
+        onLongPress: () {
+          setState(() {
+            editableTabIndex = i;
+          });
+        },
+        child: Container(
+            width: 200,
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 2, color: activeTabIndex == i ? Colors.deepOrange : Colors.grey[300]!),
+              ),
+            ),
+            child: Center(
+                child: editableTabIndex == i
+                    ? TextField(
+                        autofocus: true,
+                        decoration: const InputDecoration(isDense: true),
+                        textAlign: TextAlign.center,
+                        controller: controllerTab,
+                        focusNode: focusNodeTab,
+                        enabled: true,
+                        onSubmitted: (String value) {
+                          setState(() {
+                            var tabs = [...poly.tabs];
+                            editableTabIndex = null;
+                            value = poly.getValidTabName(tabIndex: i, suggestedName: value);
+                            tabs[i] = tabs[i].copyWith(name: value);
+                            ref.read(providerOfPolygraph.notifier).tabs = tabs;
+                          });
+                        },
+                      )
+                    : Text(
+                        poly.tabs[i].name,
+                        // tab.name,
+                        style: const TextStyle(fontSize: 18),
+                      ))));
+  }
+
+  void _update(int oldIndex, int newIndex, List<PolygraphTab> tabs) {
+    setState(() {
+      var element = tabs[oldIndex];
+      if (oldIndex < newIndex) {
+        newIndex--;
+      }
+      tabs.removeAt(oldIndex);
+      tabs.insert(newIndex, element);
+      activeTabIndex = newIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var poly = ref.watch(providerOfPolygraph);
     print('in polygraph build: ${poly.tabs.map((e) => e.name)}');
     print('active tab: ${poly.activeTabIndex}');
+    var tabs = poly.tabs;
     // var tab = ref.watch(providerOfPolygraphTab);
-
-    // var categories = variableSelection.getCategoriesForNextLevel();
 
     return Scaffold(
       appBar: AppBar(
@@ -163,265 +215,274 @@ class _PolygraphState extends ConsumerState<Polygraph> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           controller: _scrollControllerV,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            controller: _scrollControllerH,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  width: 1500,
-                  // height: 1,
-                ),
-
-                ///
-                /// Tabs
-                ///
-                Wrap(
-                  spacing: 8.0,
-                  children: [
-                    for (var i = 0; i < poly.tabs.length; i++)
-                      activeTabIndex == i
-                          ? ContextMenuArea(
-                              verticalPadding: 4.0,
-                              width: 200,
-                              builder: (context) {
-                                return [
-                                  /// Add tab
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.add,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Add tab'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        poly.addTab();
-                                      });
-                                    },
-                                  ),
-
-                                  /// Delete tab
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.delete_forever,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Delete tab'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        poly.deleteTab(activeTabIndex);
-                                      });
-                                    },
-                                  ),
-
-                                  /// Rename
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.edit,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Rename'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        editableTabIndex = i;
-                                      });
-                                    },
-                                  ),
-
-                                  /// Move left
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.arrow_back,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Move Left'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Whatever'),
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  /// Move right
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.arrow_forward,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Move Right'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Whatever'),
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  /// Add window
-                                  ListTile(
-                                    dense: true,
-                                    horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.square_outlined,
-                                      color: Colors.blueGrey[300],
-                                    ),
-                                    title: const Text('Add window'),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Whatever'),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ];
-                              },
-                              child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero),
-                                  onPressed: () {
-                                    setState(() {
-                                      activeTabIndex = i;
-                                    });
-                                  },
-                                  onLongPress: () {
-                                    setState(() {
-                                      editableTabIndex = i;
-                                    });
-                                  },
-                                  child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ///
+              /// Tabs
+              ///
+              ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: 60,
+                  ),
+                  child: ReorderableListView(
+                    buildDefaultDragHandles: false,
+                    scrollDirection: Axis.horizontal,
+                    onReorder: (oldIndex, newIndex) => _update(oldIndex, newIndex, tabs),
+                    children: [
+                      for (int index = 0; index < tabs.length; index++)
+                        ReorderableDragStartListener(
+                          key: ValueKey(tabs[index].name),
+                          index: index,
+                          child: Container(
+                            height: 300,
+                            width: 200,
+                            margin: const EdgeInsets.all(12),
+                            child: Center(
+                              child: activeTabIndex == index
+                                  ? ContextMenuArea(
+                                      verticalPadding: 4.0,
                                       width: 200,
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                              width: 2,
-                                              color: activeTabIndex == i
-                                                  ? Colors.deepOrange
-                                                  : Colors.grey[300]!),
-                                        ),
-                                      ),
-                                      child: Center(
-                                          child: editableTabIndex == i
-                                              ? TextField(
-                                                  autofocus: true,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          isDense: true),
-                                                  textAlign: TextAlign.center,
-                                                  controller: controllerTab,
-                                                  focusNode: focusNodeTab,
-                                                  enabled: true,
-                                                  onSubmitted: (String value) {
-                                                    setState(() {
-                                                      var tabs = [...poly.tabs];
-                                                      editableTabIndex = null;
-                                                      value = poly.getValidTabName(tabIndex: i, suggestedName: value);
-                                                      tabs[i] = tabs[i]
-                                                          .copyWith(
-                                                              name: value);
-                                                      ref
-                                                          .read(
-                                                              providerOfPolygraph
-                                                                  .notifier)
-                                                          .tabs = tabs;
-                                                    });
-                                                  },
-                                                )
-                                              : Text(
-                                                  poly.tabs[i].name,
-                                                  // tab.name,
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
-                                                )))),
-                            )
-                          : TextButton(
-                              style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero),
-                              onPressed: () {
-                                setState(() {
-                                  activeTabIndex = i;
-                                });
-                              },
-                              child: Container(
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                          width: 2,
-                                          color: activeTabIndex == i
-                                              ? Colors.deepOrange
-                                              : Colors.grey[300]!),
-                                    ),
-                                  ),
-                                  child: Center(
-                                      child: editableTabIndex == i
-                                          ? TextField(
-                                              controller: controllerTab,
-                                              enabled: true,
-                                              onSubmitted: (String value) {
-                                                setState(() {
-                                                  ref
-                                                      .read(
-                                                          providerOfPolygraphTab
-                                                              .notifier)
-                                                      .name = value;
-                                                  editableTabIndex = null;
-                                                });
-                                              },
-                                            )
-                                          : Text(
-                                              poly.tabs[i].name,
-                                              style:
-                                                  const TextStyle(fontSize: 18),
-                                            )))),
-                  ],
-                ),
+                                      builder: (context) {
+                                        return [
+                                          /// Add tab
+                                          ListTile(
+                                            dense: true,
+                                            horizontalTitleGap: 0.0,
+                                            leading: Icon(
+                                              Icons.add,
+                                              color: Colors.blueGrey[300],
+                                            ),
+                                            title: const Text('Add tab'),
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              setState(() {
+                                                poly.addTab();
+                                              });
+                                            },
+                                          ),
 
-                const SizedBox(
-                  height: 16,
-                ),
+                                          /// Delete tab
+                                          ListTile(
+                                            dense: true,
+                                            horizontalTitleGap: 0.0,
+                                            leading: Icon(
+                                              Icons.delete_forever,
+                                              color: Colors.blueGrey[300],
+                                            ),
+                                            title: const Text('Delete tab'),
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              setState(() {
+                                                poly.deleteTab(activeTabIndex);
+                                              });
+                                            },
+                                          ),
 
-                const PolygraphTabUi(),
+                                          /// Rename
+                                          ListTile(
+                                            dense: true,
+                                            horizontalTitleGap: 0.0,
+                                            leading: Icon(
+                                              Icons.edit,
+                                              color: Colors.blueGrey[300],
+                                            ),
+                                            title: const Text('Rename'),
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              setState(() {
+                                                editableTabIndex = index;
+                                              });
+                                            },
+                                          ),
 
-                const SizedBox(
-                  height: 48,
-                ),
-                // const HorizontalLineEditor(),
-                // const TransformedVariableEditor(),
-                const SizedBox(
-                  height: 48,
-                ),
 
-                // const VariableSelectionUi(),
+                                          /// Add window
+                                          ListTile(
+                                            dense: true,
+                                            horizontalTitleGap: 0.0,
+                                            leading: Icon(
+                                              Icons.square_outlined,
+                                              color: Colors.blueGrey[300],
+                                            ),
+                                            title: const Text('Add window'),
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              // ScaffoldMessenger.of(context).showSnackBar(
+                                              //   const SnackBar(
+                                              //     content: Text('Whatever'),
+                                              //   ),
+                                              // );
+                                            },
+                                          ),
+                                        ];
+                                      },
+                                      child: _makeTabTextButton(index, poly),
+                                    )
+                                  : _makeTabTextButton(index, poly),
+                            ),
+                          ),
+                        ),
+                    ],
+                  )),
+              // Wrap(
+              //   spacing: 8.0,
+              //   children: [
+              //     for (var i = 0; i < poly.tabs.length; i++)
+              //       activeTabIndex == i
+              //           ? ContextMenuArea(
+              //               verticalPadding: 4.0,
+              //               width: 200,
+              //               builder: (context) {
+              //                 return [
+              //                   /// Add tab
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.add,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Add tab'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       setState(() {
+              //                         poly.addTab();
+              //                       });
+              //                     },
+              //                   ),
+              //
+              //                   /// Delete tab
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.delete_forever,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Delete tab'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       setState(() {
+              //                         poly.deleteTab(activeTabIndex);
+              //                       });
+              //                     },
+              //                   ),
+              //
+              //                   /// Rename
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.edit,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Rename'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       setState(() {
+              //                         editableTabIndex = i;
+              //                       });
+              //                     },
+              //                   ),
+              //
+              //                   /// Move left
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.arrow_back,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Move Left'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       ScaffoldMessenger.of(context).showSnackBar(
+              //                         const SnackBar(
+              //                           content: Text('Whatever'),
+              //                         ),
+              //                       );
+              //                     },
+              //                   ),
+              //
+              //                   /// Move right
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.arrow_forward,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Move Right'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       ScaffoldMessenger.of(context).showSnackBar(
+              //                         const SnackBar(
+              //                           content: Text('Whatever'),
+              //                         ),
+              //                       );
+              //                     },
+              //                   ),
+              //
+              //                   /// Add window
+              //                   ListTile(
+              //                     dense: true,
+              //                     horizontalTitleGap: 0.0,
+              //                     leading: Icon(
+              //                       Icons.square_outlined,
+              //                       color: Colors.blueGrey[300],
+              //                     ),
+              //                     title: const Text('Add window'),
+              //                     onTap: () {
+              //                       Navigator.of(context).pop();
+              //                       ScaffoldMessenger.of(context).showSnackBar(
+              //                         const SnackBar(
+              //                           content: Text('Whatever'),
+              //                         ),
+              //                       );
+              //                     },
+              //                   ),
+              //                 ];
+              //               },
+              //               child: _makeTextButton(i, poly),
+              //             )
+              //           : _makeTextButton(i, poly),
+              //   ],
+              // ),
 
-                const SizedBox(
-                  height: 48,
-                ),
-              ],
-            ),
+              const SizedBox(
+                height: 16,
+              ),
+
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: _scrollControllerH,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      SizedBox(
+                        // height: 16,
+                        width: 1500,
+                      ),
+
+                      PolygraphTabUi(),
+
+                      SizedBox(
+                        height: 48,
+                      ),
+                      // const HorizontalLineEditor(),
+                      // const TransformedVariableEditor(),
+                      SizedBox(
+                        height: 48,
+                      ),
+
+                      // const VariableSelectionUi(),
+                      SizedBox(
+                        height: 48,
+                      ),
+                    ],
+                  )),
+            ],
           ),
           // ),
         ),

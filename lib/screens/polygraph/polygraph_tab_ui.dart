@@ -633,7 +633,10 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   tooltip: 'Remove',
                                   onPressed: () {
                                     setState(() {
-                                      // variableModel.removeVariableAt(i);
+                                      window.yVariables.removeAt(i);
+                                      var windows = [...tab.windows];
+                                      windows[tab.activeWindowIndex] = window;
+                                      ref.read(providerOfPolygraphTab.notifier).windows = windows;
                                     });
                                   }, // delete the sucker
                                   visualDensity: VisualDensity.compact,
