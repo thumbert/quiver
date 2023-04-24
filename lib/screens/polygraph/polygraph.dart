@@ -27,6 +27,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   final focusNodeTab = FocusNode();
   late ScrollController _scrollControllerV;
   late ScrollController _scrollControllerH;
+  late ScrollController _scrollControllerTabs;
   late Plotly plotly;
 
   String? _errorTerm;
@@ -46,6 +47,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     super.initState();
     _scrollControllerH = ScrollController();
     _scrollControllerV = ScrollController();
+    _scrollControllerTabs = ScrollController();
 
     focusNodeTab.addListener(() {
       if (!focusNodeTab.hasFocus) {
@@ -71,6 +73,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     focusNodeTab.dispose();
     _scrollControllerH.dispose();
     _scrollControllerV.dispose();
+    _scrollControllerTabs.dispose();
     super.dispose();
   }
 
@@ -221,110 +224,114 @@ class _PolygraphState extends ConsumerState<Polygraph> {
               ///
               /// Tabs
               ///
-              ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxHeight: 60,
-                  ),
-                  child: ReorderableListView(
-                    buildDefaultDragHandles: false,
-                    scrollDirection: Axis.horizontal,
-                    onReorder: (oldIndex, newIndex) => _update(oldIndex, newIndex, tabs),
-                    children: [
-                      for (int index = 0; index < tabs.length; index++)
-                        ReorderableDragStartListener(
-                          key: ValueKey(tabs[index].name),
-                          index: index,
-                          child: Container(
-                            height: 300,
-                            width: 200,
-                            margin: const EdgeInsets.all(12),
-                            child: Center(
-                              child: activeTabIndex == index
-                                  ? ContextMenuArea(
-                                      verticalPadding: 4.0,
-                                      width: 200,
-                                      builder: (context) {
-                                        return [
-                                          /// Add tab
-                                          ListTile(
-                                            dense: true,
-                                            horizontalTitleGap: 0.0,
-                                            leading: Icon(
-                                              Icons.add,
-                                              color: Colors.blueGrey[300],
+              Scrollbar(
+                controller: _scrollControllerTabs,
+                child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxHeight: 50,
+                    ),
+                    child: ReorderableListView(
+                      buildDefaultDragHandles: false,
+                      scrollDirection: Axis.horizontal,
+                      scrollController: _scrollControllerTabs,
+                      onReorder: (oldIndex, newIndex) => _update(oldIndex, newIndex, tabs),
+                      children: [
+                        for (int index = 0; index < tabs.length; index++)
+                          ReorderableDragStartListener(
+                            key: ValueKey(tabs[index].name),
+                            index: index,
+                            child: Container(
+                              height: 40,
+                              width: 200,
+                              margin: const EdgeInsets.only(right: 4, bottom: 16),
+                              child: Center(
+                                child: activeTabIndex == index
+                                    ? ContextMenuArea(
+                                        verticalPadding: 8.0,
+                                        width: 200,
+                                        builder: (context) {
+                                          return [
+                                            /// Add tab
+                                            ListTile(
+                                              dense: true,
+                                              horizontalTitleGap: 0.0,
+                                              leading: Icon(
+                                                Icons.add,
+                                                color: Colors.blueGrey[300],
+                                              ),
+                                              title: const Text('Add tab'),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  poly.addTab();
+                                                });
+                                              },
                                             ),
-                                            title: const Text('Add tab'),
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              setState(() {
-                                                poly.addTab();
-                                              });
-                                            },
-                                          ),
 
-                                          /// Delete tab
-                                          ListTile(
-                                            dense: true,
-                                            horizontalTitleGap: 0.0,
-                                            leading: Icon(
-                                              Icons.delete_forever,
-                                              color: Colors.blueGrey[300],
+                                            /// Delete tab
+                                            ListTile(
+                                              dense: true,
+                                              horizontalTitleGap: 0.0,
+                                              leading: Icon(
+                                                Icons.delete_forever,
+                                                color: Colors.blueGrey[300],
+                                              ),
+                                              title: const Text('Delete tab'),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  poly.deleteTab(activeTabIndex);
+                                                });
+                                              },
                                             ),
-                                            title: const Text('Delete tab'),
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              setState(() {
-                                                poly.deleteTab(activeTabIndex);
-                                              });
-                                            },
-                                          ),
 
-                                          /// Rename
-                                          ListTile(
-                                            dense: true,
-                                            horizontalTitleGap: 0.0,
-                                            leading: Icon(
-                                              Icons.edit,
-                                              color: Colors.blueGrey[300],
+                                            /// Rename
+                                            ListTile(
+                                              dense: true,
+                                              horizontalTitleGap: 0.0,
+                                              leading: Icon(
+                                                Icons.edit,
+                                                color: Colors.blueGrey[300],
+                                              ),
+                                              title: const Text('Rename'),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  editableTabIndex = index;
+                                                });
+                                              },
                                             ),
-                                            title: const Text('Rename'),
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              setState(() {
-                                                editableTabIndex = index;
-                                              });
-                                            },
-                                          ),
 
 
-                                          /// Add window
-                                          ListTile(
-                                            dense: true,
-                                            horizontalTitleGap: 0.0,
-                                            leading: Icon(
-                                              Icons.square_outlined,
-                                              color: Colors.blueGrey[300],
+                                            /// Add window
+                                            ListTile(
+                                              dense: true,
+                                              horizontalTitleGap: 0.0,
+                                              leading: Icon(
+                                                Icons.square_outlined,
+                                                color: Colors.blueGrey[300],
+                                              ),
+                                              title: const Text('Add window'),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                                // ScaffoldMessenger.of(context).showSnackBar(
+                                                //   const SnackBar(
+                                                //     content: Text('Whatever'),
+                                                //   ),
+                                                // );
+                                              },
                                             ),
-                                            title: const Text('Add window'),
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              // ScaffoldMessenger.of(context).showSnackBar(
-                                              //   const SnackBar(
-                                              //     content: Text('Whatever'),
-                                              //   ),
-                                              // );
-                                            },
-                                          ),
-                                        ];
-                                      },
-                                      child: _makeTabTextButton(index, poly),
-                                    )
-                                  : _makeTabTextButton(index, poly),
+                                          ];
+                                        },
+                                        child: _makeTabTextButton(index, poly),
+                                      )
+                                    : _makeTabTextButton(index, poly),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  )),
+                      ],
+                    )),
+              ),
               // Wrap(
               //   spacing: 8.0,
               //   children: [

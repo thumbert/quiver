@@ -10,6 +10,12 @@
 - When variable selection is made, the OK button needs to do the widget validation.
 - When tabs are added, they can stretch outside the screen.  How to scroll to them?
 
+## Release 2023-04-xx
+- Polygraph changes
+  - Tabs now have a scrollbar 
+
+
+
 ## Release 2023-04-23
 - Polygraph changes
   - Tabs can now be rearranged into a different position by dragging
