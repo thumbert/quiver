@@ -10,6 +10,7 @@ import 'package:flutter_quiver/models/polygraph/display/variable_display_config.
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_summary_ui.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart' hide Interval;
@@ -20,6 +21,13 @@ import 'package:timezone/timezone.dart';
 // final providerOfPolygraphWindow =
 //     StateNotifierProvider<PolygraphWindowNotifier, PolygraphWindow>(
 //         (ref) => PolygraphWindowNotifier(ref));
+
+// final providerOfActivePolygraphWindow =
+//   StateProvider<PolygraphWindow>((ref) {
+//     var poly = ref.watch(providerOfPolygraph);
+//     var tab = poly.tabs[poly.activeTabIndex];
+//     return tab.windows[tab.activeWindowIndex];
+//   });
 
 final providerOfPolygraphWindowCache =
     FutureProvider.family<Map<String, dynamic>, PolygraphWindow>(

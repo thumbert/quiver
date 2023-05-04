@@ -6,6 +6,11 @@ class PlotlyLayout {
   PlotlyLayout({
     required this.width,
     required this.height,
+    this.legend,
+    this.title,
+    this.xAxis,
+    this.yAxis,
+    this.hoverMode,
   });
 
   final num width;
@@ -20,9 +25,8 @@ class PlotlyLayout {
   PlotlyXAxis? xAxis;
   PlotlyYAxis? yAxis;
 
-  static PlotlyLayout getDefault() {
-    return PlotlyLayout(width: 900.0, height: 600.0);
-  }
+  static PlotlyLayout getDefault({required num width, required num height}) =>
+      PlotlyLayout(width: width, height: height);
 
   /// Construct a layout object from storage
   static PlotlyLayout fromMap(Map<String, dynamic> x) {
@@ -54,13 +58,13 @@ class PlotlyLayout {
 
   PlotlyLayout copyWith(
       {num? width,
-      num? height,
-      PlotlyTitle? title,
-      PlotlyXAxis? xAxis,
-      PlotlyYAxis? yAxis,
-      PlotlyLegend? legend,
-      bool? showLegend,
-      HoverMode? hoverMode}) {
+        num? height,
+        PlotlyTitle? title,
+        PlotlyXAxis? xAxis,
+        PlotlyYAxis? yAxis,
+        PlotlyLegend? legend,
+        bool? showLegend,
+        HoverMode? hoverMode}) {
     return PlotlyLayout(
         width: width ?? this.width, height: height ?? this.height)
       ..title = title ?? this.title
@@ -456,7 +460,7 @@ enum TickMode {
 class PlotlyLegend {
   PlotlyLegend();
 
-  LegendOrientation orientation = LegendOrientation.vertical;
+  LegendOrientation orientation = LegendOrientation.horizontal;
   LegendToggleOption itemClick = LegendToggleOption.toggle;
   LegendToggleOption itemDoubleClick = LegendToggleOption.toggleOthers;
 
@@ -543,8 +547,9 @@ class PlotlyXAxis {
     if (x.containsKey('color')) axis.color = x['color'];
     if (x.containsKey('showgrid')) axis.showGrid = x['showgrid'];
     if (x.containsKey('gridcolor')) axis.gridColor = x['gridcolor'];
-    if (x.containsKey('griddash'))
+    if (x.containsKey('griddash')) {
       axis.gridDash = DashStyle.parse(x['griddash']);
+    }
     if (x.containsKey('gridwidth')) axis.gridWidth = x['gridwidth'];
     if (x.containsKey('layer')) axis.layer = AxisLayer.parse(x['layer']);
     if (x.containsKey('linecolor')) axis.lineColor = x['linecolor'];
@@ -553,8 +558,9 @@ class PlotlyXAxis {
     if (x.containsKey('zeroline')) axis.showZeroLine = x['zeroline'];
 
     /// TODO: continue
-    if (x.containsKey('title'))
+    if (x.containsKey('title')) {
       axis.title = PlotlyAxisTitle.fromMap(x['title']);
+    }
     if (x.containsKey('side')) axis.side = SideX.parse(x['side']);
 
     return axis;
@@ -610,8 +616,9 @@ class PlotlyYAxis {
     if (x.containsKey('color')) axis.color = x['color'];
     if (x.containsKey('showgrid')) axis.showGrid = x['showgrid'];
     if (x.containsKey('gridcolor')) axis.gridColor = x['gridcolor'];
-    if (x.containsKey('griddash'))
+    if (x.containsKey('griddash')) {
       axis.gridDash = DashStyle.parse(x['griddash']);
+    }
     if (x.containsKey('gridwidth')) axis.gridWidth = x['gridwidth'];
     if (x.containsKey('layer')) axis.layer = AxisLayer.parse(x['layer']);
     if (x.containsKey('linecolor')) axis.lineColor = x['linecolor'];
@@ -620,8 +627,9 @@ class PlotlyYAxis {
     if (x.containsKey('zeroline')) axis.showZeroLine = x['zeroline'];
 
     /// TODO: continue
-    if (x.containsKey('title'))
+    if (x.containsKey('title')) {
       axis.title = PlotlyAxisTitle.fromMap(x['title']);
+    }
     if (x.containsKey('side')) axis.side = SideX.parse(x['side']);
 
     return axis;

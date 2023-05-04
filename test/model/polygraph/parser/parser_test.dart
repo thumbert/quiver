@@ -6,6 +6,7 @@ import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
+import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
@@ -52,7 +53,9 @@ Future<void> tests(String rootUrl) async {
             TransformedVariable(
                 expression: 'toMonthly(bos_daily_temp, mean)',
                 id: 'bos_monthly_temp'),
-          ]);
+          ],
+          layout: PlotlyLayout.getDefault(width: 900, height: 600),
+      );
       await window.updateCache();
       expect(window.cache.keys.toSet(), {'bos_daily_temp', 'bos_monthly_temp'});
       var ts = window.cache['bos_monthly_temp'] as TimeSeries<num>;

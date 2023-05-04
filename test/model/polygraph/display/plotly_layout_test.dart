@@ -10,15 +10,15 @@ import 'package:timezone/data/latest.dart';
 Future<void> tests(String rootUrl) async {
   group('Layout tests', () {
     test('Simplest layout', () async {
-      var layout = PlotlyLayout(width: 900.0, height: 600.0);
+      var layout = PlotlyLayout(width: 900, height: 600);
       expect(layout.toMap(), {
-        'width': 900.0,
-        'height': 600.0,
+        'width': 900,
+        'height': 600,
         'displaylogo': false,
       });
     });
     test('Default layout', () async {
-      var layout = PlotlyLayout(width: 900.0, height: 600.0)
+      var layout = PlotlyLayout(width: 900, height: 600)
         ..xAxis = (PlotlyXAxis()
           ..showGrid = true
           ..gridColor = '#f5f5f5')
@@ -27,8 +27,8 @@ Future<void> tests(String rootUrl) async {
           ..gridColor = '#f5f5f5')
         ..legend = (PlotlyLegend()..orientation = LegendOrientation.horizontal);
       expect(layout.toMap(), {
-        'width': 900.0,
-        'height': 600.0,
+        'width': 900,
+        'height': 600,
         'legend': {'orientation': 'h'},
         'xaxis': {'showgrid': true, 'gridcolor': '#f5f5f5', 'zeroline': false},
         'yaxis': {'showgrid': true, 'gridcolor': '#f5f5f5'},

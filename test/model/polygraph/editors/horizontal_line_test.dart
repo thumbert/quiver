@@ -1,11 +1,13 @@
 library test.models.polygraph.editors.horizontal_line_test;
 
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
@@ -35,12 +37,13 @@ Future<void> tests() async {
       expect(ts.length, 24);
     });
     test('Window with horizontal variable', () async {
+      var tabLayout = TabLayout.getDefault();
       var poly = PolygraphState(
           config: PolygraphConfig.getDefault(),
           tabs: [
             PolygraphTab(
                 name: 'Tab1',
-                windowLayout: WindowLayout(rows: 1, cols: 1),
+                layout: tabLayout,
                 windows: [
                   PolygraphWindow(
                       term: Term.parse('Jan21-Dec21',
@@ -53,7 +56,9 @@ Future<void> tests() async {
                                 .copyWith(bucket: Bucket.b5x16),
                             timeAggregation: TimeAggregation(
                                 frequency: 'month', function: 'count')),
-                      ]),
+                      ],
+                      layout: PlotlyLayout(width: tabLayout.canvasSize.width, height: tabLayout.canvasSize.height),
+                  ),
                 ],
                 activeWindowIndex: 0),
           ],

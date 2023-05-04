@@ -4,6 +4,7 @@ import 'package:elec_server/client/weather/noaa_daily_summary.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
 import 'package:flutter_quiver/models/polygraph/variables/temperature_variable.dart';
+import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
 import 'package:http/http.dart';
 import 'package:timeseries/timeseries.dart';
 
@@ -17,12 +18,12 @@ class DataServiceLocal extends DataService {
   static late final DaLmp clientDaLmp;
   static late final NoaaDailySummary clientNoaa;
 
-  // @override
-  // Future<TimeSeries<num>> getMarksAsOfDate(
-  //     VariableMarksAsOfDate variable, Term term) {
-  //   // TODO: implement getMarksAsOfDate
-  //   throw UnimplementedError();
-  // }
+  @override
+  Future<TimeSeries<num>> getMarksAsOfDate(
+      VariableMarksAsOfDate variable, Term term) {
+    // TODO: implement getMarksAsOfDate
+    throw UnimplementedError();
+  }
 
   @override
   Future<TimeSeries<num>> getLmp(VariableLmp variable, Term term) async {

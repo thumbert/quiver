@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
@@ -36,14 +37,15 @@ Future<void> tests(String rootUrl) async {
             dataSource: 'NOAA',
             id: 'bos_daily_temp',
           )
-        ]);
+        ],
+      layout: PlotlyLayout.getDefault(width: 900, height: 600),
+    );
     setUp(() async {
       await window.updateCache();
     });
     test('toMap()', (){
       var res = window.toMap();
       expect(res.keys.toSet(), {'term', 'tzLocation', 'xVariable', 'yVariables'});
-      print(res);
     });
 
     test('Window with temperature data, UTC', () async {
@@ -87,7 +89,9 @@ Future<void> tests(String rootUrl) async {
               dataSource: 'NOAA',
               id: 'bos_min',
             )
-          ]);
+          ],
+        layout: PlotlyLayout.getDefault(width: 900, height: 600),
+      );
       await window.updateCache();
       var traces = window.makeTraces();
       expect(traces.length, 1);

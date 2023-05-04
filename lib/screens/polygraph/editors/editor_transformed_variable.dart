@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,7 +62,8 @@ class _TransformedVariableEditorState
     focusExpression.addListener(() {
       if (!focusExpression.hasFocus) {
         var state = ref.read(providerOfTransformedVariable);
-        var tab = ref.read(providerOfPolygraphTab);
+        var poly = ref.read(providerOfPolygraph);
+        var tab = poly.tabs[poly.activeTabIndex];
         var window = tab.windows[tab.activeWindowIndex];
         setState(() {
           ref.read(providerOfTransformedVariable.notifier).expression =
@@ -232,7 +234,8 @@ class _TransformedVariableEditorState
                                   : InputBorder.none,
                             ),
                             onEditingComplete: () {
-                              var tab = ref.read(providerOfPolygraphTab);
+                              var poly = ref.read(providerOfPolygraph);
+                              var tab = poly.tabs[poly.activeTabIndex];
                               var window = tab.windows[tab.activeWindowIndex];
                               print('in transformed_variable_editor, build, onEditingComplete:');
                               print('${window.yVariables.map((e) => e.label)}');

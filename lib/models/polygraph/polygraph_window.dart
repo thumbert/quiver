@@ -1,17 +1,18 @@
 library models.polygraph.polygraph_window;
 
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/risk_system.dart';
+import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
@@ -20,24 +21,14 @@ class PolygraphWindow {
     required this.term,
     required this.xVariable,
     required this.yVariables,
-  }) {
-    // this.term = Term.fromInterval(term.interval.withTimeZone(tzLocation));
-  }
+    required this.layout,
+  });
 
-  /// Historical term in the given timezone
-  late final Term term;
-  // final Location tzLocation;
+  /// Historical term in the given (correct) timezone
+  final Term term;
   final PolygraphVariable xVariable;
   final List<PolygraphVariable> yVariables;
-
-  /// A stale cache requires a trip to the database, so it should be avoided
-  /// if possible.
-  /// How does the [cache] become stale?
-  /// 1) At initialization
-  /// 2) When a new transformed variable is added to the window
-  /// 3) An existing transformed variable has its expression modified
-  /// 4) When the window term is modified beyond the existing term
-  // bool isCacheStale = true;  /// NOT NEEDED I THINK!
+  final PlotlyLayout layout;
 
   /// Should we make a trip to the database when updating the cache?  This
   /// needs to happen when
@@ -52,34 +43,34 @@ class PolygraphWindow {
 
   ///
   static PolygraphWindow fromMongo(Map<String, dynamic> x) {
-    return PolygraphWindow.getDefault();
+    return PolygraphWindow.getDefault(size: const Size(900.0, 600.0));
   }
 
-  final layout = <String, dynamic>{
-    'width': 900.0,
-    'height': 600.0,
-    'xaxis': {
-      'showgrid': true,
-      // 'gridcolor': '#bdbdbd',
-      'gridcolor': '#f5f5f5',
-    },
-    'yaxis': {
-      'showgrid': true,
-      'gridcolor': '#f5f5f5',
-      // 'zeroline': false,
-    },
-    // if you need a secondary axis on the right add
-    // 'yaxis2': {
-    //   'anchor': 'x', // 'free'
-    //   'overlaying': 'y',
-    //   'side': 'right',
-    // },
-
-    'showlegend': true,
-    'legend': {'orientation': 'h'},
-    'hovermode': 'closest',
-    'displaylogo': false,
-  };
+  // final layout = <String, dynamic>{
+  //   'width': 900.0,
+  //   'height': 600.0,
+  //   'xaxis': {
+  //     'showgrid': true,
+  //     // 'gridcolor': '#bdbdbd',
+  //     'gridcolor': '#f5f5f5',
+  //   },
+  //   'yaxis': {
+  //     'showgrid': true,
+  //     'gridcolor': '#f5f5f5',
+  //     // 'zeroline': false,
+  //   },
+  //   // if you need a secondary axis on the right add
+  //   // 'yaxis2': {
+  //   //   'anchor': 'x', // 'free'
+  //   //   'overlaying': 'y',
+  //   //   'side': 'right',
+  //   // },
+  //
+  //   'showlegend': true,
+  //   'legend': {'orientation': 'h'},
+  //   'hovermode': 'closest',
+  //   'displaylogo': false,
+  // };
 
   /// Get the data for external variables.
   /// Re-calculate the [TransformedVariable]s if needed.
@@ -105,6 +96,7 @@ class PolygraphWindow {
       if (variable is TransformedVariable) {
         if (variable.isDirty) {
           variable.eval(cache);
+
           /// TODO: the lines below should not be needed.  There should be
           /// NO parsing error here.  Parsing errors need to be checked at
           /// variable creation only.
@@ -122,7 +114,6 @@ class PolygraphWindow {
     refreshDataFromDb = false;
   }
 
-
   /// Construct the Plotly traces.
   /// Note that the cache may contain more history than needed for the plot.
   List<Map<String, dynamic>> makeTraces() {
@@ -136,13 +127,12 @@ class PolygraphWindow {
           ts = TimeSeries.fromIterable(ts.window(term.interval));
         }
 
-        var color = (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
+        var color =
+            (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
 
         /// show a stepwise function (default)
         var one = {
-          'x': ts.intervals
-              .expand((e) => [e.start, e.end])
-              .toList(),
+          'x': ts.intervals.expand((e) => [e.start, e.end]).toList(),
           'y': ts.values.expand((e) => [e, e]).toList(),
           'name': yVariables[i].id,
           'mode': 'lines',
@@ -204,16 +194,20 @@ class PolygraphWindow {
     };
   }
 
-  static PolygraphWindow empty() {
+  static PolygraphWindow empty({required Size size}) {
     var today = Date.today(location: UTC);
     var term =
         Term(Month.fromTZDateTime(today.start).subtract(14).startDate, today);
     var xVariable = TimeVariable();
     return PolygraphWindow(
-        term: term, xVariable: xVariable, yVariables: <PolygraphVariable>[]);
+      term: term,
+      xVariable: xVariable,
+      yVariables: <PolygraphVariable>[],
+      layout: PlotlyLayout(width: size.width , height: size.height)
+    );
   }
 
-  static PolygraphWindow getDefault() {
+  static PolygraphWindow getDefault({required Size size}) {
     var window = PolygraphWindow(
       term: Term.parse('Jan20-Dec21', UTC),
       xVariable: TimeVariable(),
@@ -233,69 +227,49 @@ class PolygraphWindow {
             expression: 'toMonthly(bos_daily_temp, max)',
             id: 'bos_monthly_max'),
       ],
+        layout: PlotlyLayout(width: size.width, height: size.height),
     );
     return window;
   }
 
-  static PolygraphWindow getLmpWindow() {
+  static PolygraphWindow getLmpWindow({required Size size}) {
     var window = PolygraphWindow(
-        term:
-            Term.parse('Jan21-Dec21', Iso.newEngland.preferredTimeZoneLocation),
-        xVariable: TimeVariable(),
-        yVariables: [
-          VariableLmp(
-              iso: Iso.newEngland,
-              market: Market.da,
-              ptid: 4000,
-              lmpComponent: LmpComponent.lmp)
-            ..id = 'hub_da_lmp'
-            ..label = 'hub_da_lmp',
-          TransformedVariable(expression: 'toMonthly(hub_da_lmp, mean)',
-              id: 'monthly_mean'),
-        ]);
-    // print(window.toMap());
+      term: Term.parse('Jan21-Dec21', Iso.newEngland.preferredTimeZoneLocation),
+      xVariable: TimeVariable(),
+      yVariables: [
+        VariableLmp(
+            iso: Iso.newEngland,
+            market: Market.da,
+            ptid: 4000,
+            lmpComponent: LmpComponent.lmp)
+          ..id = 'hub_da_lmp'
+          ..label = 'hub_da_lmp',
+        TransformedVariable(
+            expression: 'toMonthly(hub_da_lmp, mean)', id: 'monthly_mean'),
+      ],
+      layout: PlotlyLayout(width: size.width , height: size.height)..legend = PlotlyLegend.getDefault(),
+    );
     return window;
   }
 
   PolygraphWindow copyWith({
     Term? term,
-    // Location? tzLocation,
     PolygraphVariable? xVariable,
     List<PolygraphVariable>? yVariables,
     bool? refreshDataFromDb,
+    PlotlyLayout? layout,
   }) {
     var window = PolygraphWindow(
       term: term ?? this.term,
-      // tzLocation: tzLocation ?? this.tzLocation,
       xVariable: xVariable ?? this.xVariable,
       yVariables: yVariables ?? this.yVariables,
-    )..refreshDataFromDb = refreshDataFromDb ?? this.refreshDataFromDb;
+      layout: layout ?? this.layout,
+    )
+      ..refreshDataFromDb = refreshDataFromDb ?? this.refreshDataFromDb;
     if (!window.refreshDataFromDb) {
       /// If you don't need to get the data from Db, copy the existing cache
       window.cache = Map.from(cache);
     }
     return window;
-  }
-}
-
-class PolygraphWindowNotifier extends StateNotifier<PolygraphWindow> {
-  PolygraphWindowNotifier(this.ref) : super(PolygraphWindow.getDefault());
-
-  final Ref ref;
-
-  set term(Term value) {
-    state = state.copyWith(term: value);
-  }
-
-  // set tzLocation(Location value) {
-  //   state = state.copyWith(tzLocation: value);
-  // }
-
-  set xVariable(PolygraphVariable value) {
-    state = state.copyWith(xVariable: value);
-  }
-
-  set yVariables(List<PolygraphVariable> values) {
-    state = state.copyWith(yVariables: values);
   }
 }

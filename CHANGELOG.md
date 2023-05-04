@@ -10,10 +10,16 @@
 - When variable selection is made, the OK button needs to do the widget validation.
 - When tabs are added, they can stretch outside the screen.  How to scroll to them?
 
-## Release 2023-04-xx
-- Polygraph changes
-  - Tabs now have a scrollbar 
-
+## Release 2023-05-03
+- Many polygraph changes
+  - The tab row now has a scrollbar, if they are so many to extend outside the screen
+  - Move customization of tab layout in its own widget.  Only setting the canvas size 
+    and adding a window is supported.   
+  - Can add windows (all the same size for now) to a tab
+  - Can delete windows from a tab
+  - Added ability to set the size of the canvas for each tab
+  - Started to customize the active window plotly display.  Can customize 
+    the title, and the legend position.
 
 
 ## Release 2023-04-23
