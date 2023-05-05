@@ -8,7 +8,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';
 
 Future<void> tests(String rootUrl) async {
-  group('Layout tests', () {
+  group('Plotly x axis tests', () {
+    test('Default axis', (){
+      var axis = PlotlyXAxis();
+      expect(axis.toMap(), {});
+    });
+    test('with show grid', (){
+      var axis = PlotlyXAxis()..showGrid = false;
+      expect(axis.toMap(), {'showgrid': false});
+    });
+
+  });
+
+
+  group('Plotly layout tests', () {
     test('Simplest layout', () async {
       var layout = PlotlyLayout(width: 900, height: 600);
       expect(layout.toMap(), {
@@ -30,8 +43,8 @@ Future<void> tests(String rootUrl) async {
         'width': 900,
         'height': 600,
         'legend': {'orientation': 'h'},
-        'xaxis': {'showgrid': true, 'gridcolor': '#f5f5f5', 'zeroline': false},
-        'yaxis': {'showgrid': true, 'gridcolor': '#f5f5f5'},
+        'xaxis': {'gridcolor': '#f5f5f5'},
+        'yaxis': {'gridcolor': '#f5f5f5'},
         'displaylogo': false,
       });
     });

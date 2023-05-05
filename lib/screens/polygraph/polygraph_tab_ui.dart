@@ -26,16 +26,6 @@ import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:timezone/timezone.dart';
 
-// final providerOfPolygraphTab =
-//     StateNotifierProvider<PolygraphTabNotifier, PolygraphTab>(
-//         (ref) => PolygraphTabNotifier(ref));
-//
-//
-// final providerOfActivePolygraphTab = StateProvider<PolygraphTab>((ref) {
-//   var poly = ref.watch(providerOfPolygraph);
-//   return poly.tabs[poly.activeTabIndex];
-// });
-
 
 class PolygraphTabUi extends ConsumerStatefulWidget {
   const PolygraphTabUi({Key? key}) : super(key: key);
@@ -166,8 +156,16 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                           onPressed: () {
                             setState(() {
                               var tab = poly.tabs[poly.activeTabIndex];
+                              if (tab.windows.length == 1) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Oops, you can\'t remove the last window.'),
+                                  ),
+                                );
+                              }
                               tab = tab.removeWindow(ij);
                               ref.read(providerOfPolygraph.notifier).activeTab = tab;
+
                             });
                           },
                           icon: const Icon(
@@ -196,12 +194,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       // print('window.term = ${window.term}');
                       // print('asyncCache keys: ${cache.keys}');
                       var traces = window.makeTraces();
-                      print('traces.length = ${traces.length}');
+                      // print('traces.length = ${traces.length}');
                       // print(traces.first['x'].take(10));
                       // if (traces.length == 3) {
                       //   print(traces[2]);
                       // }
-                      // print('poly')
+                      print('window.layout = ${window.layout.toMap()}');
 
                       plotly[ij]
                           .plot

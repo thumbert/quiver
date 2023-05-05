@@ -532,7 +532,7 @@ class PlotlyXAxis {
   AxisLayer layer = AxisLayer.aboveTraces;
   String lineColor = '#444';
   SideX? side;
-  bool showGrid = false;
+  bool showGrid = true;
   bool showZeroLine = false;
   TicksPosition? ticksPosition;
   TickMode? tickMode;
@@ -576,8 +576,8 @@ class PlotlyXAxis {
       if (lineColor != '#444') 'linecolor': lineColor,
       if (!isVisible) 'visible': isVisible,
       if (layer != AxisLayer.aboveTraces) 'layer': layer.toString(),
-      if (!showZeroLine) 'zeroline': showZeroLine,
-      if (showGrid) 'showgrid': true,
+      if (showZeroLine) 'zeroline': showZeroLine,
+      if (!showGrid) 'showgrid': showGrid,
       if (side != null) 'side': side.toString(),
       if (ticksPosition != null) 'ticks': ticksPosition.toString(),
       if (tickMode != null) 'tickmode': tickMode.toString(),
@@ -587,6 +587,14 @@ class PlotlyXAxis {
       if (zeroLineWidth != 1) 'zerolinewidth': zeroLineWidth,
     };
   }
+
+  PlotlyXAxis copyWith({PlotlyAxisTitle? title}) {
+    var axis = PlotlyXAxis()
+      ..title = title;
+    return axis;
+  }
+
+
 }
 
 class PlotlyYAxis {
@@ -601,7 +609,7 @@ class PlotlyYAxis {
   AxisLayer layer = AxisLayer.aboveTraces;
   String lineColor = '#444';
   SideX? side;
-  bool showGrid = false;
+  bool showGrid = true;
   bool showZeroLine = false;
   TicksPosition? ticksPosition;
   TickMode? tickMode;
@@ -645,8 +653,8 @@ class PlotlyYAxis {
       if (lineColor != '#444') 'linecolor': lineColor,
       if (!isVisible) 'visible': isVisible,
       if (layer != AxisLayer.aboveTraces) 'layer': layer.toString(),
-      if (!showZeroLine) 'zeroline': showZeroLine,
-      if (showGrid) 'showgrid': true,
+      if (showZeroLine) 'zeroline': showZeroLine,
+      if (!showGrid) 'showgrid': showGrid,
       if (side != null) 'side': side.toString(),
       if (ticksPosition != null) 'ticks': ticksPosition.toString(),
       if (tickMode != null) 'tickmode': tickMode.toString(),
