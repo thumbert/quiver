@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter_quiver/models/polygraph/parser/custom_functions_arity2.dart' as arity2;
 import 'package:petitparser/petitparser.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:dama/dama.dart';
@@ -39,8 +40,15 @@ final functions1 = <String, FutureOr<dynamic> Function(dynamic)>{
   'sum': (x) => x,
 };
 
-/// Functions of arity 2
+/// Functions of arity 2.  First argument is a timeseries.
 final functions2 = <String, dynamic Function(dynamic, dynamic)> {
+  'max': arity2.max,
+  'min': arity2.min,
+
+  // TODO: implement moving average and standard deviation for Bollinger bands
+  // TODO: implement append/prepend of two timeseries
+  
+  
   'sd': (ts, window) => ts,
   //
   //
@@ -56,15 +64,6 @@ final functions2 = <String, dynamic Function(dynamic, dynamic)> {
   },
   //
   //
-  'toMonthly': (ts, functionName) {
-    if (ts is! TimeSeries) {
-      return const Failure('', 0, 'First argument needs to be a timeseries');
-    }
-    if (baseFunctions.containsKey(functionName)) {
-      return Success('', 0, toMonthly(ts as TimeSeries<num>, baseFunctions[functionName]!));
-    } else {
-      return Failure('', 0, 'Unsupported aggregation function: $functionName');
-    }
-  },
+  'toMonthly': arity2.toMonthly,
 };
 

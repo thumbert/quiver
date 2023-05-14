@@ -1,6 +1,7 @@
 library petitparser.parser;
 
 import 'dart:math' as math;
+import 'package:flutter_quiver/models/polygraph/parser/ast/ternary.dart';
 import 'package:petitparser/petitparser.dart';
 import 'ast.dart';
 import 'common.dart';
@@ -111,9 +112,14 @@ Expression _createFunctionN(String name, List<Expression> args) {
     ///
   } else if (args.length == 2) {
     if (!functions2.containsKey(name)) {
-      throw 'Can\'t find function $name among list of functions with two arguments.';
+      throw 'Can\'t find function $name among functions with two arguments.';
     }
     return Binary(name, args[0], args[1], functions2[name]!);
+    ///
+    ///
+    ///
+  } else if (args.length == 3) {
+    return Ternary(name, args[0], args[1], args[2], (p0, p1, p2) => null);
     ///
     ///
     ///

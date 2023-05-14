@@ -2,6 +2,8 @@ library screens.polygraph.polygraph;
 
 import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart' hide Interval;
+import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
@@ -38,6 +40,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   late ScrollController _scrollControllerV;
   late ScrollController _scrollControllerH;
   late ScrollController _scrollControllerTabs;
+
+
+  final focusNodeSelection = FocusNode();
 
   String? _errorTerm;
 
@@ -76,6 +81,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   void dispose() {
     controllerTab.dispose();
     focusNodeTab.dispose();
+    focusNodeSelection.dispose();
     _scrollControllerH.dispose();
     _scrollControllerV.dispose();
     _scrollControllerTabs.dispose();
@@ -162,9 +168,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'raw_data',
-                child: Row(children: const [
-                  Icon(Icons.folder_open),
-                  Text('  Open')]),
+                child: Row(children: const [Icon(Icons.folder_open), Text('  Open')]),
                 onTap: () {},
               ),
               PopupMenuItem<String>(
@@ -234,6 +238,44 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // const SelectionArea(
+              //   child: Text(
+              //     'toMonthly(mass_hub, mean)',
+              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
+              //   ),
+              // ),
+              // const SelectableText.rich(
+              //   TextSpan(
+              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
+              //     children: [
+              //       TextSpan(text: 'toMonthly', style: TextStyle(color: Colors.teal)),
+              //       TextSpan(text: '('),
+              //       TextSpan(text: 'mass_hub', style: TextStyle(color: Colors.red)),
+              //       TextSpan(text: ', '),
+              //       TextSpan(text: 'mean', style: TextStyle(color: Colors.blueAccent)),
+              //       TextSpan(text: ')'),
+              //     ],
+              //   ),
+              // ),
+              // Text.rich(
+              //   TextSpan(
+              //     text: 'My name is ',
+              //     style: const TextStyle(color: Colors.black),
+              //     children: <InlineSpan>[
+              //       WidgetSpan(
+              //           alignment: PlaceholderAlignment.baseline,
+              //           baseline: TextBaseline.alphabetic,
+              //           child: ConstrainedBox(
+              //             constraints: const BoxConstraints(maxWidth: 100),
+              //             child: const TextField(),
+              //           )),
+              //       const TextSpan(
+              //         text: '.',
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
               ///
               /// Tabs
               ///
