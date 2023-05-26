@@ -75,7 +75,7 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
     focusDaysOfWeek.addListener(() {
       if (!focusDaysOfWeek.hasFocus) {
         setState(() {
-          validateHours(ref.read(providerOfTimeFilter));
+          validateDaysOfWeek(ref.read(providerOfTimeFilter));
         });
       }
     });

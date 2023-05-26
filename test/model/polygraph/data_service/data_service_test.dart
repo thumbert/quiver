@@ -23,7 +23,8 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  var service = DataServiceLocal(rootUrl: rootUrl);
+  // var service = DataServiceLocal(rootUrl: rootUrl);
+  var service = PolygraphState.service;
   group('Data Service test', () {
     var term = Term.parse('Jan20-Dec21', UTC);
     test('get min and max temperatures Boston', () async {

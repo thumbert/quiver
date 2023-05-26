@@ -21,7 +21,7 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  group('Tab tests', () {
+  group('Polygraph Tab tests', () {
     test('Empty tab', () {
       var tab = PolygraphTab.empty(name: 'Tab 1');
       expect(tab.windows.length, 1);
@@ -29,6 +29,39 @@ Future<void> tests(String rootUrl) async {
       expect(tab.layout.rows, 1);
       expect(tab.layout.cols, 1);
       expect(tab.layout.canvasSize, const Size(900.0, 600.0));
+    });
+
+    test('get valid tab name', (){
+      var poly = PolygraphState.getDefault();
+      poly.deleteTab(2);
+      poly.deleteTab(1);
+
+      expect(poly.tabs.length, 1);
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 1');
+      // 'Tab 2' is a valid name for tab index 0
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 2'), 'Tab 2');
+      poly = poly.copyWith(tabs: [poly.tabs.first.copyWith(name: 'Boo')]);
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 1');
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: ''), 'Tab 1');
+      /// add another tab
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Boo', 'Tab 1']);
+      // can't rename tab index 0 to 'Tab 1', but you can to 'Tab 2'
+      expect(poly.getValidTabName(tabIndex: 0, suggestedName: 'Tab 1'), 'Tab 2');
+
+      /// Rename tab to existing tab name, maintains name
+      poly = PolygraphState.getDefault();
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2']);
+      // can't rename tab index 1 to 'Tab 1', but you stay at 'Tab 2'
+      expect(poly.getValidTabName(tabIndex: 1, suggestedName: 'Tab 1'), 'Tab 2');
+
+      /// Delete tabs
+      poly = PolygraphState.getDefault();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2', 'Tab 3']);
+      poly.deleteTab(1);
+      poly.addTab();
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3', 'Tab 2']);
     });
 
     test('Tab layout, add windows', () {

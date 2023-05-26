@@ -49,7 +49,7 @@ final functions2 = <String, dynamic Function(dynamic, dynamic)> {
   // TODO: implement append/prepend of two timeseries
   
   
-  'sd': (ts, window) => ts,
+  // 'sd': (ts, window) => ts,
   //
   //
   'toDaily': (ts, functionName) {

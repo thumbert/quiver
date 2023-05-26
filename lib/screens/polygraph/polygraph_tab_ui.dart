@@ -631,10 +631,10 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                 });
               },
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                PopupMenuItem<String>(
+                const PopupMenuItem<String>(
                   value: 'refresh',
                   child: Row(
-                    children: const [
+                    children: [
                       Icon(
                         Icons.refresh,
                         color: Colors.blue,

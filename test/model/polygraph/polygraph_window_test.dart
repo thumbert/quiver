@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
@@ -59,6 +60,9 @@ Future<void> tests(String rootUrl) async {
           expression: 'toMonthly(bos_daily_temp, mean)',
           id: 'bos_monthly_temp');
       mTemp.eval(window.cache);
+      expect(window.cache.keys.length, 2);
+      expect(window.cache.keys.contains('bos_monthly_temp'), true);
+
       window.yVariables.add(mTemp);
       var traces = window.makeTraces();
       expect(traces.length, 2);

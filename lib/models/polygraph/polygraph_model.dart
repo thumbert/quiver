@@ -31,7 +31,7 @@ class PolygraphState {
   /// displayed.
   final int activeTabIndex;
 
-  static final DataService service = DataServiceLocal();
+  static DataService service = DataServiceLocal();
 
   /// tabIndex -> tab windows
   // final plotly = <int, List<Plotly>>{};

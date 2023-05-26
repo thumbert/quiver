@@ -125,27 +125,28 @@ class PolygraphWindow {
         var ts = cache[yVariables[i].id] ?? TimeSeries<num>();
         if (ts is TimeSeries<num>) {
           ts = TimeSeries.fromIterable(ts.window(term.interval));
+
+          var color =
+          (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
+          print('i: $i, ts: ${ts.take(5)}');
+
+          /// show a stepwise function (default)
+          var one = {
+            'x': ts.intervals.expand((e) => [e.start, e.end]).toList(),
+            'y': ts.values.expand((e) => [e, e]).toList(),
+            'name': yVariables[i].id,
+            'mode': 'lines',
+            'line': {
+              'color': VariableDisplayConfig.colorToHex(color),
+            },
+            // 'line': {'shape': 'hv'},
+
+            // 'yaxis': 'y2',  // if you want it on the right side
+          };
+          // print(one['line']);
+          // yVariables[i].config
+          traces.add(one);
         }
-
-        var color =
-            (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
-
-        /// show a stepwise function (default)
-        var one = {
-          'x': ts.intervals.expand((e) => [e.start, e.end]).toList(),
-          'y': ts.values.expand((e) => [e, e]).toList(),
-          'name': yVariables[i].id,
-          'mode': 'lines',
-          'line': {
-            'color': VariableDisplayConfig.colorToHex(color),
-          },
-          // 'line': {'shape': 'hv'},
-
-          // 'yaxis': 'y2',  // if you want it on the right side
-        };
-        // print(one['line']);
-        // yVariables[i].config
-        traces.add(one);
       }
     } else {
       /// When you have a scatter plot

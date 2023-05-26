@@ -447,9 +447,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   controller: _scrollControllerH,
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       SizedBox(
                         width: 1500,
                       ),

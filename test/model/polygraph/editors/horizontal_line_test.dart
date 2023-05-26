@@ -70,6 +70,41 @@ Future<void> tests() async {
       expect(traces.first['y'].length, 24);
     });
   });
+  group('Horizontal line variable test', () {
+    var term = Term.parse('Jan22-Dec22', IsoNewEngland.location);
+    var yVariable = SlopeInterceptVariable(slope: 0.0, intercept: 1);
+
+    // test('check various transforms', () {
+    //   var ts = yVariable.timeSeries(term);
+    //   expect(ts.length, 1);
+    //
+    //   // add a fill hourly transform
+    //   yVariable.transforms.add(FillTransform(timeFrequency: 'hourly'));
+    //   var ts1 = yVariable.timeSeries(term);
+    //   expect(ts1.length, 8760);
+    //
+    //   // filter by bucket 5x16, aggregate by month
+    //   yVariable.transforms
+    //       .add(TimeFilter.empty()..copyWith(bucket: Bucket.b5x16));
+    //   yVariable.transforms
+    //       .add(TimeAggregation(frequency: 'monthly', function: 'sum'));
+    //   var ts2 = yVariable.timeSeries(term);
+    //   expect(ts2.length, 12);
+    //   expect(
+    //       ts2.first,
+    //       IntervalTuple<num>(
+    //           Month(2022, 1, location: IsoNewEngland.location), 336));
+    // });
+
+    // var state = PolygraphState(term: term,
+    //     xVariable: TimeVariable(),
+    //     yVariables: [yVariable]);
+    //
+    // var traces = state.makeTraces();
+    // expect(traces.length, 1);
+    // var t0 = traces.first;
+    // print(t0);
+  });
 }
 
 Future<void> main() async {

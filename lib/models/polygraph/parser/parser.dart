@@ -22,21 +22,22 @@ final variable = (letter() & word().star())
 
 final expression = () {
   final builder = ExpressionBuilder<Expression>();
-  builder.group()
+  builder
     ..primitive(number)
-    ..primitive(variable)
+    ..primitive(variable);
 
-    /// functions of arity 1
-    ..wrapper(
-        seq2(
-          word().plus().flatten('function expected').trim(),
-          char('(').trim(),
-        ),
-        char(')').trim(),
-        (left, value, right) => _createFunction1(left.first, value))
+  // /// functions of arity 1
+  // builder.group()
+  //   ..wrapper(
+  //       seq2(
+  //         word().plus().flatten('function expected').trim(),
+  //         char('(').trim(),
+  //       ),
+  //       char(')').trim(),
+  //       (left, value, right) => _createFunction1(left.first, value))
 
     /// parentheses just return the value
-    ..wrapper(
+    builder.group().wrapper(
         char('(').trim(), char(')').trim(), (left, value, right) => value);
 
   /// Simple math ops
@@ -60,22 +61,20 @@ final argList =
   return <Expression>[values[0], ...(values[1] as List).map((e) => e[1])];
 });
 
-
 final callable = seq4(word().plus().flatten('function expected').trim(),
         char('(').trim(), argList, char(')').trim())
     .map((value) => _createFunctionN(value.first, value.third));
 
 final parser = () {
   final builder = ExpressionBuilder<Expression>();
-  builder.group()
+  builder
     ..primitive(number)
-    ..primitive(variable)
-    /// parentheses just return the value
-    ..wrapper(
-        char('(').trim(), char(')').trim(), (left, value, right) => value);
+    ..primitive(callable)
+    ..primitive(variable);
 
-  /// Function of general arity
-  builder.group().primitive(callable);
+  /// parentheses just return the value
+  builder.group().wrapper(
+      char('(').trim(), char(')').trim(), (left, value, right) => value);
 
   /// Simple math ops
   builder.group()
@@ -84,11 +83,12 @@ final parser = () {
   builder.group().right(char('^').trim(),
       (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
   builder.group()
-    ..left(char('*').trim(), (a, op, b) => Binary('*', a, b, (x, y) => x * y))
-    ..left(char('/').trim(), (a, op, b) => Binary('/', a, b, (x, y) => x / y));
+    ..left(char('*').trim(), (a, op, b) => BinaryMultiply(a, b))
+    ..left(char('/').trim(), (a, op, b) => BinaryDivide(a, b));
   builder.group()
-    ..left(char('+').trim(), (a, op, b) => Binary('+', a, b, (x, y) => x + y))
-    ..left(char('-').trim(), (a, op, b) => Binary('-', a, b, (x, y) => x - y));
+    ..left(char('+').trim(), (a, op, b) => BinaryAdd(a, b))
+    ..left(char('-').trim(), (a, op, b) => BinarySubtract(a, b));
+
   return builder.build().end();
 }();
 
@@ -101,12 +101,17 @@ Expression _createFunction1(String name, Expression expression) {
   return Unary(name, expression, functions1[name]!);
 }
 
+// Expression _createFunction2(String name, Expression e1, Expression e2) {
+//   return Binary(name, e1, e2, functions2[name]!);
+// }
+
 Expression _createFunctionN(String name, List<Expression> args) {
   if (args.length == 1) {
     if (!functions1.containsKey(name)) {
       throw 'Can\'t find function $name among list of functions with one argument.';
     }
     return Unary(name, args.first, functions1[name]!);
+
     ///
     ///
     ///
@@ -115,11 +120,13 @@ Expression _createFunctionN(String name, List<Expression> args) {
       throw 'Can\'t find function $name among functions with two arguments.';
     }
     return Binary(name, args[0], args[1], functions2[name]!);
+
     ///
     ///
     ///
   } else if (args.length == 3) {
     return Ternary(name, args[0], args[1], args[2], (p0, p1, p2) => null);
+
     ///
     ///
     ///
