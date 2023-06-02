@@ -17,19 +17,48 @@ final baseFunctions = <String, num Function(Iterable<num>)>{
   'first': (xs) => xs.first,
   'last': (xs) => xs.last,
   'mean': (xs) => mean(xs),
-  // 'median': (xs) => median(xs), // TODO: implement median and quantile
+  'median': (xs) {
+    var q = Quantile(xs.toList());
+    return q.median();
+  },
   'min': (xs) => min(xs),
   'max': (xs) => max(xs),
+  'sum': (xs) => sum(xs),
 };
 
 
 /// Functions of arity 1.
-final functions1 = <String, FutureOr<dynamic> Function(dynamic)>{
-  'exp': (x) => exp(x),
-  'log': (x) => log(x),
-  'sin': (x) => sin(x),
+final functions1 = <String, dynamic Function(dynamic)>{
+  'exp': (x) {
+    return switch (x) {
+      (num x) => exp(x),
+      (TimeSeries<num> x) => x.apply((e) => exp(e)),
+      _ => throw StateError('Don\'t know how to calculate the exp for this input'),
+    };
+  },
+  'log': (x) {
+    return switch (x) {
+      (num x) => log(x),
+      (TimeSeries<num> x) => x.apply((e) => log(e)),
+      _ => throw StateError('Don\'t know how to calculate the log for this input'),
+    };
+  },
+  'sin': (x) {
+    return switch (x) {
+      (num x) => sin(x),
+      (TimeSeries<num> x) => x.apply((e) => sin(e)),
+      _ => throw StateError('Don\'t know how to calculate the sin for this input'),
+    };
+  },
   'asin': (x) => asin(x),
-  'cos': (x) => cos(x),
+  'cos': (x) {
+    return switch (x) {
+      (num x) => cos(x),
+      (TimeSeries<num> x) => x.apply((e) => cos(e)),
+      _ => throw StateError('Don\'t know how to calculate the cos for this input'),
+    };
+
+  },
   'acos': (x) => acos(x),
   'tan': (x) => tan(x),
   'atan': (x) => atan(x),
@@ -38,6 +67,9 @@ final functions1 = <String, FutureOr<dynamic> Function(dynamic)>{
   /// custom functions
   'get': (x) => x,
   'sum': (x) => x,
+
+
+
 };
 
 /// Functions of arity 2.  First argument is a timeseries.
@@ -64,6 +96,6 @@ final functions2 = <String, dynamic Function(dynamic, dynamic)> {
   },
   //
   //
-  'toMonthly': arity2.toMonthly,
+  // 'toMonthly': arity2.toMonthly,
 };
 

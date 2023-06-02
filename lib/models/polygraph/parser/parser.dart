@@ -3,6 +3,7 @@ library petitparser.parser;
 import 'dart:math' as math;
 import 'package:flutter_quiver/models/polygraph/parser/ast/ternary.dart';
 import 'package:petitparser/petitparser.dart';
+import 'package:timeseries/timeseries.dart';
 import 'ast.dart';
 import 'common.dart';
 
@@ -36,9 +37,9 @@ final expression = () {
   //       char(')').trim(),
   //       (left, value, right) => _createFunction1(left.first, value))
 
-    /// parentheses just return the value
-    builder.group().wrapper(
-        char('(').trim(), char(')').trim(), (left, value, right) => value);
+  /// parentheses just return the value
+  builder.group().wrapper(
+      char('(').trim(), char(')').trim(), (left, value, right) => value);
 
   /// Simple math ops
   builder.group()
@@ -65,6 +66,8 @@ final callable = seq4(word().plus().flatten('function expected').trim(),
         char('(').trim(), argList, char(')').trim())
     .map((value) => _createFunctionN(value.first, value.third));
 
+final chain = seq2(variable, [string('=>').trim(), callable].toSequenceParser().plus());
+
 final parser = () {
   final builder = ExpressionBuilder<Expression>();
   builder
@@ -75,6 +78,9 @@ final parser = () {
   /// parentheses just return the value
   builder.group().wrapper(
       char('(').trim(), char(')').trim(), (left, value, right) => value);
+
+  /// chain/transform
+  // builder.;
 
   /// Simple math ops
   builder.group()
@@ -101,10 +107,6 @@ Expression _createFunction1(String name, Expression expression) {
   return Unary(name, expression, functions1[name]!);
 }
 
-// Expression _createFunction2(String name, Expression e1, Expression e2) {
-//   return Binary(name, e1, e2, functions2[name]!);
-// }
-
 Expression _createFunctionN(String name, List<Expression> args) {
   if (args.length == 1) {
     if (!functions1.containsKey(name)) {
@@ -116,16 +118,25 @@ Expression _createFunctionN(String name, List<Expression> args) {
     ///
     ///
   } else if (args.length == 2) {
-    if (!functions2.containsKey(name)) {
-      throw 'Can\'t find function $name among functions with two arguments.';
-    }
-    return Binary(name, args[0], args[1], functions2[name]!);
+    return switch (name) {
+      'max' => BinaryMax(args[0], args[1]),
+      'min' => BinaryMin(args[0], args[1]),
+      'toMonthly' =>
+        ToMonthly(args[0], args[1].toString().replaceFirst('Variable ', '')),
+      _ => throw StateError('Wah-wah-wah...  Function $name is not supported.'),
+    };
 
     ///
     ///
     ///
   } else if (args.length == 3) {
-    return Ternary(name, args[0], args[1], args[2], (p0, p1, p2) => null);
+    return switch (name) {
+      'toMonthly' => ToMonthly3(
+          args[0],
+          args[1].toString().replaceFirst('Variable ', ''),
+          args[2].toString().replaceFirst('Variable ', '')),
+      _ => throw StateError('Wah-wah-wah...  Function $name is not supported.'),
+    };
 
     ///
     ///

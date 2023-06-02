@@ -1,6 +1,8 @@
 library ast.binary;
 
 import 'dart:async';
+import 'dart:math';
+import 'package:flutter_quiver/models/polygraph/parser/common.dart';
 import 'package:timeseries/timeseries.dart';
 
 import 'expression.dart';
@@ -16,11 +18,6 @@ class Binary extends Expression {
 
   @override
   dynamic eval(Map<String, dynamic> variables) {
-    if (name == 'toMonthly') {
-      return function(
-          left.eval(variables), right.toString().replaceFirst('Variable ', ''));
-    }
-
     return function(left.eval(variables), right.eval(variables));
   }
 
@@ -118,4 +115,74 @@ class BinaryDivide extends Expression {
 
   @override
   String toString() => 'Divide';
+}
+
+class BinaryMax extends Expression {
+  BinaryMax(this.left, this.right);
+
+  final Expression left;
+  final Expression right;
+
+  @override
+  dynamic eval(Map<String, dynamic> variables) {
+    var x = left.eval(variables);
+    var y = right.eval(variables);
+    return switch ((x, y)) {
+      ((num x, num y)) => max(x, y),
+      ((num x, TimeSeries<num> y)) => y.apply((e) => max(x, e)),
+      ((TimeSeries<num> x, num y)) => x.apply((e) => max(y, e)),
+      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x,y) => max(x!, y!)),
+      _ => throw StateError('Don\'t know how to calculate the max of $x and $y'),
+    };
+  }
+
+  @override
+  String toString() => 'max';
+}
+
+class BinaryMin extends Expression {
+  BinaryMin(this.left, this.right);
+
+  final Expression left;
+  final Expression right;
+
+  @override
+  dynamic eval(Map<String, dynamic> variables) {
+    var x = left.eval(variables);
+    var y = right.eval(variables);
+    return switch ((x, y)) {
+      ((num x, num y)) => min(x, y),
+      ((num x, TimeSeries<num> y)) => y.apply((e) => min(x, e)),
+      ((TimeSeries<num> x, num y)) => x.apply((e) => min(y, e)),
+      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x,y) => min(x!, y!)),
+      _ => throw StateError('Don\'t know how to calculate the min of $x and $y'),
+    };
+  }
+
+  @override
+  String toString() => 'min';
+}
+
+
+
+class ToMonthly extends Expression {
+  ToMonthly(this.x, this.function);
+
+  final Expression x;
+  final String function;
+
+  @override
+  dynamic eval(Map<String, dynamic> variables) {
+    var ts = x.eval(variables);
+    if (ts is! TimeSeries<num>) {
+      throw StateError('First argument to function toMonthly needs to be a timeseries');
+    }
+    if (!baseFunctions.containsKey(function)) {
+      throw StateError('Can\'t find $function in the pre-defined aggregation functions list');
+    }
+    return toMonthly(ts, baseFunctions[function]!);
+  }
+
+  @override
+  String toString() => 'toMonthly';
 }

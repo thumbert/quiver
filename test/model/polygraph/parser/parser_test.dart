@@ -28,6 +28,12 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
+  group('Parse chain', () {
+    test('x => toMonthly(sum)', () {
+      var res = chain.parse('x => toMonthly(sum)');
+      expect(res.isSuccess, true);
+    });
+  });
   group('Polygraph parser test (basic): ', () {
     test('arithmetic', () {
       var res = parser.parse('2 + 2');
@@ -52,6 +58,14 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('sin(0.0)').isSuccess, true);
       expect(parser.parse('sin(0.0)').value.eval({}), 0.0);
       expect(parser.parse('sin(pi/4)').value.eval({}), 1 / sqrt2);
+      var x = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 0.0),
+        IntervalTuple(Date.utc(2022, 1, 2), pi/6),
+        IntervalTuple(Date.utc(2022, 1, 3), pi/2),
+      ]);
+      expect(parser.parse('sin(x)').value.eval({'x': x}),
+          x.apply((e) => sin(e))
+      );
     });
     test('linear transform of sin function ', () {
       // trace(parser).parse('sin(0.0)');
@@ -132,15 +146,83 @@ Future<void> tests(String rootUrl) async {
   });
   group('Polygraph parser test (custom functions arity 2)', () {
     test('max', (){
-      var ts = TimeSeries.fromIterable([
+      var x = TimeSeries<num>.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
         IntervalTuple(Date.utc(2022, 1, 3), 3.0),
       ]);
-      expect(parser.parse('max(ts, 1.5)').value.eval({'ts': ts}),
-          ts.apply((e) => max(e, 1.5)));
+      var y = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 2), 3.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 5.0),
+        IntervalTuple(Date.utc(2022, 1, 4), 4.0),
+      ]);
+      expect(parser.parse('max(ts, 1.5)').value.eval({'ts': x}),
+          x.apply((e) => max(e, 1.5)));
+      expect(parser.parse('max(1.5, ts)').value.eval({'ts': x}),
+          x.apply((e) => max(e, 1.5)));
+      expect(parser.parse('max(x, y)').value.eval({'x': x, 'y': y}),
+          x.merge(y, f: (x,y) => max<num>(x!, y!)));
+    });
+    test('min', (){
+      var x = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+      ]);
+      var y = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 2), 3.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 5.0),
+        IntervalTuple(Date.utc(2022, 1, 4), 4.0),
+      ]);
+      expect(parser.parse('min(ts, 1.5)').value.eval({'ts': x}),
+          x.apply((e) => min(e, 1.5)));
+      expect(parser.parse('min(1.5, ts)').value.eval({'ts': x}),
+          x.apply((e) => min(e, 1.5)));
+      expect(parser.parse('min(x, y)').value.eval({'x': x, 'y': y}),
+          x.merge(y, f: (x,y) => min<num>(x!, y!)));
+    });
+    test('toMonthly', (){
+      var x = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+        IntervalTuple(Date.utc(2022, 2, 1), 3.0),
+        IntervalTuple(Date.utc(2022, 2, 4), 8.0),
+      ]);
+      expect(parser.parse('toMonthly(x, sum)').value.eval({'x': x}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Month.utc(2022, 1), 3.0),
+            IntervalTuple(Month.utc(2022, 2), 11.0),
+          ]));
     });
   });
+
+  // group('Polygraph parser test (custom functions arity 3)', () {
+  //   test('toMonthly', (){
+  //     var x = TimeSeries<num>.fromIterable([
+  //       IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+  //       IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+  //       IntervalTuple(Date.utc(2022, 2, 1), 3.0),
+  //       IntervalTuple(Date.utc(2022, 2, 4), 8.0),
+  //     ]);
+  //     expect(parser.parse('toMonthly(x, sum)').value.eval({'x': x}),
+  //         TimeSeries<num>.fromIterable([
+  //           IntervalTuple(Month.utc(2022, 1), 3.0),
+  //           IntervalTuple(Month.utc(2022, 2), 11.0),
+  //         ]));
+  //   });
+  // });
+
+  /// toMonthly(filterBucket(x, 5x16), sum)
+  ///
+  ///
+  /// filter(x, {bucket: 5x16})
+  ///
+  /// toMonthly(x, sum, 5x16)
+  ///
+  /// x => filter(bucket: 5x16) => to_monthly(mean)
+  /// x.filter(months: [1,2,3], bucket: offpeak).to_monthly(mean)
+  /// x.filter(hours: [7, 9, 13-20]).to_daily(max)
+  ///
 
 }
 
