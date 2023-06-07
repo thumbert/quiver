@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/parser/custom_functions_arity2.dart' as arity2;
 import 'package:petitparser/petitparser.dart';
 import 'package:timeseries/timeseries.dart';
@@ -57,7 +58,6 @@ final functions1 = <String, dynamic Function(dynamic)>{
       (TimeSeries<num> x) => x.apply((e) => cos(e)),
       _ => throw StateError('Don\'t know how to calculate the cos for this input'),
     };
-
   },
   'acos': (x) => acos(x),
   'tan': (x) => tan(x),
@@ -66,9 +66,21 @@ final functions1 = <String, dynamic Function(dynamic)>{
 
   /// custom functions
   'get': (x) => x,
-  'sum': (x) => x,
+  'sum': (x) {
+    return switch (x) {
+      (num x) => x,
+      (TimeSeries<List<num>> x) => TimeSeries.fromIterable(x.map((e) =>
+          IntervalTuple(e.interval, sum(e.value)))),
+      _ => throw StateError('Don\'t know how to calculate the cos for this input'),
+    };
+  },
 
-
+  // 'toMonthly(mean)': (x) {
+  //   return switch (x) {
+  //     (TimeSeries<num> x) => x.groupByIndex((interval) => Month.fromTZDateTime(interval.start)),
+  //     _ => throw StateError('Input is not a numeric timeseries.  Don\'t know how to aggregate toMonthly for this input'),
+  //   };
+  // },
 
 };
 
