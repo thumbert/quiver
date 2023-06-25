@@ -1,0 +1,6 @@
+[book]
+authors = ["thumbert"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Polygraph Documentation"

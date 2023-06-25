@@ -9,6 +9,8 @@
 .history
 .svn/
 
+docs/polygraph/book/
+
 # IntelliJ related
 *.iml
 *.ipr
