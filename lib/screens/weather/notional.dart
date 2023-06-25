@@ -68,7 +68,7 @@ class _NotionalState extends State<Notional> {
       decoration: InputDecoration(
         isDense: true,
         errorText: error,
-        contentPadding: const EdgeInsets.all(12),
+        contentPadding: const EdgeInsets.all(9),
         errorBorder: _errorBorder,
         focusedErrorBorder: _errorBorder,
         enabledBorder: InputBorder.none,

@@ -133,7 +133,7 @@ class _AppGroupState extends State<AppGroup> {
           ),
           // trailing: item.icon,
           title: Transform.translate(
-            offset: const Offset(-20, 0),
+            offset: const Offset(-12, 0),
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [

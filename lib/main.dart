@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
       title: 'Quiver',
       routerConfig: _router,
       theme: ThemeData(
-        // useMaterial3: true,
+        useMaterial3: true,
         appBarTheme: AppBarTheme(
             backgroundColor: Colors.blueGrey.shade300,
             foregroundColor: Colors.black),

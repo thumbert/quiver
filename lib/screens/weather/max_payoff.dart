@@ -70,7 +70,7 @@ class _MaxPayoffState extends State<MaxPayoff> {
       decoration: InputDecoration(
         isDense: true,
         errorText: error,
-        contentPadding: const EdgeInsets.all(12),
+        contentPadding: const EdgeInsets.all(9),
         errorBorder: _errorBorder,
         focusedErrorBorder: _errorBorder,
         // border: _outlineInputBorder,

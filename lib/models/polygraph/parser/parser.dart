@@ -33,10 +33,11 @@ final intList = (char('[').trim() &
     .trim()
     .map(_createIntList);
 
+/// Input list [x] can be either:
+/// * list of digit characters: ['2', '1']
+///
+/// * list of digit characters separated by dash: ['2', '1', '-', '2', '4']
 Expression _createIntList(List x) {
-  /// Input [x] can be either
-  /// 1) list of digit characters: ['2', '1']
-  /// 2) list of digit characters separated by dash: ['2', '1', '-', '2', '4']
   List<int> _processIntListElement(List xs) {
     var i = xs.indexOf('-');
     if (i == -1) {

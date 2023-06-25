@@ -59,7 +59,7 @@ class _AirportState extends State<Airport> {
       controller: airportController,
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: const EdgeInsets.all(12),
+        contentPadding: const EdgeInsets.all(9),
         errorText: error,
         enabledBorder: InputBorder.none,
       ),
