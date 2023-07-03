@@ -1,4 +1,4 @@
-library ast.custom.window_expr;
+library parser.ast.custom.window_expr;
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
@@ -8,6 +8,7 @@ import 'package:timeseries/timeseries.dart';
 import '../expression.dart';
 
 /// The window expression associated with the window function.
+///
 class WindowExpr extends Expression {
   WindowExpr({required this.x, this.bucket, required this.months,
     required this.hours});

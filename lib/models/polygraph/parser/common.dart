@@ -86,8 +86,8 @@ final functions1 = <String, dynamic Function(dynamic)>{
 
 /// Functions of arity 2.  First argument is a timeseries.
 final functions2 = <String, dynamic Function(dynamic, dynamic)> {
-  'max': arity2.max,
-  'min': arity2.min,
+  // 'max': arity2.max,
+  // 'min': arity2.min,
 
   // TODO: implement moving average and standard deviation for Bollinger bands
   // TODO: implement append/prepend of two timeseries

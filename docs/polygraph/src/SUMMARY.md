@@ -7,7 +7,11 @@
   - [Saving and Loading projects](user_interface/saving_loading.md)
 - [Variables](./variables/variables.md)
   - [Timeseries operations](variables/ts_operations/ts_operations.md)
-    - [Basic operations](variables/ts_operations/basic.md)
+    - [Arithmetic](variables/ts_operations/arithmetic.md)
+    - [Relational operators](variables/ts_operations/relational_operators.md)
+    - [Mathematical functions](variables/ts_operations/mathematical_functions.md)
+    - [Operations](variables/ts_operations/operations.md)
+    - [Rolling functions](variables/ts_operations/rolling_functions.md)
     - [Filtering](variables/ts_operations/filtering.md)
     - [Aggregation](variables/ts_operations/aggregation.md)
   - [Custom functions](variables/custom_functions.md) 
@@ -17,3 +21,4 @@
 
 -----------
 - [Examples](examples/examples.md)
+- [Index](index/index.md)

@@ -3,6 +3,7 @@ library petitparser.parser;
 import 'dart:math' as math;
 import 'package:elec/elec.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_quiver/models/polygraph/parser/ast/custom/ma_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/window_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/int_list_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/ternary.dart';
@@ -81,8 +82,8 @@ Expression _createIntList(List x) {
 
 /// Parse a bucket argument for a function.  
 /// For example, `bucket = 7x24`, or `bucket = offpeak`, etc.
-final bucketArg = (string('bucket').trim() & char('=').trim() & word().plus()).trim().map((value) {
-  return Bucket.parse((value[2] as List).join());
+final bucketArg = (string('bucket').trim() & char('=').trim() & char("'") & word().plus() & char("'")).trim().map((value) {
+  return Bucket.parse((value[3] as List).join());
 });
 
 /// Parse a months argument for a function.  Allowed values are between [1, 12].
@@ -167,6 +168,12 @@ final windowFun = (string('window(') & variable & seq2(char(',').trim(), windowA
   return WindowExpr(x: value[1], bucket: bucket, months: months, hours: hours);
 });
 
+final maFun = (string('ma(') & expression & seq2(char(',').trim(), digit().plus()).trim() & char(')'))
+    .trim().map((value) {
+  var n = value[2] as List;
+  return MaExpr(x: value[1], n: 3);
+});
+
 /// Comma separated list of expressions
 final argList = (expression & (char(',').trim() & expression).star()).map((values) {
   return <Expression>[values[0], ...(values[1] as List).map((e) => e[1])];
@@ -189,20 +196,28 @@ final parser = () {
   /// parentheses just return the value
   builder.group().wrapper(char('(').trim(), char(')').trim(), (left, value, right) => value);
 
-  /// chain/transform
+  /// TODO: add chain/transform
   // builder.;
 
   /// Simple math ops
   builder.group()
     ..prefix(char('+').trim(), (op, a) => a)
-    ..prefix(char('-').trim(), (op, a) => Unary('-', a, (x) => -x));
+    ..prefix(char('-').trim(), (op, a) => UnaryNegation(a));
   builder.group().right(char('^').trim(), (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
   builder.group()
     ..left(char('*').trim(), (a, op, b) => BinaryMultiply(a, b))
     ..left(char('/').trim(), (a, op, b) => BinaryDivide(a, b));
   builder.group()
     ..left(char('+').trim(), (a, op, b) => BinaryAdd(a, b))
+    ..left(string('.+').trim(), (a, op, b) => BinaryDotAddition(a, b))
     ..left(char('-').trim(), (a, op, b) => BinarySubtract(a, b));
+  builder.group()
+    ..left(char('>').trim(), (a, op, b) => BinaryGreaterThan(a, b))
+    ..left(string('>=').trim(), (a, op, b) => BinaryGreaterThanEqual(a, b))
+    ..left(char('<').trim(), (a, op, b) => BinaryLessThan(a, b))
+    ..left(string('<=').trim(), (a, op, b) => BinaryLessThanEqual(a, b));
+
+
 
   return builder.build().end();
 }();

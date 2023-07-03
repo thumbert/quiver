@@ -15,13 +15,13 @@ import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
   var tz = Iso.newEngland.preferredTimeZoneLocation;
-  group('Parse basic function arguments', () {
-    test('parse a bucket function argument', () {
-      expect(bucketArg.parse('bucket = atc').value, Bucket.atc);
-      expect(bucketArg.parse('bucket=5x16').value, Bucket.b5x16);
-      expect(() => bucketArg.parse('bucket = 5y16').value, throwsArgumentError);
+  group('Parse basic function arguments:', () {
+    test('Bucket function argument', () {
+      expect(bucketArg.parse("bucket = 'atc'").value, Bucket.atc);
+      expect(bucketArg.parse("bucket='5x16'").value, Bucket.b5x16);
+      expect(() => bucketArg.parse("bucket = '5y16'").value, throwsArgumentError);
     });
-    test('parse comma separated ints', () {
+    test('Comma separated ints', () {
       // trace(intList).parse('[4, 5, 6, 13, 15, 17-19]');
       expect(() => intList.parse('[]').value.eval({}), throwsException);
       expect(intList.parse('[ 3 ]').value.eval({}), [3]);
@@ -37,7 +37,7 @@ Future<void> tests(String rootUrl) async {
       expect(intList.parse('[1, 4, 17]').value.eval({}), [1, 4, 17]);
       expect(intList.parse('[1, 4-6, 17, 19-20]').value.eval({}), [1, 4, 5, 6, 17, 19, 20]);
     });
-    test('parse a months function argument', () {
+    test('Months argument', () {
       expect(monthsArg.parse('months = [1-2, 7-8]').value.eval({}), [1, 2, 7, 8]);
       expect(monthsArg.parse('months=[1-2, 7-8]').value.eval({}), [1, 2, 7, 8]);
       expect(monthsArg.parse('months = [11, 3, 7-8]').value.eval({}), [3, 7, 8, 11]);
@@ -68,7 +68,7 @@ Future<void> tests(String rootUrl) async {
     });
     test('bucket filter', () {
       var x = TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0);
-      var ts = windowFun.parse('window(x, bucket=7x8)').value.eval({'x': x}) as TimeSeries;
+      var ts = windowFun.parse("window(x, bucket='7x8')").value.eval({'x': x}) as TimeSeries;
       expect(ts.length, 8);
     });
     test('filter combo: bucket + months', () {
@@ -76,14 +76,14 @@ Future<void> tests(String rootUrl) async {
         ...TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0),
         ...TimeSeries<num>.fill(Date(2022, 3, 1, location: tz).hours(), 3.0),
       ]);
-      var ts = windowFun.parse('window(x, bucket=7x8, months=[3])').value.eval({'x': x}) as TimeSeries;
+      var ts = windowFun.parse("window(x, bucket='7x8', months=[3])").value.eval({'x': x}) as TimeSeries;
       expect(ts.length, 8);
     });
 
 
   });
 
-  group('Parse chains (rocket operator)', () {
+  group('Parse chains (fat-arrow operator):', () {
     test('x => toMonthly(x, mean)', () {
       var res = chain.parse('x => toMonthly(x, mean)');
       expect(res.isSuccess, true);
@@ -117,7 +117,7 @@ Future<void> tests(String rootUrl) async {
     //   ]));
     // });
   });
-  group('Polygraph parser test (basic): ', () {
+  group('Parse basic arithmetic: ', () {
     test('arithmetic', () {
       var res = parser.parse('2 + 2');
       expect(res.isSuccess, true);
@@ -154,8 +154,18 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('3 + 2*sin(x)').value.eval({'x': pi / 6}), 4.0);
     });
   });
-  group('Polygraph parser test (basic timeseries operations)', () {
-    test('addition with one timeseries', () {
+  group('Parse basic timeseries operations:', () {
+    test('Unary negation', () {
+      var ts = TimeSeries.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+      ]);
+      expect(parser.parse('-ts').value.eval({'ts': ts}), ts.apply((e) => -e));
+      expect(parser.parse('ts + (-ts)').value.eval({'ts': ts}),
+          ts.apply((e) => 0.0));
+    });
+    test('Addition with one timeseries', () {
       var ts = TimeSeries.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
@@ -165,7 +175,7 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('2 + ts').value.eval({'ts': ts}), ts.apply((e) => e + 2));
       expect(parser.parse('ts + ts').value.eval({'ts': ts}), ts.apply((e) => e + e));
     });
-    test('subtraction with one timeseries', () {
+    test('Subtraction with one timeseries', () {
       var ts = TimeSeries.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
@@ -175,7 +185,7 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('2 - ts').value.eval({'ts': ts}), ts.apply((e) => 2 - e));
       expect(parser.parse('ts - ts').value.eval({'ts': ts}), ts.apply((e) => e - e));
     });
-    test('multiplication with one timeseries', () {
+    test('Multiplication with one timeseries', () {
       var ts = TimeSeries.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
@@ -185,7 +195,7 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('2 * ts').value.eval({'ts': ts}), ts.apply((e) => e * 2));
       expect(parser.parse('ts * ts').value.eval({'ts': ts}), ts.apply((e) => e * e));
     });
-    test('division with one timeseries', () {
+    test('Division with one timeseries', () {
       var ts = TimeSeries.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
@@ -195,7 +205,7 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('2 / ts').value.eval({'ts': ts}), ts.apply((e) => 2 / e));
       expect(parser.parse('ts / ts').value.eval({'ts': ts}), ts.apply((e) => 1));
     });
-    test('more complicated arithmetic with timeseries', () {
+    test('More complicated arithmetic with timeseries', () {
       var x = TimeSeries.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
@@ -213,7 +223,80 @@ Future<void> tests(String rootUrl) async {
             IntervalTuple(Date.utc(2022, 1, 3), 7.0),
           ]));
     });
+    test('Dot addition of two timeseries', () {
+      var x = TimeSeries.fromIterable([
+        IntervalTuple(Month.utc(2021, 1), 10),
+        IntervalTuple(Month.utc(2021, 2), 11),
+        IntervalTuple(Month.utc(2021, 3), 15),
+        IntervalTuple(Month.utc(2021, 4), 13),
+        IntervalTuple(Month.utc(2021, 5), 12),
+      ]);
+      var y = TimeSeries.fromIterable([
+        IntervalTuple(Month.utc(2021, 2), 5),
+        IntervalTuple(Month.utc(2021, 3), 6),
+        IntervalTuple(Month.utc(2021, 5), 7),
+        IntervalTuple(Month.utc(2021, 8), 8),
+      ]);
+      expect(
+          parser.parse('x .+ y').value.eval({'x': x, 'y': y}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Month.utc(2021, 1), 10),
+            IntervalTuple(Month.utc(2021, 2), 16),
+            IntervalTuple(Month.utc(2021, 3), 21),
+            IntervalTuple(Month.utc(2021, 4), 13),
+            IntervalTuple(Month.utc(2021, 5), 19),
+            IntervalTuple(Month.utc(2021, 8), 8),
+          ]));
+    });
+    test('Relational operators with timeseries', () {
+      var x = TimeSeries.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+        IntervalTuple(Date.utc(2022, 1, 4), 4.0),
+        IntervalTuple(Date.utc(2022, 1, 5), 3.0),
+      ]);
+      var y = TimeSeries.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 2), -2.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+        IntervalTuple(Date.utc(2022, 1, 5), -3.0),
+      ]);
+      expect(
+          parser.parse('x > 2').value.eval({'x': x}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+            IntervalTuple(Date.utc(2022, 1, 4), 4.0),
+            IntervalTuple(Date.utc(2022, 1, 5), 3.0),
+          ]));
+      expect(
+          parser.parse('x > y').value.eval({'x': x, 'y': y}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+            IntervalTuple(Date.utc(2022, 1, 5), 3.0),
+          ]));
+      expect(
+          parser.parse('x < 3').value.eval({'x': x}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+            IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+          ]));
+    });
   });
+
+
+  group('Parse rolling functions', () {
+    test('ma', () {
+      var x = TimeSeries<num>.fromIterable([
+        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
+        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
+        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+      ]);
+      // expect(parser.parse('max(ts, 1.5)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
+      // expect(parser.parse('max(1.5, ts)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
+      // expect(parser.parse('max(x, y)').value.eval({'x': x, 'y': y}), x.merge(y, f: (x, y) => max<num>(x!, y!)));
+    });
+  });
+
   group('Polygraph parser test (custom functions arity 2)', () {
     test('max', () {
       var x = TimeSeries<num>.fromIterable([
@@ -277,19 +360,6 @@ Future<void> tests(String rootUrl) async {
           ]));
     });
   });
-
-  /// toMonthly(filterBucket(x, 5x16), sum)
-  ///
-  ///
-  /// filter(x, {bucket: 5x16})
-  ///
-  /// toMonthly(x, sum, 5x16)
-  ///
-  /// x => window(x, bucket: 5x16) => toMonthly(x, mean)
-  ///
-  /// x.filter(months: [1,2,3], bucket: offpeak).to_monthly(mean)
-  /// x.filter(hours: [7, 9, 13-20]).to_daily(max)
-  ///
 }
 
 Future<void> main() async {
@@ -298,59 +368,3 @@ Future<void> main() async {
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   await tests(rootUrl);
 }
-
-// test('parse toMonthly(bos_daily_temp, mean)', () async {
-//   var location = getLocation('America/New_York');
-//   var term = Term.parse('Jan20-Dec21', location);
-//   var window = PolygraphWindow(
-//       term: term,
-//       xVariable: TimeVariable(),
-//       yVariables: [
-//         TemperatureVariable(
-//           airportCode: 'BOS',
-//           variable: 'mean',
-//           frequency: 'daily',
-//           isForecast: false,
-//           dataSource: 'NOAA',
-//           id: 'bos_daily_temp',
-//         ),
-//         TransformedVariable(
-//             expression: 'toMonthly(bos_daily_temp, mean)',
-//             id: 'bos_monthly_temp'),
-//       ],
-//       layout: PlotlyLayout.getDefault(width: 900, height: 600),
-//   );
-//   await window.updateCache();
-//   expect(window.cache.keys.toSet(), {'bos_daily_temp', 'bos_monthly_temp'});
-//   var ts = window.cache['bos_monthly_temp'] as TimeSeries<num>;
-//   expect(ts.observationAt(Month(2020, 4, location: location)).value, 44.55);
-//   //
-//   // generate an error on a transformed variable, unknown function
-//   window.yVariables[1] = TransformedVariable(
-//       expression: 'toMonthly(bos_daily_temp, mix)',
-//       id: 'bos_monthly_temp');
-//   await window.updateCache();
-//   expect(window.cache.keys.toSet(), {'bos_daily_temp'});
-//   var tv = window.yVariables[1] as TransformedVariable;
-//   expect(tv.error, 'Unsupported aggregation function: mix');
-//   //
-//   // generate an error on a transformed variable, wrong arity
-//   window.yVariables[1] = TransformedVariable(
-//       expression: 'toMonthly(bos_daily_temp)',
-//       id: 'bos_monthly_temp');
-//   await window.updateCache();
-//   expect(window.cache.keys.toSet(), {'bos_daily_temp'});
-//   tv = window.yVariables[1] as TransformedVariable;
-//   expect(tv.error, 'Bad state: Can\'t find function toMonthly among '
-//       'list of functions with one argument.');
-//   //
-//   // generate an error on a transformed variable, wrong syntax
-//   // (missing end parenthesis)
-//   window.yVariables[1] = TransformedVariable(
-//       expression: 'toMonthly(bos_daily_temp',
-//       id: 'bos_monthly_temp');
-//   await window.updateCache();
-//   expect(window.cache.keys.toSet(), {'bos_daily_temp'});
-//   tv = window.yVariables[1] as TransformedVariable;
-//   expect(tv.error, '")" expected');
-// });

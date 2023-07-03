@@ -1,3 +1,5 @@
+## General concepts
+
 Polygraph organizes work in **projects**.  In general, a **project** has several **tabs**
 and each tab can contain several **windows**.  Each window contains one chart displaying
 multiple **variables**.  Tabs can be added, deleted and renamed.  A project can be saved
@@ -30,15 +32,15 @@ Each observation is a pair of a time-interval and a (numerical) value.
 >    or yearly observations.
 >
 >    A disadvantage is that this representation uses more memory, but that should not be
->    an issue given a typical Polygraph project.  Hundreds of
->    series per project should not be an issue.
+>    an issue given that a typical Polygraph project should use less than a hundred of
+>    series.
 
 Also, Polygraph by design is taking a lot of care to communicate clearly the timezone
 associated with each timeseries.
 
-Implementation
-==============
-Polygraph has been created with open source software.  The user interface is 
+### Implementation
+
+Polygraph was created with open source software.  The user interface is 
 written in [Flutter](https://flutter.dev/).  The charts are done using 
-[Plotly](https://plotly.com/javascript/).  This documentation was created using 
+[Plotly](https://plotly.com/javascript/).  This documentation was made using 
 [mdBook](https://github.com/rust-lang/mdBook).

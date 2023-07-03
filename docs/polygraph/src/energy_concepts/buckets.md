@@ -1,3 +1,5 @@
+## Buckets
+
 Time buckets are a core concept when dealing with electricity 
 timeseries.  Several Polygraph functions accept buckets as arguments, 
 see for example the function ```window``` used to filter observations 
