@@ -5,9 +5,18 @@
 Let `x` be an hourly price timeseries.
 
 ```
-x => window(bucket=5x16) 
-  => toMonthly(mean)
+x => window(_, bucket='5x16') 
+  => toMonthly(_, mean)
 ```
+
+### Calculate a monthly CDD index
+
+Let `t` be a timeseries of daily temperature for a location.  Then  
+
+```
+t => max(_, 65) => toMonthly(_, sum)
+```
+calculates the monthly CDD index.
 
 [//]: # (### Calculate a historic heat-rate)
 

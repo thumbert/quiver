@@ -1,16 +1,17 @@
 ### Rolling functions
 
-* **ma** Calculate a rolling moving average
+* **ma** Calculate a moving average
 
-> `ma(x, n)`  Calculate a rolling moving average of the last `n` 
+> `ma(x, n)`  Calculate a 'simple' moving average of the last `n` 
 > observations.  No special consideration is given if the timeseries 
 > 'has gaps'.
 > 
 > Returns a timeseries
 > 
 > Parameters
-> * `x` A numeric timeseries
-> * `n` the number of observations used in the average
+> * `x` a numeric timeseries
+> * `n` window length, the number of observations used in the average.  
+>   It should be an integer greater than one.
 >
 > **Example** If `x` is the monthly timeseries
 >```
@@ -22,7 +23,7 @@
 >```
 > then `ma(x, 4)` is the timeseries
 >```
->   2021-04 -> 13      
->   2021-05 -> 12
+>   2021-04 -> 12.25      
+>   2021-05 -> 12.75
 >```
 
