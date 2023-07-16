@@ -6,6 +6,7 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_transformed_variable.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,46 +31,45 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
     Widget widget = const Text('');
     if (variableSelection.isSelectionDone()) {
       var path = variableSelection.selection;
-      if (path == 'Expression') {
-        widget = const TransformedVariableEditor();
-      } else if (path == 'Line,Horizontal') {
-        widget = const HorizontalLineEditor();
-      } else {
-        print('Variable selection for $path is not yet implemented!');
-        print('See file other/variable_selection_ui.dart');
-      }
+      widget = switch (path) {
+        'Expression' => const TransformedVariableEditor(),
+        'Line,Horizontal' => const HorizontalLineEditor(),
+        'Marks,Prices,Historical' => const MarksHistoricalView(),
+        _ => Text('Selection $path not yet implemented'),
+      };
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       // mainAxisSize: MainAxisSize.min,
       children: [
+        const Text('Add a variable', style: TextStyle(fontSize: 24),),
+        if (!variableSelection.isSelectionDone()) const SizedBox(height: 12,),
         if (!variableSelection.isSelectionDone())
           const Text('Choose a category'),
-        const SizedBox(
-          height: 8,
+        if (!variableSelection.isSelectionDone()) const SizedBox(
+          height: 16,
         ),
         if (!variableSelection.isSelectionDone())
-          // Wrap(
-          //   spacing: 5.0,
           Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List<Widget>.generate(
               categories.length,
                   (int index) {
-                return ChoiceChip(
-                  selectedColor: MyApp.background,
-                  label: Text(categories[index]),
-                  selected: false,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      if (selected) {
-                        variableSelection
-                            .selectCategory(categories[index]);
-                      }
-                    });
-                  },
+                return Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: ChoiceChip(
+                    selectedColor: MyApp.background,
+                    label: Text(categories[index]),
+                    selected: false,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected) {
+                          variableSelection
+                              .selectCategory(categories[index]);
+                        }
+                      });
+                    },
+                  ),
                 );
               },
             ).toList(),
@@ -78,31 +78,31 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
           height: 16,
         ),
         if (variableSelection.categories.isNotEmpty)
-          // Wrap(
-          //   spacing: 5.0,
-          //   crossAxisAlignment: WrapCrossAlignment.center,
           Row(
             children: [
               const Text('Selection '),
               ...List.generate(variableSelection.categories.length,
                       (index) {
-                    return InputChip(
-                      label: Text(
-                        variableSelection.categories[index],
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: InputChip(
+                        label: Text(
+                          variableSelection.categories[index],
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            variableSelection.removeFromLevel(index);
+                          });
+                        },
+                        deleteIcon: const Icon(Icons.close),
+                        backgroundColor: MyApp.background2,
                       ),
-                      onDeleted: () {
-                        setState(() {
-                          variableSelection.removeFromLevel(index);
-                        });
-                      },
-                      deleteIcon: const Icon(Icons.close),
-                      backgroundColor: MyApp.background,
                     );
                   })
             ],
           ),
         const SizedBox(
-          height: 8,
+          height: 12,
         ),
         widget,
       ],

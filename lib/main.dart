@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
   static final background = Colors.orange[100]!;
+  static final background2 = Colors.green[100]!;
 
   final _router = GoRouter(routes: [
     GoRoute(

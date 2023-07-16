@@ -12,16 +12,13 @@ class VariableSelection {
   String get selection => categories.join(',');
 
   static final allCategories = <List<String>>[
-    // ['Combo Expression'],
-    // ['Electricity', 'Realized'],
-    // ['Electricity', 'Forward'],
     ['Expression'],
     ['Line', 'Horizontal'],
     ['Line', 'Vertical'],
     ['Marks', 'Prices', 'As of'],
     ['Marks', 'Prices', 'Historical'],
     ['Marks', 'Vols'],
-    ['Shooju'],
+    // ['Shooju'],
     ['Time'],
     // ['Weather', 'Temperature'],
   ];

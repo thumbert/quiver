@@ -17,6 +17,9 @@ class TransformedVariableEditor extends ConsumerStatefulWidget {
   const TransformedVariableEditor(
       {Key? key}) : super(key: key);
 
+  static bool isValid = false;
+  static String error = '';
+
   @override
   ConsumerState<TransformedVariableEditor> createState() =>
       _TransformedVariableEditorState();
@@ -30,9 +33,8 @@ class _TransformedVariableEditorState
   final focusLabel = FocusNode();
   final focusExpression = FocusNode();
 
-  /// Have this here too for convenience
-  String _errorMessage = '';
-  bool pressedOk = false;
+  String errorLabel = '';
+  String errorExpression = '';
   int activeTab = 0;
 
   @override
@@ -41,35 +43,17 @@ class _TransformedVariableEditorState
     controllerExpression.text = '';
     controllerLabel.text = '';
 
-    // print('in initState() of transformed_variable_editor');
-    // print('label: ${ref.read(providerOfTransformedVariable).label}');
-
-    // ref.read(providerOfTransformedVariable.notifier).label = '';
-    // ref.read(providerOfTransformedVariable.notifier).expression = '';
-
     focusLabel.addListener(() {
       if (!focusLabel.hasFocus) {
         setState(() {
-          ref.read(providerOfTransformedVariable.notifier).label =
-              controllerLabel.text;
-          if (controllerLabel.text == '') {
-            _errorMessage =
-                'Label can\'t be empty.  Please provide a variable name';
-          }
+          validateLabel(ref.read(providerOfTransformedVariable));
         });
       }
     });
     focusExpression.addListener(() {
       if (!focusExpression.hasFocus) {
-        var state = ref.read(providerOfTransformedVariable);
-        var poly = ref.read(providerOfPolygraph);
-        var tab = poly.tabs[poly.activeTabIndex];
-        var window = tab.windows[tab.activeWindowIndex];
         setState(() {
-          ref.read(providerOfTransformedVariable.notifier).expression =
-              controllerExpression.text;
-          state.eval(window.cache);
-          _errorMessage = state.error;
+          validateExpression(ref.read(providerOfTransformedVariable));
         });
       }
     });
@@ -90,8 +74,6 @@ class _TransformedVariableEditorState
     var state = ref.watch(providerOfTransformedVariable);
     controllerExpression.text = state.expression;
     controllerLabel.text = state.label;
-    _errorMessage = state.error;
-    print('_errorMessage: $_errorMessage');
 
     /// TODO: Should do validation when the tab changes too
 
@@ -189,11 +171,7 @@ class _TransformedVariableEditorState
                             ),
                             onEditingComplete: () {
                               setState(() {
-                                ref
-                                    .read(
-                                        providerOfTransformedVariable.notifier)
-                                    .label = controllerLabel.text;
-                                // pressedOk = false;
+                                validateLabel(state);
                               });
                             },
                           ),
@@ -234,17 +212,8 @@ class _TransformedVariableEditorState
                                   : InputBorder.none,
                             ),
                             onEditingComplete: () {
-                              var poly = ref.read(providerOfPolygraph);
-                              var tab = poly.tabs[poly.activeTabIndex];
-                              var window = tab.windows[tab.activeWindowIndex];
-                              print('in transformed_variable_editor, build, onEditingComplete:');
-                              print('${window.yVariables.map((e) => e.label)}');
                               setState(() {
-                                ref
-                                    .read(
-                                        providerOfTransformedVariable.notifier)
-                                    .expression = controllerExpression.text;
-                                state.eval(window.cache);
+                                validateExpression(state);
                               });
                             },
                           ),
@@ -266,8 +235,7 @@ class _TransformedVariableEditorState
                           padding: const EdgeInsets.only(right: 8),
                           child: const Text(''),
                         ),
-                        Text(
-                          state.error != '' ? 'Error: ${state.error}' : '',
+                        Text(state.error,
                           style: const TextStyle(color: Colors.red, fontSize: 10),
                         ),
                       ],
@@ -277,44 +245,37 @@ class _TransformedVariableEditorState
               ),
           ],
         ),
-        // ElevatedButton(
-        //   onPressed: () {
-        //     var window = ref.read(providerOfPolygraphWindow);
-        //     setState(() {
-        //       pressedOk = true;
-        //       if (controllerLabel.text == '') {
-        //         state.error =
-        //             'Label can\'t be empty.  Please provide a variable name';
-        //         return;
-        //       }
-        //       state.eval(window.cache);
-        //       var yVariables = [...window.yVariables, state];
-        //       ref.read(providerOfPolygraphWindow.notifier).yVariables = yVariables;
-        //       // Navigator.of(context).pop(result);
-        //     });
-        //   },
-        //   child: const Text('OK'),
-        // ),
       ],
     );
   }
 
-  // void validateForm(TransformedVariable variable) {
-  //       var window = ref.read(providerOfPolygraphWindow);
-  //       setState(() {
-  //         pressedOk = true;
-  //         if (controllerLabel.text == '') {
-  //           variable.error =
-  //               'Label can\'t be empty';
-  //           return;
-  //         }
-  //         if (controllerExpression.text == '') {
-  //           variable.error = 'Expression can\'t be empty';
-  //           return;
-  //         }
-  //         variable.eval(window.cache);
-  //         var yVariables = [...window.yVariables, variable];
-  //         ref.read(providerOfPolygraphWindow.notifier).yVariables = yVariables;
-  //       });
-  // }
+  void validateLabel(TransformedVariable state) {
+    errorLabel = '';
+    ref.read(providerOfTransformedVariable.notifier).label =
+        controllerLabel.text;
+    if (controllerLabel.text == '') {
+      errorLabel =
+      'Label can\'t be empty.  Please provide a variable name';
+    }
+    ref.read(providerOfTransformedVariable.notifier).error = errorLabel;
+    TransformedVariableEditor.isValid = errorExpression == '' && errorLabel == '';
+  }
+
+  void validateExpression(TransformedVariable state) {
+    errorExpression = '';
+    if (controllerExpression.text == '') {
+      errorExpression = 'Expression can\'t be empty.';
+    } else {
+      ref.read(providerOfTransformedVariable.notifier).expression =
+          controllerExpression.text;
+      var poly = ref.read(providerOfPolygraph);
+      var tab = poly.tabs[poly.activeTabIndex];
+      var window = tab.windows[tab.activeWindowIndex];
+      state.eval(window.cache);
+      errorExpression = state.error;
+    }
+    ref.read(providerOfTransformedVariable.notifier).error = errorExpression;
+    TransformedVariableEditor.isValid = errorExpression == '' && errorLabel == '';
+  }
+
 }
