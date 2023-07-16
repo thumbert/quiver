@@ -3,6 +3,7 @@ library petitparser.parser;
 import 'dart:math' as math;
 import 'package:elec/elec.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_quiver/models/polygraph/parser/ast/custom/hourly_schedule_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/ma_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/window_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/int_list_expr.dart';
@@ -166,6 +167,12 @@ final windowFun = (string('window(') & variable & seq2(char(',').trim(), windowA
   }
 
   return WindowExpr(x: value[1], bucket: bucket, months: months, hours: hours);
+});
+
+final hourlyScheduleFun = (string('hourly_schedule(') & number & seq2(char(',').trim(), bucketArg).optional()
+    & char(')')).trim().map((value) {
+      var x = value[0];
+      return HourlyScheduleExpr(x, months: []);
 });
 
 final maFun = (string('ma(') & expression & seq2(char(',').trim(), digit().plus()).trim() & char(')'))

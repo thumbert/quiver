@@ -59,7 +59,7 @@ class TransformedVariable extends PolygraphVariable {
       res = Failure('', 0, e.toString());
     }
     if (res.isFailure) {
-      error = res.message;
+      error = 'Parsing error: ${res.message}';
     } else {
       var out = res.value.eval(cache);
       if (out is Failure) {
@@ -76,17 +76,18 @@ class TransformedVariable extends PolygraphVariable {
     }
   }
 
-  void validate(PolygraphWindow window) {
-    if (label == '') {
-      error = 'Label can\'t be empty';
-      return;
-    }
-    if (expression == '') {
-      error = 'Expression can\'t be empty';
-      return;
-    }
-    eval(window.cache);
-  }
+  // void validate(PolygraphWindow window) {
+  //   if (label == '') {
+  //     error = 'Label can\'t be empty';
+  //     return;
+  //   }
+  //   if (expression == '') {
+  //     error = 'Expression can\'t be empty';
+  //     return;
+  //   }
+  //   eval(window.cache);
+  // }
+
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {

@@ -4,12 +4,30 @@
 
 Occasionally it is useful to directly create timeseries. 
 
-**hourly_schedule** Create an hourly timeseries
+Use **`hourly_schedule`** to create an hourly timeseries
 
-```
-hourly_schedule(10, tz='UTC')
-hourly_schedule(50, tz='America/New_York', bucket='Peak')
-```
+> `hourly_schedule(fill, {bucket, months})`
+> 
+> Create an hourly timeseries for the time window specified in the 
+> associated Polygraph tab.  All values of the created timeseries 
+> are set to `fill`. 
+> 
+> Parameters
+> * `fill` the value for all hours
+> * `bucket` A bucket name (quoted), for example ``5x16``, etc.  For a list
+>   of valid bucket names see Section [Buckets](../../energy_concepts/buckets.md)
+> * `months` A list of months separated by commas inside brackets, for example
+>   ``[4, 5, 10, 11]``, a numeric range start-end, for example `6-9`, or a
+>   combination of the two, for example `[1, 3, 5-7, 10-11]`.  Accepted month
+>   values are between 1 and 12.
+> 
+> Examples
+>
+>   `hourly_schedule(10)`
+> 
+>   `hourly_schedule(50, bucket='Peak')`
+>
+>   `hourly_schedule(50, bucket='Peak', months=[1,2])`
 
 **daily_schedule** Create a daily timeseries
 

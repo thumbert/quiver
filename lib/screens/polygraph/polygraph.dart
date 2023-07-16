@@ -1,11 +1,13 @@
 library screens.polygraph.polygraph;
 
 import 'package:contextmenu/contextmenu.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,7 +157,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     // print('active tab index: ${poly.activeTabIndex}');
     // var tabs = poly.tabs;
     var tab = poly.tabs[poly.activeTabIndex];
-    print('in polygraph build(), tab height = ${tab.layout.canvasSize.height}');
+    if (kDebugMode) {
+      print('in polygraph build(), tab height = ${tab.layout.canvasSize.height}');
+    }
     final container = ProviderScope.containerOf(context);
 
     return Scaffold(
@@ -168,7 +172,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'raw_data',
-                child: Row(children: const [Icon(Icons.folder_open), Text('  Open')]),
+                child: const Row(children: [Icon(Icons.folder_open), Text('  Open')]),
                 onTap: () {},
               ),
               PopupMenuItem<String>(
@@ -183,20 +187,20 @@ class _PolygraphState extends ConsumerState<Polygraph> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return SimpleDialog(
+                    return const SimpleDialog(
                       children: [
                         SizedBox(
                           width: 500,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text('Experimental UI for curve visualization.'
                                   '\n'),
                             ],
                           ),
                         )
                       ],
-                      contentPadding: const EdgeInsets.all(12),
+                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },
@@ -208,20 +212,20 @@ class _PolygraphState extends ConsumerState<Polygraph> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return SimpleDialog(
+                    return const SimpleDialog(
                       children: [
                         SizedBox(
                           width: 500,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text('Experimental UI for curve visualization.'
                                   '\n'),
                             ],
                           ),
                         )
                       ],
-                      contentPadding: const EdgeInsets.all(12),
+                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },
@@ -238,43 +242,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // const SelectionArea(
-              //   child: Text(
-              //     'toMonthly(mass_hub, mean)',
-              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
-              //   ),
-              // ),
-              // const SelectableText.rich(
-              //   TextSpan(
-              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
-              //     children: [
-              //       TextSpan(text: 'toMonthly', style: TextStyle(color: Colors.teal)),
-              //       TextSpan(text: '('),
-              //       TextSpan(text: 'mass_hub', style: TextStyle(color: Colors.red)),
-              //       TextSpan(text: ', '),
-              //       TextSpan(text: 'mean', style: TextStyle(color: Colors.blueAccent)),
-              //       TextSpan(text: ')'),
-              //     ],
-              //   ),
-              // ),
-              // Text.rich(
-              //   TextSpan(
-              //     text: 'My name is ',
-              //     style: const TextStyle(color: Colors.black),
-              //     children: <InlineSpan>[
-              //       WidgetSpan(
-              //           alignment: PlaceholderAlignment.baseline,
-              //           baseline: TextBaseline.alphabetic,
-              //           child: ConstrainedBox(
-              //             constraints: const BoxConstraints(maxWidth: 100),
-              //             child: const TextField(),
-              //           )),
-              //       const TextSpan(
-              //         text: '.',
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              // const MarksHistoricalView(),
 
               ///
               /// Tabs
@@ -303,7 +271,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                 child: poly.activeTabIndex == index
                                     ? ContextMenuArea(
                                         verticalPadding: 8.0,
-                                        width: 200,
+                                        width: 260,
                                         builder: (context) {
                                           return [
                                             /// Add tab
@@ -314,7 +282,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Icons.add,
                                                 color: Colors.blueGrey[300],
                                               ),
-                                              title: const Text('Add tab'),
+                                              title: const Padding(
+                                                padding: EdgeInsets.only(left: 12.0),
+                                                child: Text('Add tab'),
+                                              ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
@@ -331,12 +302,14 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Icons.delete_forever,
                                                 color: Colors.blueGrey[300],
                                               ),
-                                              title: const Text('Delete tab'),
+                                              title: const Padding(
+                                                padding: EdgeInsets.only(left: 12.0),
+                                                child: Text('Delete tab'),
+                                              ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
                                                   poly.deleteTab(poly.activeTabIndex);
-
                                                   /// TODO: which tab is now active?
                                                 });
                                               },
@@ -350,7 +323,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Icons.edit,
                                                 color: Colors.blueGrey[300],
                                               ),
-                                              title: const Text('Rename'),
+                                              title: const Padding(
+                                                padding: EdgeInsets.only(left: 12.0),
+                                                child: Text('Rename'),
+                                              ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
@@ -367,7 +343,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Icons.tune,
                                                 color: Colors.blueGrey[300],
                                               ),
-                                              title: const Text('Display configuration'),
+                                              title: const Padding(
+                                                padding: EdgeInsets.only(left: 12.0),
+                                                child: Text('Display configuration'),
+                                              ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 showDialog(
@@ -393,7 +372,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Icons.square_outlined,
                                                 color: Colors.blueGrey[300],
                                               ),
-                                              title: const Text('Add window'),
+                                              title: const Padding(
+                                                padding: EdgeInsets.only(left: 12.0),
+                                                child: Text('Add window'),
+                                              ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
