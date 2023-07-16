@@ -22,8 +22,6 @@ class VariableSelectionUi extends ConsumerStatefulWidget {
 
 class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
 
-  // final variableSelection = VariableSelection();
-
   @override
   Widget build(BuildContext context) {
     final variableSelection = ref.watch(providerOfVariableSelection);
@@ -38,13 +36,13 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
         widget = const HorizontalLineEditor();
       } else {
         print('Variable selection for $path is not yet implemented!');
-        print('See other/variable_selection_ui.dart');
+        print('See file other/variable_selection_ui.dart');
       }
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      // mainAxisSize: MainAxisSize.min,
       children: [
         if (!variableSelection.isSelectionDone())
           const Text('Choose a category'),
@@ -80,9 +78,10 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
           height: 16,
         ),
         if (variableSelection.categories.isNotEmpty)
-          Wrap(
-            spacing: 5.0,
-            crossAxisAlignment: WrapCrossAlignment.center,
+          // Wrap(
+          //   spacing: 5.0,
+          //   crossAxisAlignment: WrapCrossAlignment.center,
+          Row(
             children: [
               const Text('Selection '),
               ...List.generate(variableSelection.categories.length,

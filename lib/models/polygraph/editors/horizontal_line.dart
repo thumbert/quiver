@@ -35,8 +35,8 @@ class HorizontalLine extends PolygraphVariable {
     late TimeSeries<num> ts, aux;
     if (timeFilter.isNotEmpty()) {
       if (timeFilter.isMonthly()) {
-        var months = Month.fromTZDateTime(term.interval.start)
-            .upTo(Month.fromTZDateTime(term.interval.end));
+        var months = Month.containing(term.interval.start)
+            .upTo(Month.containing(term.interval.end));
         aux = TimeSeries.fill(months, yIntercept);
       } else if (timeFilter.isDaily()) {
         aux = TimeSeries.fill(term.days(), yIntercept);
@@ -68,7 +68,6 @@ class HorizontalLine extends PolygraphVariable {
     print('in horizontal_line validate(), error=$error');
   }
 
-  @override
   Map<String, dynamic> toMap() {
     // TODO: implement toJson
     throw UnimplementedError();

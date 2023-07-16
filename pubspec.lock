@@ -159,7 +159,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: af37ac16c4022e8031798010ea5b3df77344c7d6
+      resolved-ref: "39d921e4728bff27a7fc2d1c941a51c00be3e398"
       url: "https://github.com/thumbert/date.git"
     source: git
     version: "3.0.6"
@@ -167,10 +167,10 @@ packages:
     dependency: transitive
     description:
       name: decimal
-      sha256: eece91944f523657c75a3a008a90ec7f7eb3986191153a78570c7d0ac8ef3d01
+      sha256: "24a261d5d5c87e86c7651c417a5dbdf8bcd7080dd592533910e8d0505a279f21"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.3"
   dotenv:
     dependency: transitive
     description:
@@ -184,7 +184,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "0657dc2657c39ce9cd9232a649e4ecc7f221a770"
+      resolved-ref: "961a9b8a74fd3bf32828df2d7da129b14a4bceed"
       url: "https://github.com/thumbert/elec.git"
     source: git
     version: "2.0.1"
@@ -193,7 +193,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: a723b17366d5c0fefb306c9d23565b8fa4206a87
+      resolved-ref: "6e716999ce15288f564c610285d782113c05c1ff"
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"
@@ -911,10 +911,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "1414f27dd781737e51afa9711f2ac2ace6ab4498ee98e20863fa5505aa00c58c"
+      sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.4"
+    version: "5.0.5"
   xdg_directories:
     dependency: transitive
     description:

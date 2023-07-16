@@ -5,7 +5,6 @@ import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast.dart';
 import 'package:timeseries/timeseries.dart';
 
-import '../expression.dart';
 
 /// The window expression associated with the window function.
 ///

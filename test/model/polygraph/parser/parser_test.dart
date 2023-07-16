@@ -5,16 +5,39 @@ import 'dart:math';
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petitparser/debug.dart';
+import 'package:petitparser/petitparser.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:timezone/timezone.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' hide Parser;
+
+Function accept(Parser p) => (input) => p.parse(input).isSuccess;
 
 Future<void> tests(String rootUrl) async {
   var tz = Iso.newEngland.preferredTimeZoneLocation;
+  group('Parser basics', () {
+    test('multi-line expression', () {
+      var res = parser.parse('''
+    2 + 
+    2''').value.eval({});
+      expect(res, 4);
+    });
+    test('stand alone comments', () {
+      var res = parser.parse('// so easy!').value.eval({});
+      expect(res, 0);
+    });
+    test('end of line comments', () {
+      expect('///', accept(comment1));
+      expect('/// foo', accept(comment1));
+      expect('/// \n', accept(comment1));
+      expect('/// foo \n', accept(comment1));
+
+      // var res = parser.parse('2 + 2 // so easy!').value.eval({});
+      // expect(res, 4);
+    });
+  });
   group('Parse basic function arguments:', () {
     test('Bucket function argument', () {
       expect(bucketArg.parse("bucket = 'atc'").value, Bucket.atc);
@@ -47,7 +70,7 @@ Future<void> tests(String rootUrl) async {
   });
   group('Parse window function', () {
     test('months filter', () {
-      // var res = windowFun.parse('window(x, bucket=atc').value;
+      // var res = windowFun.parse("window(x, bucket='atc'").value;
       // trace(windowFun).parse('window(x, months=[1,2])');
       var x = TimeSeries<num>.fromIterable([
         IntervalTuple(Date.utc(2022, 1, 1), 1.0),
@@ -287,13 +310,17 @@ Future<void> tests(String rootUrl) async {
   group('Parse rolling functions', () {
     test('ma', () {
       var x = TimeSeries<num>.fromIterable([
-        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
-        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
-        IntervalTuple(Date.utc(2022, 1, 3), 3.0),
+        IntervalTuple(Month.utc(2021, 1), 10.0),
+        IntervalTuple(Month.utc(2021, 2), 11.0),
+        IntervalTuple(Month.utc(2021, 3), 15.0),
+        IntervalTuple(Month.utc(2021, 4), 13.0),
+        IntervalTuple(Month.utc(2021, 5), 12.0),
       ]);
-      // expect(parser.parse('max(ts, 1.5)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
-      // expect(parser.parse('max(1.5, ts)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
-      // expect(parser.parse('max(x, y)').value.eval({'x': x, 'y': y}), x.merge(y, f: (x, y) => max<num>(x!, y!)));
+      expect(parser.parse('ma(ts, 4)').value.eval({'ts': x}),
+          TimeSeries<num>.fromIterable([
+            IntervalTuple(Month.utc(2021, 4), 12.25),
+            IntervalTuple(Month.utc(2021, 5), 12.75),
+          ]));
     });
   });
 

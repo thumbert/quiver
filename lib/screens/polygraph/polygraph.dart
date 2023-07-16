@@ -16,15 +16,6 @@ import '../../models/polygraph/polygraph_tab.dart';
 
 final providerOfPolygraph = StateNotifierProvider<PolygraphNotifier, PolygraphState>((ref) => PolygraphNotifier(ref));
 
-// final providerOfPolygraph =
-//     StateNotifierProvider<PolygraphNotifier, PolygraphState>(
-//         (ref) {
-//           var tab = ref.read(providerOfPolygraphTab);
-//
-// // ref.read(providerOfPolygraph.notifier).activeTab = tab;
-//           return PolygraphNotifier(ref);
-//         } ;
-
 class Polygraph extends ConsumerStatefulWidget {
   const Polygraph({Key? key}) : super(key: key);
 
@@ -238,43 +229,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // const SelectionArea(
-              //   child: Text(
-              //     'toMonthly(mass_hub, mean)',
-              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
-              //   ),
-              // ),
-              // const SelectableText.rich(
-              //   TextSpan(
-              //     style: TextStyle(fontSize: 16, fontFamily: 'UbuntuMono'),
-              //     children: [
-              //       TextSpan(text: 'toMonthly', style: TextStyle(color: Colors.teal)),
-              //       TextSpan(text: '('),
-              //       TextSpan(text: 'mass_hub', style: TextStyle(color: Colors.red)),
-              //       TextSpan(text: ', '),
-              //       TextSpan(text: 'mean', style: TextStyle(color: Colors.blueAccent)),
-              //       TextSpan(text: ')'),
-              //     ],
-              //   ),
-              // ),
-              // Text.rich(
-              //   TextSpan(
-              //     text: 'My name is ',
-              //     style: const TextStyle(color: Colors.black),
-              //     children: <InlineSpan>[
-              //       WidgetSpan(
-              //           alignment: PlaceholderAlignment.baseline,
-              //           baseline: TextBaseline.alphabetic,
-              //           child: ConstrainedBox(
-              //             constraints: const BoxConstraints(maxWidth: 100),
-              //             child: const TextField(),
-              //           )),
-              //       const TextSpan(
-              //         text: '.',
-              //       ),
-              //     ],
-              //   ),
-              // ),
+
 
               ///
               /// Tabs

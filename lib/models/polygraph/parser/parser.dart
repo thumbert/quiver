@@ -170,8 +170,8 @@ final windowFun = (string('window(') & variable & seq2(char(',').trim(), windowA
 
 final maFun = (string('ma(') & expression & seq2(char(',').trim(), digit().plus()).trim() & char(')'))
     .trim().map((value) {
-  var n = value[2] as List;
-  return MaExpr(x: value[1], n: 3);
+  var n = int.parse(((value[2] as Sequence2).second as List).join());
+  return MaExpr(x: value[1], n: n);
 });
 
 /// Comma separated list of expressions
@@ -186,18 +186,27 @@ final chain = seq2(variable, [string('=>').trim(), callable].toSequenceParser().
   return value.second.first[1] as Expression;
 });
 
+Parser<List> hiddenWhitespace() => ref0(hiddenStuffWhitespace).plus();
+
+Parser hiddenStuffWhitespace() => ref0(whitespace) | ref0(singleLineComment);
+
+Parser<List> singleLineComment() => string('//').trim() & ref0(any).star() & ref0(newline).optional();
+
+final comment1 = (string('//').trim() & any().star() & newline().optional())
+    .map((value) => CommentExpression());
+
 final parser = () {
   final builder = ExpressionBuilder<Expression>();
   builder
+    ..primitive(comment1)
     ..primitive(number)
+    ..primitive(maFun)
     ..primitive(callable)
-    ..primitive(variable);
+    ..primitive(variable)
+  ;
 
   /// parentheses just return the value
   builder.group().wrapper(char('(').trim(), char(')').trim(), (left, value, right) => value);
-
-  /// TODO: add chain/transform
-  // builder.;
 
   /// Simple math ops
   builder.group()
@@ -216,8 +225,6 @@ final parser = () {
     ..left(string('>=').trim(), (a, op, b) => BinaryGreaterThanEqual(a, b))
     ..left(char('<').trim(), (a, op, b) => BinaryLessThan(a, b))
     ..left(string('<=').trim(), (a, op, b) => BinaryLessThanEqual(a, b));
-
-
 
   return builder.build().end();
 }();

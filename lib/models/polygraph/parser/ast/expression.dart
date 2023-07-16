@@ -6,3 +6,13 @@ abstract class Expression {
   dynamic eval(Map<String, dynamic> variables);
 }
 
+class CommentExpression extends Expression {
+  @override
+  eval(Map<String, dynamic> variables) {
+    return 0;
+  }
+
+  @override
+  String toString() => 'Comment';
+}
+
