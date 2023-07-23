@@ -33,10 +33,6 @@ class PolygraphState {
 
   static DataService service = DataServiceLocal();
 
-  /// tabIndex -> tab windows
-  // final plotly = <int, List<Plotly>>{};
-  // Map<int,List<Plotly>> plotly;
-
   PolygraphWindow get activeWindow =>
       tabs[activeTabIndex].windows[activeTabIndex];
 
@@ -79,7 +75,7 @@ class PolygraphState {
       config: PolygraphConfig.getDefault(),
       tabs: [
         PolygraphTab.getDefault(),
-        PolygraphTab.empty(name: 'Tab 2'),
+        PolygraphTab.tab2(name: 'Tab 2'),
         PolygraphTab.empty(name: 'Tab 3'),
       ],
       activeTabIndex: 0,
@@ -166,6 +162,7 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     var windows = [...activeTab.windows];
     windows[activeTab.activeWindowIndex] = value;
     activeTab = activeTab.copyWith(windows: windows);
+    print('in polygraph_model, set activeWindow, ${value.cache.keys}');
     this.activeTab = activeTab;
   }
 }

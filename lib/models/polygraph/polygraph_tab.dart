@@ -85,6 +85,16 @@ class PolygraphTab {
     );
   }
 
+  static PolygraphTab tab2({required String name}) {
+    var layout = TabLayout.getDefault();
+    return PolygraphTab(
+      name: name,
+      layout: layout,
+      windows: [PolygraphWindow.getExpressionWindow(size: layout.canvasSize)],
+      activeWindowIndex: 0,
+    );
+  }
+
   static PolygraphTab getDefault() {
     var tabLayout = TabLayout.getDefault();
     return PolygraphTab(

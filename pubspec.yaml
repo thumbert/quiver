@@ -27,7 +27,7 @@ dependencies:
   flutter_web_plotly:
     git: https://github.com/thumbert/flutter_web_plotly.git
   google_fonts: ^4.0.0
-  go_router: ^7.1.1
+  go_router: ^10.0.0
   http: '>=0.12.0 <1.0.0'
   intl: ^0.18.1
   more: ^3.10.2

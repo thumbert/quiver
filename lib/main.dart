@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/editor_transformed_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
@@ -54,6 +55,10 @@ class MyApp extends StatelessWidget {
     GoRoute(
       path: Polygraph.route,
       builder: (context, state) => const ProviderScope(child: Polygraph()),
+      routes: [
+        GoRoute(path: 'add',
+          builder: (context, state) => const TransformedVariableEditor())
+      ],
     ),
     GoRoute(
       path: PoolLoadStats.route,

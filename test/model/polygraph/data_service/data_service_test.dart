@@ -34,7 +34,7 @@ Future<void> tests(String rootUrl) async {
         frequency: 'daily',
         isForecast: false,
         dataSource: 'NOAA',
-        id: 'bos_min',
+        label: 'bos_min',
       );
       var minData = await service.getTemperature(minVariable, term);
       expect(minData.length, 366 + 365);

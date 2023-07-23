@@ -20,7 +20,6 @@ class MarksHistoricalView extends PolygraphVariable {
     required this.forwardStrip,
   }) {
     this.label = label ?? curveName;
-    id = this.label;
   }
 
   final String curveName;

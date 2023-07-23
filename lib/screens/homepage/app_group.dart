@@ -44,7 +44,7 @@ class AppGroup extends StatefulWidget {
           url: MccSurfer.route,
           title: 'MCC surfer ',
           icon: const Icon(Icons.surfing)),
-      MenuItem(url: Polygraph.route, title: 'Polygraph'),
+      MenuItem(url: Polygraph.route, title: 'Polygraph 🌈'),
       MenuItem(url: MonthlyLmp.route, title: 'Monthly LMP'),
       MenuItem(url: RateBoard.route, title: 'Competitive offers rate board  ', icon: const Icon(Icons.dashboard_outlined, color: Colors.purple,)),
       MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),

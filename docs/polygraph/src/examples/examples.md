@@ -18,6 +18,13 @@ t => max(_, 65) => toMonthly(_, sum)
 ```
 calculates the monthly CDD index.
 
+### Compare IFerc vs. GDM prices 
+
+Calculate the monthly average of the prices 
+```
+sj('bla_bla') => toMonthly(_, mean)
+```
+
 [//]: # (### Calculate a historic heat-rate)
 
 [//]: # ()

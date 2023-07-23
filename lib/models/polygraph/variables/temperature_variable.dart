@@ -12,10 +12,9 @@ class TemperatureVariable extends PolygraphVariable {
     required this.frequency,
     required this.isForecast,
     required this.dataSource,
-    required String id,
+    required String label,
   }) {
-    this.id = id;
-    label = id;
+    this.label = label;
   }
 
   /// For example, 'BOS' for Logan International Airport in Boston
@@ -39,7 +38,7 @@ class TemperatureVariable extends PolygraphVariable {
     String? frequency,
     bool? isForecast,
     String? dataSource,
-    String? id,
+    String? label,
   }) =>
       TemperatureVariable(
           airportCode: airportCode ?? this.airportCode,
@@ -47,7 +46,7 @@ class TemperatureVariable extends PolygraphVariable {
           frequency: frequency ?? this.frequency,
           isForecast: isForecast ?? this.isForecast,
           dataSource: dataSource ?? this.dataSource,
-          id: id ?? this.id,
+        label: label ?? this.label,
       );
 
   @override

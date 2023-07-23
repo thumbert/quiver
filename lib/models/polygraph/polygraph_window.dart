@@ -22,7 +22,12 @@ class PolygraphWindow {
     required this.xVariable,
     required this.yVariables,
     required this.layout,
-  });
+  }) {
+    /// Several expression may rely on this key to exist in the window
+    /// context.  For example `hourly_schedule(50)` is evaluated in this
+    /// domain.
+    cache['_domain'] = term.interval;
+  }
 
   /// Historical term in the given (correct) timezone
   final Term term;
@@ -75,10 +80,13 @@ class PolygraphWindow {
   /// Get the data for external variables.
   /// Re-calculate the [TransformedVariable]s if needed.
   /// The cache needs to be updated for several reasons.
+  ///
+  /// Where is this method called from??
+  ///
   Future<void> updateCache() async {
     if (!(xVariable is TimeVariable || xVariable is TransformedVariable)) {
       var ts = await xVariable.get(PolygraphState.service, term);
-      cache[xVariable.id] = ts;
+      cache[xVariable.label] = ts;
     }
 
     // get the data for all the variables that are not transformed variables
@@ -86,7 +94,7 @@ class PolygraphWindow {
       for (var variable in yVariables) {
         if (variable is! TransformedVariable) {
           var ts = await variable.get(PolygraphState.service, term);
-          cache[variable.id] = ts;
+          cache[variable.label] = ts;
         }
       }
     }
@@ -94,6 +102,8 @@ class PolygraphWindow {
     // process all the transformed variables that need to be updated
     for (var variable in yVariables) {
       if (variable is TransformedVariable) {
+        // print('in polygraph_window, updateCache(), variable : ${variable.label}');
+        // print('in polygraph_window, updateCache(): ${variable.isDirty}');
         if (variable.isDirty) {
           variable.eval(cache);
 
@@ -102,13 +112,13 @@ class PolygraphWindow {
           /// variable creation only.
           if (variable.error != '') {
             // parsing has failed, remove the variable from the cache
-            cache.remove(variable.id);
+            cache.remove(variable.label);
           }
         }
       } else if (variable is HorizontalLine) {
         /// TODO:  I don't need to recalculate these every time!
         var ts = variable.timeSeries(term);
-        cache[variable.id] = ts;
+        cache[variable.label] = ts;
       }
     }
     refreshDataFromDb = false;
@@ -120,21 +130,22 @@ class PolygraphWindow {
     var traces = <Map<String, dynamic>>[];
     if (xVariable is TimeVariable) {
       for (var i = 0; i < yVariables.length; i++) {
-        // print(i);
+        // print('in polygraph_window, makeTraces(), i=$i');
+        // print('${cache[yVariables[i].label]}');
         if (yVariables[i].isHidden) continue;
-        var ts = cache[yVariables[i].id] ?? TimeSeries<num>();
+        var ts = cache[yVariables[i].label] ?? TimeSeries<num>();
         if (ts is TimeSeries<num>) {
           ts = TimeSeries.fromIterable(ts.window(term.interval));
 
           var color =
           (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
-          print('i: $i, ts: ${ts.take(5)}');
+          // print('i: $i, ts: ${ts.take(5)}');
 
           /// show a stepwise function (default)
           var one = {
             'x': ts.intervals.expand((e) => [e.start, e.end]).toList(),
             'y': ts.values.expand((e) => [e, e]).toList(),
-            'name': yVariables[i].id,
+            'name': yVariables[i].label,
             'mode': 'lines',
             'line': {
               'color': VariableDisplayConfig.colorToHex(color),
@@ -188,17 +199,17 @@ class PolygraphWindow {
     return {
       'term': term.toString(),
       'tzLocation': term.location.name,
-      // 'xVariable': xVariable.toMap(),
-      // 'yVariables': [
-      //   for (var variable in yVariables) variable.toMap()
-      // ]
+      'xVariable': xVariable.toMap(),
+      'yVariables': <Map<String,dynamic>>[
+        // for (var variable in yVariables) variable.toMap()
+      ]
     };
   }
 
   static PolygraphWindow empty({required Size size}) {
     var today = Date.today(location: UTC);
     var term =
-        Term(Month.fromTZDateTime(today.start).subtract(14).startDate, today);
+        Term(Month.containing(today.start).subtract(14).startDate, today);
     var xVariable = TimeVariable();
     return PolygraphWindow(
       term: term,
@@ -219,14 +230,14 @@ class PolygraphWindow {
           frequency: 'daily',
           isForecast: false,
           dataSource: 'NOAA',
-          id: 'bos_daily_temp',
+          label: 'bos_daily_temp',
         ),
         TransformedVariable(
             expression: 'toMonthly(bos_daily_temp, min)',
-            id: 'bos_monthly_min'),
+            label: 'bos_monthly_min'),
         TransformedVariable(
             expression: 'toMonthly(bos_daily_temp, max)',
-            id: 'bos_monthly_max'),
+            label: 'bos_monthly_max'),
       ],
         layout: PlotlyLayout(width: size.width, height: size.height),
     );
@@ -243,15 +254,29 @@ class PolygraphWindow {
             market: Market.da,
             ptid: 4000,
             lmpComponent: LmpComponent.lmp)
-          ..id = 'hub_da_lmp'
           ..label = 'hub_da_lmp',
         TransformedVariable(
-            expression: 'toMonthly(hub_da_lmp, mean)', id: 'monthly_mean'),
+            expression: 'toMonthly(hub_da_lmp, mean)', label: 'monthly_mean'),
       ],
       layout: PlotlyLayout(width: size.width , height: size.height)..legend = PlotlyLegend.getDefault(),
     );
     return window;
   }
+
+  static PolygraphWindow getExpressionWindow({required Size size}) {
+    var window = PolygraphWindow(
+      term: Term.parse('Jan22-Feb22', IsoNewEngland.location),
+      xVariable: TimeVariable(),
+      yVariables: [
+        TransformedVariable(
+            expression: "hourly_schedule(50, bucket='Peak')", label: 'shape'),
+      ],
+      layout: PlotlyLayout(width: size.width , height: size.height)..legend = PlotlyLegend.getDefault(),
+    );
+    return window;
+  }
+
+
 
   PolygraphWindow copyWith({
     Term? term,

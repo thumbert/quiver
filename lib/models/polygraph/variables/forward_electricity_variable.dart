@@ -24,7 +24,6 @@ class ForwardElectricityVariable extends PolygraphVariable {
     required this.bucket,
     required this.strip,
   }) {
-    id = 'Electricity (Forward)';
     label = _makeLabel();
   }
 

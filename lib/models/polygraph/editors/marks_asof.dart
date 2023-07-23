@@ -16,7 +16,6 @@ class MarksAsof extends PolygraphVariable {
     required this.curveName,
   }) {
     this.label = label ?? curveName;
-    id = this.label;
   }
   
   final Date asOfDate;

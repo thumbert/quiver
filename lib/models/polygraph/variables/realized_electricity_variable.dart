@@ -20,7 +20,6 @@ class RealizedElectricityVariable extends PolygraphVariable {
     required this.component,
     this.timeAggregation,
   }) {
-    id = 'Electricity (Realized)';
     label = _makeLabel();
   }
 

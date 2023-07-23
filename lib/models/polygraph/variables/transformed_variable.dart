@@ -2,8 +2,8 @@ library models.polygraph.variables.transformed_variable;
 
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
+import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart' as juice;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,16 +13,15 @@ import 'package:timeseries/timeseries.dart';
 class TransformedVariable extends PolygraphVariable {
   TransformedVariable({
     required this.expression,
-    required String id,
-    String? error,
+    required String label,
   }) {
-    this.id = id;
-    label = id;
-    this.error = error ?? '';
+    this.label = label;
   }
 
   /// For example, 'toMonthly(bos_temp, mean)'
   final String expression;
+  String errorLabel = '';
+  String errorExpression = '';
 
   /// The concept of [isDirty] only applies to a [TransformedVariable].
   /// It is used to force the [updateCache] method in polygraph_window to
@@ -34,17 +33,16 @@ class TransformedVariable extends PolygraphVariable {
   bool isDirty = true;
 
   static TransformedVariable getDefault() =>
-      TransformedVariable(expression: '', id: '');
+      TransformedVariable(expression: '', label: '');
 
   TransformedVariable copyWith({
     String? expression,
-    String? id,
+    String? label,
     String? error,
   }) =>
       TransformedVariable(
         expression: expression ?? this.expression,
-        id: id ?? this.id,
-        error: error ?? this.error,
+        label: label ?? this.label,
       );
 
   /// The [cache] should already contain all variables needed for the eval
@@ -66,9 +64,9 @@ class TransformedVariable extends PolygraphVariable {
         error = out.message;
       } else {
         if (out is Success) {
-          cache[id] = out.value;
+          cache[label] = out.value;
         } else {
-          cache[id] = out;
+          cache[label] = out;
         }
         // if parsing succeeds, reset the error message
         error = '';
@@ -76,34 +74,52 @@ class TransformedVariable extends PolygraphVariable {
     }
   }
 
-  // void validate(PolygraphWindow window) {
-  //   if (label == '') {
-  //     error = 'Label can\'t be empty';
-  //     return;
-  //   }
-  //   if (expression == '') {
-  //     error = 'Expression can\'t be empty';
-  //     return;
-  //   }
-  //   eval(window.cache);
-  // }
+  List<String> getErrors() {
+    return <String>[
+      if (hasInvalidLabel()) 'Label can\'t be empty',
+      if (hasInvalidExpression()) 'Expression can\'t be empty',
+      if (hasParsingError()) error,
+    ];
+  }
 
+  bool hasInvalidLabel() => label == '';
+
+  bool hasInvalidExpression() => expression == '';
+
+  bool hasParsingError() => error != '';
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {
     throw 'A TransformedVariable doesn\'t have get, use eval!';
   }
 
-  @override
-  TransformedVariable fromMongo(Map<String, dynamic> x) {
-    // TODO: implement fromMongo
-    throw UnimplementedError();
+  static TransformedVariable fromMongo(Map<String, dynamic> x) {
+    if (x['type'] != 'TransformedVariable') {
+      throw ArgumentError('Input doesn\'t have type TransformedVariable');
+    }
+    if (x
+        case {
+          'expression': String expression,
+          'label': String label,
+          'displayConfig': Map<String, dynamic> displayConfig,
+        }) {
+      var config = VariableDisplayConfig.fromMongo(displayConfig);
+      return TransformedVariable(expression: expression, label: label)
+        ..displayConfig = config;
+    } else {
+      throw ArgumentError(
+          'Input in not a correctly formatted TransformedVariable');
+    }
   }
 
   @override
   Map<String, dynamic> toMap() {
-    // TODO: implement toMongo
-    throw UnimplementedError();
+    return {
+      'type': 'TransformedVariable',
+      'label': label,
+      'expression': expression,
+      'displayConfig': displayConfig == null ? {} : displayConfig!.toJson(),
+    };
   }
 }
 
@@ -114,7 +130,7 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
   final Ref ref;
 
   set label(String value) {
-    state = state.copyWith(id: value);
+    state = state.copyWith(label: value);
   }
 
   set expression(String value) {
@@ -128,5 +144,4 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
   void reset() {
     state = TransformedVariable.getDefault();
   }
-
 }

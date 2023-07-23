@@ -7,7 +7,6 @@ import 'variable.dart';
 
 class TimeVariable extends PolygraphVariable {
   TimeVariable({this.skipWeekends = false}) {
-    id = 'Time';
     label = 'Time';
   }
 

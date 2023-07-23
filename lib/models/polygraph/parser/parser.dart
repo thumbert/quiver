@@ -30,7 +30,10 @@ final number = (digit().plus() &
 ///
 final intList = (char('[').trim() &
         ((digit().plus() & (char('-') & digit().plus()).optional()).trim() &
-            (char(',').trim() & (digit().plus() & (char('-') & digit().plus()).optional()).trim()).star()) &
+            (char(',').trim() &
+                    (digit().plus() & (char('-') & digit().plus()).optional())
+                        .trim())
+                .star()) &
         char(']'))
     .trim()
     .map(_createIntList);
@@ -50,7 +53,8 @@ Expression _createIntList(List x) {
       var start = int.parse(xs.sublist(0, i).join());
       var end = int.parse(xs.sublist(i + 1).join());
       if (end < start) {
-        throw const ParserException(Failure('', 0, 'end before start in integer range'));
+        throw const ParserException(
+            Failure('', 0, 'end before start in integer range'));
       }
       return List.generate(end - start + 1, (i) => start + i);
     }
@@ -81,33 +85,46 @@ Expression _createIntList(List x) {
   return IntListExpr(y);
 }
 
-/// Parse a bucket argument for a function.  
+/// Parse a bucket argument for a function.
 /// For example, `bucket = 7x24`, or `bucket = offpeak`, etc.
-final bucketArg = (string('bucket').trim() & char('=').trim() & char("'") & word().plus() & char("'")).trim().map((value) {
+final bucketArg = (string('bucket').trim() &
+        char('=').trim() &
+        char("'") &
+        word().plus() &
+        char("'"))
+    .trim()
+    .map((value) {
   return Bucket.parse((value[3] as List).join());
 });
 
 /// Parse a months argument for a function.  Allowed values are between [1, 12].
 /// For example, parse `months = [1-2, 7-8]`, or `months = [3, 4-5, 12]`
-final monthsArg = (string('months').trim() & char('=').trim() & intList).map((value) {
+final monthsArg =
+    (string('months').trim() & char('=').trim() & intList).map((value) {
   var xs = (value[2] as IntListExpr).value;
   if (xs.any((e) => e < 1 || e > 12)) {
-    throw const ParserException(Failure('', 0, 'Invalid month value.  Value must be between 1 and 12.'));
+    throw const ParserException(Failure(
+        '', 0, 'Invalid month value.  Value must be between 1 and 12.'));
   }
   return MonthsListExpr(xs);
 });
 
 /// Parse the hours argument for a function.  Allowed values are between [0, 23].
 /// For example, parse `hours = [1-2, 7-8]`, or `hours = [3, 4-5, 12]`
-final hoursArg = (string('hours').trim() & char('=').trim() & intList).map((value) {
+final hoursArg =
+    (string('hours').trim() & char('=').trim() & intList).map((value) {
   var xs = (value[2] as IntListExpr).value;
   if (xs.any((e) => e < 0 || e > 23)) {
-    throw const ParserException(Failure('', 0, 'Invalid hour value.  Value must be between 0 and 23.'));
+    throw const ParserException(
+        Failure('', 0, 'Invalid hour value.  Value must be between 0 and 23.'));
   }
   return HoursListExpr(xs);
 });
 
-final variable = (letter() & word().star()).flatten('variable name expected').trim().map(_createVariable);
+final variable = (letter() & word().star())
+    .flatten('variable name expected')
+    .trim()
+    .map(_createVariable);
 
 final expression = () {
   final builder = ExpressionBuilder<Expression>();
@@ -116,13 +133,15 @@ final expression = () {
     ..primitive(variable);
 
   /// parentheses just return the value
-  builder.group().wrapper(char('(').trim(), char(')').trim(), (left, value, right) => value);
+  builder.group().wrapper(
+      char('(').trim(), char(')').trim(), (left, value, right) => value);
 
   /// Simple math ops
   builder.group()
     ..prefix(char('+').trim(), (op, a) => a)
     ..prefix(char('-').trim(), (op, a) => Unary('-', a, (x) => -x));
-  builder.group().right(char('^').trim(), (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
+  builder.group().right(char('^').trim(),
+      (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
   builder.group()
     ..left(char('*').trim(), (a, op, b) => Binary('*', a, b, (x, y) => x * y))
     ..left(char('/').trim(), (a, op, b) => Binary('/', a, b, (x, y) => x / y));
@@ -132,64 +151,78 @@ final expression = () {
   return builder.build();
 }();
 
-final windowArg = (bucketArg | monthsArg | hoursArg);
-
-final windowFun = (string('window(') & variable & seq2(char(',').trim(), windowArg).plus() & char(')'))
-    .trim().map((value) {
-  var x2 = value[2] as List;
+final windowArg = seq3(
+    seq2(char(',').trim(), bucketArg).optional(),
+    seq2(char(',').trim(), monthsArg).optional(),
+    seq2(char(',').trim(), hoursArg).optional());
+final windowFun = (string('window(') &
+        variable &
+        windowArg.times(1) &
+        char(')'))
+    .trim()
+    .map((value) {
   Bucket? bucket;
   var months = <int>[];
   var hours = <int>[];
-  for (Sequence2 e in x2) {
-    var e2 = e.second;
-    switch (e2) {
-      case (Bucket e2) : {
-        if (bucket != null) {
-          throw StateError('You can\'t have argument bucket twice!');
-        }
-        bucket = e2;
-      }
-      case (MonthsListExpr e2) : {
-        if (months.isNotEmpty) {
-          throw StateError('You can\'t have argument months twice!');
-        }
-        months = e2.value;
-      }
-      case (HoursListExpr e2) :
-        {
-          if (months.isNotEmpty) {
-            throw StateError('You can\'t have argument months twice!');
-          }
-          hours = e2.value;
-        }
-      case _ : throw StateError('Unsupported window argument $e2!');
-    }
+  var v2 = (value[2] as List).first as Sequence3;
+  if (v2.first != null) {
+    bucket = (v2.first as Sequence2).second;
+  }
+  if (v2.second != null) {
+    months = ((v2.second as Sequence2).second as MonthsListExpr).value;
+  }
+  if (v2.third != null) {
+    hours = ((v2.third as Sequence2).second as HoursListExpr).value;
   }
 
   return WindowExpr(x: value[1], bucket: bucket, months: months, hours: hours);
 });
 
-final hourlyScheduleFun = (string('hourly_schedule(') & number & seq2(char(',').trim(), bucketArg).optional()
-    & char(')')).trim().map((value) {
-      var x = value[0];
-      return HourlyScheduleExpr(x, months: []);
+final hourlyScheduleArg = seq2(seq2(char(',').trim(), bucketArg).optional(),
+    seq2(char(',').trim(), monthsArg).optional());
+final hourlyScheduleFun = (string('hourly_schedule(') &
+        number &
+        hourlyScheduleArg.times(1) &
+        char(')'))
+    .trim()
+    .map((value) {
+  var x = (value[1] as Value).value;
+
+  Bucket? bucket;
+  var months = <int>[];
+  var v2 = (value[2] as List).first as Sequence2;
+  if (v2.first != null) {
+    bucket = (v2.first as Sequence2).second;
+  }
+  if (v2.second != null) {
+    months = ((v2.second as Sequence2).second as MonthsListExpr).value;
+  }
+  return HourlyScheduleExpr(x, bucket: bucket, months: months);
 });
 
-final maFun = (string('ma(') & expression & seq2(char(',').trim(), digit().plus()).trim() & char(')'))
-    .trim().map((value) {
+final maFun = (string('ma(') &
+        expression &
+        seq2(char(',').trim(), digit().plus()).trim() &
+        char(')'))
+    .trim()
+    .map((value) {
   var n = int.parse(((value[2] as Sequence2).second as List).join());
   return MaExpr(x: value[1], n: n);
 });
 
 /// Comma separated list of expressions
-final argList = (expression & (char(',').trim() & expression).star()).map((values) {
+final argList =
+    (expression & (char(',').trim() & expression).star()).map((values) {
   return <Expression>[values[0], ...(values[1] as List).map((e) => e[1])];
 });
 
-final callable = seq4(word().plus().flatten('function expected').trim(), char('(').trim(), argList, char(')').trim())
+final callable = seq4(word().plus().flatten('function expected').trim(),
+        char('(').trim(), argList, char(')').trim())
     .map((value) => _createFunctionN(value.first, value.third));
 
-final chain = seq2(variable, [string('=>').trim(), callable].toSequenceParser().plus()).map((value) {
+final chain =
+    seq2(variable, [string('=>').trim(), callable].toSequenceParser().plus())
+        .map((value) {
   return value.second.first[1] as Expression;
 });
 
@@ -197,7 +230,8 @@ Parser<List> hiddenWhitespace() => ref0(hiddenStuffWhitespace).plus();
 
 Parser hiddenStuffWhitespace() => ref0(whitespace) | ref0(singleLineComment);
 
-Parser<List> singleLineComment() => string('//').trim() & ref0(any).star() & ref0(newline).optional();
+Parser<List> singleLineComment() =>
+    string('//').trim() & ref0(any).star() & ref0(newline).optional();
 
 final comment1 = (string('//').trim() & any().star() & newline().optional())
     .map((value) => CommentExpression());
@@ -207,19 +241,21 @@ final parser = () {
   builder
     ..primitive(comment1)
     ..primitive(number)
+    ..primitive(hourlyScheduleFun)
     ..primitive(maFun)
     ..primitive(callable)
-    ..primitive(variable)
-  ;
+    ..primitive(variable);
 
   /// parentheses just return the value
-  builder.group().wrapper(char('(').trim(), char(')').trim(), (left, value, right) => value);
+  builder.group().wrapper(
+      char('(').trim(), char(')').trim(), (left, value, right) => value);
 
   /// Simple math ops
   builder.group()
     ..prefix(char('+').trim(), (op, a) => a)
     ..prefix(char('-').trim(), (op, a) => UnaryNegation(a));
-  builder.group().right(char('^').trim(), (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
+  builder.group().right(char('^').trim(),
+      (a, op, b) => Binary('^', a, b, (a, b) => math.pow(a, b)));
   builder.group()
     ..left(char('*').trim(), (a, op, b) => BinaryMultiply(a, b))
     ..left(char('/').trim(), (a, op, b) => BinaryDivide(a, b));
@@ -238,7 +274,8 @@ final parser = () {
 
 Expression _createValue(String value) => Value(num.parse(value));
 
-Expression _createVariable(String name) => constants.containsKey(name) ? Value(constants[name]!) : Variable(name);
+Expression _createVariable(String name) =>
+    constants.containsKey(name) ? Value(constants[name]!) : Variable(name);
 
 // Expression _createFunction1(String name, Expression expression) {
 //   return Unary(name, expression, functions1[name]!);
@@ -258,7 +295,8 @@ Expression _createFunctionN(String name, List<Expression> args) {
     return switch (name) {
       'max' => BinaryMax(args[0], args[1]),
       'min' => BinaryMin(args[0], args[1]),
-      'toMonthly' => ToMonthly(args[0], args[1].toString().replaceFirst('Variable ', '')),
+      'toMonthly' =>
+        ToMonthly(args[0], args[1].toString().replaceFirst('Variable ', '')),
       _ => throw StateError('Wah-wah-wah...  Function $name is not supported.'),
     };
 
@@ -268,7 +306,9 @@ Expression _createFunctionN(String name, List<Expression> args) {
   } else if (args.length == 3) {
     return switch (name) {
       'toMonthly' => ToMonthly3(
-          args[0], args[1].toString().replaceFirst('Variable ', ''), args[2].toString().replaceFirst('Variable ', '')),
+          args[0],
+          args[1].toString().replaceFirst('Variable ', ''),
+          args[2].toString().replaceFirst('Variable ', '')),
       _ => throw StateError('Wah-wah-wah...  Function $name is not supported.'),
     };
 

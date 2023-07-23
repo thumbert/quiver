@@ -61,7 +61,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
         /// validate when you lose focus
         setState(() {
           try {
-            window = window.copyWith(term: Term.parse(controllerTerm.text, UTC));
+            window =
+                window.copyWith(term: Term.parse(controllerTerm.text, UTC));
             ref.read(providerOfPolygraph.notifier).activeWindow = window;
             _errorTerm = null; // all good
           } catch (e) {
@@ -92,6 +93,9 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     super.dispose();
   }
 
+  /// Return a widget that has all the plotly windows in this tab (activeTabIndex).
+  /// Includes the border, and the highlight logic for the border.
+  ///
   Widget _makePlotWindows() {
     var rows = <Row>[];
     var poly = ref.watch(providerOfPolygraph);
@@ -140,8 +144,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   width: width + 2,
                   height: 28,
                   decoration: BoxDecoration(
-                    color: tab.activeWindowIndex == ij ? Colors.orange[300] : Colors.blueGrey[200],
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                    color: tab.activeWindowIndex == ij
+                        ? Colors.orange[300]
+                        : Colors.blueGrey[200],
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        topRight: Radius.circular(8)),
                   ),
                   child: Visibility(
                     visible: tab.activeWindowIndex == ij,
@@ -154,12 +162,14 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                               if (tab.windows.length == 1) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Oops, you can\'t remove the last window.'),
+                                    content: Text(
+                                        'Oops, you can\'t remove the last window.'),
                                   ),
                                 );
                               }
                               tab = tab.removeWindow(ij);
-                              ref.read(providerOfPolygraph.notifier).activeTab = tab;
+                              ref.read(providerOfPolygraph.notifier).activeTab =
+                                  tab;
                             });
                           },
                           icon: const Icon(
@@ -176,7 +186,9 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                 height: height + 2,
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border: tab.activeWindowIndex == ij ? Border.all(color: Colors.orange[300]!) : null),
+                    border: tab.activeWindowIndex == ij
+                        ? Border.all(color: Colors.orange[300]!)
+                        : null),
                 // child: Center(child: Text('Window ($i,$j)')),
                 child: asyncCache.when(
                     loading: () => const CircularProgressIndicator(),
@@ -191,9 +203,10 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       // if (traces.length == 3) {
                       //   print(traces[2]);
                       // }
-                      print('window.layout = ${window.layout.toMap()}');
+                      // print('window.layout = ${window.layout.toMap()}');
 
-                      plotly[ij].plot.react(traces, window.layout.toMap(), displaylogo: false);
+                      plotly[ij].plot.react(traces, window.layout.toMap(),
+                          displaylogo: false);
                       return plotly[ij];
                     }),
               ),
@@ -228,15 +241,16 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   @override
   Widget build(BuildContext context) {
     var poly = ref.watch(providerOfPolygraph);
-    print('in polygraph_tab_ui build: ${poly.tabs.map((e) => e.name)}');
-    print('active tab index: ${poly.activeTabIndex}');
+    // print('in polygraph_tab_ui build: ${poly.tabs.map((e) => e.name)}');
+    // print('active tab index: ${poly.activeTabIndex}');
 
     var tab = poly.tabs[poly.activeTabIndex];
-    print('The active tab has ${tab.windows.length} windows');
+    // print('The active tab has ${tab.windows.length} windows');
     // print('poly.config.canvasSize = ${tab.layout.canvasSize}');
     var window = tab.windows[tab.activeWindowIndex];
-
+    controllerTerm.text = window.term.toString();
     controllerTimezone.text = window.term.location.toString();
+    print('window cache variables: ${window.cache.keys}');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,14 +288,21 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   onEditingComplete: () {
                     setState(() {
                       try {
-                        var tzLocation = controllerTimezone.text == 'UTC' ? UTC : getLocation(controllerTimezone.text);
-                        var newTerm = Term.parse(controllerTerm.text, tzLocation);
+                        var tzLocation = controllerTimezone.text == 'UTC'
+                            ? UTC
+                            : getLocation(controllerTimezone.text);
+                        var newTerm =
+                            Term.parse(controllerTerm.text, tzLocation);
                         var refreshDataFromDb = true;
-                        if (window.term.interval.containsInterval(newTerm.interval)) {
+                        if (window.term.interval
+                            .containsInterval(newTerm.interval)) {
                           refreshDataFromDb = false;
                         }
-                        window = window.copyWith(term: newTerm, refreshDataFromDb: refreshDataFromDb);
-                        ref.read(providerOfPolygraph.notifier).activeWindow = window;
+                        window = window.copyWith(
+                            term: newTerm,
+                            refreshDataFromDb: refreshDataFromDb);
+                        ref.read(providerOfPolygraph.notifier).activeWindow =
+                            window;
                         _errorTerm = null; // all good
                       } catch (e) {
                         debugPrint(e.toString());
@@ -304,8 +325,10 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
               child: RawAutocomplete(
                   focusNode: focusTimezone,
                   textEditingController: controllerTimezone,
-                  fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
-                          FocusNode focusNode, onFieldSubmitted) =>
+                  fieldViewBuilder: (BuildContext context,
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          onFieldSubmitted) =>
                       TextField(
                         focusNode: focusNode,
                         controller: textEditingController,
@@ -324,26 +347,33 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       return const Iterable<String>.empty();
                     }
                     var aux = TimeVariable.timezones
-                        .where((e) => e.toUpperCase().contains(textEditingValue.text.toUpperCase()))
+                        .where((e) => e
+                            .toUpperCase()
+                            .contains(textEditingValue.text.toUpperCase()))
                         .toList();
                     return aux;
                   },
                   onSelected: (String selection) {
                     setState(() {
-                      var tzLocation = selection == 'UTC' ? UTC : getLocation(selection);
+                      var tzLocation =
+                          selection == 'UTC' ? UTC : getLocation(selection);
                       var term = Term.parse(controllerTerm.text, tzLocation);
-                      window = window.copyWith(term: term, refreshDataFromDb: false);
-                      ref.read(providerOfPolygraph.notifier).activeWindow = window;
+                      window =
+                          window.copyWith(term: term, refreshDataFromDb: false);
+                      ref.read(providerOfPolygraph.notifier).activeWindow =
+                          window;
                     });
                   },
-                  optionsViewBuilder:
-                      (BuildContext context, void Function(String) onSelected, Iterable<String> options) {
+                  optionsViewBuilder: (BuildContext context,
+                      void Function(String) onSelected,
+                      Iterable<String> options) {
                     return Align(
                       alignment: Alignment.topLeft,
                       child: Material(
                         elevation: 4.0,
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 300, maxWidth: 200),
+                          constraints: const BoxConstraints(
+                              maxHeight: 300, maxWidth: 200),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -355,14 +385,22 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   onSelected(option);
                                 },
                                 child: Builder(builder: (BuildContext context) {
-                                  final bool highlight = AutocompleteHighlightedOption.of(context) == index;
+                                  final bool highlight =
+                                      AutocompleteHighlightedOption.of(
+                                              context) ==
+                                          index;
                                   if (highlight) {
-                                    SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-                                      Scrollable.ensureVisible(context, alignment: 0.5);
+                                    SchedulerBinding.instance
+                                        .addPostFrameCallback(
+                                            (Duration timeStamp) {
+                                      Scrollable.ensureVisible(context,
+                                          alignment: 0.5);
                                     });
                                   }
                                   return Container(
-                                    color: highlight ? Theme.of(context).focusColor : null,
+                                    color: highlight
+                                        ? Theme.of(context).focusColor
+                                        : null,
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       option,
@@ -386,24 +424,19 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
             IconButton(
               tooltip: 'Add variable',
               onPressed: () async {
-                /// TODO:  does it need ref.watch here??
                 var selection = ref.read(providerOfVariableSelection);
                 final container = ProviderScope.containerOf(context);
+
                 await showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
-                      // maybe I should move this somewhere else
-                      final mapOfVariables = {
-                        'Expression': providerOfTransformedVariable,
-                        'Line,Horizontal': providerOfHorizontalLine,
-                        'Marks,Prices,Historical': providerOfMarksHistoricalView,
-                      };
-
                       return PointerInterceptor(
                         child: AlertDialog(
                             scrollable: true,
-                            content: ProviderScope(parent: container, child: const VariableSelectionUi()),
+                            content: ProviderScope(
+                                parent: container,
+                                child: const VariableSelectionUi()),
                             actions: [
                               TextButton(
                                   child: const Text('CANCEL'),
@@ -414,58 +447,78 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                               ElevatedButton(
                                   child: const Text('OK'),
                                   onPressed: () {
-                                    var poly = container.read(providerOfPolygraph);
-                                    var window = poly.activeWindow;
-                                    // print(window.yVariables.map((e) => e.label));
-                                    /// harvest the values
-                                    // print('Selected: ${selection.selection}');
-                                    var provider = mapOfVariables[selection.selection]!;
-                                    var res = container.read(provider);
-                                    var isOk = switch (selection.selection) {
-                                      'Expression' => TransformedVariableEditor.isValid,
-                                      'Marks,Prices,Historical' => MarksHistoricalView.isValid,
-                                      _ => false,
-                                    };
-                                    print(isOk);
+                                    if (selection.isSelectionDone()) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  }),
+                            ]),
+                      );
 
-                                    // if (res is TransformedVariable) {
-                                    //   debugPrint(res.expression);
-                                    //   res.validate(window);
-                                    //   print(res.error);
-                                    //   // force a new repaint
-                                    //   ref.read(providerOfTransformedVariable.notifier).error = res.error;
-                                    //   if (res.error == '') {
-                                    //     // reset the UI
-                                    //     ref.read(providerOfTransformedVariable.notifier).reset();
-                                    //   }
-                                    // } else if (res is HorizontalLine) {
-                                    //   debugPrint(res.yIntercept.toString());
-                                    //   var ta = ref.read(providerOfTimeAggregation);
-                                    //   ref.read(providerOfHorizontalLine.notifier).timeAggregation = ta;
-                                    //   print(res.timeAggregation.toJson());
-                                    //   res.validate();
-                                    //   print(res.error);
-                                    // } else {
-                                    //   print(
-                                    //       'Need to implement this type of variable in polygraph_tab_ui, onPresed() OK');
-                                    // }
+                    });
 
-                                    if (!isOk) {
-                                      // force a redraw
-                                      switch (selection.selection) {
-                                        case 'Expression': {
-                                          ref.read(providerOfTransformedVariable.notifier).error = res.error;
-                                        }
-                                        case 'Marks,Prices,Historical': {
+                // print('You selected ${selection.selection}');
 
-                                        }
-                                      }
-                                    } else {
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      var path = selection.selection;
+                      final widget = switch (path) {
+                        'Expression' => const TransformedVariableEditor(),
+                        'Line,Horizontal' => const HorizontalLineEditor(),
+                        'Marks,Prices,Historical' =>
+                          const MarksHistoricalView(),
+                        _ =>
+                          Text('Selection $path has not been implemented yet'),
+                      };
+                      final mapOfVariables = {
+                        'Expression': providerOfTransformedVariable,
+                        'Line,Horizontal': providerOfHorizontalLine,
+                        'Marks,Prices,Historical':
+                            providerOfMarksHistoricalView,
+                      };
+
+                      return PointerInterceptor(
+                        child: AlertDialog(
+                            scrollable: true,
+                            content:
+                                ProviderScope(parent: container, child: widget),
+                            actions: [
+                              TextButton(
+                                  child: const Text('CANCEL'),
+                                  onPressed: () {
+                                    selection.categories.clear();
+                                    Navigator.of(context).pop();
+                                  }),
+                              ElevatedButton(
+                                  child: const Text('OK'),
+                                  onPressed: () async {
+                                    if (selection.isSelectionDone()) {
                                       /// Add this variable to the existing variables and pop.
-                                      var yVariables = [...window.yVariables, res];
-                                      window = window.copyWith(yVariables: yVariables);
-                                      ref.read(providerOfPolygraph.notifier).activeWindow = window;
-                                      selection.categories.clear();
+                                      var provider =
+                                          mapOfVariables[selection.selection]!;
+                                      var res = container.read(provider);
+                                      var yVariables = [
+                                        ...window.yVariables,
+                                        res
+                                      ];
+                                      var window2 = window.copyWith(
+                                          yVariables: yVariables);
+                                      await window2.updateCache();
+                                      if (selection.selection == 'Expression') {
+                                        setState(() {
+                                          ref
+                                              .read(
+                                              providerOfTransformedVariable
+                                                  .notifier)
+                                              .reset();
+                                        });
+                                      }
+                                      setState(() {
+                                        ref
+                                            .read(providerOfPolygraph.notifier)
+                                            .activeWindow = window2;
+                                        selection.categories.clear();
+                                      });
                                       Navigator.of(context).pop();
                                     }
                                   }),
@@ -548,7 +601,9 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       return PointerInterceptor(
                         child: AlertDialog(
                             scrollable: true,
-                            content: ProviderScope(parent: container, child: const PlotlyLayoutUi()),
+                            content: ProviderScope(
+                                parent: container,
+                                child: const PlotlyLayoutUi()),
                             contentPadding: const EdgeInsets.all(12),
                             actions: [
                               TextButton(
@@ -562,10 +617,13 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                     Navigator.of(context).pop();
 
                                     /// harvest the values, HOW???
-                                    var layout = ref.read(providerOfPlotlyLayout);
+                                    var layout =
+                                        ref.read(providerOfPlotlyLayout);
                                     print('Title is: ${layout.title?.text}');
                                     window = window.copyWith(layout: layout);
-                                    ref.read(providerOfPolygraph.notifier).activeWindow = window;
+                                    ref
+                                        .read(providerOfPolygraph.notifier)
+                                        .activeWindow = window;
                                   }),
                             ]),
                       );
@@ -641,11 +699,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   child: TextButton(
                     onPressed: () {},
                     child: Text(
-                      window.xVariable.id,
+                      window.xVariable.label,
                       style: const TextStyle(color: Colors.black, fontSize: 14),
                     ),
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.only(left: 0, top: 0, bottom: 0),
+                      padding:
+                          const EdgeInsets.only(left: 0, top: 0, bottom: 0),
                       alignment: Alignment.centerLeft,
                       // backgroundColor: Colors.orange,
                     ),
@@ -687,7 +746,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: 28,
+                            height: 20,
                             // width: 200,
                             child: Padding(
                               padding: const EdgeInsets.only(right: 24.0),
@@ -696,10 +755,15 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 style: TextStyle(
                                     color: window.yVariables[i].isHidden
                                         ? Colors.grey
-                                        : window.yVariables[i].color ?? VariableDisplayConfig.defaultColors[i],
+                                        : window.yVariables[i].color ??
+                                            VariableDisplayConfig
+                                                .defaultColors[i],
                                     decoration: window.yVariables[i].isHidden
                                         ? TextDecoration.lineThrough
                                         : TextDecoration.none,
+                                    fontWeight: window.yVariables[i].isMouseOver
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                     fontSize: 14),
                               ),
                             ),
@@ -715,41 +779,82 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 IconButton(
                                   tooltip: 'Edit',
                                   onPressed: () async {
-                                    setState(() {
-                                      // variableModel.editedIndex = i + 1;
-                                    });
+                                    final container =
+                                        ProviderScope.containerOf(context);
+                                    var xs = window.yVariables[i].toMap();
+
+                                    Widget widget;
+                                    late StateNotifierProvider provider;
+                                    if (xs['type'] == 'TransformedVariable') {
+                                      setState(() {
+                                        ref
+                                            .read(providerOfTransformedVariable
+                                                .notifier)
+                                            .label = xs['label'];
+                                        ref
+                                            .read(providerOfTransformedVariable
+                                                .notifier)
+                                            .expression = xs['expression'];
+                                        provider =
+                                            providerOfTransformedVariable;
+                                      });
+                                      widget =
+                                          const TransformedVariableEditor();
+                                    } else {
+                                      widget = const Text(
+                                          'Oops, this branch is dangling');
+                                    }
+
                                     await showDialog(
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
+                                              scrollable: true,
                                               elevation: 24.0,
-                                              title: const Text('Select'),
-                                              content: const Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text('Boo'),
-                                                ],
-                                              ),
+                                              content: ProviderScope(
+                                                  parent: container,
+                                                  child: widget),
                                               actions: [
                                                 TextButton(
                                                     child: const Text('CANCEL'),
                                                     onPressed: () {
-                                                      /// ignore changes the changes
-                                                      Navigator.of(context).pop();
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     }),
                                                 ElevatedButton(
                                                     child: const Text('OK'),
                                                     onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+
                                                       /// harvest the values
-                                                      Navigator.of(context).pop();
+                                                      var newVariable =
+                                                          container
+                                                              .read(provider);
+                                                      var variables = [
+                                                        ...window.yVariables
+                                                      ];
+                                                      variables[i] =
+                                                          newVariable;
+                                                      window = window.copyWith(
+                                                          yVariables:
+                                                              variables);
+                                                      setState(() {
+                                                        ref
+                                                            .read(
+                                                                providerOfPolygraph
+                                                                    .notifier)
+                                                            .activeWindow = window;
+                                                      });
                                                     }),
                                               ]);
                                         });
                                   },
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints(),
-                                  padding: const EdgeInsets.only(left: 0, right: 0),
+                                  padding:
+                                      const EdgeInsets.only(left: 0, right: 0),
                                   icon: Icon(
                                     Icons.edit_outlined,
                                     color: Colors.blueGrey[300],
@@ -763,12 +868,15 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   onPressed: () {
                                     setState(() {
                                       window.yVariables.removeAt(i);
-                                      ref.read(providerOfPolygraph.notifier).activeWindow = window;
+                                      ref
+                                          .read(providerOfPolygraph.notifier)
+                                          .activeWindow = window;
                                     });
                                   }, // delete the sucker
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints(),
-                                  padding: const EdgeInsets.only(left: 0, right: 0),
+                                  padding:
+                                      const EdgeInsets.only(left: 0, right: 0),
                                   icon: Icon(
                                     Icons.delete_forever,
                                     color: Colors.blueGrey[300],
@@ -786,7 +894,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   }, // delete the sucker
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints(),
-                                  padding: const EdgeInsets.only(left: 0, right: 0),
+                                  padding:
+                                      const EdgeInsets.only(left: 0, right: 0),
                                   icon: Icon(
                                     Icons.copy,
                                     color: Colors.blueGrey[300],
@@ -799,21 +908,35 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   tooltip: 'Hide/Show',
                                   onPressed: () {
                                     setState(() {
-                                      window.yVariables[i].isHidden = !window.yVariables[i].isHidden;
-                                      ref.read(providerOfPolygraph.notifier).activeWindow = window;
+                                      window.yVariables[i].isHidden =
+                                          !window.yVariables[i].isHidden;
+                                      ref
+                                          .read(providerOfPolygraph.notifier)
+                                          .activeWindow = window;
                                     });
                                   },
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints(),
-                                  padding: const EdgeInsets.only(left: 0, right: 0),
+                                  padding:
+                                      const EdgeInsets.only(left: 0, right: 0),
                                   icon: Icon(
                                     Icons.format_strikethrough,
                                     color: Colors.blueGrey[300],
                                     size: 20,
                                   ),
                                 ),
+
+                                // Tooltip(
+                                //   message: 'Style',
+                                //   child: TextButton(onPressed: (){},
+                                //       style: ButtonStyle(
+                                //           minimumSize: MaterialStateProperty.all(Size.zero),
+                                //           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                //           padding: MaterialStateProperty.all(EdgeInsets.zero)),
+                                //       child: RichText(text: const TextSpan(text: ' 🎨 '))),
+                                // ),
                               ],
-                            )
+                            ),
                         ],
                       ),
                     ),

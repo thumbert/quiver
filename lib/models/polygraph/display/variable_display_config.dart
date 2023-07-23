@@ -4,8 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class VariableDisplayConfig {
+
+  static VariableDisplayConfig fromMongo(Map<String,dynamic> x) {
+    var config = VariableDisplayConfig();
+    if (x.containsKey('mode')) {
+      config.mode = x['mode'];
+    }
+    if (x.containsKey('color')) {
+      config.color = x['color'];
+    }
+    if (x.containsKey('width')) {
+      config.width = x['width'];
+    }
+    if (x.containsKey('dash')) {
+      config.dash = DashStyle.parse(x['dash']);
+    }
+    if (x.containsKey('connectGaps')) {
+      config.connectGaps = x['connectGaps'];
+    }
+    return config;
+  }
+
   String mode = 'lines'; // 'lines+markers',
-  String? color;
+  String? color; // what format?
   int? width; // default is 1
   DashStyle? dash;
   bool? connectGaps;

@@ -28,20 +28,19 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
     final variableSelection = ref.watch(providerOfVariableSelection);
     var categories = variableSelection.getCategoriesForNextLevel();
 
-    Widget widget = const Text('');
-    if (variableSelection.isSelectionDone()) {
-      var path = variableSelection.selection;
-      widget = switch (path) {
-        'Expression' => const TransformedVariableEditor(),
-        'Line,Horizontal' => const HorizontalLineEditor(),
-        'Marks,Prices,Historical' => const MarksHistoricalView(),
-        _ => Text('Selection $path not yet implemented'),
-      };
-    }
+    // Widget widget = const Text('');
+    // if (variableSelection.isSelectionDone()) {
+    //   var path = variableSelection.selection;
+    //   widget = switch (path) {
+    //     'Expression' => const TransformedVariableEditor(),
+    //     'Line,Horizontal' => const HorizontalLineEditor(),
+    //     'Marks,Prices,Historical' => const MarksHistoricalView(),
+    //     _ => Text('Selection $path not yet implemented'),
+    //   };
+    // }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      // mainAxisSize: MainAxisSize.min,
       children: [
         const Text('Add a variable', style: TextStyle(fontSize: 24),),
         if (!variableSelection.isSelectionDone()) const SizedBox(height: 12,),
@@ -104,7 +103,7 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
         const SizedBox(
           height: 12,
         ),
-        widget,
+        // widget,
       ],
     );
   }

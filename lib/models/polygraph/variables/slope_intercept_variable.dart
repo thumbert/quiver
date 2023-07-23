@@ -12,7 +12,6 @@ class SlopeInterceptVariable extends PolygraphVariable {
     required this.slope,
     required this.intercept,
   }) {
-    id = 'slope*time + intercept line';
     label = _makeLabel();
   }
 

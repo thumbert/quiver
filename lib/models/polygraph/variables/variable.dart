@@ -12,7 +12,7 @@ final providerOfPolygraphVariable = Provider((ref) => PolygraphVariable());
 
 class PolygraphVariable {
   /// Internal representation used for the cache key
-  late final String id;
+  // late final String id;
 
   /// What gets displayed on the screen
   late String label;
@@ -45,8 +45,9 @@ class PolygraphVariable {
     throw 'Needs to be implemented by each subclasses';
   }
 
-  // /// How it's going to be persisted to the database
-  // Map<String,dynamic> toMap();
+  /// How it's going to be persisted to the database
+  Map<String,dynamic> toMap() => <String,dynamic>{};
+
   //
   // PolygraphVariable fromMongo(Map<String,dynamic> x);
 }

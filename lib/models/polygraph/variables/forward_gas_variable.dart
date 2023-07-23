@@ -19,7 +19,6 @@ class ForwardGasVariable extends PolygraphVariable {
     required this.product,
     required this.strip,
   }) {
-    id = 'Gas (Forward)';
     label = _makeLabel();
   }
 

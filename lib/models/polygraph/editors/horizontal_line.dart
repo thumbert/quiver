@@ -17,7 +17,6 @@ class HorizontalLine extends PolygraphVariable {
     required this.timeAggregation,
   }) {
     this.label = label ?? 'h=$yIntercept';
-    id = this.label;
   }
 
   final num yIntercept;

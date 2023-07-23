@@ -17,19 +17,20 @@ class HourlyScheduleExpr extends Expression {
 
   @override
   dynamic eval(Map<String, dynamic> variables) {
-    var ts = HourlyScheduleFilled(x);
-    // if (months.isNotEmpty) {
-    //   var monthsS = months.toSet();
-    //   ts = ts.where((e) => monthsS.contains(e.interval.start.month)).toTimeSeries();
-    // }
-    //
-    // if (bucket != null) {
-    //   if (ts.first.interval is! Hour) {
-    //     throw StateError('The bucket argument is only allowed for hourly timeseries!'
-    //         'Your timeseries is not hourly.');
-    //   }
-    //   ts = ts.where((e) => bucket!.containsHour(e.interval as Hour)).toTimeSeries();
-    // }
+    if (!variables.containsKey('_domain')) {
+      throw StateError('hourly_schedule needs a _domain!');
+    }
+    var hs = HourlyScheduleFilled(x);
+    var ts = hs.toHourly(variables['_domain'] as Interval);
+
+    if (months.isNotEmpty) {
+      var monthsS = months.toSet();
+      ts = ts.where((e) => monthsS.contains(e.interval.start.month)).toTimeSeries();
+    }
+
+    if (bucket != null) {
+      ts = ts.where((e) => bucket!.containsHour(e.interval as Hour)).toTimeSeries();
+    }
 
     return ts;
   }

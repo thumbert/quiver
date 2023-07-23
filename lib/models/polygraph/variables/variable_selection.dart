@@ -18,7 +18,6 @@ class VariableSelection {
     ['Marks', 'Prices', 'As of'],
     ['Marks', 'Prices', 'Historical'],
     ['Marks', 'Vols'],
-    // ['Shooju'],
     ['Time'],
     // ['Weather', 'Temperature'],
   ];

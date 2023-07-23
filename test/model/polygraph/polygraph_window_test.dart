@@ -7,6 +7,7 @@ import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
+import 'package:flutter_quiver/models/polygraph/parser/parser.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
@@ -27,26 +28,27 @@ import 'package:timezone/timezone.dart';
 Future<void> tests(String rootUrl) async {
   group('Polygraph window, temperature data', () {
     var window = PolygraphWindow(
-        term: Term.parse('Jan20-Dec21', UTC),
-        xVariable: TimeVariable(),
-        yVariables: [
-          TemperatureVariable(
-            airportCode: 'BOS',
-            variable: 'mean',
-            frequency: 'daily',
-            isForecast: false,
-            dataSource: 'NOAA',
-            id: 'bos_daily_temp',
-          )
-        ],
+      term: Term.parse('Jan20-Dec21', UTC),
+      xVariable: TimeVariable(),
+      yVariables: [
+        TemperatureVariable(
+          airportCode: 'BOS',
+          variable: 'mean',
+          frequency: 'daily',
+          isForecast: false,
+          dataSource: 'NOAA',
+          label: 'bos_daily_temp',
+        )
+      ],
       layout: PlotlyLayout.getDefault(width: 900, height: 600),
     );
     setUp(() async {
       await window.updateCache();
     });
-    test('toMap()', (){
+    test('toMap()', () {
       var res = window.toMap();
-      expect(res.keys.toSet(), {'term', 'tzLocation', 'xVariable', 'yVariables'});
+      expect(
+          res.keys.toSet(), {'term', 'tzLocation', 'xVariable', 'yVariables'});
     });
 
     test('Window with temperature data, UTC', () async {
@@ -58,9 +60,8 @@ Future<void> tests(String rootUrl) async {
     test('Get monthly average using a TransformedVariable', () async {
       var mTemp = TransformedVariable(
           expression: 'toMonthly(bos_daily_temp, mean)',
-          id: 'bos_monthly_temp');
+          label: 'bos_monthly_temp');
       mTemp.eval(window.cache);
-      expect(window.cache.keys.length, 2);
       expect(window.cache.keys.contains('bos_monthly_temp'), true);
 
       window.yVariables.add(mTemp);
@@ -72,28 +73,43 @@ Future<void> tests(String rootUrl) async {
 
       /// what if it's a parsing error
       mTemp = TransformedVariable(
-          expression: 'toMonthly(bos_daily_temp)',  // has no average function
-          id: 'bos_monthly_temp');
+          expression: 'toMonthly(bos_daily_temp)', // has no average function
+          label: 'bos_monthly_temp');
       mTemp.eval(window.cache);
-      print(mTemp.error);
-
     });
+
+    // test('Window with transformed variable', () async {
+    //   var window = PolygraphWindow(
+    //     term: Term.parse('Jan20-Mar20', IsoNewEngland.location),
+    //     xVariable: TimeVariable(),
+    //     yVariables: [
+    //       TransformedVariable(
+    //           label: 'shape', expression: "hourly_schedule(50, bucket='Peak')"),
+    //     ],
+    //     layout: PlotlyLayout.getDefault(width: 900, height: 600),
+    //   );
+    //   await window.updateCache();
+    //   var traces = window.makeTraces();
+    //   expect(traces.length, 1);
+    //   expect(traces.first['x'].first, TZDateTime(IsoNewEngland.location, 2020));
+    //   expect(traces.first['y'].first, 36);
+    // });
 
     test('Window with temperature data, local time', () async {
       var location = getLocation('America/New_York');
       var window = PolygraphWindow(
-          term: Term.parse('Jan20-Dec21', location),
-          xVariable: TimeVariable(),
-          yVariables: [
-            TemperatureVariable(
-              airportCode: 'BOS',
-              variable: 'min',
-              frequency: 'daily',
-              isForecast: false,
-              dataSource: 'NOAA',
-              id: 'bos_min',
-            )
-          ],
+        term: Term.parse('Jan20-Dec21', location),
+        xVariable: TimeVariable(),
+        yVariables: [
+          TemperatureVariable(
+            airportCode: 'BOS',
+            variable: 'min',
+            frequency: 'daily',
+            isForecast: false,
+            dataSource: 'NOAA',
+            label: 'bos_min',
+          )
+        ],
         layout: PlotlyLayout.getDefault(width: 900, height: 600),
       );
       await window.updateCache();

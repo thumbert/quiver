@@ -13,7 +13,6 @@ class ForwardHeatRateVariable extends PolygraphVariable {
     required this.electricityVariable,
     required this.gasVariable,
   }) {
-    id = 'Heat Rate (Forward)';
     label = _makeLabel();
   }
 

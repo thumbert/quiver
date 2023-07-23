@@ -72,41 +72,34 @@ Future<void> tests(String rootUrl) async {
 
   group('Parse hourly_schedule function', () {
     test('basic', () {
-      // var res = windowFun.parse("window(x, bucket='atc'").value;
-      // trace(windowFun).parse('window(x, months=[1,2])');
-      var x = TimeSeries<num>.fromIterable([
-        IntervalTuple(Date.utc(2022, 1, 1), 1.0),
-        IntervalTuple(Date.utc(2022, 1, 2), 2.0),
-        IntervalTuple(Date.utc(2022, 2, 1), 3.0),
-        IntervalTuple(Date.utc(2022, 2, 4), 8.0),
-        IntervalTuple(Date.utc(2022, 3, 3), 8.0),
-        IntervalTuple(Date.utc(2022, 3, 19), 5.0),
-      ]);
-      expect(
-          hourlyScheduleFun.parse('hourly_schedule(50)').value
-              .eval({'_domain': Term.parse('Jan22', UTC)}),
-          TimeSeries<num>.fromIterable([
-            IntervalTuple(Date.utc(2022, 1, 1), 1.0),
-            IntervalTuple(Date.utc(2022, 1, 2), 2.0),
-            IntervalTuple(Date.utc(2022, 2, 1), 3.0),
-            IntervalTuple(Date.utc(2022, 2, 4), 8.0),
-          ]));
-    });
-    test('bucket filter', () {
-      var x = TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0);
-      var ts = windowFun.parse("window(x, bucket='7x8')").value.eval({'x': x}) as TimeSeries;
-      expect(ts.length, 8);
-    });
-    test('filter combo: bucket + months', () {
-      var x = TimeSeries.fromIterable([
-        ...TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0),
-        ...TimeSeries<num>.fill(Date(2022, 3, 1, location: tz).hours(), 3.0),
-      ]);
-      var ts = windowFun.parse("window(x, bucket='7x8', months=[3])").value.eval({'x': x}) as TimeSeries;
-      expect(ts.length, 8);
+      TimeSeries<num> ts = parser.parse('hourly_schedule(50)').value
+          .eval({'_domain': Term.parse('Jan22', IsoNewEngland.location).interval});
+      expect(ts.length, 744);
+      expect(ts.first.interval, Hour.beginning(TZDateTime(IsoNewEngland.location, 2022)));
+      expect(ts.first.value, 50);
     });
 
+    test('with bucket argument', () {
+        TimeSeries<num> ts = parser.parse("hourly_schedule(50, bucket='Peak')").value
+            .eval({'_domain': Term.parse('Jan22', IsoNewEngland.location).interval});
+        expect(ts.length, 336);
+        expect(ts.first.interval, Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 1, 3, 7)));
+        expect(ts.first.value, 50);
+    });
 
+    test('with months argument', () {
+        TimeSeries<num> ts = parser.parse("hourly_schedule(50, months=[1,2])").value
+            .eval({'_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval});
+        expect(ts.length, 1416);
+        expect(ts.last.interval, Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 2, 28, 23)));
+        expect(ts.last.value, 50);
+    });
+
+    test('with bucket and months argument', () {
+        TimeSeries<num> ts = parser.parse("hourly_schedule(50, bucket='Peak', months=[1,2])").value
+            .eval({'_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval});
+        expect(ts.length, 656);
+    });
   });
 
   group('Parse window function', () {
@@ -346,7 +339,6 @@ Future<void> tests(String rootUrl) async {
           ]));
     });
   });
-
 
   group('Parse rolling functions', () {
     test('ma', () {

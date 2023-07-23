@@ -34,10 +34,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   late ScrollController _scrollControllerH;
   late ScrollController _scrollControllerTabs;
 
-
   final focusNodeSelection = FocusNode();
-
-  String? _errorTerm;
 
   /// If the tab becomes editable, this will be non-null and have the value
   /// of its tab index.  Used so you can edit the tab name by a long press.
@@ -390,31 +387,9 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     )),
               ),
 
-              // const SizedBox(
-              //   height: 16,
-              // ),
-              //
-              // IconButton(
-              //     onPressed: () async {
-              //       final container = ProviderScope.containerOf(context);
-              //       await showDialog(
-              //           context: context,
-              //           builder: (BuildContext context) {
-              //             return SimpleDialog(
-              //               children: [
-              //                 ProviderScope(
-              //                     parent: container,
-              //                     child: PointerInterceptor(
-              //                         child: const Padding(
-              //                       padding: EdgeInsets.all(16.0),
-              //                       child: TabLayoutUi(),
-              //                     ))),
-              //               ],
-              //             );
-              //           });
-              //     },
-              //     icon: const Icon(Icons.tune)),
-
+              ///
+              /// Tab content
+              ///
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   controller: _scrollControllerH,

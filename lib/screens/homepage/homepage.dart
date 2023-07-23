@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Wrap(direction: Axis.horizontal, children: const [
+      body: const Wrap(direction: Axis.horizontal, children: [
         AppGroup('Load'),
         AppGroup('Reports'),
         AppGroup('Other'),

@@ -268,7 +268,7 @@ Future<void> tests(String rootUrl) async {
               frequency: 'daily',
               isForecast: false,
               dataSource: 'NOAA',
-              id: 'bos_min',
+              label: 'bos_min',
             )
           ],
           layout: PlotlyLayout.getDefault(width: 900, height: 600),
@@ -296,11 +296,10 @@ Future<void> tests(String rootUrl) async {
                             market: Market.da,
                             ptid: 4000,
                             lmpComponent: LmpComponent.lmp)
-                          ..id = 'hub_da_lmp'
                           ..label = 'hub_da_lmp',
                         TransformedVariable(
                             expression: 'toMonthly(hub_da_lmp, mean)',
-                            id: 'monthly_mean'),
+                            label: 'monthly_mean'),
                       ],
                     layout: PlotlyLayout.getDefault(width: 900, height: 600),
                   ),

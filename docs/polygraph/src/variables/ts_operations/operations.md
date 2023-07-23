@@ -10,7 +10,8 @@ Use **`hourly_schedule`** to create an hourly timeseries
 > 
 > Create an hourly timeseries for the time window specified in the 
 > associated Polygraph tab.  All values of the created timeseries 
-> are set to `fill`. 
+> are set to `fill`.  The domain of the timeseries is the 
+> viewport of the window.
 > 
 > Parameters
 > * `fill` the value for all hours

@@ -6,9 +6,15 @@
   the plot
 - Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
-- Implement multiple tabs and multiple plots per tab. 
 - When variable selection is made, the OK button needs to do the widget validation.
 - When tabs are added, they can stretch outside the screen.  How to scroll to them?
+- Move Add variable action to a new page.
+
+
+## Release 2023-07-23
+- More polygraph changes
+  - Added hourly_schedule, window, and ma functions.
+  - Made the Add variable two-step.  First, make the selection, then populate. 
 
 ## Release 2023-05-03
 - Many polygraph changes

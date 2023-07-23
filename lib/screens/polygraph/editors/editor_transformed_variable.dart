@@ -1,12 +1,10 @@
 library screens.polygraph.editors.transformed_variable_editor;
 
-
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
-import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfTransformedVariable =
@@ -14,11 +12,7 @@ final providerOfTransformedVariable =
         (ref) => TransformedVariableNotifier(ref));
 
 class TransformedVariableEditor extends ConsumerStatefulWidget {
-  const TransformedVariableEditor(
-      {Key? key}) : super(key: key);
-
-  static bool isValid = false;
-  static String error = '';
+  const TransformedVariableEditor({Key? key}) : super(key: key);
 
   @override
   ConsumerState<TransformedVariableEditor> createState() =>
@@ -33,13 +27,12 @@ class _TransformedVariableEditorState
   final focusLabel = FocusNode();
   final focusExpression = FocusNode();
 
-  String errorLabel = '';
-  String errorExpression = '';
   int activeTab = 0;
 
   @override
   void initState() {
     super.initState();
+
     controllerExpression.text = '';
     controllerLabel.text = '';
 
@@ -136,7 +129,7 @@ class _TransformedVariableEditorState
             ),
             if (activeTab == 0)
               SizedBox(
-                height: 100,
+                height: 150,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -163,8 +156,7 @@ class _TransformedVariableEditorState
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: const EdgeInsets.all(8),
-                              enabledBorder: (state.error != '' &&
-                                      controllerLabel.text == '')
+                              enabledBorder: state.hasInvalidLabel()
                                   ? const OutlineInputBorder(
                                       borderSide: BorderSide(color: Colors.red))
                                   : InputBorder.none,
@@ -203,10 +195,13 @@ class _TransformedVariableEditorState
                             controller: controllerExpression,
                             focusNode: focusExpression,
                             style: const TextStyle(fontSize: 14),
+                            // expands: true,
+                            maxLines: null,
                             decoration: InputDecoration(
                               isDense: true,
                               contentPadding: const EdgeInsets.all(8),
-                              enabledBorder: (state.error != '' && controllerExpression.text == '')
+                              enabledBorder: (state.hasInvalidExpression() ||
+                                      state.hasParsingError())
                                   ? const OutlineInputBorder(
                                       borderSide: BorderSide(color: Colors.red))
                                   : InputBorder.none,
@@ -227,22 +222,27 @@ class _TransformedVariableEditorState
                     ///
                     /// Error row
                     ///
-                    Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 8),
-                          child: const Text(''),
-                        ),
-                        Text(state.error,
-                          style: const TextStyle(color: Colors.red, fontSize: 10),
-                        ),
-                      ],
-                    ),
+                    for (var error in state.getErrors())
+                      Row(
+                        children: [
+                          Container(
+                            width: 100,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(right: 8),
+                            child: const Text(''),
+                          ),
+                          Text(
+                            error,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 10),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
+            if (activeTab == 1)
+              const Placeholder(fallbackHeight: 150, fallbackWidth: 900,),
           ],
         ),
       ],
@@ -250,32 +250,16 @@ class _TransformedVariableEditorState
   }
 
   void validateLabel(TransformedVariable state) {
-    errorLabel = '';
     ref.read(providerOfTransformedVariable.notifier).label =
         controllerLabel.text;
-    if (controllerLabel.text == '') {
-      errorLabel =
-      'Label can\'t be empty.  Please provide a variable name';
-    }
-    ref.read(providerOfTransformedVariable.notifier).error = errorLabel;
-    TransformedVariableEditor.isValid = errorExpression == '' && errorLabel == '';
   }
 
   void validateExpression(TransformedVariable state) {
-    errorExpression = '';
-    if (controllerExpression.text == '') {
-      errorExpression = 'Expression can\'t be empty.';
-    } else {
-      ref.read(providerOfTransformedVariable.notifier).expression =
-          controllerExpression.text;
-      var poly = ref.read(providerOfPolygraph);
-      var tab = poly.tabs[poly.activeTabIndex];
-      var window = tab.windows[tab.activeWindowIndex];
-      state.eval(window.cache);
-      errorExpression = state.error;
-    }
-    ref.read(providerOfTransformedVariable.notifier).error = errorExpression;
-    TransformedVariableEditor.isValid = errorExpression == '' && errorLabel == '';
+    ref.read(providerOfTransformedVariable.notifier).expression =
+        controllerExpression.text;
+    var poly = ref.read(providerOfPolygraph);
+    var tab = poly.tabs[poly.activeTabIndex];
+    var window = tab.windows[tab.activeWindowIndex];
+    state.eval(window.cache);
   }
-
 }
