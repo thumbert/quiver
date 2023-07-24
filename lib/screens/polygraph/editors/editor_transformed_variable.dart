@@ -6,6 +6,7 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final providerOfTransformedVariable =
     StateNotifierProvider<TransformedVariableNotifier, TransformedVariable>(
@@ -242,7 +243,40 @@ class _TransformedVariableEditorState
                 ),
               ),
             if (activeTab == 1)
-              const Placeholder(fallbackHeight: 150, fallbackWidth: 900,),
+              const Placeholder(
+                fallbackHeight: 150,
+                fallbackWidth: 900,
+              ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    context.go('/');
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    /// Add this variable to the existing variables and pop.
+                    // var yVariables = [...window.yVariables, res];
+                    // var window2 = window.copyWith(yVariables: yVariables);
+                    // await window2.updateCache();
+
+                    setState(() {
+                      // ref.read(providerOfPolygraph.notifier).activeWindow =
+                      //     window2;
+                      ref.read(providerOfTransformedVariable.notifier).reset();
+                    });
+
+                    context.go('/polygraph');
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ],

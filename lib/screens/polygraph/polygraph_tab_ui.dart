@@ -24,6 +24,7 @@ import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:timezone/timezone.dart';
 
@@ -424,107 +425,94 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
             IconButton(
               tooltip: 'Add variable',
               onPressed: () async {
-                var selection = ref.read(providerOfVariableSelection);
-                final container = ProviderScope.containerOf(context);
+                context.go('/polygraph/add');
 
-                await showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return PointerInterceptor(
-                        child: AlertDialog(
-                            scrollable: true,
-                            content: ProviderScope(
-                                parent: container,
-                                child: const VariableSelectionUi()),
-                            actions: [
-                              TextButton(
-                                  child: const Text('CANCEL'),
-                                  onPressed: () {
-                                    selection.categories.clear();
-                                    Navigator.of(context).pop();
-                                  }),
-                              ElevatedButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    if (selection.isSelectionDone()) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  }),
-                            ]),
-                      );
-
-                    });
-
-                // print('You selected ${selection.selection}');
-
-                await showDialog(
-                    context: context,
-                    builder: (context) {
-                      var path = selection.selection;
-                      final widget = switch (path) {
-                        'Expression' => const TransformedVariableEditor(),
-                        'Line,Horizontal' => const HorizontalLineEditor(),
-                        'Marks,Prices,Historical' =>
-                          const MarksHistoricalView(),
-                        _ =>
-                          Text('Selection $path has not been implemented yet'),
-                      };
-                      final mapOfVariables = {
-                        'Expression': providerOfTransformedVariable,
-                        'Line,Horizontal': providerOfHorizontalLine,
-                        'Marks,Prices,Historical':
-                            providerOfMarksHistoricalView,
-                      };
-
-                      return PointerInterceptor(
-                        child: AlertDialog(
-                            scrollable: true,
-                            content:
-                                ProviderScope(parent: container, child: widget),
-                            actions: [
-                              TextButton(
-                                  child: const Text('CANCEL'),
-                                  onPressed: () {
-                                    selection.categories.clear();
-                                    Navigator.of(context).pop();
-                                  }),
-                              ElevatedButton(
-                                  child: const Text('OK'),
-                                  onPressed: () async {
-                                    if (selection.isSelectionDone()) {
-                                      /// Add this variable to the existing variables and pop.
-                                      var provider =
-                                          mapOfVariables[selection.selection]!;
-                                      var res = container.read(provider);
-                                      var yVariables = [
-                                        ...window.yVariables,
-                                        res
-                                      ];
-                                      var window2 = window.copyWith(
-                                          yVariables: yVariables);
-                                      await window2.updateCache();
-                                      if (selection.selection == 'Expression') {
-                                        setState(() {
-                                          ref
-                                              .read(
-                                              providerOfTransformedVariable
-                                                  .notifier)
-                                              .reset();
-                                        });
-                                      }
-                                      setState(() {
-                                        ref
-                                            .read(providerOfPolygraph.notifier)
-                                            .activeWindow = window2;
-                                        selection.categories.clear();
-                                      });
-                                      Navigator.of(context).pop();
-                                    }
-                                  }),
-                            ]),
-                      );
-                    });
+                // var selection = ref.read(providerOfVariableSelection);
+                // final container = ProviderScope.containerOf(context);
+                //
+                // await showDialog(
+                //     context: context,
+                //     builder: (context) {
+                //       return PointerInterceptor(
+                //         child: AlertDialog(
+                //             scrollable: true,
+                //             content: ProviderScope(
+                //                 parent: container,
+                //                 child: const VariableSelectionUi()),
+                //         ),
+                //       );
+                //
+                //     });
+                //
+                // // print('You selected ${selection.selection}');
+                //
+                // await showDialog(
+                //     context: context,
+                //     builder: (context) {
+                //       var path = selection.selection;
+                //       final widget = switch (path) {
+                //         'Expression' => const TransformedVariableEditor(),
+                //         'Line,Horizontal' => const HorizontalLineEditor(),
+                //         'Marks,Prices,Historical' =>
+                //           const MarksHistoricalView(),
+                //         _ =>
+                //           Text('Selection $path has not been implemented yet'),
+                //       };
+                //       final mapOfVariables = {
+                //         'Expression': providerOfTransformedVariable,
+                //         'Line,Horizontal': providerOfHorizontalLine,
+                //         'Marks,Prices,Historical':
+                //             providerOfMarksHistoricalView,
+                //       };
+                //
+                //       return PointerInterceptor(
+                //         child: AlertDialog(
+                //             scrollable: true,
+                //             content:
+                //                 ProviderScope(parent: container, child: widget),
+                //             actions: [
+                //               TextButton(
+                //                   child: const Text('CANCEL'),
+                //                   onPressed: () {
+                //                     selection.categories.clear();
+                //                     Navigator.of(context).pop();
+                //                   }),
+                //               ElevatedButton(
+                //                   child: const Text('OK'),
+                //                   onPressed: () async {
+                //                     if (selection.isSelectionDone()) {
+                //                       /// Add this variable to the existing variables and pop.
+                //                       var provider =
+                //                           mapOfVariables[selection.selection]!;
+                //                       var res = container.read(provider);
+                //                       var yVariables = [
+                //                         ...window.yVariables,
+                //                         res
+                //                       ];
+                //                       var window2 = window.copyWith(
+                //                           yVariables: yVariables);
+                //                       await window2.updateCache();
+                //                       if (selection.selection == 'Expression') {
+                //                         setState(() {
+                //                           ref
+                //                               .read(
+                //                               providerOfTransformedVariable
+                //                                   .notifier)
+                //                               .reset();
+                //                         });
+                //                       }
+                //                       setState(() {
+                //                         ref
+                //                             .read(providerOfPolygraph.notifier)
+                //                             .activeWindow = window2;
+                //                         selection.categories.clear();
+                //                       });
+                //                       Navigator.of(context).pop();
+                //                     }
+                //                   }),
+                //             ]),
+                //       );
+                //     });
               },
               icon: const Icon(
                 Icons.add,

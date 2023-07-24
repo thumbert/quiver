@@ -40,8 +40,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
   /// of its tab index.  Used so you can edit the tab name by a long press.
   int? editableTabIndex;
 
-  final variableSelection = VariableSelection();
-
   @override
   void initState() {
     super.initState();

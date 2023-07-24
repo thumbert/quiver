@@ -1,13 +1,13 @@
 library models.polygraph.variables.variable_selection;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 class VariableSelection {
-  VariableSelection() {
-    categories = <String>[];
-  }
+  VariableSelection(this.categories);
 
   /// the current selection 
-  late List<String> categories;
+  List<String> categories;
 
   String get selection => categories.join(',');
 
@@ -22,6 +22,7 @@ class VariableSelection {
     // ['Weather', 'Temperature'],
   ];
 
+  static VariableSelection empty() => VariableSelection(<String>[]);
 
   /// Add at the end of the category list
   void selectCategory(String category) {
@@ -43,8 +44,6 @@ class VariableSelection {
     for (var i=0; i<level; i++) {
       xs = xs.where((e) => e[i] == categories[i]);
     }
-    // var aux = xs.toList();
-    // print(aux);
     if (xs.length == 1) return <String>[];  // fully specified
     return xs.map((e) => e[level]).toSet().toList();
   }
@@ -53,5 +52,13 @@ class VariableSelection {
   bool isSelectionDone() {
     return getCategoriesForNextLevel().isEmpty;
   }
-
 }
+
+class VariableSelectionNotifier extends StateNotifier<VariableSelection> {
+  VariableSelectionNotifier(this.ref) : super(VariableSelection.empty());
+  final Ref ref;
+  set categories(List<String> categories) {
+    state = VariableSelection(categories);
+  }
+}
+

@@ -10,6 +10,10 @@
 - When tabs are added, they can stretch outside the screen.  How to scroll to them?
 - Move Add variable action to a new page.
 
+## Release 2023-07-22
+- More polygraph changes
+  - Move the variable add to a separate route.  Should be a better design. 
+
 
 ## Release 2023-07-23
 - More polygraph changes
