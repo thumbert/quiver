@@ -19,15 +19,16 @@ are
     window(x, bucket='Offpeak', months=[1,2])
 ```
 
-An example of a **required named** parameter is `tz` from function `hourly_schedule`. 
-The parameter `tz` needs to be specified because otherwise the timeseries 
-can't be properly defined.  
-
 > **Note** Polygraph does not allow **default values** for parameters.  Having 
 > default values for parameters may seem convenient, but in practice it can 
 > introduce subtle bugs, and it makes things less explicit.  For an interesting
 > discussion regarding named and default values in functions see 
 > [link](https://internals.rust-lang.org/t/pre-rfc-named-arguments/16413/146). 
+
+The naming convention for functions is in [camelCase](https://en.wikipedia.org/wiki/Camel_case).  
+Therefore, it is `hourlySchedule` and not ~~hourly_schedule~~, `toMonthly` and not 
+~~to_monthly~~.  
+
 
 
 

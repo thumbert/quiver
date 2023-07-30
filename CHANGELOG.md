@@ -6,13 +6,15 @@
   the plot
 - Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
-- When variable selection is made, the OK button needs to do the widget validation.
-- When tabs are added, they can stretch outside the screen.  How to scroll to them?
-- Move Add variable action to a new page.
+- Implement VariableMarksHistoricalView.getAllCurveNames() to use a DataService
+
+## Release 2023-07-xx
+- 
 
 ## Release 2023-07-22
 - More polygraph changes
-  - Move the variable add to a separate route.  Should be a better design. 
+  - Move the variable add to a separate route.  Should be a better design in 
+    the long run. 
 
 
 ## Release 2023-07-23

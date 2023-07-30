@@ -3,8 +3,8 @@ library models.polygraph.variables.forward_heatrate_variable;
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
-import 'package:flutter_quiver/models/polygraph/variables/forward_electricity_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/forward_gas_variable.dart';
+import 'package:flutter_quiver/models/polygraph/attic/forward_electricity_variable.dart';
+import 'package:flutter_quiver/models/polygraph/attic/forward_gas_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/src/timeseries_base.dart';
 

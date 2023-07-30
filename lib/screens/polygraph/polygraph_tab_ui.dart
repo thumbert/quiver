@@ -6,15 +6,15 @@ import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
-import 'package:flutter_quiver/models/polygraph/editors/ok_button.dart';
+import 'package:flutter_quiver/models/polygraph/attic/ok_button.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_transformed_variable.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/plotly_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
@@ -251,7 +251,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     var window = tab.windows[tab.activeWindowIndex];
     controllerTerm.text = window.term.toString();
     controllerTimezone.text = window.term.location.toString();
-    print('window cache variables: ${window.cache.keys}');
+    // print('window cache variables: ${window.cache.keys}');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,94 +425,16 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
             IconButton(
               tooltip: 'Add variable',
               onPressed: () async {
-                context.go('/polygraph/add');
-
-                // var selection = ref.read(providerOfVariableSelection);
-                // final container = ProviderScope.containerOf(context);
-                //
-                // await showDialog(
-                //     context: context,
-                //     builder: (context) {
-                //       return PointerInterceptor(
-                //         child: AlertDialog(
-                //             scrollable: true,
-                //             content: ProviderScope(
-                //                 parent: container,
-                //                 child: const VariableSelectionUi()),
-                //         ),
-                //       );
-                //
-                //     });
-                //
-                // // print('You selected ${selection.selection}');
-                //
-                // await showDialog(
-                //     context: context,
-                //     builder: (context) {
-                //       var path = selection.selection;
-                //       final widget = switch (path) {
-                //         'Expression' => const TransformedVariableEditor(),
-                //         'Line,Horizontal' => const HorizontalLineEditor(),
-                //         'Marks,Prices,Historical' =>
-                //           const MarksHistoricalView(),
-                //         _ =>
-                //           Text('Selection $path has not been implemented yet'),
-                //       };
-                //       final mapOfVariables = {
-                //         'Expression': providerOfTransformedVariable,
-                //         'Line,Horizontal': providerOfHorizontalLine,
-                //         'Marks,Prices,Historical':
-                //             providerOfMarksHistoricalView,
-                //       };
-                //
-                //       return PointerInterceptor(
-                //         child: AlertDialog(
-                //             scrollable: true,
-                //             content:
-                //                 ProviderScope(parent: container, child: widget),
-                //             actions: [
-                //               TextButton(
-                //                   child: const Text('CANCEL'),
-                //                   onPressed: () {
-                //                     selection.categories.clear();
-                //                     Navigator.of(context).pop();
-                //                   }),
-                //               ElevatedButton(
-                //                   child: const Text('OK'),
-                //                   onPressed: () async {
-                //                     if (selection.isSelectionDone()) {
-                //                       /// Add this variable to the existing variables and pop.
-                //                       var provider =
-                //                           mapOfVariables[selection.selection]!;
-                //                       var res = container.read(provider);
-                //                       var yVariables = [
-                //                         ...window.yVariables,
-                //                         res
-                //                       ];
-                //                       var window2 = window.copyWith(
-                //                           yVariables: yVariables);
-                //                       await window2.updateCache();
-                //                       if (selection.selection == 'Expression') {
-                //                         setState(() {
-                //                           ref
-                //                               .read(
-                //                               providerOfTransformedVariable
-                //                                   .notifier)
-                //                               .reset();
-                //                         });
-                //                       }
-                //                       setState(() {
-                //                         ref
-                //                             .read(providerOfPolygraph.notifier)
-                //                             .activeWindow = window2;
-                //                         selection.categories.clear();
-                //                       });
-                //                       Navigator.of(context).pop();
-                //                     }
-                //                   }),
-                //             ]),
-                //       );
-                //     });
+                var variable = await context.push('/polygraph/add');
+                // variable can also be null if things are aborted or incorrect
+                if (variable is PolygraphVariable) {
+                  var yVariables = [...window.yVariables, variable];
+                  var window2 = window.copyWith(yVariables: yVariables);
+                  await window2.updateCache();
+                  setState(() {
+                    ref.read(providerOfPolygraph.notifier).activeWindow = window2;
+                  });
+                }
               },
               icon: const Icon(
                 Icons.add,
@@ -607,7 +529,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                     /// harvest the values, HOW???
                                     var layout =
                                         ref.read(providerOfPlotlyLayout);
-                                    print('Title is: ${layout.title?.text}');
+                                    // print('Title is: ${layout.title?.text}');
                                     window = window.copyWith(layout: layout);
                                     ref
                                         .read(providerOfPolygraph.notifier)
@@ -767,77 +689,99 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 IconButton(
                                   tooltip: 'Edit',
                                   onPressed: () async {
-                                    final container =
-                                        ProviderScope.containerOf(context);
-                                    var xs = window.yVariables[i].toMap();
-
-                                    Widget widget;
-                                    late StateNotifierProvider provider;
-                                    if (xs['type'] == 'TransformedVariable') {
-                                      setState(() {
-                                        ref
-                                            .read(providerOfTransformedVariable
-                                                .notifier)
-                                            .label = xs['label'];
-                                        ref
-                                            .read(providerOfTransformedVariable
-                                                .notifier)
-                                            .expression = xs['expression'];
-                                        provider =
-                                            providerOfTransformedVariable;
-                                      });
-                                      widget =
-                                          const TransformedVariableEditor();
-                                    } else {
-                                      widget = const Text(
-                                          'Oops, this branch is dangling');
+                                    var x = window.yVariables[i].toMap();
+                                    // print(x);
+                                    switch (x['type']) {
+                                      case 'TransformedVariable' : ref.read(providerOfTransformedVariable.notifier).fromMongo(x);
+                                      case 'VariableMarksHistoricalView' : ref.read(providerOfMarksHistoricalView.notifier).fromMongo(x);
+                                      case _ : print('Implement edit for ${x['type']} in polygraph_tab_ui, Edit button');
                                     }
 
-                                    await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                              scrollable: true,
-                                              elevation: 24.0,
-                                              content: ProviderScope(
-                                                  parent: container,
-                                                  child: widget),
-                                              actions: [
-                                                TextButton(
-                                                    child: const Text('CANCEL'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    }),
-                                                ElevatedButton(
-                                                    child: const Text('OK'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
+                                    var variable = await context.push(
+                                        '/polygraph/edit',
+                                        extra: window.yVariables[i]) as PolygraphVariable;
+                                    var yVariables = [...window.yVariables];
+                                    yVariables[i] = variable;
+                                    var window2 =
+                                        window.copyWith(yVariables: yVariables);
+                                    await window2.updateCache();
+                                    setState(() {
+                                      ref
+                                          .read(providerOfPolygraph.notifier)
+                                          .activeWindow = window2;
+                                    });
 
-                                                      /// harvest the values
-                                                      var newVariable =
-                                                          container
-                                                              .read(provider);
-                                                      var variables = [
-                                                        ...window.yVariables
-                                                      ];
-                                                      variables[i] =
-                                                          newVariable;
-                                                      window = window.copyWith(
-                                                          yVariables:
-                                                              variables);
-                                                      setState(() {
-                                                        ref
-                                                            .read(
-                                                                providerOfPolygraph
-                                                                    .notifier)
-                                                            .activeWindow = window;
-                                                      });
-                                                    }),
-                                              ]);
-                                        });
+                                    // final container =
+                                    //     ProviderScope.containerOf(context);
+                                    // var xs = window.yVariables[i].toMap();
+                                    //
+                                    // Widget widget;
+                                    // late StateNotifierProvider provider;
+                                    // if (xs['type'] == 'TransformedVariable') {
+                                    //   setState(() {
+                                    //     ref
+                                    //         .read(providerOfTransformedVariable
+                                    //             .notifier)
+                                    //         .label = xs['label'];
+                                    //     ref
+                                    //         .read(providerOfTransformedVariable
+                                    //             .notifier)
+                                    //         .expression = xs['expression'];
+                                    //     provider =
+                                    //         providerOfTransformedVariable;
+                                    //   });
+                                    //   widget =
+                                    //       const TransformedVariableEditor();
+                                    // } else {
+                                    //   widget = const Text(
+                                    //       'Oops, this branch is dangling');
+                                    // }
+
+                                    // await showDialog(
+                                    //     barrierDismissible: false,
+                                    //     context: context,
+                                    //     builder: (context) {
+                                    //       return AlertDialog(
+                                    //           scrollable: true,
+                                    //           elevation: 24.0,
+                                    //           content: ProviderScope(
+                                    //               parent: container,
+                                    //               child: widget),
+                                    //           actions: [
+                                    //             TextButton(
+                                    //                 child: const Text('CANCEL'),
+                                    //                 onPressed: () {
+                                    //                   Navigator.of(context)
+                                    //                       .pop();
+                                    //                 }),
+                                    //             ElevatedButton(
+                                    //                 child: const Text('OK'),
+                                    //                 onPressed: () {
+                                    //                   Navigator.of(context)
+                                    //                       .pop();
+                                    //
+                                    //                   /// harvest the values
+                                    //                   var newVariable =
+                                    //                       container
+                                    //                           .read(provider);
+                                    //                   var variables = [
+                                    //                     ...window.yVariables
+                                    //                   ];
+                                    //                   variables[i] =
+                                    //                       newVariable;
+                                    //                   window = window.copyWith(
+                                    //                       yVariables:
+                                    //                           variables);
+                                    //                   setState(() {
+                                    //                     ref
+                                    //                         .read(
+                                    //                             providerOfPolygraph
+                                    //                                 .notifier)
+                                    //                         .activeWindow = window;
+                                    //                   });
+                                    //                 }),
+                                    //           ]);
+                                    //     });
                                   },
                                   visualDensity: VisualDensity.compact,
                                   constraints: const BoxConstraints(),

@@ -7,8 +7,8 @@ import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/screens/common/lmp_component.dart';
 import 'package:flutter_quiver/screens/common/region.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/power_deliverypoint.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/power_market.dart';
+import 'package:flutter_quiver/screens/polygraph/attic/power_deliverypoint.dart';
+import 'package:flutter_quiver/screens/polygraph/attic/power_market.dart';
 import 'package:provider/provider.dart';
 
 class PowerLocation extends StatefulWidget {

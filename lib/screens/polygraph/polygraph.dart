@@ -7,7 +7,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

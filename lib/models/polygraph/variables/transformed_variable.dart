@@ -3,6 +3,7 @@ library models.polygraph.variables.transformed_variable;
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
+import 'package:flutter_quiver/models/polygraph/parser/ast.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart' as juice;
@@ -43,14 +44,14 @@ class TransformedVariable extends PolygraphVariable {
       TransformedVariable(
         expression: expression ?? this.expression,
         label: label ?? this.label,
-      );
+      )..error = error ?? this.error;
 
   /// The [cache] should already contain all variables needed for the eval
   /// already.
   /// If the parsing fails, set the error message and don't store anything
   /// in the cache.
   void eval(Map<String, dynamic> cache) {
-    Result res;
+    Result<Expression> res;
     try {
       res = juice.parser.parse(expression);
     } catch (e) {
@@ -59,17 +60,21 @@ class TransformedVariable extends PolygraphVariable {
     if (res.isFailure) {
       error = 'Parsing error: ${res.message}';
     } else {
-      var out = res.value.eval(cache);
-      if (out is Failure) {
-        error = out.message;
-      } else {
-        if (out is Success) {
-          cache[label] = out.value;
+      try {
+        var out = res.value.eval(cache);
+        if (out is Failure) {
+          error = out.message;
         } else {
-          cache[label] = out;
+          if (out is Success) {
+            cache[label] = out.value;
+          } else {
+            cache[label] = out;
+          }
+          // if parsing succeeds, reset the error message
+          error = '';
         }
-        // if parsing succeeds, reset the error message
-        error = '';
+      } catch (e) {
+        error = 'Evaluation error: ${e.toString()}';
       }
     }
   }
@@ -118,7 +123,7 @@ class TransformedVariable extends PolygraphVariable {
       'type': 'TransformedVariable',
       'label': label,
       'expression': expression,
-      'displayConfig': displayConfig == null ? {} : displayConfig!.toJson(),
+      'displayConfig': displayConfig == null ? <String,dynamic>{} : displayConfig!.toJson(),
     };
   }
 }
@@ -139,6 +144,10 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
 
   set error(String value) {
     state = state.copyWith(error: value);
+  }
+
+  void fromMongo(Map<String,dynamic> x) {
+    state = TransformedVariable.fromMongo(x);
   }
 
   void reset() {

@@ -1,47 +1,44 @@
-library screens.polygraph.editors.marks_historical_strip;
+library screens.polygraph.editors.marks_historical_view_editor;
 
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
-import 'package:flutter_quiver/models/polygraph/editors/marks_historical_view.dart' as model;
-import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
+import 'package:flutter_quiver/models/polygraph/variables/variable_marks_historical_view.dart';
+import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timezone/timezone.dart';
 
 final providerOfMarksHistoricalView =
-StateNotifierProvider<model.MarksHistoricalViewNotifier, model.MarksHistoricalView>(
-        (ref) => model.MarksHistoricalViewNotifier(ref));
+StateNotifierProvider<VariableMarksHistoricalViewNotifier, VariableMarksHistoricalView>(
+        (ref) => VariableMarksHistoricalViewNotifier(ref));
 
-class MarksHistoricalView extends ConsumerStatefulWidget {
-  const MarksHistoricalView({Key? key}) : super(key: key);
-
-  static bool isValid = true;
+class MarksHistoricalViewEditor extends ConsumerStatefulWidget {
+  const MarksHistoricalViewEditor({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MarksHistoricalView> createState() => _MarksHistoricalViewState();
+  ConsumerState<MarksHistoricalViewEditor> createState() => _MarksHistoricalViewState();
 }
 
-class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
+class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor> {
   final controllerCurveName = TextEditingController();
   final controllerForwardStrip = TextEditingController();
-  final controllerHistoricalTerm = TextEditingController();
   final controllerLabel = TextEditingController();
 
   final focusCurveName = FocusNode();
   final focusForwardStrip = FocusNode();
-  final focusHistoricalTerm = FocusNode();
   final focusLabel = FocusNode();
 
   int activeTab = 0;
 
-  String? _errorCurveName, _errorForwardStrip, _errorHistoricalTerm, _errorLabel;
+  String? _errorCurveName, _errorForwardStrip, _errorLabel;
 
   @override
   void initState() {
     super.initState();
     // get this as soon as possible
-    model.MarksHistoricalView.getAllCurveNames();
+    VariableMarksHistoricalView.getAllCurveNames();
     var state = ref.read(providerOfMarksHistoricalView);
     _setControllers(state);
 
@@ -59,13 +56,6 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
         });
       }
     });
-    focusHistoricalTerm.addListener(() {
-      if (!focusHistoricalTerm.hasFocus) {
-        setState(() {
-          validateHistoricalTerm(ref.read(providerOfMarksHistoricalView));
-        });
-      }
-    });
     focusLabel.addListener(() {
       if (!focusLabel.hasFocus) {
         setState(() {
@@ -79,21 +69,18 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
   void dispose() {
     controllerCurveName.dispose();
     controllerForwardStrip.dispose();
-    controllerHistoricalTerm.dispose();
     controllerLabel.dispose();
 
     focusCurveName.dispose();
     focusForwardStrip.dispose();
-    focusHistoricalTerm.dispose();
     focusLabel.dispose();
 
     super.dispose();
   }
 
-  void _setControllers(model.MarksHistoricalView state) {
+  void _setControllers(VariableMarksHistoricalView state) {
     controllerCurveName.text = state.curveName;
     controllerForwardStrip.text = state.forwardStrip.toString();
-    controllerHistoricalTerm.text = state.historicalTerm.toString();
     controllerLabel.text = state.label;
   }
 
@@ -204,7 +191,7 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
                           if (textEditingValue == TextEditingValue.empty) {
                             return const Iterable<String>.empty();
                           }
-                          var aux = (await model.MarksHistoricalView.getAllCurveNames()).where((e) => e
+                          var aux = (await VariableMarksHistoricalView.getAllCurveNames()).where((e) => e
                               .toUpperCase()
                               .contains(textEditingValue.text.toUpperCase())).toList();
                           return aux;
@@ -286,7 +273,7 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 8),
                     child: const Tooltip(
-                      message: 'The forward term of interest, a month, a month range, a year, etc.',
+                      message: 'The forward term of interest, Nov24, Jan25-Feb25, Q2,24, Cal 25, etc.',
                       child: Text(
                         'Forward strip',
                       ),
@@ -320,52 +307,6 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
               ),
               const SizedBox(
                 height: 8,
-              ),
-
-              ///
-              /// Historical term
-              ///
-              Row(
-                children: [
-                  Container(
-                    width: 140,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 8),
-                    child: const Tooltip(
-                      message: 'A date range for the historical period of interest',
-                      child: Text(
-                        'Historical period',
-                      ),
-                    ),
-                  ),
-                  Container(
-                    color: MyApp.background,
-                    width: 150,
-                    height: 32,
-                    child: TextField(
-                      controller: controllerHistoricalTerm,
-                      focusNode: focusHistoricalTerm,
-                      style: const TextStyle(fontSize: 13.0),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(8),
-                        enabledBorder: InputBorder.none,
-                      ),
-                      onEditingComplete: () {
-                        setState(() {
-                          validateHistoricalTerm(state);
-                        });
-                      },
-                    ),
-                  ),
-                  Text(
-                    _errorHistoricalTerm ?? '',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 24,
               ),
 
 
@@ -410,12 +351,51 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
               ),
             ],
           ),
+        if (activeTab == 1)
+          const Placeholder(
+            fallbackHeight: 150,
+            fallbackWidth: 900,
+          ),
+
+        Padding(
+          padding: const EdgeInsets.only(top: 36.0),
+          child: SizedBox(
+            width: 500,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('CANCEL'),
+                  onPressed: () {
+                    context.pop();
+                    setState(() {
+                      ref.read(providerOfMarksHistoricalView.notifier).reset();
+                    });
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('OK'),
+                  onPressed: () async {
+                    if (state.getErrors().isEmpty) {
+                      context.pop(state);
+                      setState(() {
+                        ref.read(providerOfPolygraph.notifier).refreshActiveWindow = true;
+                        ref.read(providerOfMarksHistoricalView.notifier).reset();
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
 
       ],
     );
   }
 
-  void validateCurveName(model.MarksHistoricalView state) {
+  void validateCurveName(VariableMarksHistoricalView state) {
     _errorCurveName = null;
     if (controllerCurveName.text != '') {
       ref
@@ -426,7 +406,7 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
     }
   }
 
-  void validateForwardStrip(model.MarksHistoricalView state) {
+  void validateForwardStrip(VariableMarksHistoricalView state) {
     _errorForwardStrip = null;
     try {
       var term = Term.parse(controllerForwardStrip.text, UTC);
@@ -435,9 +415,7 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
             ', for example: K27, Jul28, Nov26-Mar27, Cal28';
       }
       ref.read(providerOfMarksHistoricalView.notifier).forwardStrip = term;
-      MarksHistoricalView.isValid = true;
     } catch (e) {
-      MarksHistoricalView.isValid = false;
       if (e is ArgumentError) {
         _errorForwardStrip = 'Don\'t know how to parse ${controllerForwardStrip.text}'
             '\nValid examples are: K27, Nov26-Mar27, Cal28, Q2,28, etc.';
@@ -447,33 +425,15 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalView> {
     }
   }
 
-  void validateHistoricalTerm(model.MarksHistoricalView state) {
-    _errorHistoricalTerm = null;
-    try {
-      var term = Term.parse(controllerHistoricalTerm.text, UTC);
-      ref.read(providerOfMarksHistoricalView.notifier).historicalTerm = term;
-      MarksHistoricalView.isValid = true;
-    } catch (e) {
-      MarksHistoricalView.isValid = false;
-      if (e is ArgumentError) {
-        _errorHistoricalTerm = 'Don\'t know how to parse ${controllerHistoricalTerm.text}'
-            '\nEnter a date range: 15Jan21-31Jul21, or a relative date: -10d';
-      } else {
-        _errorHistoricalTerm = e.toString();
-      }
-    }
-  }
 
 
-  void validateLabel(model.MarksHistoricalView state) {
+  void validateLabel(VariableMarksHistoricalView state) {
     _errorLabel = null;
     if (controllerLabel.text != '') {
       ref
           .read(providerOfMarksHistoricalView.notifier)
           .label = controllerLabel.text;
-      MarksHistoricalView.isValid = true;
     } else {
-      MarksHistoricalView.isValid = false;
       _errorLabel = 'Label can\'t be empty';
     }
   }

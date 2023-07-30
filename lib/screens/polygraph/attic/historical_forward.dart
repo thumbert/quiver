@@ -14,7 +14,6 @@ class HistoricalOrForward extends StatefulWidget {
 }
 
 class _HistoricalOrForwardState extends State<HistoricalOrForward> {
-  final _background = Colors.orange[100]!;
 
   String selectedTab = 'Realized';
 
@@ -94,7 +93,7 @@ class _HistoricalOrForwardState extends State<HistoricalOrForward> {
             ),
           ],
         ),
-        if (selectedTab == 'Forward, as of') Column(children: [
+        if (selectedTab == 'Forward, as of') const Column(children: [
           Row(children: [
             Text('Forward Term', style: TextStyle(fontSize: 16),),
             TermUi(),

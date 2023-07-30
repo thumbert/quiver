@@ -38,6 +38,9 @@ Future<void> tests(String rootUrl) async {
       // var res = parser.parse('2 + 2 // so easy!').value.eval({});
       // expect(res, 4);
     });
+    test('try to eval for a value that isn\'t there', () {
+      expect(() => parser.parse('x + 2').value.eval({}), throwsA('Unknown variable x'));
+    });
   });
   group('Parse basic function arguments:', () {
     test('Bucket function argument', () {

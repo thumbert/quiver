@@ -1,9 +1,9 @@
 library screens.polygraph.other.add_variable_ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/polygraph/editors/marks_asof.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_transformed_variable.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_asof_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,22 +19,27 @@ class _AddVariableUiState extends ConsumerState<AddVariableUi> {
   Widget build(BuildContext context) {
     var selection = ref.watch(providerOfVariableSelection);
 
-    Widget widget = const Text('');
+    Widget editorWidget = const Text('');
     if (selection.isSelectionDone()) {
-      widget = switch (selection.selection) {
+      editorWidget = switch (selection.selection) {
         'Expression' => const TransformedVariableEditor(),
-        'Marks,Prices,Historical' => const MarksHistoricalView(),
-        _ => const Text(''),
+        'Marks,Prices,AsOf' => const MarksAsOfEditor(),
+        'Marks,Prices,Historical' => const MarksHistoricalViewEditor(),
+        _ => Text('Selection ${selection.selection} is not implemented.  Edit other/add_variable_ui!'),
       };
     }
 
     return Scaffold(
-      body: Center(
+      appBar: AppBar(
+        title: const Text('Add a variable'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 24.0, top: 12.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const VariableSelectionUi(),
-            widget,
+            editorWidget,
           ],
         ),
       ),

@@ -1,39 +1,43 @@
 import 'package:date/date.dart';
 import 'package:elec_server/client/dalmp.dart';
+import 'package:elec_server/client/marks/forward_marks2.dart';
 import 'package:elec_server/client/weather/noaa_daily_summary.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
 import 'package:flutter_quiver/models/polygraph/variables/temperature_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
+import 'package:flutter_quiver/models/polygraph/variables/variable_marks_historical_view.dart';
 import 'package:http/http.dart';
 import 'package:timeseries/timeseries.dart';
 
 class DataServiceLocal extends DataService {
   DataServiceLocal({String rootUrl = 'http://localhost:8080'}) {
-    var client = Client();
+    final client = Client();
     clientDaLmp = DaLmp(client, rootUrl: rootUrl);
     clientNoaa = NoaaDailySummary(client, rootUrl: rootUrl);
+    clientFwdMarks = ForwardMarks2(rootUrl: rootUrl, client: client);
   }
 
   static late final DaLmp clientDaLmp;
   static late final NoaaDailySummary clientNoaa;
+  static late final ForwardMarks2 clientFwdMarks;
 
   @override
   Future<TimeSeries<num>> getMarksAsOfDate(
-      VariableMarksAsOfDate variable, Term term) {
-    // TODO: implement getMarksAsOfDate
-    throw UnimplementedError();
+      VariableMarksAsOfDate variable, Term term) async {
+    // var data = await clientFwdMarks.getPriceCurveForAsOfDate(curveName: variable.curveName,
+    //     strip: variable.forwardStrip, startDate: term.startDate,
+    //     endDate: term.endDate, markType: MarkType.price,
+    //     location: term.location);
+    return TimeSeries<num>();
   }
 
   @override
   Future<TimeSeries<num>> getLmp(VariableLmp variable, Term term) async {
     var data = await clientDaLmp.getHourlyLmp(variable.iso, variable.ptid,
-        variable.lmpComponent,
-        term.startDate, term.endDate);
+        variable.lmpComponent, term.startDate, term.endDate);
     return data;
   }
-
-
 
   @override
   Future<TimeSeries<num>> getTemperature(
@@ -61,4 +65,18 @@ class DataServiceLocal extends DataService {
     throw UnimplementedError();
   }
 
+  @override
+  Future<TimeSeries<num>> getMarksHistoricalView(
+      VariableMarksHistoricalView variable, Term term) async {
+    var bucket = clientFwdMarks.getBucket(variable.curveName);
+    var data = await clientFwdMarks.getCurveStrip(
+        curveName: variable.curveName,
+        strip: variable.forwardStrip,
+        startDate: term.startDate,
+        endDate: term.endDate,
+        markType: MarkType.price,
+        location: term.location,
+        bucket: bucket);
+    return data;
+  }
 }

@@ -89,6 +89,7 @@ class PolygraphWindow {
       cache[xVariable.label] = ts;
     }
 
+    // print('in polygraph_window/updateCache(), refreshDataFromDb=$refreshDataFromDb');
     // get the data for all the variables that are not transformed variables
     if (refreshDataFromDb) {
       for (var variable in yVariables) {
@@ -143,7 +144,7 @@ class PolygraphWindow {
 
           /// show a stepwise function (default)
           var one = {
-            'x': ts.intervals.expand((e) => [e.start, e.end]).toList(),
+            'x': ts.intervals.expand((e) => [e.start.toIso8601String(), e.end.toIso8601String()]).toList(),
             'y': ts.values.expand((e) => [e, e]).toList(),
             'name': yVariables[i].label,
             'mode': 'lines',

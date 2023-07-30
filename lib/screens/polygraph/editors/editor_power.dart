@@ -7,8 +7,8 @@ import 'package:flutter_quiver/models/common/experimental/select_variable_model.
 import 'package:flutter_quiver/models/common/lmp_component_model.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/historical_forward.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/power_location.dart';
+import 'package:flutter_quiver/screens/polygraph/attic/historical_forward.dart';
+import 'package:flutter_quiver/screens/polygraph/attic/power_location.dart';
 import 'package:provider/provider.dart';
 
 class EditorPower extends StatefulWidget {

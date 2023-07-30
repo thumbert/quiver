@@ -162,7 +162,17 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     var windows = [...activeTab.windows];
     windows[activeTab.activeWindowIndex] = value;
     activeTab = activeTab.copyWith(windows: windows);
-    print('in polygraph_model, set activeWindow, ${value.cache.keys}');
+    // print('in polygraph_model, set activeWindow, ${value.cache.keys}');
     this.activeTab = activeTab;
   }
+
+  set refreshActiveWindow(bool value) {
+    var activeTab = state.tabs[state.activeTabIndex];
+    var windows = [...activeTab.windows];
+    windows[activeTab.activeWindowIndex].refreshDataFromDb = value;
+    activeTab = activeTab.copyWith(windows: windows);
+    // print('in polygraph_model, set activeWindow, ${value.cache.keys}');
+    this.activeTab = activeTab;
+  }
+
 }

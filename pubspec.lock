@@ -159,7 +159,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "39d921e4728bff27a7fc2d1c941a51c00be3e398"
+      resolved-ref: b44d343e50017c477fa9dfc0017e84ef07c0fe82
       url: "https://github.com/thumbert/date.git"
     source: git
     version: "3.0.6"
@@ -184,7 +184,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "961a9b8a74fd3bf32828df2d7da129b14a4bceed"
+      resolved-ref: f26938cd750215921109f48640948a21effec5cf
       url: "https://github.com/thumbert/elec.git"
     source: git
     version: "2.0.1"
@@ -193,7 +193,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "6e716999ce15288f564c610285d782113c05c1ff"
+      resolved-ref: b832d10a8c4237afb76de72095bfe30d9afca3fb
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"
@@ -339,10 +339,10 @@ packages:
     dependency: transitive
     description:
       name: grpc
-      sha256: "4e9bff1ebb4ff370cf471b1ab85007b408ade867dcc34b551eee7ee7da573002"
+      sha256: "220ffb2218288f4e7dea487242e08b9c6277596d9b6f3f10ba50be96771a032d"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.2"
+    version: "3.2.3"
   highlight:
     dependency: transitive
     description:
@@ -480,10 +480,10 @@ packages:
     dependency: transitive
     description:
       name: mongo_dart_query
-      sha256: ccb2875f84a33afe72025ba447956cf4dbad5c7776e5e7cb00f39a1b5234291b
+      sha256: "146150cec2b8baaa8ea7c59fa93b221b774529ec9aac87d49c74a08fae83451f"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0"
+    version: "4.0.1"
   more:
     dependency: "direct main"
     description:
@@ -552,10 +552,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "1995d88ec2948dac43edf8fe58eb434d35d22a2940ecee1a9fefcd62beee6eb3"
+      sha256: "916731ccbdce44d545414dd9961f26ba5fbaa74bcbb55237d8e65a623a8c7297"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.3"
+    version: "2.2.4"
   path_provider_linux:
     dependency: transitive
     description:
@@ -608,10 +608,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
+      sha256: "43798d895c929056255600343db8f049921cbec94d31ec87f1dc5c16c01935dd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   pointer_interceptor:
     dependency: "direct main"
     description:
@@ -911,18 +911,18 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
+      sha256: f2add6fa510d3ae152903412227bda57d0d5a8da61d2c39c1fb022c9429a41c0
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.5"
+    version: "5.0.6"
   xdg_directories:
     dependency: transitive
     description:
       name: xdg_directories
-      sha256: ee1505df1426458f7f60aac270645098d318a8b4766d85fde75f76f2e21807d1
+      sha256: e0b1147eec179d3911f1f19b59206448f78195ca1d20514134e10641b7d7fbff
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   xml:
     dependency: transitive
     description:

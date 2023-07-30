@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_transformed_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
+import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/monthly_asset_ncpc/monthly_asset_ncpc.dart';
@@ -24,7 +25,7 @@ void main() async {
   initializeTimeZones();
   // setPathUrlStrategy();  // doesn't allow me to navigate to the absolute url
   await dotenv.load(fileName: '.env');
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -55,10 +56,14 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const MonthlyLmp()),
     GoRoute(
       path: Polygraph.route,
-      builder: (context, state) => const ProviderScope(child: Polygraph()),
+      builder: (context, state) => const Polygraph(),
       routes: [
         GoRoute(path: 'add',
-          builder: (context, state) => const ProviderScope(child: AddVariableUi()))
+          builder: (context, state) {
+          return const AddVariableUi();}),
+        GoRoute(path: 'edit',
+          builder: (context, state) {
+          return EditVariableUi(variable: state.extra as PolygraphVariable);}),
       ],
     ),
     GoRoute(
