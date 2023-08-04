@@ -6,7 +6,10 @@
   the plot
 - Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
-- Implement VariableMarksHistoricalView.getAllCurveNames() to use a DataService
+- Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
+- When I change tabs (click on Tab3) and edit the Term box, I get the variables from Tab1!
+
+
 
 ## Release 2023-07-xx
 - 

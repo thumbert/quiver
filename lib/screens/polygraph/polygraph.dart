@@ -113,6 +113,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                             value = poly.getValidTabName(tabIndex: i, suggestedName: value);
                             tabs[i] = tabs[i].copyWith(name: value);
                             ref.read(providerOfPolygraph.notifier).tabs = tabs;
+                            /// FIXME: when I change
                           });
                         },
                       )
@@ -142,10 +143,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
     // print('in polygraph build: ${poly.tabs.map((e) => e.name)}');
     // print('active tab index: ${poly.activeTabIndex}');
     // var tabs = poly.tabs;
-    var tab = poly.tabs[poly.activeTabIndex];
-    if (kDebugMode) {
-      print('in polygraph build(), tab height = ${tab.layout.canvasSize.height}');
-    }
+    // var tab = poly.tabs[poly.activeTabIndex];
+    // if (kDebugMode) {
+    //   print('in polygraph build(), tab height = ${tab.layout.canvasSize.height}');
+    // }
     final container = ProviderScope.containerOf(context);
 
     return Scaffold(

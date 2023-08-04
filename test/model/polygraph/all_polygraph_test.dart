@@ -13,6 +13,9 @@ import 'parser/parser_test.dart' as parser;
 import 'polygraph_tab_test.dart' as tab;
 import 'polygraph_window_test.dart' as window;
 
+import 'editors/marks_asof_test.dart' as marks_asof;
+import 'editors/marks_historical_view_test.dart' as marks_historical_view;
+
 
 Future<void> main() async {
   initializeTimeZones();
@@ -26,4 +29,7 @@ Future<void> main() async {
 
   await tab.tests(rootUrl);
   await window.tests(rootUrl);
+
+  await marks_asof.tests();
+  await marks_historical_view.tests();
 }

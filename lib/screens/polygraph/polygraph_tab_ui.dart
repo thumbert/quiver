@@ -10,9 +10,11 @@ import 'package:flutter_quiver/models/polygraph/attic/ok_button.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/marks_asof_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/plotly_layout_ui.dart';
@@ -61,15 +63,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       if (!focusNodeTerm.hasFocus) {
         /// validate when you lose focus
         setState(() {
-          try {
-            window =
-                window.copyWith(term: Term.parse(controllerTerm.text, UTC));
-            ref.read(providerOfPolygraph.notifier).activeWindow = window;
-            _errorTerm = null; // all good
-          } catch (e) {
-            debugPrint(e.toString());
-            _errorTerm = 'Parsing error';
-          }
+          var window = ref.read(providerOfPolygraph).activeWindow;
+          validateTerm(window);
         });
       }
     });
@@ -246,6 +241,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     // print('active tab index: ${poly.activeTabIndex}');
 
     var tab = poly.tabs[poly.activeTabIndex];
+    // print('active window index: ${tab.activeWindowIndex}');
     // print('The active tab has ${tab.windows.length} windows');
     // print('poly.config.canvasSize = ${tab.layout.canvasSize}');
     var window = tab.windows[tab.activeWindowIndex];
@@ -288,33 +284,15 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   /// validate when Enter is pressed
                   onEditingComplete: () {
                     setState(() {
-                      try {
-                        var tzLocation = controllerTimezone.text == 'UTC'
-                            ? UTC
-                            : getLocation(controllerTimezone.text);
-                        var newTerm =
-                            Term.parse(controllerTerm.text, tzLocation);
-                        var refreshDataFromDb = true;
-                        if (window.term.interval
-                            .containsInterval(newTerm.interval)) {
-                          refreshDataFromDb = false;
-                        }
-                        window = window.copyWith(
-                            term: newTerm,
-                            refreshDataFromDb: refreshDataFromDb);
-                        ref.read(providerOfPolygraph.notifier).activeWindow =
-                            window;
-                        _errorTerm = null; // all good
-                      } catch (e) {
-                        debugPrint(e.toString());
-                        _errorTerm = 'Parsing error';
-                      }
+                      validateTerm(window);
                     });
                   },
                 )),
             const SizedBox(
               width: 32,
             ),
+
+            /// Timezone
             const Text('Timezone'),
             const SizedBox(
               width: 8,
@@ -693,6 +671,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                     // print(x);
                                     switch (x['type']) {
                                       case 'TransformedVariable' : ref.read(providerOfTransformedVariable.notifier).fromMongo(x);
+                                      case 'VariableMarksAsOfDate' : ref.read(providerOfMarksAsOf.notifier).fromMongo(x);
                                       case 'VariableMarksHistoricalView' : ref.read(providerOfMarksHistoricalView.notifier).fromMongo(x);
                                       case _ : print('Implement edit for ${x['type']} in polygraph_tab_ui, Edit button');
                                     }
@@ -884,33 +863,29 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     );
   }
 
-  // Future<Widget?> _variableSelection(BuildContext context) async {
-  //   final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ))
-  // }
+  void validateTerm(PolygraphWindow window) {
+    try {
+      var tzLocation = controllerTimezone.text == 'UTC'
+          ? UTC
+          : getLocation(controllerTimezone.text);
+      var newTerm =
+      Term.parse(controllerTerm.text, tzLocation);
+      var refreshDataFromDb = true;
+      if (window.term.interval
+          .containsInterval(newTerm.interval)) {
+        refreshDataFromDb = false;
+      }
+      window = window.copyWith(
+          term: newTerm,
+          refreshDataFromDb: refreshDataFromDb);
+      ref.read(providerOfPolygraph.notifier).activeWindow =
+          window;
+      _errorTerm = null; // all good
+    } catch (e) {
+      debugPrint(e.toString());
+      _errorTerm = 'Parsing error';
+    }
+  }
+
 }
 
-// return AlertDialog(
-//     elevation: 24.0,
-//     title: const Text('Select'),
-//     content: Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: const [
-//         Text('Boo'),
-//       ],
-//     ),
-//     actions: [
-//       TextButton(
-//           child: const Text('CANCEL'),
-//           onPressed: () {
-//             /// ignore changes the changes
-//             Navigator.of(context)
-//                 .pop();
-//           }),
-//       ElevatedButton(
-//           child: const Text('OK'),
-//           onPressed: () {
-//             /// harvest the values
-//             Navigator.of(context)
-//                 .pop();
-//           }),
-//     ]);

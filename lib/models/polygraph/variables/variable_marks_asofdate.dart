@@ -53,7 +53,7 @@ class VariableMarksAsOfDate extends PolygraphVariable {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'type': 'VariableMarskAsOfDate',
+      'type': 'VariableMarksAsOfDate',
       'asOfDate': asOfDate.toString(),
       'label': label,
       'curveName': curveName,
@@ -98,8 +98,7 @@ class VariableMarksAsOfDate extends PolygraphVariable {
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {
-    // TODO: implement get
-    throw UnimplementedError();
+    return service.getMarksAsOfDate(this, term);
   }
 }
 

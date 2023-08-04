@@ -23,7 +23,7 @@ class _AddVariableUiState extends ConsumerState<AddVariableUi> {
     if (selection.isSelectionDone()) {
       editorWidget = switch (selection.selection) {
         'Expression' => const TransformedVariableEditor(),
-        'Marks,Prices,AsOf' => const MarksAsOfEditor(),
+        'Marks,Prices,As of' => const MarksAsOfEditor(),
         'Marks,Prices,Historical' => const MarksHistoricalViewEditor(),
         _ => Text('Selection ${selection.selection} is not implemented.  Edit other/add_variable_ui!'),
       };

@@ -257,7 +257,8 @@ Future<void> tests(String rootUrl) async {
       var poly = PolygraphState(
           config: PolygraphConfig.getDefault(),
           tabs: [PolygraphTab.empty(name: 'Tab 1')],
-          activeTabIndex: 0);
+          activeTabIndex: 0,
+      );
       poly.tabs.first.windows.first = PolygraphWindow(
           term: Term.parse('Jan20-Dec21', location),
           xVariable: TimeVariable(),
@@ -304,7 +305,8 @@ Future<void> tests(String rootUrl) async {
                     layout: PlotlyLayout.getDefault(width: 900, height: 600),
                   ),
                 ],
-                activeWindowIndex: 0),
+              activeWindowIndex: 0,
+            ),
           ],
           activeTabIndex: 0);
       var window = poly.tabs.first.windows.first;

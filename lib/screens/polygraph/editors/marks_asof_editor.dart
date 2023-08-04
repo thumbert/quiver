@@ -1,14 +1,15 @@
 library screens.polygraph.editors.forward_asof;
 
+import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_historical_view.dart';
-import 'package:flutter_quiver/screens/common/region.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:timezone/timezone.dart';
 
 final providerOfMarksAsOf =
 StateNotifierProvider<VariableMarksAsOfDateNotifier, VariableMarksAsOfDate>(
@@ -24,16 +25,16 @@ class MarksAsOfEditor extends ConsumerStatefulWidget {
 
 class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
   final controllerCurveName = TextEditingController();
-  final controllerForwardStrip = TextEditingController();
+  final controllerAsOfDate = TextEditingController();
   final controllerLabel = TextEditingController();
 
   final focusCurveName = FocusNode();
-  final focusForwardStrip = FocusNode();
+  final focusAsOfDate = FocusNode();
   final focusLabel = FocusNode();
 
   int activeTab = 0;
 
-  String? _errorCurveName, _errorForwardStrip, _errorLabel;
+  String? _errorCurveName, _errorAsOfDate, _errorLabel;
 
   @override
   void initState() {
@@ -50,13 +51,13 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
         });
       }
     });
-    // focusForwardStrip.addListener(() {
-    //   if (!focusForwardStrip.hasFocus) {
-    //     setState(() {
-    //       validateForwardStrip(ref.read(providerOfMarksHistoricalView));
-    //     });
-    //   }
-    // });
+    focusAsOfDate.addListener(() {
+      if (!focusAsOfDate.hasFocus) {
+        setState(() {
+          validateAsOfDate();
+        });
+      }
+    });
     focusLabel.addListener(() {
       if (!focusLabel.hasFocus) {
         setState(() {
@@ -69,11 +70,11 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
   @override
   void dispose() {
     controllerCurveName.dispose();
-    controllerForwardStrip.dispose();
+    controllerAsOfDate.dispose();
     controllerLabel.dispose();
 
     focusCurveName.dispose();
-    focusForwardStrip.dispose();
+    focusAsOfDate.dispose();
     focusLabel.dispose();
 
     super.dispose();
@@ -81,7 +82,7 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
 
   void _setControllers(VariableMarksAsOfDate state) {
     controllerCurveName.text = state.curveName;
-    // controllerForwardStrip.text = state.forwardStrip.toString();
+    controllerAsOfDate.text = state.asOfDate.toString();
     controllerLabel.text = state.label;
   }
 
@@ -264,7 +265,7 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
               ),
 
               ///
-              /// Forward strip
+              /// As of date
               ///
               Row(
                 children: [
@@ -273,9 +274,9 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 8),
                     child: const Tooltip(
-                      message: 'The forward term of interest, Nov24, Jan25-Feb25, Q2,24, Cal 25, etc.',
+                      message: 'A date like 7Jul23, or a relative expression like -1b, -3d',
                       child: Text(
-                        'Forward strip',
+                        'As of date',
                       ),
                     ),
                   ),
@@ -284,8 +285,8 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                     width: 150,
                     height: 32,
                     child: TextField(
-                      controller: controllerForwardStrip,
-                      focusNode: focusForwardStrip,
+                      controller: controllerAsOfDate,
+                      focusNode: focusAsOfDate,
                       style: const TextStyle(fontSize: 13.0),
                       decoration: const InputDecoration(
                         isDense: true,
@@ -294,13 +295,13 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                       ),
                       onEditingComplete: () {
                         setState(() {
-                          // validateForwardStrip(state);
+                          validateAsOfDate();
                         });
                       },
                     ),
                   ),
                   Text(
-                    _errorForwardStrip ?? '',
+                    _errorAsOfDate ?? '',
                     style: const TextStyle(color: Colors.red),
                   ),
                 ],
@@ -406,24 +407,20 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
     }
   }
 
-  // void validateForwardStrip() {
-  //   _errorForwardStrip = null;
-  //   try {
-  //     var term = Term.parse(controllerForwardStrip.text, UTC);
-  //     if (!term.isOneMonth() && !term.isMonthRange()) {
-  //       throw 'Forward strip needs to be a month or a month range\n'
-  //           ', for example: K27, Jul28, Nov26-Mar27, Cal28';
-  //     }
-  //     ref.read(providerOfMarksHistoricalView.notifier).forwardStrip = term;
-  //   } catch (e) {
-  //     if (e is ArgumentError) {
-  //       _errorForwardStrip = 'Don\'t know how to parse ${controllerForwardStrip.text}'
-  //           '\nValid examples are: K27, Nov26-Mar27, Cal28, Q2,28, etc.';
-  //     } else {
-  //       _errorForwardStrip = e.toString();
-  //     }
-  //   }
-  // }
+  void validateAsOfDate() {
+    _errorAsOfDate = null;
+    try {
+      var date = Date.parse(controllerAsOfDate.text, location: UTC);
+      ref.read(providerOfMarksAsOf.notifier).asOfDate = date;
+    } catch (e) {
+      if (e is ArgumentError) {
+        _errorAsOfDate = 'Don\'t know how to parse ${controllerAsOfDate.text}'
+            '\nValid examples are: 7Jul23, -1b, -3d, etc.';
+      } else {
+        _errorAsOfDate = e.toString();
+      }
+    }
+  }
 
 
 

@@ -25,11 +25,9 @@ class DataServiceLocal extends DataService {
   @override
   Future<TimeSeries<num>> getMarksAsOfDate(
       VariableMarksAsOfDate variable, Term term) async {
-    // var data = await clientFwdMarks.getPriceCurveForAsOfDate(curveName: variable.curveName,
-    //     strip: variable.forwardStrip, startDate: term.startDate,
-    //     endDate: term.endDate, markType: MarkType.price,
-    //     location: term.location);
-    return TimeSeries<num>();
+    var data = await clientFwdMarks.getPriceCurveForAsOfDate(curveName: variable.curveName,
+        asOfDate: variable.asOfDate, location: term.location);
+    return data.window(term.interval).toTimeSeries();
   }
 
   @override

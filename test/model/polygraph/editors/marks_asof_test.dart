@@ -19,6 +19,7 @@ import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
 import 'package:flutter_quiver/models/polygraph/variables/slope_intercept_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
+import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,44 +28,50 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests() async {
-  group('MarksAsof test', () {
-    test('get curve names on 2023-07-23', () {
-      var ts = TimeSeries();
-      expect(ts.length, 0);
+  group('MarksAsOf test', () {
+    test('get forward curve as of 2023-07-27', () async {
+      var variable = VariableMarksAsOfDate(
+          asOfDate: Date.utc(2023, 7, 27), curveName: 'NG_HENRY_HUB_CME');
+      var term = Term.parse('Aug23-Dec27', UTC);
+      var data = await variable.get(PolygraphState.service, term);
+      expect(data.length, 53);
+      expect(data.observationAt(Month.utc(2024, 1)).value, 3.765);
     });
-    // test('Window with horizontal variable', () async {
-    //   var tabLayout = TabLayout.getDefault();
-    //   var poly = PolygraphState(
-    //       config: PolygraphConfig.getDefault(),
-    //       tabs: [
-    //         PolygraphTab(
-    //             name: 'Tab1',
-    //             layout: tabLayout,
-    //             windows: [
-    //               PolygraphWindow(
-    //                 term: Term.parse('Jan21-Dec21',
-    //                     Iso.newEngland.preferredTimeZoneLocation),
-    //                 xVariable: TimeVariable(),
-    //                 yVariables: [
-    //                   HorizontalLine(
-    //                       yIntercept: 1.0,
-    //                       timeFilter: TimeFilter.empty()
-    //                           .copyWith(bucket: Bucket.b5x16),
-    //                       timeAggregation: TimeAggregation(
-    //                           frequency: 'month', function: 'count')),
-    //                 ],
-    //                 layout: PlotlyLayout(width: tabLayout.canvasSize.width, height: tabLayout.canvasSize.height),
-    //               ),
-    //             ],
-    //             activeWindowIndex: 0),
-    //       ],
-    //       activeTabIndex: 0);
-    //   var window = poly.tabs.first.windows.first;
-    //   await window.updateCache();
-    //   var traces = window.makeTraces();
-    //   expect(traces.length, 1);
-    //   expect(traces.first['y'].length, 24);
-    // });
+
+    test('Window with VariableMarksAsOf', () async {
+      var tabLayout = TabLayout.getDefault();
+      var poly = PolygraphState(
+          config: PolygraphConfig.getDefault(),
+          tabs: [
+            PolygraphTab(
+                name: 'Tab1',
+                layout: tabLayout,
+                windows: [
+                  PolygraphWindow(
+                    term: Term.parse('Aug23-Dec27', IsoNewEngland.location),
+                    xVariable: TimeVariable(),
+                    yVariables: [
+                      VariableMarksAsOfDate(
+                        asOfDate: Date.utc(2023, 7, 27),
+                        curveName: 'NG_HENRY_HUB_CME',
+                        label: 'hh',
+                      )
+                    ],
+                    layout: PlotlyLayout(
+                        width: tabLayout.canvasSize.width,
+                        height: tabLayout.canvasSize.height),
+                  ),
+                ],
+                activeWindowIndex: 0),
+          ],
+          activeTabIndex: 0);
+      var window = poly.tabs.first.windows.first;
+      await window.updateCache();
+      var traces = window.makeTraces();
+      expect(traces.length, 1);
+      expect(traces.first['y'].length, 53 * 2);
+      expect(traces.first['y'].first, 2.492); // for Aug23
+    });
   });
 }
 

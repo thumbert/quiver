@@ -33,8 +33,10 @@ class PolygraphState {
 
   static DataService service = DataServiceLocal();
 
-  PolygraphWindow get activeWindow =>
-      tabs[activeTabIndex].windows[activeTabIndex];
+  PolygraphWindow get activeWindow {
+    var tab = tabs[activeTabIndex];
+    return tab.windows[tab.activeWindowIndex];
+  }
 
   /// Add tab at the end
   void addTab() {
@@ -162,7 +164,6 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     var windows = [...activeTab.windows];
     windows[activeTab.activeWindowIndex] = value;
     activeTab = activeTab.copyWith(windows: windows);
-    // print('in polygraph_model, set activeWindow, ${value.cache.keys}');
     this.activeTab = activeTab;
   }
 
@@ -171,7 +172,6 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     var windows = [...activeTab.windows];
     windows[activeTab.activeWindowIndex].refreshDataFromDb = value;
     activeTab = activeTab.copyWith(windows: windows);
-    // print('in polygraph_model, set activeWindow, ${value.cache.keys}');
     this.activeTab = activeTab;
   }
 
