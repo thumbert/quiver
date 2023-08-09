@@ -7,12 +7,15 @@
 - Not sure how to show the data because it can be of various frequency
 - Implement Load/Save functionality for the plot config
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
-- When I change tabs (click on Tab3) and edit the Term box, I get the variables from Tab1!
+- Make the Close icon X on the plot window appear only when the window is active
 
 
-
-## Release 2023-07-xx
-- 
+## Release 2023-08-09
+- Polygraph
+  - Work on serde for several variable types. 
+  - Fix bug when clicking on different tab and editing the term box, you were getting 
+    the variables form Tab1. 
+  - Can load basic project from json
 
 ## Release 2023-07-22
 - More polygraph changes

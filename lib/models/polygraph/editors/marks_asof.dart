@@ -51,7 +51,7 @@ class MarksAsof extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'type': 'MarskAsof',
       'asOfDate': asOfDate.toString(),
@@ -73,7 +73,7 @@ class MarksAsof extends PolygraphVariable {
           'label': String label,
           'displayConfig': Map<String, dynamic> displayConfig,
         }) {
-      var config = VariableDisplayConfig.fromMongo(displayConfig);
+      var config = VariableDisplayConfig.fromMap(displayConfig);
       return MarksAsof(
           asOfDate: Date.fromIsoString(asOfDate, location: UTC),
           curveName: curveName,

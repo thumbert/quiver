@@ -29,7 +29,7 @@ class SlopeInterceptVariable extends PolygraphVariable {
   // }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     var out = <String,dynamic>{
       'slope': slope,
       'intercept': intercept,

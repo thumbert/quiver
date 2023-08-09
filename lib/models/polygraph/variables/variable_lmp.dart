@@ -20,11 +20,7 @@ class VariableLmp extends PolygraphVariable {
 
   /// For example, Market.da
   final Market market;
-
-  /// One of 'min', 'max', 'mean'
   final int ptid;
-
-  /// One of 'day' or 'hour'
   final LmpComponent lmpComponent;
 
   VariableLmp copyWith({
@@ -36,7 +32,7 @@ class VariableLmp extends PolygraphVariable {
       VariableLmp(
           iso: iso ?? this.iso,
           market: market ?? this.market,
-          ptid:  ptid ?? this.ptid,
+          ptid: ptid ?? this.ptid,
           lmpComponent: lmpComponent ?? this.lmpComponent);
 
   @override
@@ -44,15 +40,33 @@ class VariableLmp extends PolygraphVariable {
     return service.getLmp(this, term);
   }
 
-  @override
-  VariableLmp fromMongo(Map<String,dynamic> x) {
-    // TODO: implement fromMongo
-    throw UnimplementedError();
+  static VariableLmp fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'type': 'VariableLmp',
+          'iso': String _iso,
+          'market': String _market,
+          'ptid': int ptid,
+          'lmpComponent': String _lmpComponent,
+        }) {
+      return VariableLmp(
+          iso: Iso.parse(_iso),
+          market: Market.parse(_market),
+          ptid: ptid,
+          lmpComponent: LmpComponent.parse(_lmpComponent));
+    } else {
+      throw ArgumentError('Input $x is not a correctly formatted VariableLmp');
+    }
   }
 
   @override
-  Map<String, dynamic> toMap() {
-    // TODO: implement toMongo
-    throw UnimplementedError();
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'VariableLmp',
+      'iso': iso.name,
+      'market': market.name,
+      'ptid': ptid,
+      'lmpComponent': lmpComponent.name,
+    };
   }
 }

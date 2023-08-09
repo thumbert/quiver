@@ -39,7 +39,6 @@ Future<void> tests() async {
     test('Window with horizontal variable', () async {
       var tabLayout = TabLayout.getDefault();
       var poly = PolygraphState(
-          config: PolygraphConfig.getDefault(),
           tabs: [
             PolygraphTab(
                 name: 'Tab1',

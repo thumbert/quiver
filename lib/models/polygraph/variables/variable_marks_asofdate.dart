@@ -51,34 +51,34 @@ class VariableMarksAsOfDate extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'type': 'VariableMarksAsOfDate',
       'asOfDate': asOfDate.toString(),
-      'label': label,
       'curveName': curveName,
-      'displayConfig':
-          displayConfig == null ? <String, dynamic>{} : displayConfig!.toJson(),
+      if (label != curveName) 'label': label,
+      if (displayConfig != null) 'displayConfig': displayConfig!.toJson(),
     };
   }
 
-  static VariableMarksAsOfDate fromMongo(Map<String, dynamic> x) {
-    if (x['type'] != 'MarksAsof') {
-      throw ArgumentError('Input doesn\'t have type MarksAsof');
-    }
+  static VariableMarksAsOfDate fromJson(Map<String, dynamic> x) {
     if (x
         case {
+          'type': 'VariableMarksAsOfDate',
           'asOfDate': String asOfDate,
           'curveName': String curveName,
-          'label': String label,
-          'displayConfig': Map<String, dynamic> displayConfig,
         }) {
-      var config = VariableDisplayConfig.fromMongo(displayConfig);
-      return VariableMarksAsOfDate(
+      var v = VariableMarksAsOfDate(
           asOfDate: Date.fromIsoString(asOfDate, location: UTC),
-          curveName: curveName,
-          label: label)
-        ..displayConfig = config;
+          curveName: curveName);
+      if (x['label'] != null) {
+        v.label = x['label'];
+      }
+      if (x['displayConfig'] != null) {
+        var config = VariableDisplayConfig.fromMap(x['displayConfig']);
+        v.displayConfig = config;
+      }
+      return v;
     } else {
       throw ArgumentError(
           'Input in not a correctly formatted TransformedVariable');
@@ -119,8 +119,8 @@ class VariableMarksAsOfDateNotifier extends StateNotifier<VariableMarksAsOfDate>
     state = state.copyWith(label: value);
   }
 
-  void fromMongo(Map<String, dynamic> x) {
-    state = VariableMarksAsOfDate.fromMongo(x);
+  void fromJson(Map<String, dynamic> x) {
+    state = VariableMarksAsOfDate.fromJson(x);
   }
 
   void reset() {

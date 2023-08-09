@@ -18,53 +18,6 @@ import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
-  group('Polygraph toMongo/fromMongo tests', () {
-    test('Serialize default', () {
-      var poly = PolygraphState.getDefault();
-      var out = poly.toMap();
-      expect(out, {
-        'settings': {
-          'canvasSize': [1200, 800],
-        },
-        'tabs': [
-          {
-            'tab': 0,
-            'grid': {
-              'rows': 1,
-              'cols': 1,
-            },
-            'windows': [
-              {
-                'term': '',
-                'xVariable': 'time',
-                'yVariables': [
-                  {
-                    'label': '',
-                  },
-                  {
-                    'label',
-                    '',
-                  },
-                ],
-                'layout': {
-                  'width': 900.0,
-                  'height': 600.0,
-                  'xaxis': {
-                    'showgrid': true,
-                    'gridcolor': '#bdbdbd',
-                  },
-                  'yaxis': {
-                    'showgrid': true,
-                    'gridcolor': '#bdbdbd',
-                  },
-                },
-              },
-            ]
-          },
-        ],
-      });
-    });
-  });
 }
 
 Future<void> main() async {

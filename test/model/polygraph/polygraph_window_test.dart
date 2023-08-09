@@ -46,7 +46,7 @@ Future<void> tests(String rootUrl) async {
       await window.updateCache();
     });
     test('toMap()', () {
-      var res = window.toMap();
+      var res = window.toJson();
       expect(
           res.keys.toSet(), {'term', 'tzLocation', 'xVariable', 'yVariables'});
     });

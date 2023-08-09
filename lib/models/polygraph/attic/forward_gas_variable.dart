@@ -31,7 +31,7 @@ class ForwardGasVariable extends PolygraphVariable {
   ];
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     throw UnimplementedError();
   }
 

@@ -11,6 +11,7 @@ import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
+import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
 import 'package:timeseries/timeseries.dart';
@@ -47,8 +48,31 @@ class PolygraphWindow {
   var cache = <String, dynamic>{};
 
   ///
-  static PolygraphWindow fromMongo(Map<String, dynamic> x) {
-    return PolygraphWindow.getDefault(size: const Size(900.0, 600.0));
+  static PolygraphWindow fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'term': String _term,
+          'tzLocation': String _tzLocation,
+          'xVariable': Map<String, dynamic> _xVariable,
+          'yVariables': List _yVariables,  // can be an empty list
+          'layout': Map<String, dynamic> _layout,
+        }) {
+      var location = _tzLocation == 'UTC' ? UTC : getLocation(_tzLocation);
+      var term = Term.parse(_term, location);
+      var xVariable = PolygraphVariable.fromJson(_xVariable);
+      var yVariables = <PolygraphVariable>[
+        for (Map<String, dynamic> e in _yVariables)
+          PolygraphVariable.fromJson(e)
+      ];
+      var layout = PlotlyLayout.fromJson(_layout);
+      return PolygraphWindow(
+          term: term,
+          xVariable: xVariable,
+          yVariables: yVariables,
+          layout: layout);
+    } else {
+      throw ArgumentError('Can\'t parse $x into a Polygraph window');
+    }
   }
 
   // final layout = <String, dynamic>{
@@ -139,12 +163,15 @@ class PolygraphWindow {
           ts = TimeSeries.fromIterable(ts.window(term.interval));
 
           var color =
-          (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
+              (yVariables[i].color ?? VariableDisplayConfig.defaultColors[i]);
           // print('i: $i, ts: ${ts.take(5)}');
 
           /// show a stepwise function (default)
           var one = {
-            'x': ts.intervals.expand((e) => [e.start.toIso8601String(), e.end.toIso8601String()]).toList(),
+            'x': ts.intervals
+                .expand(
+                    (e) => [e.start.toIso8601String(), e.end.toIso8601String()])
+                .toList(),
             'y': ts.values.expand((e) => [e, e]).toList(),
             'name': yVariables[i].label,
             'mode': 'lines',
@@ -195,15 +222,16 @@ class PolygraphWindow {
     ];
   }
 
-  /// What gets serialized to Mongo
-  Map<String, dynamic> toMap() {
+
+  Map<String, dynamic> toJson() {
     return {
       'term': term.toString(),
       'tzLocation': term.location.name,
-      'xVariable': xVariable.toMap(),
-      'yVariables': <Map<String,dynamic>>[
-        // for (var variable in yVariables) variable.toMap()
-      ]
+      'xVariable': xVariable.toJson(),
+      'yVariables': <Map<String, dynamic>>[
+        for (var variable in yVariables) variable.toJson()
+      ],
+      'layout': layout.toJson(),
     };
   }
 
@@ -213,11 +241,10 @@ class PolygraphWindow {
         Term(Month.containing(today.start).subtract(14).startDate, today);
     var xVariable = TimeVariable();
     return PolygraphWindow(
-      term: term,
-      xVariable: xVariable,
-      yVariables: <PolygraphVariable>[],
-      layout: PlotlyLayout(width: size.width , height: size.height)
-    );
+        term: term,
+        xVariable: xVariable,
+        yVariables: <PolygraphVariable>[],
+        layout: PlotlyLayout(width: size.width, height: size.height));
   }
 
   static PolygraphWindow getDefault({required Size size}) {
@@ -240,7 +267,7 @@ class PolygraphWindow {
             expression: 'toMonthly(bos_daily_temp, max)',
             label: 'bos_monthly_max'),
       ],
-        layout: PlotlyLayout(width: size.width, height: size.height),
+      layout: PlotlyLayout(width: size.width, height: size.height),
     );
     return window;
   }
@@ -259,7 +286,8 @@ class PolygraphWindow {
         TransformedVariable(
             expression: 'toMonthly(hub_da_lmp, mean)', label: 'monthly_mean'),
       ],
-      layout: PlotlyLayout(width: size.width , height: size.height)..legend = PlotlyLegend.getDefault(),
+      layout: PlotlyLayout(width: size.width, height: size.height)
+        ..legend = PlotlyLegend.getDefault(),
     );
     return window;
   }
@@ -272,12 +300,11 @@ class PolygraphWindow {
         TransformedVariable(
             expression: "hourly_schedule(50, bucket='Peak')", label: 'shape'),
       ],
-      layout: PlotlyLayout(width: size.width , height: size.height)..legend = PlotlyLegend.getDefault(),
+      layout: PlotlyLayout(width: size.width, height: size.height)
+        ..legend = PlotlyLegend.getDefault(),
     );
     return window;
   }
-
-
 
   PolygraphWindow copyWith({
     Term? term,
@@ -291,8 +318,7 @@ class PolygraphWindow {
       xVariable: xVariable ?? this.xVariable,
       yVariables: yVariables ?? this.yVariables,
       layout: layout ?? this.layout,
-    )
-      ..refreshDataFromDb = refreshDataFromDb ?? this.refreshDataFromDb;
+    )..refreshDataFromDb = refreshDataFromDb ?? this.refreshDataFromDb;
     if (!window.refreshDataFromDb) {
       /// If you don't need to get the data from Db, copy the existing cache
       window.cache = Map.from(cache);

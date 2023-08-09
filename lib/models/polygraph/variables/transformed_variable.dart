@@ -98,32 +98,31 @@ class TransformedVariable extends PolygraphVariable {
     throw 'A TransformedVariable doesn\'t have get, use eval!';
   }
 
-  static TransformedVariable fromMongo(Map<String, dynamic> x) {
-    if (x['type'] != 'TransformedVariable') {
-      throw ArgumentError('Input doesn\'t have type TransformedVariable');
-    }
+  static TransformedVariable fromJson(Map<String, dynamic> x) {
     if (x
         case {
+          'type': 'TransformedVariable',
           'expression': String expression,
           'label': String label,
-          'displayConfig': Map<String, dynamic> displayConfig,
         }) {
-      var config = VariableDisplayConfig.fromMongo(displayConfig);
-      return TransformedVariable(expression: expression, label: label)
-        ..displayConfig = config;
+      var v = TransformedVariable(expression: expression, label: label);
+      if (x['displayConfig'] != null) {
+        v.displayConfig = VariableDisplayConfig.fromMap(x['displayConfig']);
+      }
+      return v;
     } else {
       throw ArgumentError(
-          'Input in not a correctly formatted TransformedVariable');
+          'Input $x is not a correctly formatted TransformedVariable');
     }
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'type': 'TransformedVariable',
       'label': label,
       'expression': expression,
-      'displayConfig': displayConfig == null ? <String,dynamic>{} : displayConfig!.toJson(),
+      if (displayConfig != null) 'displayConfig': displayConfig!.toJson(),
     };
   }
 }
@@ -146,8 +145,8 @@ class TransformedVariableNotifier extends StateNotifier<TransformedVariable> {
     state = state.copyWith(error: value);
   }
 
-  void fromMongo(Map<String,dynamic> x) {
-    state = TransformedVariable.fromMongo(x);
+  void fromJson(Map<String, dynamic> x) {
+    state = TransformedVariable.fromJson(x);
   }
 
   void reset() {

@@ -21,7 +21,7 @@ class EditVariableUi extends ConsumerStatefulWidget {
 class _EditVariableUiState extends ConsumerState<EditVariableUi> {
   @override
   Widget build(BuildContext context) {
-    var xs = widget.variable.toMap();
+    var xs = widget.variable.toJson();
     // print(xs);
 
     var editorWidget = switch (xs['type']) {

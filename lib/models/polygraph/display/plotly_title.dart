@@ -19,7 +19,7 @@ class PlotlyTitle {
     return PlotlyTitle();
   }
 
-  static PlotlyTitle fromMap(Map<String, dynamic> x) {
+  static PlotlyTitle fromJson(Map<String, dynamic> x) {
     var title = PlotlyTitle();
     if (x.containsKey('text')) title.text = x['text'];
     if (x.containsKey('automargin')) title.autoMargin = x['automargin'];

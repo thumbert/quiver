@@ -7,19 +7,31 @@ import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 
-class PolygraphConfig {
-  PolygraphConfig();
-  static PolygraphConfig getDefault() => PolygraphConfig();
-}
+// class PolygraphConfig {
+//   /// What is this supposed to contain?
+//   PolygraphConfig();
+//   static PolygraphConfig getDefault() => PolygraphConfig();
+//
+//   Map<String,dynamic> toJson() {
+//     return <String,dynamic>{};
+//   }
+//
+//   /// Throws with string message if parsing fails.
+//   static PolygraphConfig fromMap(Map<String,dynamic> x) {
+//     /// TODO: Fix me
+//     return PolygraphConfig();
+//   }
+//
+// }
 
 class PolygraphState {
   PolygraphState({
-    required this.config,
+    // required this.config,
     required this.tabs,
     required this.activeTabIndex,
   });
 
-  final PolygraphConfig config;
+  // final PolygraphConfig config;
 
   /// Each sheet has at least one tab, can have multiple tabs.
   /// Each tab has at least one window, can have multiple windows.
@@ -49,24 +61,33 @@ class PolygraphState {
     tabs.removeAt(index);
   }
 
-  ///
-  PolygraphState fromMap(Map<String, dynamic> x) {
-    return PolygraphState.getDefault();
+  /// Throws [ArgumentError] if parsing fails.
+  static PolygraphState fromJson(Map<String, dynamic> x) {
+    if (x case {
+      'tabs': List<Map<String,dynamic>> _tabs,
+    }) {
+      var tabs = [for (var e in _tabs) PolygraphTab.fromJson(e)];
+      return PolygraphState(tabs: tabs, activeTabIndex: 0);
+    } else {
+      throw ArgumentError(
+          'Input $x is not a correctly formatted Polygraph project');
+    }
   }
 
   static final cache = <String, TimeSeries<num>>{};
 
-  /// What gets serialized to Mongo
-  Map<String, dynamic> toMap() {
+  /// What gets serialized to the database.
+  /// User name and project name gets added later.
+  ///
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'tabs': [for (var tab in tabs) tab.toMap()],
+      'tabs': [for (var tab in tabs) tab.toJson()],
     };
   }
 
   /// An empty state containing one tab with an empty window.
   static PolygraphState empty() {
     return PolygraphState(
-      config: PolygraphConfig.getDefault(),
       tabs: [PolygraphTab.empty(name: 'Tab 1')],
       activeTabIndex: 0,
     );
@@ -74,7 +95,6 @@ class PolygraphState {
 
   static PolygraphState getDefault() {
     return PolygraphState(
-      config: PolygraphConfig.getDefault(),
       tabs: [
         PolygraphTab.getDefault(),
         PolygraphTab.tab2(name: 'Tab 2'),
@@ -125,12 +145,10 @@ class PolygraphState {
 
   PolygraphState copyWith({
     List<PolygraphTab>? tabs,
-    PolygraphConfig? config,
     int? activeTabIndex,
   }) {
     return PolygraphState(
       tabs: tabs ?? this.tabs,
-      config: config ?? this.config,
       activeTabIndex: activeTabIndex ?? this.activeTabIndex,
     );
   }
@@ -144,11 +162,7 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
   set tabs(List<PolygraphTab> values) {
     state = state.copyWith(tabs: values);
   }
-
-  set config(PolygraphConfig value) {
-    state = state.copyWith(config: value);
-  }
-
+  
   set activeTabIndex(int value) {
     state = state.copyWith(activeTabIndex: value);
   }

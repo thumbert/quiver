@@ -67,7 +67,7 @@ class HorizontalLine extends PolygraphVariable {
     print('in horizontal_line validate(), error=$error');
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     // TODO: implement toJson
     throw UnimplementedError();
   }

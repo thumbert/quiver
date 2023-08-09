@@ -21,17 +21,25 @@ class TimeVariable extends PolygraphVariable {
   ];
 
   @override
-  Map<String, dynamic> toMap() => {
-        'category': 'Time',
+  Map<String, dynamic> toJson() => {
+        'type': 'TimeVariable',
         'config': {
           'skipWeekends': skipWeekends,
         }
       };
 
-  @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
-    // TODO: implement fromMongo
-    throw UnimplementedError();
+  static TimeVariable fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'type': 'TimeVariable',
+          'config': {
+            'skipWeekends': bool skipWeekends,
+          },
+        }) {
+      return TimeVariable(skipWeekends: skipWeekends);
+    } else {
+      throw ArgumentError('Input $x is not a correctly formatted TimeVariable');
+    }
   }
 
   @override

@@ -75,7 +75,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       plotly.add(Plotly(
         viewId: 'polygraph-div-${tab.name}-w$j-$aux',
         data: const [],
-        layout: window.layout.toMap(),
+        layout: window.layout.toJson(),
       ));
     }
   }
@@ -106,7 +106,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
         plotly.add(Plotly(
           viewId: 'polygraph-div-${tab.name}-w${tab.windows.length - 1}-$aux',
           data: const [],
-          layout: window.layout.toMap(),
+          layout: window.layout.toJson(),
         ));
       } else if (tab.tabAction.keys.first == 'windowRemoved') {
         /// TODO: implement removal!
@@ -201,7 +201,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                       // }
                       // print('window.layout = ${window.layout.toMap()}');
 
-                      plotly[ij].plot.react(traces, window.layout.toMap(),
+                      plotly[ij].plot.react(traces, window.layout.toJson(),
                           displaylogo: false);
                       return plotly[ij];
                     }),
@@ -667,12 +667,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 IconButton(
                                   tooltip: 'Edit',
                                   onPressed: () async {
-                                    var x = window.yVariables[i].toMap();
+                                    var x = window.yVariables[i].toJson();
                                     // print(x);
                                     switch (x['type']) {
-                                      case 'TransformedVariable' : ref.read(providerOfTransformedVariable.notifier).fromMongo(x);
-                                      case 'VariableMarksAsOfDate' : ref.read(providerOfMarksAsOf.notifier).fromMongo(x);
-                                      case 'VariableMarksHistoricalView' : ref.read(providerOfMarksHistoricalView.notifier).fromMongo(x);
+                                      case 'TransformedVariable' : ref.read(providerOfTransformedVariable.notifier).fromJson(x);
+                                      case 'VariableMarksAsOfDate' : ref.read(providerOfMarksAsOf.notifier).fromJson(x);
+                                      case 'VariableMarksHistoricalView' : ref.read(providerOfMarksHistoricalView.notifier).fromJson(x);
                                       case _ : print('Implement edit for ${x['type']} in polygraph_tab_ui, Edit button');
                                     }
 

@@ -54,14 +54,12 @@ class TemperatureVariable extends PolygraphVariable {
     return service.getTemperature(this, term);
   }
 
-  @override
-  TemperatureVariable fromMongo(Map<String,dynamic> x) {
-    // TODO: implement fromMongo
+  static TemperatureVariable fromJson(Map<String,dynamic> x) {
     throw UnimplementedError();
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'variableType': 'TemperatureVariable',
       'airportCode': airportCode,

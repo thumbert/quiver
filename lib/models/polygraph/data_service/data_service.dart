@@ -10,10 +10,14 @@ import '../variables/variable_lmp.dart';
 
 
 abstract class DataService {
+
   Future<TimeSeries<num>> getLmp(VariableLmp variable, Term term);
   Future<TimeSeries<num>> getMarksAsOfDate(VariableMarksAsOfDate variable, Term term);
   Future<TimeSeries<num>> getMarksHistoricalView(VariableMarksHistoricalView variable, Term term);
   Future<TimeSeries<num>> getTemperature(TemperatureVariable variable, Term term);
+
+  Future<Map<String,dynamic>> loadProject(String userName, String projectName);
+  Future<Map<String,dynamic>> saveProject(String userName, String projectName);
 }
 
 

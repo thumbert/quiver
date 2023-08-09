@@ -255,7 +255,6 @@ Future<void> tests(String rootUrl) async {
     test('Add window to tab with temperature data', () {
       var location = getLocation('America/New_York');
       var poly = PolygraphState(
-          config: PolygraphConfig.getDefault(),
           tabs: [PolygraphTab.empty(name: 'Tab 1')],
           activeTabIndex: 0,
       );
@@ -281,7 +280,6 @@ Future<void> tests(String rootUrl) async {
 
     test('Hide/Unhide variable', () async {
       var poly = PolygraphState(
-          config: PolygraphConfig.getDefault(),
           tabs: [
             PolygraphTab(
                 name: 'Tab1',

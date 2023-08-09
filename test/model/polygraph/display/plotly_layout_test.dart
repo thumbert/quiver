@@ -9,25 +9,22 @@ import 'package:timezone/data/latest.dart';
 
 Future<void> tests(String rootUrl) async {
   group('Plotly x axis tests', () {
-    test('Default axis', (){
+    test('Default axis', () {
       var axis = PlotlyXAxis();
-      expect(axis.toMap(), {});
+      expect(axis.toJson(), {});
     });
-    test('with show grid', (){
+    test('with show grid', () {
       var axis = PlotlyXAxis()..showGrid = false;
-      expect(axis.toMap(), {'showgrid': false});
+      expect(axis.toJson(), {'showgrid': false});
     });
-
   });
-
 
   group('Plotly layout tests', () {
     test('Simplest layout', () async {
       var layout = PlotlyLayout(width: 900, height: 600);
-      expect(layout.toMap(), {
+      expect(layout.toJson(), {
         'width': 900,
         'height': 600,
-        'displaylogo': false,
       });
     });
     test('Default layout', () async {
@@ -39,14 +36,23 @@ Future<void> tests(String rootUrl) async {
           ..showGrid = true
           ..gridColor = '#f5f5f5')
         ..legend = (PlotlyLegend()..orientation = LegendOrientation.horizontal);
-      expect(layout.toMap(), {
+      expect(layout.toJson(), {
         'width': 900,
         'height': 600,
         'legend': {'orientation': 'h'},
         'xaxis': {'gridcolor': '#f5f5f5'},
         'yaxis': {'gridcolor': '#f5f5f5'},
-        'displaylogo': false,
       });
+    });
+
+    test('with legend', () {
+      var x = {
+        'width': 900.0,
+        'height': 600.0,
+        'legend': {'orientation': 'h'}
+      };
+      var layout = PlotlyLayout.fromJson(x);
+      expect(layout.legend?.orientation.toString(), 'h');
     });
   });
 }

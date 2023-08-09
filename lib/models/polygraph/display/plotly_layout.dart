@@ -29,30 +29,31 @@ class PlotlyLayout {
       PlotlyLayout(width: width, height: height);
 
   /// Construct a layout object from storage
-  static PlotlyLayout fromMap(Map<String, dynamic> x) {
+  static PlotlyLayout fromJson(Map<String, dynamic> x) {
     var layout = PlotlyLayout(width: x['width'], height: x['height']);
     if (x.containsKey('hovermode')) {
       layout.hoverMode = HoverMode.parse(x['hovermode']);
     }
+    if (x.containsKey('legend')) layout.legend = PlotlyLegend.fromJson(x['legend']);
     if (x.containsKey('showlegend')) layout.showLegend = x['showlegend'];
-    if (x.containsKey('title')) layout.title = PlotlyTitle.fromMap(x['title']);
-    if (x.containsKey('xaxis')) layout.xAxis = PlotlyXAxis.fromMap(x['xaxis']);
-    if (x.containsKey('yaxis')) layout.yAxis = PlotlyYAxis.fromMap(x['yaxis']);
+    if (x.containsKey('title')) layout.title = PlotlyTitle.fromJson(x['title']);
+    if (x.containsKey('xaxis')) layout.xAxis = PlotlyXAxis.fromJson(x['xaxis']);
+    if (x.containsKey('yaxis')) layout.yAxis = PlotlyYAxis.fromJson(x['yaxis']);
     if (x.containsKey('displaylogo')) layout.displayLogo = x['displaylogo'];
     return layout;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'width': width,
       'height': height,
       if (hoverMode != null) 'hovermode': hoverMode.toString(),
       if (!showLegend) 'showlegend': showLegend,
-      if (legend != null) 'legend': legend!.toMap(),
+      if (legend != null) 'legend': legend!.toJson(),
       if (title != null) 'title': title!.toMap(),
-      if (xAxis != null) 'xaxis': xAxis!.toMap(),
+      if (xAxis != null) 'xaxis': xAxis!.toJson(),
       if (yAxis != null) 'yaxis': yAxis!.toMap(),
-      'displaylogo': displayLogo,
+      if (displayLogo != false) 'displaylogo': displayLogo,
     };
   }
 
@@ -373,7 +374,15 @@ enum LegendOrientation {
   const LegendOrientation(this._orientation);
 
   final String _orientation;
-
+  
+  static LegendOrientation parse(String value) {
+    return switch (value) {
+      'h' => LegendOrientation.horizontal,
+      'v' => LegendOrientation.vertical,
+      _ => throw ArgumentError('Incorrect value $value for legend orientation'),
+    };
+  }
+  
   @override
   String toString() => _orientation;
 }
@@ -468,7 +477,15 @@ class PlotlyLegend {
     return PlotlyLegend();
   }
 
-  Map<String, dynamic> toMap() {
+  static PlotlyLegend fromJson(Map<String,dynamic> x) {
+    var legend = PlotlyLegend();
+    if (x.containsKey('orientation')) {
+      legend.orientation = LegendOrientation.parse(x['orientation']);
+    }
+    return legend;
+  }
+
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (orientation != LegendOrientation.vertical)
         'orientation': orientation.toString(),
@@ -541,7 +558,7 @@ class PlotlyXAxis {
   String zeroLineColor = '#444';
   int zeroLineWidth = 1;
 
-  static PlotlyXAxis fromMap(Map<String, dynamic> x) {
+  static PlotlyXAxis fromJson(Map<String, dynamic> x) {
     var axis = PlotlyXAxis();
     if (x.containsKey('anchor')) axis.anchor = AnchorXAxis.parse(x['anchor']);
     if (x.containsKey('color')) axis.color = x['color'];
@@ -566,7 +583,7 @@ class PlotlyXAxis {
     return axis;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (anchor != null) 'anchor': anchor.toString(),
       if (color != null) 'color': color,
@@ -618,7 +635,7 @@ class PlotlyYAxis {
   String zeroLineColor = '#444';
   int zeroLineWidth = 1;
 
-  static PlotlyYAxis fromMap(Map<String, dynamic> x) {
+  static PlotlyYAxis fromJson(Map<String, dynamic> x) {
     var axis = PlotlyYAxis();
     if (x.containsKey('anchor')) axis.anchor = AnchorYAxis.parse(x['anchor']);
     if (x.containsKey('color')) axis.color = x['color'];

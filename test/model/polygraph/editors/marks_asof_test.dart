@@ -41,7 +41,6 @@ Future<void> tests() async {
     test('Window with VariableMarksAsOf', () async {
       var tabLayout = TabLayout.getDefault();
       var poly = PolygraphState(
-          config: PolygraphConfig.getDefault(),
           tabs: [
             PolygraphTab(
                 name: 'Tab1',

@@ -84,7 +84,7 @@ class ShoojuExpression extends PolygraphVariable {
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     // TODO: implement toJson
     throw UnimplementedError();
   }

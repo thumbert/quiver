@@ -4,9 +4,9 @@
 
 Occasionally it is useful to directly create timeseries. 
 
-Use **`hourly_schedule`** to create an hourly timeseries
+Use **`hourlySchedule`** to create an hourly timeseries
 
-> `hourly_schedule(fill, {bucket, months})`
+> `hourlySchedule(fill, {bucket, months})`
 > 
 > Create an hourly timeseries for the time window specified in the 
 > associated Polygraph tab.  All values of the created timeseries 
@@ -24,17 +24,21 @@ Use **`hourly_schedule`** to create an hourly timeseries
 > 
 > Examples
 >
->   `hourly_schedule(10)`
+>   `hourlySchedule(10)`
 > 
->   `hourly_schedule(50, bucket='Peak')`
+>   `hourlySchedule(50, bucket='Peak')`
 >
->   `hourly_schedule(50, bucket='Peak', months=[1,2])`
+>   `hourlySchedule(50, bucket='Peak', months=[1,2])`
 
 **daily_schedule** Create a daily timeseries
 
 ```
-daily_schedule(10, tz='UTC')
+dailySchedule(10)
 ```
+
+#### Diff
+
+Calculate 
 
 #### Lag
 

@@ -77,4 +77,16 @@ class DataServiceLocal extends DataService {
         bucket: bucket);
     return data;
   }
+
+  @override
+  Future<Map<String, dynamic>> loadProject(String userName, String projectName) {
+    // TODO: implement loadProject
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Map<String, dynamic>> saveProject(String userName, String projectName) {
+    // TODO: implement saveProject
+    throw UnimplementedError();
+  }
 }

@@ -30,7 +30,7 @@ class RealizedElectricityVariable extends PolygraphVariable {
   TimeAggregation? timeAggregation;
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     var out = <String,dynamic>{
       'region': region,
       'deliveryPoint': deliveryPoint,

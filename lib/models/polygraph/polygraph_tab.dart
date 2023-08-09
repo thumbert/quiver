@@ -14,6 +14,33 @@ class TabLayout {
   static TabLayout getDefault() =>
       TabLayout(rows: 1, cols: 1, canvasSize: const Size(900.0, 600.0));
 
+  static TabLayout fromMap(Map<String, dynamic> x) {
+    if (x
+        case {
+          'rows': int rows,
+          'cols': int cols,
+          'canvasSize': {'width': num width, 'height': num height}
+        }) {
+      return TabLayout(
+          rows: rows,
+          cols: cols,
+          canvasSize: Size(width.toDouble(), height.toDouble()));
+    } else {
+      throw StateError('Can\'t parse input $x into a TabLayout');
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'rows': rows,
+      'cols': cols,
+      'canvasSize': {
+        'width': canvasSize.width,
+        'height': canvasSize.height,
+      }
+    };
+  }
+
   /// Allow up to 8 max windows per tab, split in 2 columns if the number of
   /// windows is even, except for the case of 2 windows.
   TabLayout addWindow() {
@@ -73,7 +100,7 @@ class PolygraphTab {
 
   /// Use this variable to communicate if a window was added or removed,
   /// so I can modify the list of plotly in the UI.
-  var tabAction = <String,dynamic>{};
+  var tabAction = <String, dynamic>{};
 
   static PolygraphTab empty({required String name}) {
     var layout = TabLayout.getDefault();
@@ -126,8 +153,8 @@ class PolygraphTab {
       layout: newLayout,
       windows: newWindows,
     )..tabAction = {
-      'windowAdded': true,
-    };
+        'windowAdded': true,
+      };
 
     return tab;
   }
@@ -155,8 +182,8 @@ class PolygraphTab {
       windows: newWindows,
       activeWindowIndex: 0,
     )..tabAction = {
-      'windowRemoved': {'index': i},
-    };
+        'windowRemoved': {'index': i},
+      };
     return tab;
   }
 
@@ -175,49 +202,39 @@ class PolygraphTab {
       activeWindowIndex: activeWindowIndex ?? this.activeWindowIndex,
     );
     if (resetTabAction) {
-      tab.tabAction = <String,dynamic>{};
+      tab.tabAction = <String, dynamic>{};
     }
     return tab;
   }
 
-  PolygraphTab fromMap(Map<String, dynamic> x) {
-    /// TODO: implement serialization
-    return PolygraphTab.getDefault();
+  static PolygraphTab fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'name': String name,
+          'tabLayout': Map<String, dynamic> _layout,
+          'windows': List<Map<String, dynamic>> _windows,
+        }) {
+      var tabLayout = TabLayout.fromMap(_layout);
+      var windows = [for (var e in _windows) PolygraphWindow.fromJson(e)];
+
+      return PolygraphTab(
+          name: name,
+          layout: tabLayout,
+          windows: windows,
+          activeWindowIndex: 0);
+    } else {
+      throw StateError('Can\'t parse input $x into a PolygraphTab');
+    }
   }
 
-  /// What gets serialized to Mongo
-  Map<String, dynamic> toMap() {
+  /// What gets serialized to the database
+  Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'grid': {
-        'rows': layout.rows,
-        'cols': layout.cols,
-      },
-      'windows': [for (var window in windows) window.toMap()],
+      'tabLayout': layout.toJson(),
+      'windows': [for (var window in windows) window.toJson()],
     };
   }
 }
 
 /// I don't need a notifier for the tab.  Everything goes through poly.
-
-// class PolygraphTabNotifier extends StateNotifier<PolygraphTab> {
-//   PolygraphTabNotifier(this.ref) : super(PolygraphTab.getDefault());
-//
-//   final Ref ref;
-//
-//   set name(String value) {
-//     state = state.copyWith(name: value);
-//   }
-//
-//   set layout(TabLayout value) {
-//     state = state.copyWith(layout: value);
-//   }
-//
-//   set windows(List<PolygraphWindow> values) {
-//     state = state.copyWith(windows: values);
-//   }
-//
-//   set activeWindowIndex(int value) {
-//     state = state.copyWith(activeWindowIndex: value);
-//   }
-// }

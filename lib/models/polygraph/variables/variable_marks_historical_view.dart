@@ -63,48 +63,51 @@ class VariableMarksHistoricalView extends PolygraphVariable {
     );
   }
 
+  static VariableMarksHistoricalView fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'type': 'VariableMarksHistoricalView',
+          'curveName': String curveName,
+          'forwardStrip': String _forwardStrip,
+        }) {
+      var forwardStrip = Term.parse(_forwardStrip, UTC);
+      var v = VariableMarksHistoricalView(
+          curveName: curveName, forwardStrip: forwardStrip);
+      if (x['label'] != null) {
+        v.label = x['label'];
+      }
+      if (x['displayConfig'] != null) {
+        var displayConfig = VariableDisplayConfig.fromMap(x['displayConfig']);
+        v.displayConfig = displayConfig;
+      }
+      return  v;
+    } else {
+      throw ArgumentError(
+          'Input $x is not a correctly formatted VariableMarksHistoricalVariable');
+    }
+  }
+
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'type': 'VariableMarksHistoricalView',
-      'label': label,
       'curveName': curveName,
       'forwardStrip': forwardStrip.toString(),
-      'displayConfig':
-          displayConfig == null ? <String, dynamic>{} : displayConfig!.toJson(),
+      if (label != curveName) 'label': label,
+      if (displayConfig != null) 'displayConfig': displayConfig!.toJson(),
     };
   }
 
   VariableMarksHistoricalView copyWith(
-          {String? curveName, String? label, Term? forwardStrip, String? error}) =>
+          {String? curveName,
+          String? label,
+          Term? forwardStrip,
+          String? error}) =>
       VariableMarksHistoricalView(
         curveName: curveName ?? this.curveName,
         label: label ?? this.label,
         forwardStrip: forwardStrip ?? this.forwardStrip,
       )..error = error ?? this.error;
-
-  static VariableMarksHistoricalView fromMongo(Map<String, dynamic> x) {
-    if (x['type'] != 'VariableMarksHistoricalView') {
-      throw ArgumentError('Input doesn\'t have type TransformedVariable');
-    }
-    if (x
-        case {
-          'curveName': String curveName,
-          'label': String label,
-          'forwardStrip': String forwardStrip,
-          'displayConfig': Map<String, dynamic> displayConfig,
-        }) {
-      var config = VariableDisplayConfig.fromMongo(displayConfig);
-      return VariableMarksHistoricalView(
-        curveName: curveName,
-        label: label,
-        forwardStrip: Term.parse(forwardStrip, UTC),
-      )..displayConfig = config;
-    } else {
-      throw ArgumentError(
-          'Input is not a correctly formatted VariableMarksHistoricalView');
-    }
-  }
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {
@@ -135,14 +138,11 @@ class VariableMarksHistoricalViewNotifier
     state = state.copyWith(error: value);
   }
 
-  void fromMongo(Map<String,dynamic> x) {
-    state = VariableMarksHistoricalView.fromMongo(x);
+  void fromJson(Map<String, dynamic> x) {
+    state = VariableMarksHistoricalView.fromJson(x);
   }
 
   void reset() {
     state = VariableMarksHistoricalView.getDefault();
   }
-
-
 }
-
