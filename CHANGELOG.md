@@ -9,6 +9,8 @@
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Make the Close icon X on the plot window appear only when the window is active
 
+## Release 2023-08-xx
+
 
 ## Release 2023-08-09
 - Polygraph

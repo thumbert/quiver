@@ -7,31 +7,12 @@ import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
 
-// class PolygraphConfig {
-//   /// What is this supposed to contain?
-//   PolygraphConfig();
-//   static PolygraphConfig getDefault() => PolygraphConfig();
-//
-//   Map<String,dynamic> toJson() {
-//     return <String,dynamic>{};
-//   }
-//
-//   /// Throws with string message if parsing fails.
-//   static PolygraphConfig fromMap(Map<String,dynamic> x) {
-//     /// TODO: Fix me
-//     return PolygraphConfig();
-//   }
-//
-// }
-
 class PolygraphState {
   PolygraphState({
     // required this.config,
     required this.tabs,
     required this.activeTabIndex,
   });
-
-  // final PolygraphConfig config;
 
   /// Each sheet has at least one tab, can have multiple tabs.
   /// Each tab has at least one window, can have multiple windows.
@@ -42,6 +23,10 @@ class PolygraphState {
   /// on the screen.  Variables and the chart associated with this tab get
   /// displayed.
   final int activeTabIndex;
+
+  String? userId;
+  String? projectName;
+  String? fileName;
 
   static DataService service = DataServiceLocal();
 
@@ -67,7 +52,10 @@ class PolygraphState {
       'tabs': List<Map<String,dynamic>> _tabs,
     }) {
       var tabs = [for (var e in _tabs) PolygraphTab.fromJson(e)];
-      return PolygraphState(tabs: tabs, activeTabIndex: 0);
+      var poly = PolygraphState(tabs: tabs, activeTabIndex: 0)
+        ..userId = x['userId']
+        ..projectName = x['projectName'];
+      return poly;
     } else {
       throw ArgumentError(
           'Input $x is not a correctly formatted Polygraph project');
@@ -81,6 +69,8 @@ class PolygraphState {
   ///
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      if (userId != null) 'userId': userId,
+      if (projectName != null) 'projectName': projectName,
       'tabs': [for (var tab in tabs) tab.toJson()],
     };
   }

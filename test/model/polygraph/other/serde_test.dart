@@ -1,5 +1,6 @@
 library test.models.polygraph.other.serde_test;
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -125,7 +126,7 @@ Future<void> tests(String rootUrl) async {
       expect(window2.yVariables.isEmpty, true);
     });
 
-    test('General window', () {
+    test('Window with several variables', () {
       var term = Term.parse('Cal22', UTC);
       var xVariable = TimeVariable();
       var yVariables = <PolygraphVariable>[
@@ -319,54 +320,34 @@ Future<void> tests(String rootUrl) async {
       expect(poly.toJson(), out);
     });
   });
+}
 
-  // group('Serde tests for Polygraph Project', () {
-  //   test('Serialize default', () {
-  //     var poly = PolygraphState.getDefault();
-  //     var out = poly.toMap();
-  //     expect(out, {
-  //       'settings': {
-  //         'canvasSize': [1200, 800],
-  //       },
-  //       'tabs': [
-  //         {
-  //           'tab': 0,
-  //           'grid': {
-  //             'rows': 1,
-  //             'cols': 1,
-  //           },
-  //           'windows': [
-  //             {
-  //               'term': '',
-  //               'xVariable': 'time',
-  //               'yVariables': [
-  //                 {
-  //                   'label': '',
-  //                 },
-  //                 {
-  //                   'label',
-  //                   '',
-  //                 },
-  //               ],
-  //               'layout': {
-  //                 'width': 900.0,
-  //                 'height': 600.0,
-  //                 'xaxis': {
-  //                   'showgrid': true,
-  //                   'gridcolor': '#bdbdbd',
-  //                 },
-  //                 'yaxis': {
-  //                   'showgrid': true,
-  //                   'gridcolor': '#bdbdbd',
-  //                 },
-  //               },
-  //             },
-  //           ]
-  //         },
-  //       ],
-  //     });
-  //   });
-  // });
+void exportExampleProjects() {
+  var dir = Directory('${Platform.environment['HOME']}/Downloads/Archive/Polygraph/Projects/Raw');
+  exportProject1() {
+    var poly = PolygraphState(tabs: [
+      PolygraphTab(
+          name: 'Tab 1',
+          layout: TabLayout(rows: 1, cols: 1, canvasSize: const Size(900, 600)),
+          windows: [
+            PolygraphWindow(
+                term: Term.parse('Cal23', UTC),
+                xVariable: TimeVariable(),
+                yVariables: [
+                  TransformedVariable(
+                      expression: 'hourlySchedule(50)', label: 'shape')
+                ],
+                layout: PlotlyLayout(width: 900, height: 600))
+          ],
+          activeWindowIndex: 0)
+    ], activeTabIndex: 0)
+    ..userId = 'e47187'
+    ..projectName = 'project 1';
+    var out = const JsonEncoder.withIndent('  ').convert(poly.toJson());
+    File('${dir.path}/project1.json').writeAsStringSync(out);
+  }
+
+  exportProject1();
 }
 
 Future<void> main() async {
@@ -374,4 +355,8 @@ Future<void> main() async {
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   await tests(rootUrl);
+
+  exportExampleProjects();
+
+  /// Valhala Thallasso
 }
