@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
         AppGroup('Load'),
         AppGroup('Reports'),
         AppGroup('Other'),
+        AppGroup('Examples'),
       ]),
     );
   }

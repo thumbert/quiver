@@ -1,5 +1,9 @@
 library models.polygraph.polygraph_model;
 
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
@@ -9,7 +13,6 @@ import 'package:timeseries/timeseries.dart';
 
 class PolygraphState {
   PolygraphState({
-    // required this.config,
     required this.tabs,
     required this.activeTabIndex,
   });
@@ -44,6 +47,45 @@ class PolygraphState {
   /// No opportunity to ask 'Are you sure?'.  Just delete it.
   void deleteTab(int index) {
     tabs.removeAt(index);
+  }
+
+  /// Get the users from the Db
+  static Future<List<String>> getUsers() async {
+    final rootUrl = dotenv.env['ROOT_URL'] as String;
+    var url = '$rootUrl/polygraph/v1/users';
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode != 200) {
+      throw StateError('Error getting the user list from the database.');
+    }
+    var users = json.decode(res.body) as List;
+    return users.cast<String>();
+  }
+
+  /// Get the projectNames for a userId
+  static Future<List<String>> getProjectNames(String userId) async {
+    if (userId == '') return <String>[];
+    final rootUrl = dotenv.env['ROOT_URL'] as String;
+    var url = '$rootUrl/polygraph/v1/user/$userId/project_names';
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode != 200) {
+      throw StateError('Error getting the project list for user $userId from the database.');
+    }
+    var projectNames = json.decode(res.body) as List;
+    print('Getting projects from the Db');
+    return projectNames.cast<String>();
+  }
+
+  /// Get a project.  Throws [StateError] if an issue with parsing or else.
+  static Future<PolygraphState> getProject(String userId, String projectName) async {
+    final rootUrl = dotenv.env['ROOT_URL'] as String;
+    var url = '$rootUrl/polygraph/v1/user/$userId/project_name/$projectName';
+    var res = await http.get(Uri.parse(url));
+    if (res.statusCode != 200) {
+      throw StateError('Error getting the project $projectName for user $userId');
+    }
+    var data = json.decode(res.body) as Map<String,dynamic>;
+    var poly = PolygraphState.fromJson(data);
+    return poly;
   }
 
   /// Throws [ArgumentError] if parsing fails.

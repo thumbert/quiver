@@ -324,6 +324,9 @@ Future<void> tests(String rootUrl) async {
 
 void exportExampleProjects() {
   var dir = Directory('${Platform.environment['HOME']}/Downloads/Archive/Polygraph/Projects/Raw');
+  if (!dir.existsSync()) {
+    dir.createSync(recursive: true);
+  }
   exportProject1() {
     var poly = PolygraphState(tabs: [
       PolygraphTab(

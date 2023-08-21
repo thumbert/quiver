@@ -90,12 +90,12 @@ class _TestPageUiState extends State<TestPageUi> {
             padding: const EdgeInsets.only(left: 12.0, top: 8.0),
             child: Scrollbar(
               controller: _controller,
-              isAlwaysShown: true,
+              thumbVisibility: true,
               child: ListView(
                 controller: _controller,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       SizedBox(width: 140, child: MonthUi()),
                     ],
                   ),

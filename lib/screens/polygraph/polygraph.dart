@@ -8,6 +8,7 @@ import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
+import 'package:flutter_quiver/screens/polygraph/editors/load_project_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,9 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../../models/polygraph/polygraph_tab.dart';
 
-final providerOfPolygraph = StateNotifierProvider<PolygraphNotifier, PolygraphState>((ref) => PolygraphNotifier(ref));
+final providerOfPolygraph =
+    StateNotifierProvider<PolygraphNotifier, PolygraphState>(
+        (ref) => PolygraphNotifier(ref));
 
 class Polygraph extends ConsumerStatefulWidget {
   const Polygraph({Key? key}) : super(key: key);
@@ -54,9 +57,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           var poly = ref.read(providerOfPolygraph);
           var tabs = [...poly.tabs];
           var value = controllerTab.text;
-          value = poly.getValidTabName(tabIndex: poly.activeTabIndex, suggestedName: value);
+          value = poly.getValidTabName(
+              tabIndex: poly.activeTabIndex, suggestedName: value);
           // print('tab name is: $value');
-          tabs[poly.activeTabIndex] = tabs[poly.activeTabIndex].copyWith(name: value);
+          tabs[poly.activeTabIndex] =
+              tabs[poly.activeTabIndex].copyWith(name: value);
           ref.read(providerOfPolygraph.notifier).tabs = tabs;
           controllerTab.text = value;
           editableTabIndex = null;
@@ -94,7 +99,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             width: 200,
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(width: 2, color: poly.activeTabIndex == i ? Colors.deepOrange : Colors.grey[300]!),
+                bottom: BorderSide(
+                    width: 2,
+                    color: poly.activeTabIndex == i
+                        ? Colors.deepOrange
+                        : Colors.grey[300]!),
               ),
             ),
             child: Center(
@@ -110,9 +119,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           setState(() {
                             var tabs = [...poly.tabs];
                             editableTabIndex = null;
-                            value = poly.getValidTabName(tabIndex: i, suggestedName: value);
+                            value = poly.getValidTabName(
+                                tabIndex: i, suggestedName: value);
                             tabs[i] = tabs[i].copyWith(name: value);
                             ref.read(providerOfPolygraph.notifier).tabs = tabs;
+
                             /// FIXME: when I change
                           });
                         },
@@ -159,12 +170,70 @@ class _PolygraphState extends ConsumerState<Polygraph> {
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 value: 'raw_data',
-                child: const Row(children: [Icon(Icons.folder_open), Text('  Open')]),
+                child: const Row(children: [
+                  Icon(
+                    Icons.cloud_download,
+                    color: Colors.orange,
+                  ),
+                  Text('  Open project')
+                ]),
+                onTap: () {
+                  final container = ProviderScope.containerOf(context);
+                  showDialog(context: context, builder: (BuildContext context) {
+                    return PointerInterceptor(child: AlertDialog(
+                      title: const Text('Load project'),
+                      content: ProviderScope(
+                          parent: container,
+                          child: const LoadProjectEditor()),
+                        contentPadding: const EdgeInsets.all(12),
+                        actions: [
+                          TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }),
+                          ElevatedButton(
+                              child: const Text('OK'),
+                              onPressed: () {
+
+                                Navigator.of(context).pop();
+                              }),
+                        ]),
+                    );
+                  });
+                },
+              ),
+              PopupMenuItem<String>(
+                value: 'raw_data',
+                child: const Row(children: [
+                  Icon(
+                    Icons.cloud_upload,
+                    color: Colors.orange,
+                  ),
+                  Text('  Save project')
+                ]),
                 onTap: () {},
               ),
               PopupMenuItem<String>(
                 value: 'raw_data',
-                child: const Text('Save project'),
+                child: const Row(children: [
+                  Icon(
+                    Icons.file_upload,
+                    color: Colors.orange,
+                  ),
+                  Text('  Load file')
+                ]),
+                onTap: () {},
+              ),
+              PopupMenuItem<String>(
+                value: 'raw_data',
+                child: const Row(children: [
+                  Icon(
+                    Icons.file_download,
+                    color: Colors.orange,
+                  ),
+                  Text('  Save to file')
+                ]),
                 onTap: () {},
               ),
             ],
@@ -229,6 +298,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const LoadProjectEditor(),
+
               ///
               /// Tabs
               ///
@@ -242,7 +313,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                       buildDefaultDragHandles: false,
                       scrollDirection: Axis.horizontal,
                       scrollController: _scrollControllerTabs,
-                      onReorder: (oldIndex, newIndex) => _updateTabPosition(oldIndex, newIndex, poly.tabs),
+                      onReorder: (oldIndex, newIndex) =>
+                          _updateTabPosition(oldIndex, newIndex, poly.tabs),
                       children: [
                         for (int index = 0; index < poly.tabs.length; index++)
                           ReorderableDragStartListener(
@@ -251,7 +323,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                             child: Container(
                               height: 40,
                               width: 200,
-                              margin: const EdgeInsets.only(right: 4, bottom: 16),
+                              margin:
+                                  const EdgeInsets.only(right: 4, bottom: 16),
                               child: Center(
                                 child: poly.activeTabIndex == index
                                     ? ContextMenuArea(
@@ -268,7 +341,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding: EdgeInsets.only(left: 12.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 12.0),
                                                 child: Text('Add tab'),
                                               ),
                                               onTap: () {
@@ -288,13 +362,16 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding: EdgeInsets.only(left: 12.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 12.0),
                                                 child: Text('Delete tab'),
                                               ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
-                                                  poly.deleteTab(poly.activeTabIndex);
+                                                  poly.deleteTab(
+                                                      poly.activeTabIndex);
+
                                                   /// TODO: which tab is now active?
                                                 });
                                               },
@@ -309,7 +386,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding: EdgeInsets.only(left: 12.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 12.0),
                                                 child: Text('Rename'),
                                               ),
                                               onTap: () {
@@ -329,22 +407,32 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding: EdgeInsets.only(left: 12.0),
-                                                child: Text('Display configuration'),
+                                                padding:
+                                                    EdgeInsets.only(left: 12.0),
+                                                child: Text(
+                                                    'Display configuration'),
                                               ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 showDialog(
                                                     context: context,
-                                                    builder: (BuildContext context) {
-                                                      return SimpleDialog(children: [
-                                                        PointerInterceptor(
-                                                            child: Padding(
-                                                          padding: const EdgeInsets.all(16.0),
-                                                          child: ProviderScope(
-                                                              parent: container, child: const TabLayoutUi()),
-                                                        )),
-                                                      ]);
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return SimpleDialog(
+                                                          children: [
+                                                            PointerInterceptor(
+                                                                child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .all(
+                                                                      16.0),
+                                                              child: ProviderScope(
+                                                                  parent:
+                                                                      container,
+                                                                  child:
+                                                                      const TabLayoutUi()),
+                                                            )),
+                                                          ]);
                                                     });
                                               },
                                             ),
@@ -358,14 +446,20 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding: EdgeInsets.only(left: 12.0),
+                                                padding:
+                                                    EdgeInsets.only(left: 12.0),
                                                 child: Text('Add window'),
                                               ),
                                               onTap: () {
                                                 Navigator.of(context).pop();
                                                 setState(() {
-                                                  var tab = poly.tabs[poly.activeTabIndex].addWindow();
-                                                  ref.read(providerOfPolygraph.notifier).activeTab = tab;
+                                                  var tab = poly
+                                                      .tabs[poly.activeTabIndex]
+                                                      .addWindow();
+                                                  ref
+                                                      .read(providerOfPolygraph
+                                                          .notifier)
+                                                      .activeTab = tab;
                                                 });
                                                 // ScaffoldMessenger.of(context).showSnackBar(
                                                 //   const SnackBar(

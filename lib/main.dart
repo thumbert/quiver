@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -42,6 +43,9 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: DemandBids.route,
         builder: (context, state) => const DemandBids()),
+    GoRoute(
+        path: DropdownExample.route,
+        builder: (context, state) => const DropdownExample()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
     GoRoute(
         path: HistoricalPlc.route,

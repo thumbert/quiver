@@ -67,6 +67,7 @@ class HorizontalLine extends PolygraphVariable {
     print('in horizontal_line validate(), error=$error');
   }
 
+  @override
   Map<String, dynamic> toJson() {
     // TODO: implement toJson
     throw UnimplementedError();
@@ -83,11 +84,6 @@ class HorizontalLine extends PolygraphVariable {
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
 
-  @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
-    // TODO: implement fromMongo
-    throw UnimplementedError();
-  }
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {

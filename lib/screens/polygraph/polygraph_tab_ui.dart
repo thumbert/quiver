@@ -495,7 +495,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                             contentPadding: const EdgeInsets.all(12),
                             actions: [
                               TextButton(
-                                  child: const Text('CANCEL'),
+                                  child: const Text('Cancel'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   }),

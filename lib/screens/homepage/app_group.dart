@@ -2,6 +2,7 @@ library screens.homepage.calculator_list;
 
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -49,6 +50,9 @@ class AppGroup extends StatefulWidget {
       MenuItem(url: RateBoard.route, title: 'Competitive offers rate board  ', icon: const Icon(Icons.dashboard_outlined, color: Colors.purple,)),
       MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),
       MenuItem(url: Weather.route, title: 'Weather'),
+    ],
+    'Examples': [
+      MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
     ],
   };
 
