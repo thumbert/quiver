@@ -1,18 +1,12 @@
 library screens.polygraph.polygraph;
 
 import 'package:contextmenu/contextmenu.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Interval;
-import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/load_project_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../../models/polygraph/polygraph_tab.dart';
@@ -454,8 +448,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Navigator.of(context).pop();
                                                 setState(() {
                                                   var tab = poly
-                                                      .tabs[poly.activeTabIndex]
-                                                      .addWindow();
+                                                      .tabs[poly.activeTabIndex];
+                                                      // .addWindow();
                                                   ref
                                                       .read(providerOfPolygraph
                                                           .notifier)

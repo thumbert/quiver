@@ -1,8 +1,6 @@
 library models.asset_id_model;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
 class AssetIdModel extends ChangeNotifier {
   AssetIdModel();

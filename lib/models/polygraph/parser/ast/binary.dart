@@ -1,6 +1,5 @@
 library ast.binary;
 
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter_quiver/models/polygraph/parser/common.dart';
 import 'package:timeseries/timeseries.dart';

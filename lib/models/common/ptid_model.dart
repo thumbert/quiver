@@ -1,8 +1,6 @@
 library models.ptid_model;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
 class PtidModel extends ChangeNotifier {
   PtidModel({int? ptid}) {

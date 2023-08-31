@@ -1,25 +1,17 @@
 library lib.screens.polygraph.polygraph_tab_ui;
 
+import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
-import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
-import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
-import 'package:flutter_quiver/models/polygraph/attic/ok_button.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
-import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/marks_asof_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/plotly_layout_ui.dart';
-import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
-import 'package:flutter_quiver/screens/polygraph/other/variable_selection_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/variable_summary_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
@@ -90,71 +82,128 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   }
 
   /// Return a widget that has all the plotly windows in this tab (activeTabIndex).
-  /// Includes the border, and the highlight logic for the border.
+  /// Includes the border, the highlight logic for the border, and the
+  /// split horizontally or vertically icons.
   ///
   Widget _makePlotWindows() {
-    var rows = <Row>[];
     var poly = ref.watch(providerOfPolygraph);
     var tab = poly.tabs[poly.activeTabIndex];
-    var windowSize = tab.layout.windowSize();
-    var height = windowSize.height;
-    var width = windowSize.width;
     if (tab.tabAction.isNotEmpty) {
-      if (tab.tabAction.keys.first == 'windowAdded') {
+      if (tab.tabAction.keys.contains('windowAdded')) {
         var aux = DateTime.now().hashCode;
-        var window = tab.windows.last;
-        plotly.add(Plotly(
-          viewId: 'polygraph-div-${tab.name}-w${tab.windows.length - 1}-$aux',
-          data: const [],
-          layout: window.layout.toJson(),
-        ));
-      } else if (tab.tabAction.keys.first == 'windowRemoved') {
+        var i = tab.tabAction['windowAdded']['index'] as int;
+        var window = tab.windows[i];
+        plotly.insert(
+            i,
+            Plotly(
+              viewId:
+                  'polygraph-div-${tab.name}-w${tab.windows.length - 1}-$aux',
+              data: const [],
+              layout: window.layout.toJson(),
+            ));
+      } else if (tab.tabAction.keys.contains('windowRemoved')) {
         /// TODO: implement removal!
       } else {
         print('tabAction ${tab.tabAction.keys.first} is not supported!');
       }
-
-      /// reset tabAction to an empty Map
+      /// TODO: reset tabAction to an empty Map
     }
 
-    for (var i = 0; i < tab.layout.rows; i++) {
-      var aux = <Widget>[];
-      for (var j = 0; j < tab.layout.cols; j++) {
-        var ij = i + j * tab.layout.rows;
-        var window = tab.windows[ij];
-        var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
-        aux.add(SizedBox(
-          width: width + 2,
-          height: height + 30,
-          child: Column(
-            children: [
-              /// Window border with the Close icon
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    tab = tab.copyWith(activeWindowIndex: ij);
-                    ref.read(providerOfPolygraph.notifier).activeTab = tab;
-                  });
-                },
-                child: Container(
-                  width: width + 2,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: tab.activeWindowIndex == ij
-                        ? Colors.orange[300]
-                        : Colors.blueGrey[200],
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8)),
-                  ),
-                  child: Visibility(
-                    visible: tab.activeWindowIndex == ij,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
+    return switch (tab.rootNode) {
+      SingleNode() => _addSingle(0, tab),
+      ColumnNode() => _addColumn(tab.rootNode as ColumnNode, 0, tab),
+      RowNode() => _addRow(tab.rootNode as RowNode, 0, tab),
+    };
+  }
+
+  /// Index [i] is the index of Singles (flattened) windows.
+  Widget _addSingle(int i, PolygraphTab tab) {
+    // print('Adding single window $i');
+    var window = tab.windows[i];
+    var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
+    return SizedBox(
+      width: window.layout.width + 2,
+      height: window.layout.height + 30,
+      child: Column(
+        children: [
+          /// Window border with the Close icon
+          InkWell(
+            onTap: () {
+              setState(() {
+                tab = tab.copyWith(activeWindowIndex: i);
+                ref.read(providerOfPolygraph.notifier).activeTab = tab;
+              });
+            },
+            child: Container(
+              width: window.layout.width + 2,
+              height: 28,
+              decoration: BoxDecoration(
+                color: tab.activeWindowIndex == i
+                    ? Colors.orange[300]
+                    : Colors.blueGrey[200],
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8)),
+              ),
+              child: Visibility(
+                visible: tab.activeWindowIndex == i,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
                           onPressed: () {
                             setState(() {
-                              var tab = poly.tabs[poly.activeTabIndex];
+                              // var tab = poly.tabs[poly.activeTabIndex];
+                              tab = tab.splitWindowHorizontally(i);
+                              ref
+                                  .read(providerOfPolygraph.notifier)
+                                  .activeTab = tab;
+                            });
+                          },
+                          icon: const Tooltip(
+                            message: 'Split window horizontally',
+                            child: Icon(
+                              Icons.horizontal_split,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          )),
+                      IconButton(
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                          onPressed: () {
+                            setState(() {
+                              // var tab = poly.tabs[poly.activeTabIndex];
+                              tab = tab.splitWindowVertically(i);
+                              // for (var e in tab.rootNode.flatten()) {
+                              //   print('(${e.width()}, ${e.height()})');
+                              // }
+                              // for (var w in tab.windows) {
+                              //   print('(${w.layout.width}, ${w.layout.height})');
+                              // }
+                              ref
+                                  .read(providerOfPolygraph.notifier)
+                                  .activeTab = tab;
+                            });
+                          },
+                          icon: const Tooltip(
+                            message: 'Split window vertically',
+                            child: Icon(
+                              Icons.vertical_split,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          )),
+                      IconButton(
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                          onPressed: () {
+                            setState(() {
+                              // var tab = poly.tabs[poly.activeTabIndex];
                               if (tab.windows.length == 1) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -163,76 +212,101 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   ),
                                 );
                               }
-                              tab = tab.removeWindow(ij);
-                              ref.read(providerOfPolygraph.notifier).activeTab =
-                                  tab;
+                              tab = tab.removeWindow(i);
+                              ref
+                                  .read(providerOfPolygraph.notifier)
+                                  .activeTab = tab;
                             });
                           },
                           icon: const Icon(
                             Icons.close,
                             color: Colors.white,
-                            size: 14,
+                            size: 18,
                           )),
-                    ),
+                    ],
                   ),
                 ),
               ),
-              Container(
-                width: width + 2,
-                height: height + 2,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: tab.activeWindowIndex == ij
-                        ? Border.all(color: Colors.orange[300]!)
-                        : null),
-                // child: Center(child: Text('Window ($i,$j)')),
-                child: asyncCache.when(
-                    loading: () => const CircularProgressIndicator(),
-                    error: (err, stack) => Text('Error: $err'),
-                    data: (cache) {
-                      // print('in asyncCache/data:');
-                      // print('window.term = ${window.term}');
-                      // print('asyncCache keys: ${cache.keys}');
-                      var traces = window.makeTraces();
-                      // print('traces.length = ${traces.length}');
-                      // print(traces.first['x'].take(10));
-                      // if (traces.length == 3) {
-                      //   print(traces[2]);
-                      // }
-                      // print('window.layout = ${window.layout.toMap()}');
-
-                      plotly[ij].plot.react(traces, window.layout.toJson(),
-                          displaylogo: false);
-                      return plotly[ij];
-                    }),
-              ),
-            ],
+            ),
           ),
-        ));
-      }
-      rows.add(Row(
-        children: aux,
-      ));
-    }
+          Container(
+            width: window.layout.width + 2,
+            height: window.layout.height + 2,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: tab.activeWindowIndex == i
+                    ? Border.all(color: Colors.orange[300]!)
+                    : null),
+            // child: Center(child: Text('Window ($i,$j)')),
+            child: asyncCache.when(
+                loading: () => const Center(
+                    child: SizedBox(
+                        height: 32,
+                        width: 32,
+                        child: CircularProgressIndicator())),
+                error: (err, stack) => Text('Error: $err'),
+                data: (cache) {
+                  // print('in asyncCache/data:');
+                  // print('window.term = ${window.term}');
+                  // print('asyncCache keys: ${cache.keys}');
+                  var traces = window.makeTraces();
+                  // print('traces.length = ${traces.length}');
+                  // print(traces.first['x'].take(10));
+                  // if (traces.length == 3) {
+                  //   print(traces[2]);
+                  // }
+                  // print('window.layout = ${window.layout.toMap()}');
 
-    // for (var i = 0; i < tab.windows.length; i++) {
-    //   var window = tab.windows[i];
-    //   print('Plotly layout $i: ${window.layout.toMap()}');
-    //   var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
-    //   out.add(Container(
-    //     width: window.layout.width.toDouble(),
-    //     // height: window.layout.height.toDouble(),
-    //     height: 100,
-    //     padding: const EdgeInsets.all(8.0),
-    //     decoration: BoxDecoration(
-    //         color: i == 0 ? Colors.green[200] : Colors.pink[200],
-    //         border: Border.all(color: Colors.orange)),
-    //     child: Center(
-    //       child: Text('Window $i')),
-    //     // ),
-    //   ));
-    return Column(children: rows);
+                  plotly[i].plot.react(traces, window.layout.toJson(),
+                      displaylogo: false);
+                  return plotly[i];
+                }),
+          ),
+        ],
+      ),
+    );
   }
+
+  Widget _addRow(RowNode node, int iOffset, PolygraphTab tab) {
+    var sizes = [0, ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()];
+    // print('in _addRow...');
+    // print('sizes: $sizes');
+    var children = <Widget>[];
+    for (var i=0; i<node.children.length; i++) {
+      /// j is the single window index for the rootNode
+      var j = sizes[i+1] - 1;
+      // print('iOffset: $iOffset, i: $i, j: $j');
+      children.add(switch (node.children[i]) {
+        SingleNode() => _addSingle(iOffset + j, tab),
+        ColumnNode() => _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
+        RowNode() => _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
+      });
+    }
+    return Row(children: children);
+  }
+
+  /// The [iOffset] is the count of singles before this node.
+  Widget _addColumn(ColumnNode node, int iOffset, PolygraphTab tab) {
+    var sizes = [0, ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()];
+    // print('in _addColumn...');
+    // print('sizes: $sizes');
+    var children = <Widget>[];
+    for (var i=0; i<node.children.length; i++) {
+      /// j is the single window index relative to this node
+      var j = sizes[i+1] - 1;
+      // print('iOffset: $iOffset, i: $i, j: $j');
+      children.add(switch (node.children[i]) {
+        SingleNode() => _addSingle(iOffset + j, tab),
+        ColumnNode() => _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
+        RowNode() => _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
+      });
+    }
+    return Column(children: children);
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +484,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   var window2 = window.copyWith(yVariables: yVariables);
                   await window2.updateCache();
                   setState(() {
-                    ref.read(providerOfPolygraph.notifier).activeWindow = window2;
+                    ref.read(providerOfPolygraph.notifier).activeWindow =
+                        window2;
                   });
                 }
               },
@@ -670,15 +745,29 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                     var x = window.yVariables[i].toJson();
                                     // print(x);
                                     switch (x['type']) {
-                                      case 'TransformedVariable' : ref.read(providerOfTransformedVariable.notifier).fromJson(x);
-                                      case 'VariableMarksAsOfDate' : ref.read(providerOfMarksAsOf.notifier).fromJson(x);
-                                      case 'VariableMarksHistoricalView' : ref.read(providerOfMarksHistoricalView.notifier).fromJson(x);
-                                      case _ : print('Implement edit for ${x['type']} in polygraph_tab_ui, Edit button');
+                                      case 'TransformedVariable':
+                                        ref
+                                            .read(providerOfTransformedVariable
+                                                .notifier)
+                                            .fromJson(x);
+                                      case 'VariableMarksAsOfDate':
+                                        ref
+                                            .read(providerOfMarksAsOf.notifier)
+                                            .fromJson(x);
+                                      case 'VariableMarksHistoricalView':
+                                        ref
+                                            .read(providerOfMarksHistoricalView
+                                                .notifier)
+                                            .fromJson(x);
+                                      case _:
+                                        print(
+                                            'Implement edit for ${x['type']} in polygraph_tab_ui, Edit button');
                                     }
 
                                     var variable = await context.push(
-                                        '/polygraph/edit',
-                                        extra: window.yVariables[i]) as PolygraphVariable;
+                                            '/polygraph/edit',
+                                            extra: window.yVariables[i])
+                                        as PolygraphVariable;
                                     var yVariables = [...window.yVariables];
                                     yVariables[i] = variable;
                                     var window2 =
@@ -868,24 +957,18 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       var tzLocation = controllerTimezone.text == 'UTC'
           ? UTC
           : getLocation(controllerTimezone.text);
-      var newTerm =
-      Term.parse(controllerTerm.text, tzLocation);
+      var newTerm = Term.parse(controllerTerm.text, tzLocation);
       var refreshDataFromDb = true;
-      if (window.term.interval
-          .containsInterval(newTerm.interval)) {
+      if (window.term.interval.containsInterval(newTerm.interval)) {
         refreshDataFromDb = false;
       }
-      window = window.copyWith(
-          term: newTerm,
-          refreshDataFromDb: refreshDataFromDb);
-      ref.read(providerOfPolygraph.notifier).activeWindow =
-          window;
+      window =
+          window.copyWith(term: newTerm, refreshDataFromDb: refreshDataFromDb);
+      ref.read(providerOfPolygraph.notifier).activeWindow = window;
       _errorTerm = null; // all good
     } catch (e) {
       debugPrint(e.toString());
       _errorTerm = 'Parsing error';
     }
   }
-
 }
-

@@ -322,6 +322,7 @@ Future<void> tests(String rootUrl) async {
   });
 }
 
+///
 void exportExampleProjects() {
   var dir = Directory('${Platform.environment['HOME']}/Downloads/Archive/Polygraph/Projects/Raw');
   if (!dir.existsSync()) {
@@ -331,7 +332,7 @@ void exportExampleProjects() {
     var poly = PolygraphState(tabs: [
       PolygraphTab(
           name: 'Tab 1',
-          layout: TabLayout(rows: 1, cols: 1, canvasSize: const Size(900, 600)),
+          rootNode: SingleNode(900, 600),
           windows: [
             PolygraphWindow(
                 term: Term.parse('Cal23', UTC),

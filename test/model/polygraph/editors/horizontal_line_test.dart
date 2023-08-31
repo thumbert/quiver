@@ -37,12 +37,11 @@ Future<void> tests() async {
       expect(ts.length, 24);
     });
     test('Window with horizontal variable', () async {
-      var tabLayout = TabLayout.getDefault();
       var poly = PolygraphState(
           tabs: [
             PolygraphTab(
                 name: 'Tab1',
-                layout: tabLayout,
+                rootNode: SingleNode(900, 600),
                 windows: [
                   PolygraphWindow(
                       term: Term.parse('Jan21-Dec21',
@@ -56,7 +55,7 @@ Future<void> tests() async {
                             timeAggregation: TimeAggregation(
                                 frequency: 'month', function: 'count')),
                       ],
-                      layout: PlotlyLayout(width: tabLayout.canvasSize.width, height: tabLayout.canvasSize.height),
+                      layout: PlotlyLayout(width: 900, height: 600),
                   ),
                 ],
                 activeWindowIndex: 0),

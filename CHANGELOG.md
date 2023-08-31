@@ -8,6 +8,8 @@
 - Implement Load/Save functionality for the plot config
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Make the Close icon X on the plot window appear only when the window is active
+- Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
+
 
 ## Release 2023-08-xx
 

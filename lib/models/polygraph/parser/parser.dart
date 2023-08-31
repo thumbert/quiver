@@ -2,17 +2,14 @@ library petitparser.parser;
 
 import 'dart:math' as math;
 import 'package:elec/elec.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/hourly_schedule_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/ma_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/window_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/int_list_expr.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/ternary.dart';
 import 'package:petitparser/petitparser.dart';
-import 'package:timeseries/timeseries.dart';
 import 'ast.dart';
 import 'common.dart';
-import 'package:elec/elec.dart';
 
 final id = seq2(letter(), [letter(), digit()].toChoiceParser().star());
 

@@ -55,7 +55,7 @@ class ShoojuExpression extends PolygraphVariable {
 
   @override
   TimeSeries<num> timeSeries(Term term) {
-    TimeSeries<num> ts, aux;
+    // TimeSeries<num> ts, aux;
 
     // dataProvider.spec =
 

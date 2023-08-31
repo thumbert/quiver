@@ -1,7 +1,6 @@
 library screens.polygraph.editors.editor_power;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/common/entity_with_checkbox_model.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
 import 'package:flutter_quiver/models/common/experimental/select_variable_model.dart';
 import 'package:flutter_quiver/models/common/lmp_component_model.dart';

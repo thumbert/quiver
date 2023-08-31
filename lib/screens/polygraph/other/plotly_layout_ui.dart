@@ -4,10 +4,7 @@ import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_title.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
-import 'package:flutter_quiver/screens/polygraph/polygraph_tab_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfPlotlyLayout =

@@ -1,8 +1,6 @@
 library models.load_aggregation_model;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
 class LoadAggregationModel extends ChangeNotifier {
   LoadAggregationModel() {

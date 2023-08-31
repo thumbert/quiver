@@ -1,6 +1,5 @@
 library ast.binary;
 
-import 'dart:async';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/parser/common.dart';

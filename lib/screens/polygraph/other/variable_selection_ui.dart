@@ -2,12 +2,7 @@ library screens.polygraph.other.variable_selection_ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/horizontal_line_editor.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';
-import 'package:flutter_quiver/screens/polygraph/editors/marks_historical_view_editor.dart';
-import 'package:flutter_quiver/screens/polygraph/polygraph_window_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfVariableSelection =

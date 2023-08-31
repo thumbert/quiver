@@ -1,14 +1,10 @@
 library screens.polygraph.editors.editor_line_horizontal;
 
 import 'package:flutter/material.dart' hide Interval, Transform;
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_aggregation.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/editor_time_filter.dart';
-import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfHorizontalLine =
