@@ -8,7 +8,7 @@ import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfPlotlyLayout =
-    StateProvider((ref) => PlotlyLayout(width: 900, height: 600)..legend = PlotlyLegend.getDefault());
+    StateProvider((ref) => PlotlyLayout()..legend = PlotlyLegend.getDefault());
 
 class PlotlyLayoutUi extends ConsumerStatefulWidget {
   const PlotlyLayoutUi({Key? key}) : super(key: key);

@@ -55,7 +55,7 @@ Future<void> tests() async {
                             timeAggregation: TimeAggregation(
                                 frequency: 'month', function: 'count')),
                       ],
-                      layout: PlotlyLayout(width: 900, height: 600),
+                      layout: PlotlyLayout(),
                   ),
                 ],
                 activeWindowIndex: 0),

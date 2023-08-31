@@ -39,7 +39,7 @@ Future<void> tests() async {
                     label: 'hh',
                   )
                 ],
-                layout: PlotlyLayout(width: 900, height: 600),
+                layout: PlotlyLayout(),
               ),
             ],
             activeWindowIndex: 0),

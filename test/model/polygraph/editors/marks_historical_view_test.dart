@@ -55,7 +55,7 @@ Future<void> tests() async {
                           label: 'hh',
                           forwardStrip: Term.parse('Jan24-Feb24', UTC))
                     ],
-                    layout: PlotlyLayout(width: 900, height: 600),
+                    layout: PlotlyLayout(),
                   ),
                 ],
                 activeWindowIndex: 0),

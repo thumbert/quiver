@@ -138,7 +138,7 @@ Future<void> tests(String rootUrl) async {
         TransformedVariable(
             expression: "toMonthly(Henry, mean)", label: 'meanHenry')
       ];
-      var layout = PlotlyLayout(width: 900, height: 600);
+      var layout = PlotlyLayout();
       var window = PolygraphWindow(
           term: term,
           xVariable: xVariable,
@@ -166,10 +166,7 @@ Future<void> tests(String rootUrl) async {
             'label': 'meanHenry',
           },
         ],
-        'layout': {
-          'width': 900.0,
-          'height': 600.0,
-        },
+        'layout': {},
       };
       expect(window.toJson(), out);
       var window2 = PolygraphWindow.fromJson(out);
@@ -341,7 +338,7 @@ void exportExampleProjects() {
                   TransformedVariable(
                       expression: 'hourlySchedule(50)', label: 'shape')
                 ],
-                layout: PlotlyLayout(width: 900, height: 600))
+                layout: PlotlyLayout())
           ],
           activeWindowIndex: 0)
     ], activeTabIndex: 0)

@@ -40,7 +40,7 @@ Future<void> tests(String rootUrl) async {
           label: 'bos_daily_temp',
         )
       ],
-      layout: PlotlyLayout.getDefault(width: 900, height: 600),
+      layout: PlotlyLayout.getDefault(),
     );
     setUp(() async {
       await window.updateCache();
@@ -110,7 +110,7 @@ Future<void> tests(String rootUrl) async {
             label: 'bos_min',
           )
         ],
-        layout: PlotlyLayout.getDefault(width: 900, height: 600),
+        layout: PlotlyLayout.getDefault(),
       );
       await window.updateCache();
       var traces = window.makeTraces();

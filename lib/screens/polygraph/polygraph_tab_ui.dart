@@ -119,11 +119,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   /// Index [i] is the index of Singles (flattened) windows.
   Widget _addSingle(int i, PolygraphTab tab) {
     // print('Adding single window $i');
+    var nodes = tab.rootNode.flatten();
     var window = tab.windows[i];
     var asyncCache = ref.watch(providerOfPolygraphWindowCache(window));
     return SizedBox(
-      width: window.layout.width + 2,
-      height: window.layout.height + 30,
+      width: nodes[i].width() + 2,
+      height: nodes[i].height().toDouble(),
       child: Column(
         children: [
           /// Window border with the Close icon
@@ -135,7 +136,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
               });
             },
             child: Container(
-              width: window.layout.width + 2,
+              width: nodes[i].width() + 2,
               height: 28,
               decoration: BoxDecoration(
                 color: tab.activeWindowIndex == i
@@ -230,8 +231,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
             ),
           ),
           Container(
-            width: window.layout.width + 2,
-            height: window.layout.height + 2,
+            width: nodes[i].width() + 2,
+            height: nodes[i].height() + 2 - 30,
             decoration: BoxDecoration(
                 color: Colors.white,
                 border: tab.activeWindowIndex == i
@@ -257,8 +258,12 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   // }
                   // print('window.layout = ${window.layout.toMap()}');
 
-                  plotly[i].plot.react(traces, window.layout.toJson(),
-                      displaylogo: false);
+                  var layout = {
+                    'width': nodes[i].width(),
+                    'height': nodes[i].height() - 30,
+                    ...window.layout.toJson(),
+                  };
+                  plotly[i].plot.react(traces, layout, displaylogo: false);
                   return plotly[i];
                 }),
           ),
