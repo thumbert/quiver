@@ -36,6 +36,7 @@ class PolygraphWindow {
   final List<PolygraphVariable> yVariables;
   final PlotlyLayout layout;
 
+
   /// Should we make a trip to the database when updating the cache?  This
   /// needs to happen when
   /// 1) We are at initialization (cache is empty)

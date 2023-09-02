@@ -1,30 +1,60 @@
 library models.polygraph.polygraph_tab;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
+
+class WindowLayout {
+  WindowLayout({required this.topLeftCorner, required this.size});
+  final Size size;
+  final Point topLeftCorner;
+
+  static WindowLayout fromJson(Map<String, dynamic> x) {
+    if (x
+        case {
+          'size': {'width': num width, 'height': num height},
+          'topLeftCorner': {'x': num x, 'y': num y},
+        }) {
+      return WindowLayout(
+          topLeftCorner: Point(x, y),
+          size: Size(width.toDouble(), height.toDouble()));
+    } else {
+      throw StateError('Can\'t parse input $x into a WindowLayout');
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'size': {'width': size.width, 'height': size.height},
+      'topLeftCorner': {'x': topLeftCorner.x, 'y': topLeftCorner.y},
+    };
+  }
+}
 
 class TabLayout {
   /// The window layout for this tab, number of rows and columns.
   /// maybe even custom size at some time ...
-  TabLayout({required this.rows, required this.cols, required this.canvasSize});
-  final int rows;
-  final int cols;
+  TabLayout({required this.canvasSize, required this.windows});
   final Size canvasSize;
+  final List<WindowLayout> windows;
 
   static TabLayout getDefault() =>
-      TabLayout(rows: 1, cols: 1, canvasSize: const Size(900.0, 600.0));
+      TabLayout(canvasSize: const Size(900.0, 600.0), windows: [
+        WindowLayout(
+            topLeftCorner: const Point(0, 0), size: const Size(900.0, 600.0))
+      ]);
 
-  static TabLayout fromMap(Map<String, dynamic> x) {
+  static TabLayout fromJson(Map<String, dynamic> x) {
     if (x
         case {
-          'rows': int rows,
-          'cols': int cols,
-          'canvasSize': {'width': num width, 'height': num height}
+          'canvasSize': {'width': num width, 'height': num height},
+          'windows': List<Map<String, dynamic>> xs,
         }) {
+      var windows = xs.map((e) => WindowLayout.fromJson(e)).toList();
       return TabLayout(
-          rows: rows,
-          cols: cols,
-          canvasSize: Size(width.toDouble(), height.toDouble()));
+          canvasSize: Size(width.toDouble(), height.toDouble()),
+          windows: windows);
     } else {
       throw StateError('Can\'t parse input $x into a TabLayout');
     }
@@ -32,56 +62,37 @@ class TabLayout {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'rows': rows,
-      'cols': cols,
       'canvasSize': {
         'width': canvasSize.width,
         'height': canvasSize.height,
-      }
+      },
+      'windows': [for (var e in windows) e.toJson()],
     };
   }
 
-  /// Allow up to 8 max windows per tab, split in 2 columns if the number of
-  /// windows is even, except for the case of 2 windows.
-  TabLayout addWindow() {
-    if (rows * cols < 3) {
-      return copyWith(rows: rows + 1);
-    } else if (rows * cols == 3) {
-      return copyWith(rows: 2, cols: 2);
-    } else if (rows * cols == 4) {
-      return copyWith(rows: 5, cols: 1);
-    } else if (rows * cols == 5) {
-      return copyWith(rows: 3, cols: 2);
-    } else if (rows * cols == 6) {
-      return copyWith(rows: 7, cols: 1);
-    } else if (rows * cols == 7) {
-      return copyWith(rows: 4, cols: 2);
-    }
-    return this;
+  TabLayout splitHorizontally(int i) {
+    /// TODO
+    return TabLayout(canvasSize: canvasSize, windows: windows);
   }
 
-  /// Don't remove the last window.
-  TabLayout removeWindow() {
-    if (rows * cols == 1) {
-      return this;
-    } else if ((rows * cols) % 2 == 0) {
-      return copyWith(rows: rows * cols - 1, cols: 1);
-    } else if (rows * cols == 3) {
-      return copyWith(rows: 2, cols: 1);
-    } else {
-      return copyWith(rows: rows * cols ~/ 2, cols: 2);
-    }
+  TabLayout splitVertically(int i) {
+    /// TODO
+    return TabLayout(canvasSize: canvasSize, windows: windows);
   }
 
-  /// All windows have the same size.  Calculate that size.
-  Size windowSize() {
-    return Size(canvasSize.width / cols, canvasSize.height / rows);
+  /// Don't remove the last window
+  TabLayout removeWindow(int i) {
+    if (windows.length == 1) return this;
+
+    /// TODO
+    return TabLayout(canvasSize: canvasSize, windows: windows);
   }
 
-  TabLayout copyWith({int? rows, int? cols, Size? canvasSize}) => TabLayout(
-      rows: rows ?? this.rows,
-      cols: cols ?? this.cols,
-      canvasSize: canvasSize ?? this.canvasSize);
+  TabLayout copyWith({Size? canvasSize, List<WindowLayout>? windows}) =>
+      TabLayout(
+        canvasSize: canvasSize ?? this.canvasSize,
+        windows: windows ?? this.windows,
+      );
 }
 
 class PolygraphTab {
@@ -135,11 +146,13 @@ class PolygraphTab {
     );
   }
 
-  /// Add an empty window
-  PolygraphTab addWindow() {
-    // all the windows need to be resized
-    var newLayout = layout.addWindow();
-    var size = newLayout.windowSize();
+  PolygraphTab splitWindowHorizontally(int i) {
+    var newLayout = layout.splitHorizontally(i);
+
+    var newWindows = [...windows];
+    newWindows.insert(i, newWindows[i]);
+    var size = newLayout
+    newWindows[i].copyWith(layout: newWindows[i].layout.copyWith(width: ));
 
     var newWindows = <PolygraphWindow>[];
     for (var window in windows) {
@@ -214,7 +227,7 @@ class PolygraphTab {
           'tabLayout': Map<String, dynamic> _layout,
           'windows': List<Map<String, dynamic>> _windows,
         }) {
-      var tabLayout = TabLayout.fromMap(_layout);
+      var tabLayout = TabLayout.fromJson(_layout);
       var windows = [for (var e in _windows) PolygraphWindow.fromJson(e)];
 
       return PolygraphTab(
