@@ -26,9 +26,8 @@ Future<void> tests(String rootUrl) async {
       var tab = PolygraphTab.empty(name: 'Tab 1');
       expect(tab.windows.length, 1);
       expect(tab.activeWindowIndex, 0);
-      expect(tab.layout.rows, 1);
-      expect(tab.layout.cols, 1);
-      expect(tab.layout.canvasSize, const Size(900.0, 600.0));
+      expect(tab.rootNode.width(), 900);
+      expect(tab.rootNode.height(), 600);
     });
 
     test('get valid tab name', (){
@@ -52,7 +51,7 @@ Future<void> tests(String rootUrl) async {
       /// Rename tab to existing tab name, maintains name
       poly = PolygraphState.getDefault();
       poly.addTab();
-      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2']);
+      expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4']);
       // can't rename tab index 1 to 'Tab 1', but you stay at 'Tab 2'
       expect(poly.getValidTabName(tabIndex: 1, suggestedName: 'Tab 1'), 'Tab 2');
 
@@ -63,87 +62,7 @@ Future<void> tests(String rootUrl) async {
       poly.addTab();
       expect(poly.tabs.map((e) => e.name).toList(), ['Tab 1', 'Tab 3', 'Tab 2']);
     });
-
-    test('Tab layout, add windows', () {
-      var layout = TabLayout(rows: 1, cols: 1, canvasSize: const Size(900.0, 600.0));
-      layout = layout.addWindow();
-      expect(layout.rows, 2);
-      expect(layout.cols, 1);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 3);
-      expect(layout.cols, 1);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 2);
-      expect(layout.cols, 2);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 5);
-      expect(layout.cols, 1);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 3);
-      expect(layout.cols, 2);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 7);
-      expect(layout.cols, 1);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 4);
-      expect(layout.cols, 2);
-
-      layout = layout.addWindow();
-      expect(layout.rows, 4);
-      expect(layout.cols, 2);
-    });
-
-    test('Tab layout, remove windows', () {
-      var layout = TabLayout(rows: 1, cols: 1, canvasSize: const Size(900.0, 600.0));
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      layout = layout.addWindow();
-      expect(layout.rows, 4);
-      expect(layout.cols, 2);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 7);
-      expect(layout.cols, 1);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 3);
-      expect(layout.cols, 2);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 5);
-      expect(layout.cols, 1);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 2);
-      expect(layout.cols, 2);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 3);
-      expect(layout.cols, 1);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 2);
-      expect(layout.cols, 1);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 1);
-      expect(layout.cols, 1);
-
-      layout = layout.removeWindow();
-      expect(layout.rows, 1);
-      expect(layout.cols, 1);
-    });
-
+    
     test('Add/Remove tabs', () {
       var poly = PolygraphState.getDefault();
       expect(
@@ -167,90 +86,73 @@ Future<void> tests(String rootUrl) async {
 
     test('Add windows to a tab', () {
       var poly = PolygraphState.getDefault();
-      expect(poly.tabs.first.layout.canvasSize, const Size(900.0, 600.0));
+      expect(poly.tabs.first.rootNode.width(), 900);
+      expect(poly.tabs.first.rootNode.height(), 600);
 
       var tab = poly.tabs[1];
       expect(tab.windows.length, 1);
 
-      var tab2 = tab.addWindow();
+      // split main window horizontally
+      var tab2 = tab.splitWindowHorizontally(0);
+      var nodes = tab2.rootNode.flatten();
       expect(tab2.windows.length, 2);
-      expect(tab2.layout.rows, 2);
-      expect(tab2.layout.cols, 1);
-      expect(tab2.windows[0].layout.width, 900.0);
-      expect(tab2.windows[0].layout.height, 300.0);
-      expect(tab2.windows[1].layout.width, 900.0);
-      expect(tab2.windows[1].layout.height, 300.0);
+      expect(nodes[0].width(), 900.0);
+      expect(nodes[0].height(), 300.0);
+      expect(nodes[1].width(), 900.0);
+      expect(nodes[1].height(), 300.0);
 
-      // add another window
-      var tab3 = tab2.addWindow();
+      // split the top window vertically
+      var tab3 = tab2.splitWindowVertically(0);
+      nodes = tab3.rootNode.flatten();
       expect(tab3.windows.length, 3);
-      expect(tab3.layout.rows, 3);
-      expect(tab3.layout.cols, 1);
-      expect(tab3.windows[0].layout.width, 900.0);
-      expect(tab3.windows[0].layout.height, 200.0);
+      expect(nodes[0].width(), 450.0);
+      expect(nodes[0].height(), 300.0);
+      expect(nodes[1].width(), 450.0);
+      expect(nodes[1].height(), 300.0);
+      expect(nodes[2].width(), 900.0);
+      expect(nodes[2].height(), 300.0);
 
       // add another window
-      var tab4 = tab3.addWindow();
+      var tab4 = tab3.splitWindowVertically(2);
+      nodes = tab3.rootNode.flatten();
       expect(tab4.windows.length, 4);
-      expect(tab4.layout.rows, 2);
-      expect(tab4.layout.cols, 2);
-      expect(tab4.windows[0].layout.width, 450.0);
-      expect(tab4.windows[0].layout.height, 300.0);
+      expect(nodes[3].width(), 450.0);
+      expect(nodes[3].height(), 300.0);
     });
 
     test('Remove windows from a tab', () {
       var tab = PolygraphTab.empty(name: 'Tab 1');
-      tab = tab.copyWith(layout: tab.layout.copyWith(canvasSize: const Size(900.0, 600.0)));
+      var nodes = tab.rootNode.flatten();
       expect(tab.windows.length, 1);
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      tab = tab.addWindow();
-      expect(tab.windows.length, 8);
-      expect(tab.layout.rows, 4);
-      expect(tab.layout.cols, 2);
+      expect(nodes.first.width(), 900);
+      expect(nodes.first.height(), 600);
 
-      tab = tab.removeWindow(7);
-      expect(tab.windows.length, 7);
-      expect(tab.layout.rows, 7);
-      expect(tab.layout.cols, 1);
-      expect(tab.windows.first.layout.width, 900.0);
-      expect(tab.windows.first.layout.height, 600.0/7);
+      /// make a column with 4 windows
+      tab = tab.splitWindowHorizontally(0);
+      tab = tab.splitWindowHorizontally(0);
+      tab = tab.splitWindowHorizontally(2);
+      nodes = tab.rootNode.flatten();
+      expect(tab.windows.length, 4);
+      expect(nodes[3].width(), 900.0);
+      expect(nodes[3].height(), 150.0);
 
-      tab = tab.removeWindow(6);
-      expect(tab.windows.length, 6);
-      expect(tab.layout.rows, 3);
-      expect(tab.layout.cols, 2);
-      expect(tab.windows.first.layout.width, 450.0);
-      expect(tab.windows.first.layout.height, 200.0);
-
-      tab = tab.removeWindow(5);
-      expect(tab.windows.length, 5);
-      expect(tab.layout.rows, 5);
-      expect(tab.layout.cols, 1);
-      expect(tab.windows.first.layout.width, 900.0);
-      expect(tab.windows.first.layout.height, 120.0);
-
-      tab = tab.removeWindow(4);
+      /// remove one window
       tab = tab.removeWindow(3);
-      tab = tab.removeWindow(2);
-      expect(tab.windows.length, 2);
-      expect(tab.layout.rows, 2);
-      expect(tab.layout.cols, 1);
-      expect(tab.windows.first.layout.width, 900.0);
-      expect(tab.windows.first.layout.height, 300.0);
+      nodes = tab.rootNode.flatten();
+      expect(tab.windows.length, 3);
+      expect(nodes[0].width(), 900.0);
+      expect(nodes[0].height(), 150.0);
+      expect(nodes[2].width(), 900.0);
+      expect(nodes[2].height(), 300.0);
 
-      tab = tab.removeWindow(1);
-      tab = tab.removeWindow(0);
-      expect(tab.windows.length, 1);
-      expect(tab.layout.rows, 1);
-      expect(tab.layout.cols, 1);
-      expect(tab.windows.first.layout.width, 900.0);
-      expect(tab.windows.first.layout.height, 600.0);
+      /// remove another window
+      tab = tab.removeWindow(2);
+      nodes = tab.rootNode.flatten();
+      expect(tab.windows.length, 2);
+      expect(nodes[0].width(), 900.0);
+      expect(nodes[0].height(), 300.0);
     });
+
 
     test('Add window to tab with temperature data', () {
       var location = getLocation('America/New_York');
@@ -271,7 +173,7 @@ Future<void> tests(String rootUrl) async {
               label: 'bos_min',
             )
           ],
-          layout: PlotlyLayout.getDefault(width: 900, height: 600),
+          layout: PlotlyLayout.getDefault(),
       );
       /// TO BE CONTINUED ...
       /// when I add a window to this tab, the existing variable in disappear
@@ -283,7 +185,7 @@ Future<void> tests(String rootUrl) async {
           tabs: [
             PolygraphTab(
                 name: 'Tab1',
-                layout: TabLayout.getDefault(),
+                rootNode: SingleNode(900, 600),
                 windows: [
                   PolygraphWindow(
                       term: Term.parse('Jan21-Dec21',
@@ -300,7 +202,7 @@ Future<void> tests(String rootUrl) async {
                             expression: 'toMonthly(hub_da_lmp, mean)',
                             label: 'monthly_mean'),
                       ],
-                    layout: PlotlyLayout.getDefault(width: 900, height: 600),
+                    layout: PlotlyLayout.getDefault(),
                   ),
                 ],
               activeWindowIndex: 0,

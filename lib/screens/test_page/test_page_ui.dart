@@ -1,28 +1,14 @@
 library screens.monthly_asset_ncpc.monthly_asset_ncpc_ui;
 
-import 'dart:math';
 import 'package:date/date.dart';
-import 'package:flutter/services.dart';
 
-import 'package:elec/risk_system.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/date_with_checkbox_model.dart';
-import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/month_model.dart';
-import 'package:flutter_quiver/models/common/term_model.dart';
-import 'package:flutter_quiver/models/monthly_asset_ncpc/asset_autocomplete_model.dart';
-import 'package:flutter_quiver/models/monthly_asset_ncpc/monthly_asset_ncpc.dart';
 import 'package:flutter_quiver/screens/common/date_with_checkbox.dart';
-import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/month.dart';
-import 'package:flutter_quiver/screens/common/term.dart';
-import 'package:flutter_quiver/screens/monthly_asset_ncpc/asset_autocomplete.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:table/table_base.dart' as table;
-import 'package:flutter_quiver/utils/empty_download.dart'
-    if (dart.library.html) '../../utils/download.dart';
 
 class TestPageUi extends StatefulWidget {
   const TestPageUi({Key? key}) : super(key: key);

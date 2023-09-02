@@ -1,6 +1,5 @@
 library test.models.polygraph.editors.marks_asof_test;
 
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
@@ -25,31 +24,26 @@ Future<void> tests() async {
     });
 
     test('Window with VariableMarksAsOf', () async {
-      var tabLayout = TabLayout.getDefault();
-      var poly = PolygraphState(
-          tabs: [
-            PolygraphTab(
-                name: 'Tab1',
-                layout: tabLayout,
-                windows: [
-                  PolygraphWindow(
-                    term: Term.parse('Aug23-Dec27', IsoNewEngland.location),
-                    xVariable: TimeVariable(),
-                    yVariables: [
-                      VariableMarksAsOfDate(
-                        asOfDate: Date.utc(2023, 7, 27),
-                        curveName: 'NG_HENRY_HUB_CME',
-                        label: 'hh',
-                      )
-                    ],
-                    layout: PlotlyLayout(
-                        width: tabLayout.canvasSize.width,
-                        height: tabLayout.canvasSize.height),
-                  ),
+      var poly = PolygraphState(tabs: [
+        PolygraphTab(
+            name: 'Tab1',
+            rootNode: SingleNode(900, 600),
+            windows: [
+              PolygraphWindow(
+                term: Term.parse('Aug23-Dec27', IsoNewEngland.location),
+                xVariable: TimeVariable(),
+                yVariables: [
+                  VariableMarksAsOfDate(
+                    asOfDate: Date.utc(2023, 7, 27),
+                    curveName: 'NG_HENRY_HUB_CME',
+                    label: 'hh',
+                  )
                 ],
-                activeWindowIndex: 0),
-          ],
-          activeTabIndex: 0);
+                layout: PlotlyLayout(),
+              ),
+            ],
+            activeWindowIndex: 0),
+      ], activeTabIndex: 0);
       var window = poly.tabs.first.windows.first;
       await window.updateCache();
       var traces = window.makeTraces();

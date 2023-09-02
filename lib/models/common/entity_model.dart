@@ -1,8 +1,6 @@
 library models.entity_model;
 
-import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:timezone/timezone.dart';
 
 class EntityModel extends ChangeNotifier {
   EntityModel({required String entity, required String subaccount}) {

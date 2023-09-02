@@ -4,8 +4,6 @@ import 'plotly_title.dart';
 
 class PlotlyLayout {
   PlotlyLayout({
-    required this.width,
-    required this.height,
     this.legend,
     this.title,
     this.xAxis,
@@ -13,8 +11,8 @@ class PlotlyLayout {
     this.hoverMode,
   });
 
-  final num width;
-  final num height;
+  /// Don't need a (width,height) as it gets set/controlled by the
+  /// tab dimensions.
 
   bool displayLogo = false;
   HoverMode? hoverMode;
@@ -25,12 +23,11 @@ class PlotlyLayout {
   PlotlyXAxis? xAxis;
   PlotlyYAxis? yAxis;
 
-  static PlotlyLayout getDefault({required num width, required num height}) =>
-      PlotlyLayout(width: width, height: height);
+  static PlotlyLayout getDefault() => PlotlyLayout();
 
   /// Construct a layout object from storage
   static PlotlyLayout fromJson(Map<String, dynamic> x) {
-    var layout = PlotlyLayout(width: x['width'], height: x['height']);
+    var layout = PlotlyLayout();
     if (x.containsKey('hovermode')) {
       layout.hoverMode = HoverMode.parse(x['hovermode']);
     }
@@ -45,8 +42,6 @@ class PlotlyLayout {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'width': width,
-      'height': height,
       if (hoverMode != null) 'hovermode': hoverMode.toString(),
       if (!showLegend) 'showlegend': showLegend,
       if (legend != null) 'legend': legend!.toJson(),
@@ -66,8 +61,7 @@ class PlotlyLayout {
         PlotlyLegend? legend,
         bool? showLegend,
         HoverMode? hoverMode}) {
-    return PlotlyLayout(
-        width: width ?? this.width, height: height ?? this.height)
+    return PlotlyLayout()
       ..title = title ?? this.title
       ..xAxis = xAxis ?? this.xAxis
       ..yAxis = yAxis ?? this.yAxis

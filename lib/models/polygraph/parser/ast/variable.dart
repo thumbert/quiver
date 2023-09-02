@@ -1,6 +1,5 @@
 library ast.variable;
 
-import 'dart:async';
 import 'expression.dart';
 
 /// A variable expression.

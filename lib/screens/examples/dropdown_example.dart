@@ -111,7 +111,25 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
                           selectedIcon = icon;
                         });
                       },
-                    )
+                    ),
+                    const SizedBox(width: 12,),
+                    DropdownMenu<IconLabel>(
+                      controller: iconController,
+                      enableFilter: true,
+                      leadingIcon: const Icon(Icons.search),
+                      label: const Text('Icon'),
+                      dropdownMenuEntries: iconEntries,
+                      inputDecorationTheme: const InputDecorationTheme(
+                        isDense: true,
+                        filled: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+                      ),
+                      onSelected: (IconLabel? icon) {
+                        setState(() {
+                          selectedIcon = icon;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -139,14 +157,15 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
               const SizedBox(
                 height: 48,
               ),
-              const Text('A dropdown with async values'),
+              const Text('A dropdown with async values, and progress indicator next to it'),
               const SizedBox(
                 height: 8,
               ),
               asyncData.when(
                 data: (data) => ExampleHeader(data),
                 error: (e, trace) => const Text('Boo'),
-                loading: () => const Column(
+                loading: () => const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ExampleHeader([]),
                     CircularProgressIndicator(),
@@ -193,7 +212,7 @@ class _ExampleHeaderState extends ConsumerState<ExampleHeader> {
           controller: controllerCountry,
           // label: const Text('Country'),
           inputDecorationTheme: InputDecorationTheme(
-            // isDense: true,
+            isDense: true,
             isCollapsed: true,
             filled: true,
             fillColor: MyApp.background,

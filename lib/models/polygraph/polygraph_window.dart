@@ -245,7 +245,7 @@ class PolygraphWindow {
         term: term,
         xVariable: xVariable,
         yVariables: <PolygraphVariable>[],
-        layout: PlotlyLayout(width: size.width, height: size.height));
+        layout: PlotlyLayout());
   }
 
   static PolygraphWindow getDefault({required Size size}) {
@@ -268,7 +268,7 @@ class PolygraphWindow {
             expression: 'toMonthly(bos_daily_temp, max)',
             label: 'bos_monthly_max'),
       ],
-      layout: PlotlyLayout(width: size.width, height: size.height),
+      layout: PlotlyLayout(),
     );
     return window;
   }
@@ -287,7 +287,7 @@ class PolygraphWindow {
         TransformedVariable(
             expression: 'toMonthly(hub_da_lmp, mean)', label: 'monthly_mean'),
       ],
-      layout: PlotlyLayout(width: size.width, height: size.height)
+      layout: PlotlyLayout()
         ..legend = PlotlyLegend.getDefault(),
     );
     return window;
@@ -301,7 +301,7 @@ class PolygraphWindow {
         TransformedVariable(
             expression: "hourly_schedule(50, bucket='Peak')", label: 'shape'),
       ],
-      layout: PlotlyLayout(width: size.width, height: size.height)
+      layout: PlotlyLayout()
         ..legend = PlotlyLegend.getDefault(),
     );
     return window;

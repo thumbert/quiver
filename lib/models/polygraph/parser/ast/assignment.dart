@@ -1,6 +1,5 @@
 library ast.assignment;
 
-import 'dart:async';
 import 'expression.dart';
 
 /// An assignment expression.

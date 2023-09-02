@@ -28,8 +28,8 @@ class _TabLayoutUiState extends ConsumerState<TabLayoutUi> {
     var poly = ref.read(providerOfPolygraph);
     var tab = poly.tabs[poly.activeTabIndex];
 
-    controllerWidth.text = tab.layout.canvasSize.width.toString();
-    controllerHeight.text = tab.layout.canvasSize.height.toString();
+    controllerWidth.text = tab.rootNode.width().toString();
+    controllerHeight.text = tab.rootNode.height().toString();
 
     focusWidth.addListener(() {
       if (!focusWidth.hasFocus) {
@@ -168,13 +168,17 @@ class _TabLayoutUiState extends ConsumerState<TabLayoutUi> {
                 setState(() {
                   var width = num.parse(controllerWidth.text).toDouble();
                   var height = num.parse(controllerHeight.text).toDouble();
-                  var tabLayout = tab.layout.copyWith(canvasSize: Size(width, height));
-                  var windowSize = tabLayout.windowSize();
-                  var windows = tab.windows
-                      .map((window) => window.copyWith(
-                          layout: window.layout.copyWith(width: windowSize.width, height: windowSize.height)))
-                      .toList();
-                  tab = tab.copyWith(layout: tabLayout, windows: windows);
+
+                  var newRoot = tab.rootNode.resize(width, height);
+                  var fs = newRoot.flatten();
+                  var newWindows = [...tab.windows];
+                  for (var i = 0; i < newWindows.length; i++) {
+                    newWindows[i] = newWindows[i].copyWith(
+                        layout: newWindows[i]
+                            .layout
+                            .copyWith(width: fs[i].width(), height: fs[i].height()));
+                  }
+                  tab = tab.copyWith(rootNode: newRoot, windows: newWindows);
                   ref.read(providerOfPolygraph.notifier).activeTab = tab;
                 });
               }

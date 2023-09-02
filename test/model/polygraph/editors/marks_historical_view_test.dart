@@ -40,12 +40,11 @@ Future<void> tests() async {
     });
 
     test('Window with VariableMarksHistoricalView', () async {
-      var tabLayout = TabLayout.getDefault();
       var poly = PolygraphState(
           tabs: [
             PolygraphTab(
                 name: 'Tab1',
-                layout: tabLayout,
+                rootNode: SingleNode(900, 600),
                 windows: [
                   PolygraphWindow(
                     term: Term.parse('1Jan23-27Jul23', IsoNewEngland.location),
@@ -56,9 +55,7 @@ Future<void> tests() async {
                           label: 'hh',
                           forwardStrip: Term.parse('Jan24-Feb24', UTC))
                     ],
-                    layout: PlotlyLayout(
-                        width: tabLayout.canvasSize.width,
-                        height: tabLayout.canvasSize.height),
+                    layout: PlotlyLayout(),
                   ),
                 ],
                 activeWindowIndex: 0),

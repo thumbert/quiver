@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
-import 'package:flutter_quiver/screens/polygraph/utils/autocomplete_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfTimeAggregation =

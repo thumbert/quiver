@@ -21,14 +21,11 @@ Future<void> tests(String rootUrl) async {
 
   group('Plotly layout tests', () {
     test('Simplest layout', () async {
-      var layout = PlotlyLayout(width: 900, height: 600);
-      expect(layout.toJson(), {
-        'width': 900,
-        'height': 600,
-      });
+      var layout = PlotlyLayout();
+      expect(layout.toJson(), {});
     });
     test('Default layout', () async {
-      var layout = PlotlyLayout(width: 900, height: 600)
+      var layout = PlotlyLayout()
         ..xAxis = (PlotlyXAxis()
           ..showGrid = true
           ..gridColor = '#f5f5f5')
@@ -37,8 +34,6 @@ Future<void> tests(String rootUrl) async {
           ..gridColor = '#f5f5f5')
         ..legend = (PlotlyLegend()..orientation = LegendOrientation.horizontal);
       expect(layout.toJson(), {
-        'width': 900,
-        'height': 600,
         'legend': {'orientation': 'h'},
         'xaxis': {'gridcolor': '#f5f5f5'},
         'yaxis': {'gridcolor': '#f5f5f5'},
@@ -47,8 +42,6 @@ Future<void> tests(String rootUrl) async {
 
     test('with legend', () {
       var x = {
-        'width': 900.0,
-        'height': 600.0,
         'legend': {'orientation': 'h'}
       };
       var layout = PlotlyLayout.fromJson(x);
