@@ -1,7 +1,11 @@
 library screens.polygraph.polygraph;
 
+import 'dart:convert';
+
 import 'package:contextmenu/contextmenu.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart' hide Interval;
+import 'package:flutter_quiver/models/polygraph/editors/load_project.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/load_project_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
@@ -173,32 +177,26 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 ]),
                 onTap: () {
                   final container = ProviderScope.containerOf(context);
-                  showDialog(context: context, builder: (BuildContext context) {
-                    return PointerInterceptor(child: AlertDialog(
-                      title: const Text('Load project'),
-                      content: ProviderScope(
-                          parent: container,
-                          child: const LoadProjectEditor()),
-                        contentPadding: const EdgeInsets.all(12),
-                        actions: [
-                          TextButton(
-                              child: const Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              }),
-                          ElevatedButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-
-                                Navigator.of(context).pop();
-                              }),
-                        ]),
-                    );
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return PointerInterceptor(
+                          child: AlertDialog(
+                            scrollable: true,
+                            title: const Text('Load project'),
+                            content: ProviderScope(
+                                parent: container,
+                                child: const LoadProjectEditor()),
+                            contentPadding: const EdgeInsets.all(12),
+                          ),
+                        );
+                      });
+                  // print('After popping ... ');
+                  // print(ref.read(providerOfPolygraphLoadProject).userId);
                 },
               ),
               PopupMenuItem<String>(
-                value: 'raw_data',
+                value: 'save',
                 child: const Row(children: [
                   Icon(
                     Icons.cloud_upload,
@@ -209,7 +207,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                 onTap: () {},
               ),
               PopupMenuItem<String>(
-                value: 'raw_data',
+                value: 'loadFile',
                 child: const Row(children: [
                   Icon(
                     Icons.file_upload,
@@ -217,7 +215,51 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                   ),
                   Text('  Load file')
                 ]),
-                onTap: () {},
+                onTap: () async {
+                  var result = await FilePicker.platform.pickFiles(
+                    type: FileType.any,
+                    withData: true,
+                  );
+                  if (result != null) {
+                    if (!result.isSinglePick) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const SimpleDialog(
+                              contentPadding: EdgeInsets.fromLTRB(24, 12, 24, 24),
+                              title: Text(
+                                'Error',
+                                style: TextStyle(color: Colors.redAccent),
+                              ),
+                              children: [Text('Only one file at a time!')],
+                            );
+                          });
+                    }
+                    // print('${result.names}');
+                    // print('${utf8.decode(result.files.first.bytes as List<int>)}');
+                    try {
+                      var stringContent = utf8.decode(result.files.first.bytes as List<int>);
+                      var jsonContent = json.decode(stringContent) as Map<String,dynamic>;
+                      var poly = PolygraphState.fromJson(jsonContent);
+                      ref.read(providerOfPolygraph.notifier).tabs = poly.tabs;
+                      ref.read(providerOfPolygraph.notifier).activeTabIndex = 0;
+                    } catch (e) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                              title: const Text(
+                                'Error',
+                                style: TextStyle(color: Colors.redAccent),
+                              ),
+                              children: [Text('File ${result.names.first} is not '
+                                  'a correctly formatted Polygraph project.')],
+                            );
+                          });
+                    }
+                  }
+                },
               ),
               PopupMenuItem<String>(
                 value: 'raw_data',
@@ -254,31 +296,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     );
                   });
             },
-            icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
-          ),
-          IconButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const SimpleDialog(
-                      children: [
-                        SizedBox(
-                          width: 500,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Experimental UI for curve visualization.'
-                                  '\n'),
-                            ],
-                          ),
-                        )
-                      ],
-                      contentPadding: EdgeInsets.all(12),
-                    );
-                  });
-            },
             icon: const Icon(Icons.info_outline),
             tooltip: 'Info',
           ),
@@ -292,7 +309,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const LoadProjectEditor(),
+              // const LoadProjectEditor(),
 
               ///
               /// Tabs
@@ -418,7 +435,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                                 child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                          .all(
+                                                                      .all(
                                                                       16.0),
                                                               child: ProviderScope(
                                                                   parent:
@@ -428,38 +445,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                             )),
                                                           ]);
                                                     });
-                                              },
-                                            ),
-
-                                            /// Add window
-                                            ListTile(
-                                              dense: true,
-                                              horizontalTitleGap: 0.0,
-                                              leading: Icon(
-                                                Icons.square_outlined,
-                                                color: Colors.blueGrey[300],
-                                              ),
-                                              title: const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 12.0),
-                                                child: Text('Add window'),
-                                              ),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                setState(() {
-                                                  var tab = poly
-                                                      .tabs[poly.activeTabIndex];
-                                                      // .addWindow();
-                                                  ref
-                                                      .read(providerOfPolygraph
-                                                          .notifier)
-                                                      .activeTab = tab;
-                                                });
-                                                // ScaffoldMessenger.of(context).showSnackBar(
-                                                //   const SnackBar(
-                                                //     content: Text('Whatever'),
-                                                //   ),
-                                                // );
                                               },
                                             ),
                                           ];

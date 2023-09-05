@@ -1,5 +1,7 @@
 library models.polygraph.display.plotly_layout;
 
+import 'package:flutter_quiver/models/polygraph/display/plotly_margin.dart';
+
 import 'plotly_title.dart';
 
 class PlotlyLayout {
@@ -8,8 +10,13 @@ class PlotlyLayout {
     this.title,
     this.xAxis,
     this.yAxis,
+    this.margin,
     this.hoverMode,
-  });
+  }) {
+    if (title == null || title?.text == '') {
+      margin ??= PlotlyMargin();
+    }
+  }
 
   /// Don't need a (width,height) as it gets set/controlled by the
   /// tab dimensions.
@@ -22,6 +29,7 @@ class PlotlyLayout {
   PlotlyTitle? title;
   PlotlyXAxis? xAxis;
   PlotlyYAxis? yAxis;
+  PlotlyMargin? margin;
 
   static PlotlyLayout getDefault() => PlotlyLayout();
 
@@ -31,11 +39,16 @@ class PlotlyLayout {
     if (x.containsKey('hovermode')) {
       layout.hoverMode = HoverMode.parse(x['hovermode']);
     }
-    if (x.containsKey('legend')) layout.legend = PlotlyLegend.fromJson(x['legend']);
+    if (x.containsKey('legend')) {
+      layout.legend = PlotlyLegend.fromJson(x['legend']);
+    }
     if (x.containsKey('showlegend')) layout.showLegend = x['showlegend'];
     if (x.containsKey('title')) layout.title = PlotlyTitle.fromJson(x['title']);
     if (x.containsKey('xaxis')) layout.xAxis = PlotlyXAxis.fromJson(x['xaxis']);
     if (x.containsKey('yaxis')) layout.yAxis = PlotlyYAxis.fromJson(x['yaxis']);
+    if (x.containsKey('margin')) {
+      layout.margin = PlotlyMargin.fromJson(x['margin']);
+    }
     if (x.containsKey('displaylogo')) layout.displayLogo = x['displaylogo'];
     return layout;
   }
@@ -45,32 +58,34 @@ class PlotlyLayout {
       if (hoverMode != null) 'hovermode': hoverMode.toString(),
       if (!showLegend) 'showlegend': showLegend,
       if (legend != null) 'legend': legend!.toJson(),
-      if (title != null) 'title': title!.toMap(),
+      if (title != null) 'title': title!.toJson(),
       if (xAxis != null) 'xaxis': xAxis!.toJson(),
-      if (yAxis != null) 'yaxis': yAxis!.toMap(),
+      if (yAxis != null) 'yaxis': yAxis!.toJson(),
+      if (margin != null) 'margin': margin!.toJson(),
       if (displayLogo != false) 'displaylogo': displayLogo,
     };
   }
 
   PlotlyLayout copyWith(
       {num? width,
-        num? height,
-        PlotlyTitle? title,
-        PlotlyXAxis? xAxis,
-        PlotlyYAxis? yAxis,
-        PlotlyLegend? legend,
-        bool? showLegend,
-        HoverMode? hoverMode}) {
+      num? height,
+      PlotlyTitle? title,
+      PlotlyXAxis? xAxis,
+      PlotlyYAxis? yAxis,
+      PlotlyLegend? legend,
+      PlotlyMargin? margin,
+      bool? showLegend,
+      HoverMode? hoverMode}) {
     return PlotlyLayout()
       ..title = title ?? this.title
       ..xAxis = xAxis ?? this.xAxis
       ..yAxis = yAxis ?? this.yAxis
       ..legend = legend ?? this.legend
+      ..margin = margin ?? this.margin
       ..showLegend = showLegend ?? this.showLegend
       ..hoverMode = hoverMode ?? this.hoverMode;
   }
 }
-
 
 class AnchorXAxis {
   const AnchorXAxis._internal(this._value);
@@ -368,7 +383,7 @@ enum LegendOrientation {
   const LegendOrientation(this._orientation);
 
   final String _orientation;
-  
+
   static LegendOrientation parse(String value) {
     return switch (value) {
       'h' => LegendOrientation.horizontal,
@@ -376,7 +391,7 @@ enum LegendOrientation {
       _ => throw ArgumentError('Incorrect value $value for legend orientation'),
     };
   }
-  
+
   @override
   String toString() => _orientation;
 }
@@ -471,7 +486,7 @@ class PlotlyLegend {
     return PlotlyLegend();
   }
 
-  static PlotlyLegend fromJson(Map<String,dynamic> x) {
+  static PlotlyLegend fromJson(Map<String, dynamic> x) {
     var legend = PlotlyLegend();
     if (x.containsKey('orientation')) {
       legend.orientation = LegendOrientation.parse(x['orientation']);
@@ -600,12 +615,9 @@ class PlotlyXAxis {
   }
 
   PlotlyXAxis copyWith({PlotlyAxisTitle? title}) {
-    var axis = PlotlyXAxis()
-      ..title = title;
+    var axis = PlotlyXAxis()..title = title;
     return axis;
   }
-
-
 }
 
 class PlotlyYAxis {
@@ -654,7 +666,7 @@ class PlotlyYAxis {
     return axis;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (anchor != null) 'anchor': anchor.toString(),
       if (color != null) 'color': color,

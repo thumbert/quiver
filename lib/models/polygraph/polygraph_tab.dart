@@ -529,11 +529,11 @@ class PolygraphTab {
     if (x
     case {
     'name': String name,
-    'tabLayout': Map<String, dynamic> _layout,
-    'windows': List<Map<String, dynamic>> _windows,
+    'tabLayout': Map _layout,
+    'windows': List _windows,
     }) {
-      var root = WindowNode.fromJson(_layout);
-      var windows = [for (var e in _windows) PolygraphWindow.fromJson(e)];
+      var root = WindowNode.fromJson(_layout.cast<String,dynamic>());
+      var windows = [for (Map<String,dynamic> e in _windows) PolygraphWindow.fromJson(e)];
 
       return PolygraphTab(
           name: name,

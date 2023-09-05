@@ -5,13 +5,16 @@
 - Define hotkey Ctrl-D to show a table with data underlying 
   the plot
 - Not sure how to show the data because it can be of various frequency
-- Implement Load/Save functionality for the plot config
+- Implement Load/Save functionality for the plot config // What is this?  9/3/2023
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
-- Make the Close icon X on the plot window appear only when the window is active
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
+- If there is no title plot, reduce the top margin 
 
-
-## Release 2023-08-xx
+## Release 2023-09-04
+- Polygraph
+  - Implemented read project json file from disk and from DB
+  - The new window manager is working.  All window creation is now done from the 
+    border of the active window.
 
 
 ## Release 2023-08-09

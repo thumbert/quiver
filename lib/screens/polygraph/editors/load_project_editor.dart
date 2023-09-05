@@ -289,7 +289,7 @@ class _LoadProjectEditorState extends ConsumerState<LoadProjectEditor> {
                                     elevation: 4.0,
                                     child: ConstrainedBox(
                                       constraints: const BoxConstraints(
-                                          maxHeight: 300, maxWidth: 240),
+                                          maxHeight: 300, maxWidth: 260),
                                       child: ListView.builder(
                                         padding: EdgeInsets.zero,
                                         shrinkWrap: true,
@@ -369,15 +369,18 @@ class _LoadProjectEditorState extends ConsumerState<LoadProjectEditor> {
                 ElevatedButton(
                   child: const Text('OK'),
                   onPressed: () async {
-                    // var poly = PolygraphState.getProject(userId, projectName)
-
-                    // if (state.getErrors().isEmpty) {
-                    //   context.pop(state);
-                    //   setState(() {
-                    //     // ref.read(providerOfPolygraph.notifier).refreshActiveWindow = true;
-                    //     // ref.read(providerOfMarksAsOf.notifier).reset();
-                    //   });
-                    // }
+                    var userId = controllerUserName.text;
+                    var projectName = controllerProjectName.text;
+                    try {
+                      var poly = await PolygraphState.getProject(userId, projectName);
+                      ref.read(providerOfPolygraph.notifier).tabs = poly.tabs;
+                      ref.read(providerOfPolygraph.notifier).activeTabIndex = 0;
+                      context.pop('Success');
+                    } catch (e) {
+                      showDialog(context: context, builder: (context) {
+                        return SimpleDialog(title: Text(e.toString()),);
+                      });
+                    }
                   },
                 ),
               ],

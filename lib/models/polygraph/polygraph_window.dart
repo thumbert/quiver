@@ -56,7 +56,7 @@ class PolygraphWindow {
           'tzLocation': String _tzLocation,
           'xVariable': Map<String, dynamic> _xVariable,
           'yVariables': List _yVariables,  // can be an empty list
-          'layout': Map<String, dynamic> _layout,
+          'layout': Map _layout,
         }) {
       var location = _tzLocation == 'UTC' ? UTC : getLocation(_tzLocation);
       var term = Term.parse(_term, location);
@@ -65,7 +65,7 @@ class PolygraphWindow {
         for (Map<String, dynamic> e in _yVariables)
           PolygraphVariable.fromJson(e)
       ];
-      var layout = PlotlyLayout.fromJson(_layout);
+      var layout = PlotlyLayout.fromJson(_layout.cast<String,dynamic>());
       return PolygraphWindow(
           term: term,
           xVariable: xVariable,

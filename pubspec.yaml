@@ -22,6 +22,7 @@ dependencies:
     git: https://github.com/thumbert/elec.git
   elec_server:
     git: https://github.com/thumbert/elec-server.git
+  file_picker: ^5.5.0
   flutter_dotenv: ^5.0.0
   flutter_svg: ^1.1.5
   flutter_web_plotly:

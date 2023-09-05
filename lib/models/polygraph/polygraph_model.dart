@@ -91,9 +91,9 @@ class PolygraphState {
   /// Throws [ArgumentError] if parsing fails.
   static PolygraphState fromJson(Map<String, dynamic> x) {
     if (x case {
-      'tabs': List<Map<String,dynamic>> _tabs,
+      'tabs': List _tabs,
     }) {
-      var tabs = [for (var e in _tabs) PolygraphTab.fromJson(e)];
+      var tabs = [for (Map<String,dynamic> e in _tabs) PolygraphTab.fromJson(e)];
       var poly = PolygraphState(tabs: tabs, activeTabIndex: 0)
         ..userId = x['userId']
         ..projectName = x['projectName'];
@@ -190,6 +190,7 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
   PolygraphNotifier(this.ref) : super(PolygraphState.getDefault());
 
   final Ref ref;
+
 
   set tabs(List<PolygraphTab> values) {
     state = state.copyWith(tabs: values);

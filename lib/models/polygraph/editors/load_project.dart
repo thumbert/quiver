@@ -2,6 +2,10 @@
 //
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 //
+// final providerOfPolygraphLoadProject =
+//     StateNotifierProvider<LoadProjectNotifier, LoadProject>(
+//         (ref) => LoadProjectNotifier(ref));
+//
 // class LoadProject {
 //   LoadProject({required this.userId, required this.projectName});
 //

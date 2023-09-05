@@ -30,7 +30,7 @@ class PlotlyTitle {
     return title;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (text != '') 'text': text,
       if (!autoMargin) 'automargin': autoMargin,

@@ -88,6 +88,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   Widget _makePlotWindows() {
     var poly = ref.watch(providerOfPolygraph);
     var tab = poly.tabs[poly.activeTabIndex];
+    print('In polygraph_tab_ui, _makePlotWindows()');
+    print('tab.tabAction:${tab.tabAction}');
     if (tab.tabAction.isNotEmpty) {
       if (tab.tabAction.keys.contains('windowAdded')) {
         var aux = DateTime.now().hashCode;
@@ -310,9 +312,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   }
 
 
-
-
-
   @override
   Widget build(BuildContext context) {
     var poly = ref.watch(providerOfPolygraph);
@@ -331,9 +330,11 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          child: _makePlotWindows(),
-        ),
+        const PlotlyLayoutUi(),
+
+        // Container(
+        //   child: _makePlotWindows(),
+        // ),
 
         const SizedBox(
           height: 12,
@@ -583,8 +584,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   child: const Text('OK'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
-
-                                    /// harvest the values, HOW???
                                     var layout =
                                         ref.read(providerOfPlotlyLayout);
                                     // print('Title is: ${layout.title?.text}');

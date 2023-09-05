@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class VariableDisplayConfig {
-
   static VariableDisplayConfig fromMap(Map<String,dynamic> x) {
     var config = VariableDisplayConfig();
     if (x.containsKey('mode')) {
