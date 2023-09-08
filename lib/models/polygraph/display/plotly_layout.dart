@@ -18,8 +18,9 @@ class PlotlyLayout {
     }
   }
 
-  /// Don't need a (width,height) as it gets set/controlled by the
-  /// tab dimensions.
+  /// NOTE: Although Plotly layout has (width, height) properties, we don't
+  /// keep it here as it gets set and controlled by the tab's rootNode
+  /// dimensions.
 
   bool displayLogo = false;
   HoverMode? hoverMode;
@@ -263,7 +264,7 @@ class AxisType {
   const AxisType._internal(this._value);
   final String _value;
 
-  static const theDefault = AxisType._internal('-');
+  static const theDefault = AxisType._internal('-');  // automatic
   static const linear = AxisType._internal('linear');
   static const log = AxisType._internal('log');
   static const date = AxisType._internal('date');
@@ -416,12 +417,12 @@ class RefPosition {
   String toString() => _value;
 }
 
-class SideX {
-  const SideX._internal(this._value);
-  final String _value;
+enum SideX {
+  top('top'),
+  bottom('bottom');
 
-  static const top = SideX._internal('top');
-  static const bottom = SideX._internal('bottom');
+  const SideX(this._value);
+  final String _value;
 
   factory SideX.parse(String x) {
     if (x != 'top' && x != 'bottom') {
@@ -430,7 +431,7 @@ class SideX {
     return x == 'top' ? top : bottom;
   }
 
-  static const List<String> values = ['top', 'bottom'];
+  static const List<String> allValues = ['top', 'bottom'];
 
   @override
   String toString() => _value;
@@ -443,6 +444,15 @@ enum SideY {
   const SideY(this._value);
 
   final String _value;
+
+  factory SideY.parse(String x) {
+    if (x != 'left' && x != 'right') {
+      throw ArgumentError('Can\'t parse $x for side y axis side.');
+    }
+    return x == 'left' ? left : right;
+  }
+
+  static const List<String> allValues = ['top', 'bottom'];
 
   @override
   String toString() => _value;
@@ -631,7 +641,7 @@ class PlotlyYAxis {
   bool isVisible = true;
   AxisLayer layer = AxisLayer.aboveTraces;
   String lineColor = '#444';
-  SideX? side;
+  SideY? side;
   bool showGrid = true;
   bool showZeroLine = false;
   TicksPosition? ticksPosition;
@@ -645,7 +655,6 @@ class PlotlyYAxis {
     var axis = PlotlyYAxis();
     if (x.containsKey('anchor')) axis.anchor = AnchorYAxis.parse(x['anchor']);
     if (x.containsKey('color')) axis.color = x['color'];
-    if (x.containsKey('showgrid')) axis.showGrid = x['showgrid'];
     if (x.containsKey('gridcolor')) axis.gridColor = x['gridcolor'];
     if (x.containsKey('griddash')) {
       axis.gridDash = DashStyle.parse(x['griddash']);
@@ -653,6 +662,7 @@ class PlotlyYAxis {
     if (x.containsKey('gridwidth')) axis.gridWidth = x['gridwidth'];
     if (x.containsKey('layer')) axis.layer = AxisLayer.parse(x['layer']);
     if (x.containsKey('linecolor')) axis.lineColor = x['linecolor'];
+    if (x.containsKey('showgrid')) axis.showGrid = x['showgrid'];
     if (x.containsKey('type')) axis.type = AxisType.parse(x['type']);
     if (x.containsKey('visible')) axis.isVisible = x['visible'];
     if (x.containsKey('zeroline')) axis.showZeroLine = x['zeroline'];
@@ -661,7 +671,7 @@ class PlotlyYAxis {
     if (x.containsKey('title')) {
       axis.title = PlotlyAxisTitle.fromMap(x['title']);
     }
-    if (x.containsKey('side')) axis.side = SideX.parse(x['side']);
+    if (x.containsKey('side')) axis.side = SideY.parse(x['side']);
 
     return axis;
   }

@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart' hide Interval;
-import 'package:flutter_quiver/models/polygraph/editors/load_project.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/load_project_editor.dart';
 import 'package:flutter_quiver/screens/polygraph/other/tab_layout_ui.dart';
@@ -226,7 +225,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           context: context,
                           builder: (context) {
                             return const SimpleDialog(
-                              contentPadding: EdgeInsets.fromLTRB(24, 12, 24, 24),
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(24, 12, 24, 24),
                               title: Text(
                                 'Error',
                                 style: TextStyle(color: Colors.redAccent),
@@ -238,8 +238,10 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                     // print('${result.names}');
                     // print('${utf8.decode(result.files.first.bytes as List<int>)}');
                     try {
-                      var stringContent = utf8.decode(result.files.first.bytes as List<int>);
-                      var jsonContent = json.decode(stringContent) as Map<String,dynamic>;
+                      var stringContent =
+                          utf8.decode(result.files.first.bytes as List<int>);
+                      var jsonContent =
+                          json.decode(stringContent) as Map<String, dynamic>;
                       var poly = PolygraphState.fromJson(jsonContent);
                       ref.read(providerOfPolygraph.notifier).tabs = poly.tabs;
                       ref.read(providerOfPolygraph.notifier).activeTabIndex = 0;
@@ -248,13 +250,16 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           context: context,
                           builder: (context) {
                             return SimpleDialog(
-                              contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                              contentPadding:
+                                  const EdgeInsets.fromLTRB(24, 12, 24, 24),
                               title: const Text(
                                 'Error',
                                 style: TextStyle(color: Colors.redAccent),
                               ),
-                              children: [Text('File ${result.names.first} is not '
-                                  'a correctly formatted Polygraph project.')],
+                              children: [
+                                Text('File ${result.names.first} is not '
+                                    'a correctly formatted Polygraph project.')
+                              ],
                             );
                           });
                     }
@@ -339,12 +344,13 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                               child: Center(
                                 child: poly.activeTabIndex == index
                                     ? ContextMenuArea(
-                                        verticalPadding: 8.0,
-                                        width: 260,
-                                        builder: (context) {
-                                          return [
-                                            /// Add tab
-                                            ListTile(
+                                      verticalPadding: 8.0,
+                                      width: 260,
+                                      builder: (context) {
+                                        return [
+                                          /// Add tab
+                                          PointerInterceptor(
+                                            child: ListTile(
                                               dense: true,
                                               horizontalTitleGap: 0.0,
                                               leading: Icon(
@@ -352,8 +358,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 12.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 12.0),
                                                 child: Text('Add tab'),
                                               ),
                                               onTap: () {
@@ -363,9 +369,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 });
                                               },
                                             ),
+                                          ),
 
-                                            /// Delete tab
-                                            ListTile(
+                                          /// Delete tab
+                                          PointerInterceptor(
+                                            child: ListTile(
                                               dense: true,
                                               horizontalTitleGap: 0.0,
                                               leading: Icon(
@@ -373,8 +381,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 12.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 12.0),
                                                 child: Text('Delete tab'),
                                               ),
                                               onTap: () {
@@ -387,9 +395,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 });
                                               },
                                             ),
+                                          ),
 
-                                            /// Rename
-                                            ListTile(
+                                          /// Rename
+                                          PointerInterceptor(
+                                            child: ListTile(
                                               dense: true,
                                               horizontalTitleGap: 0.0,
                                               leading: Icon(
@@ -397,8 +407,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 12.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 12.0),
                                                 child: Text('Rename'),
                                               ),
                                               onTap: () {
@@ -408,9 +418,11 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 });
                                               },
                                             ),
+                                          ),
 
-                                            /// Tab display config
-                                            ListTile(
+                                          /// Tab display config
+                                          PointerInterceptor(
+                                            child: ListTile(
                                               dense: true,
                                               horizontalTitleGap: 0.0,
                                               leading: Icon(
@@ -418,8 +430,8 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 color: Colors.blueGrey[300],
                                               ),
                                               title: const Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 12.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 12.0),
                                                 child: Text(
                                                     'Display configuration'),
                                               ),
@@ -427,12 +439,13 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                 Navigator.of(context).pop();
                                                 showDialog(
                                                     context: context,
-                                                    builder:
-                                                        (BuildContext context) {
+                                                    builder: (BuildContext
+                                                        context) {
                                                       return SimpleDialog(
                                                           children: [
                                                             PointerInterceptor(
-                                                                child: Padding(
+                                                                child:
+                                                                    Padding(
                                                               padding:
                                                                   const EdgeInsets
                                                                       .all(
@@ -447,10 +460,12 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                                                     });
                                               },
                                             ),
-                                          ];
-                                        },
-                                        child: _makeTabTextButton(index, poly),
-                                      )
+                                          ),
+                                        ];
+                                      },
+                                      child:
+                                          _makeTabTextButton(index, poly),
+                                    )
                                     : _makeTabTextButton(index, poly),
                               ),
                             ),

@@ -363,10 +363,6 @@ class PolygraphTab {
   final int activeWindowIndex;
 
 
-  static const borderHeight = 30.0;
-  static const borderWidth = 1.0;
-
-
   /// Use this variable to communicate if a window was added or removed,
   /// so I can modify the list of plotly in the UI.
   var tabAction = <String, dynamic>{};

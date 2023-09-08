@@ -8,7 +8,14 @@
 - Implement Load/Save functionality for the plot config // What is this?  9/3/2023
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
-- If there is no title plot, reduce the top margin 
+
+
+## Release 2023-09-08
+- Polygraph
+  - Added PointerInterceptors to the Tab buttons context menus
+  - Basic chart settings now work.  Can add title, axis labels, change y axis position
+    Plot margins and axis types also work.
+
 
 ## Release 2023-09-04
 - Polygraph

@@ -20,7 +20,6 @@ import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
 import 'package:flutter_quiver/screens/homepage/homepage.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
 import 'package:timezone/data/latest.dart';
-// import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   initializeTimeZones();

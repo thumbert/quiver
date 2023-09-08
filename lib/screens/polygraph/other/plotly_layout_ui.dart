@@ -1,6 +1,6 @@
 library screens.polygraph.other.plotly_layout_ui;
 
-import 'package:flutter/material.dart' hide Interval, Transform;
+import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_margin.dart';
@@ -45,13 +45,13 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
   bool pressedOk = false;
   int activeTab = 0;
 
-  late PlotlyLayout layout;
+  // late PlotlyLayout layout;
 
   @override
   void initState() {
     super.initState();
     var plotly = ref.read(providerOfPolygraph);
-    layout = plotly.activeWindow.layout;
+    var layout = plotly.activeWindow.layout;
 
     controllerTitleText.text = layout.title?.text ?? '';
     controllerXAxisText.text = layout.xAxis?.title?.text ?? '';
@@ -73,6 +73,26 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
           ref.read(providerOfPlotlyLayout.notifier).state =
               layout.copyWith(title: title);
         });
+      }
+    });
+    focusMarginBottom.addListener(() {
+      if (!focusMarginBottom.hasFocus) {
+        setBottomMargin();
+      }
+    });
+    focusMarginLeft.addListener(() {
+      if (!focusMarginLeft.hasFocus) {
+        setLeftMargin();
+      }
+    });
+    focusMarginTop.addListener(() {
+      if (!focusMarginTop.hasFocus) {
+        setTopMargin();
+      }
+    });
+    focusMarginRight.addListener(() {
+      if (!focusMarginRight.hasFocus) {
+        setRightMargin();
       }
     });
   }
@@ -98,7 +118,7 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
     super.dispose();
   }
 
-  Widget _makeTab0() {
+  Widget _makeTabMain(PlotlyLayout layout) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -128,14 +148,6 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
                   contentPadding: EdgeInsets.all(8),
                   enabledBorder: InputBorder.none,
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    var title = layout.title ?? PlotlyTitle()
-                      ..text = controllerTitleText.text;
-                    ref.read(providerOfPlotlyLayout.notifier).state =
-                        layout.copyWith(title: title);
-                  });
-                },
                 onEditingComplete: () {
                   setState(() {
                     var title = layout.title ?? PlotlyTitle()
@@ -176,7 +188,7 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
                     : 'vertical',
                 icon: const Icon(Icons.expand_more),
                 hint: const Text('Filter'),
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14, fontFamily: 'Ubuntu'),
                 decoration: const InputDecoration(
                   isDense: true,
                   enabledBorder: InputBorder.none,
@@ -224,152 +236,150 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
           height: 12,
         ),
 
-
         ///
         /// Plot margins
         ///
         Row(
           children: [
-            Container(
-              width: 130,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 8),
-              child: const Text(
-                'Plot margins',
-                style: TextStyle(fontSize: 14),
+            Tooltip(
+              message: 'In pixels',
+              child: Container(
+                width: 130,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 8),
+                child: const Text(
+                  'Plot margins',
+                  style: TextStyle(fontSize: 14),
+                ),
               ),
             ),
-
-            // const SizedBox(width: 6,),
-            // Container(
-            //   width: 50,
-            //   alignment: Alignment.centerRight,
-            //   padding: const EdgeInsets.only(right: 4),
-            //   child: const Text(
-            //     'Left',
-            //     style: TextStyle(fontSize: 14),
-            //   ),
-            // ),
-            // const SizedBox(width: 4,),
-
             Container(
               color: MyApp.background,
-              width: 48,
+              width: 56,
               child: TextFormField(
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: 14),
+                style: _errorMarginLeft != null
+                    ? const TextStyle(fontSize: 14, color: Colors.red)
+                    : const TextStyle(fontSize: 14),
                 controller: controllerMarginLeft,
                 focusNode: focusMarginLeft,
                 decoration: const InputDecoration(
                   isDense: true,
-                  contentPadding: EdgeInsets.all(4),
                   enabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.fromLTRB(4, 2, 4, 4),
                   labelText: 'Left',
                 ),
                 onEditingComplete: () => setLeftMargin(),
               ),
             ),
-            const SizedBox(width: 24,),
-
-
-            Column(
-              children: [
-                const Text(
-                  'Left',
-                  style: TextStyle(fontSize: 14),
-                ),
-                Container(
-                  color: MyApp.background,
-                  width: 48,
-                  child: TextField(
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(fontSize: 14),
-                    controller: controllerMarginLeft,
-                    focusNode: focusMarginLeft,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(8),
-                      enabledBorder: InputBorder.none,
-                    ),
-                    onEditingComplete: () => setLeftMargin(),
-                  ),
-                ),
-              ],
+            const SizedBox(
+              width: 24,
             ),
-            const SizedBox(width: 12,),
-            const Text(
-              'Bottom',
-              style: TextStyle(fontSize: 14),
-            ),
-            const SizedBox(width: 4,),
             Container(
               color: MyApp.background,
-              width: 48,
-              child: TextField(
+              width: 56,
+              child: TextFormField(
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: 14),
+                style: _errorMarginBottom != null
+                    ? const TextStyle(fontSize: 14, color: Colors.red)
+                    : const TextStyle(fontSize: 14),
                 controller: controllerMarginBottom,
                 focusNode: focusMarginBottom,
                 decoration: const InputDecoration(
                   isDense: true,
-                  contentPadding: EdgeInsets.all(8),
+                  contentPadding: EdgeInsets.fromLTRB(4, 2, 4, 4),
                   enabledBorder: InputBorder.none,
+                  labelText: 'Bottom',
                 ),
                 onEditingComplete: () => setBottomMargin(),
               ),
             ),
-            const SizedBox(width: 12,),
-            const Text(
-              'Top',
-              style: TextStyle(fontSize: 14),
+            const SizedBox(
+              width: 24,
             ),
-            const SizedBox(width: 4,),
             Container(
               color: MyApp.background,
-              width: 48,
-              child: TextField(
+              width: 56,
+              child: TextFormField(
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: 14),
+                style: _errorMarginTop != null
+                    ? const TextStyle(fontSize: 14, color: Colors.red)
+                    : const TextStyle(fontSize: 14),
                 controller: controllerMarginTop,
                 focusNode: focusMarginTop,
                 decoration: const InputDecoration(
                   isDense: true,
-                  contentPadding: EdgeInsets.all(8),
+                  contentPadding: EdgeInsets.fromLTRB(4, 2, 4, 4),
                   enabledBorder: InputBorder.none,
+                  labelText: 'Top',
                 ),
                 onEditingComplete: () => setTopMargin(),
               ),
             ),
-            const SizedBox(width: 12,),
-            const Text(
-              'Right',
-              style: TextStyle(fontSize: 14),
+            const SizedBox(
+              width: 24,
             ),
-            const SizedBox(width: 4,),
             Container(
               color: MyApp.background,
-              width: 48,
-              child: TextField(
+              width: 56,
+              child: TextFormField(
                 textAlign: TextAlign.right,
-                style: const TextStyle(fontSize: 14),
+                style: _errorMarginRight != null
+                    ? const TextStyle(fontSize: 14, color: Colors.red)
+                    : const TextStyle(fontSize: 14),
                 controller: controllerMarginRight,
                 focusNode: focusMarginRight,
                 decoration: const InputDecoration(
                   isDense: true,
-                  contentPadding: EdgeInsets.all(8),
+                  contentPadding: EdgeInsets.fromLTRB(4, 2, 4, 4),
                   enabledBorder: InputBorder.none,
+                  labelText: 'Right',
                 ),
                 onEditingComplete: () => setRightMargin(),
               ),
             ),
-
           ],
         ),
+
+        /// Errors (if any)
+        if (_errorMarginLeft != null)
+          Container(
+            padding: const EdgeInsets.only(left: 130),
+            child: Text(
+              _errorMarginLeft!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        if (_errorMarginBottom != null)
+          Container(
+            padding: const EdgeInsets.only(left: 130),
+            child: Text(
+              _errorMarginBottom!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        if (_errorMarginTop != null)
+          Container(
+            padding: const EdgeInsets.only(left: 130),
+            child: Text(
+              _errorMarginTop!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        if (_errorMarginRight != null)
+          Container(
+            padding: const EdgeInsets.only(left: 130),
+            child: Text(
+              _errorMarginRight!,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _makeTab1() {
+  Widget _makeTabXAxis(PlotlyLayout layout) {
+    var xAxis = layout.xAxis ?? PlotlyXAxis();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -399,10 +409,9 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
                   contentPadding: EdgeInsets.all(8),
                   enabledBorder: InputBorder.none,
                 ),
-                onChanged: (value) {
+                onChanged: (String? newValue) {
                   setState(() {
-                    var xAxis = layout.xAxis ?? PlotlyXAxis();
-                    var title = xAxis.title ?? PlotlyAxisTitle()
+                    var title = (xAxis.title ?? PlotlyAxisTitle())
                       ..text = controllerXAxisText.text;
                     xAxis.title = title;
                     ref.read(providerOfPlotlyLayout.notifier).state =
@@ -411,7 +420,6 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
                 },
                 onEditingComplete: () {
                   setState(() {
-                    var xAxis = layout.xAxis ?? PlotlyXAxis();
                     var title = xAxis.title ?? PlotlyAxisTitle()
                       ..text = controllerXAxisText.text;
                     xAxis.title = title;
@@ -480,11 +488,16 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
         ///
         Container(
           width: 154,
-          padding: const EdgeInsets.only(left: 44),
+          // color: Colors.green,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(left: 42),
           child: CheckboxListTile(
-              title: const Text(
-                'Show grid',
-                style: TextStyle(fontSize: 14),
+              title: Transform.translate(
+                offset: const Offset(8, 0),
+                child: const Text(
+                  'Show grid',
+                  style: TextStyle(fontSize: 14),
+                ),
               ),
               value: layout.xAxis?.showGrid ?? true,
               dense: true,
@@ -502,8 +515,189 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
     );
   }
 
+  Widget _makeTabYAxis(PlotlyLayout layout) {
+    var yAxis = layout.yAxis ?? PlotlyYAxis();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ///
+        /// Title row
+        ///
+        Row(
+          children: [
+            Container(
+              width: 130,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 8),
+              child: const Text(
+                'Label',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            Container(
+              color: MyApp.background,
+              width: 240,
+              child: TextField(
+                style: const TextStyle(fontSize: 14),
+                controller: controllerYAxisText,
+                focusNode: focusXAxisText,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.all(8),
+                  enabledBorder: InputBorder.none,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    var title = (yAxis.title ?? PlotlyAxisTitle())
+                      ..text = controllerYAxisText.text;
+                    yAxis.title = title;
+                    ref.read(providerOfPlotlyLayout.notifier).state =
+                        layout.copyWith(yAxis: yAxis);
+                  });
+                },
+                onEditingComplete: () {
+                  setState(() {
+                    var title = (yAxis.title ?? PlotlyAxisTitle())
+                      ..text = controllerYAxisText.text;
+                    yAxis.title = title;
+                    ref.read(providerOfPlotlyLayout.notifier).state =
+                        layout.copyWith(yAxis: yAxis);
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+
+        ///
+        /// Axis type
+        ///
+        Row(
+          children: [
+            Container(
+              width: 130,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 12),
+              child: const Text(
+                'Axis type',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            Container(
+              color: MyApp.background,
+              padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
+              width: 130,
+              child: DropdownButtonFormField(
+                value: layout.yAxis?.type?.toString() ?? '-',
+                icon: const Icon(Icons.expand_more),
+                hint: const Text('Filter'),
+                style: const TextStyle(fontSize: 14),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  enabledBorder: InputBorder.none,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    yAxis.type = AxisType.parse(newValue!);
+                    ref.read(providerOfPlotlyLayout.notifier).state =
+                        layout.copyWith(yAxis: yAxis);
+                    print(yAxis.type);
+                  });
+                },
+                items: AxisType.values
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+              ),
+            )
+          ],
+        ),
+
+        const SizedBox(
+          height: 8,
+        ),
+
+        ///
+        /// Show grid lines
+        ///
+        Container(
+          width: 154,
+          padding: const EdgeInsets.only(left: 42),
+          child: CheckboxListTile(
+              title: Transform.translate(
+                offset: const Offset(8, 0),
+                child: const Text(
+                  'Show grid',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              value: layout.xAxis?.showGrid ?? true,
+              dense: true,
+              controlAffinity: ListTileControlAffinity.trailing,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (bool? value) {
+                var xAxis = layout.xAxis ?? PlotlyXAxis();
+                xAxis.showGrid = value!;
+                // print('xAxis.showGrid = ${xAxis.showGrid}');
+                ref.read(providerOfPlotlyLayout.notifier).state =
+                    layout.copyWith(xAxis: xAxis);
+              }),
+        ),
+
+        ///
+        /// Y axis position (left vs. right)
+        ///
+        Row(
+          children: [
+            Container(
+              width: 130,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 12),
+              child: const Text(
+                'Axis position',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            Container(
+              color: MyApp.background,
+              padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
+              width: 130,
+              child: DropdownButtonFormField(
+                value: yAxis.side == null ? 'left' : yAxis.side.toString(),
+                icon: const Icon(Icons.expand_more),
+                hint: const Text('Filter'),
+                style: const TextStyle(fontSize: 14),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  enabledBorder: InputBorder.none,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    yAxis.side = SideY.parse(newValue!);
+                    ref.read(providerOfPlotlyLayout.notifier).state =
+                        layout.copyWith(yAxis: yAxis);
+                  });
+                },
+                items: ['left', 'right']
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+              ),
+            )
+          ],
+        ),
+
+      ],
+    );
+  }
+
   void setLeftMargin() {
+    var plotly = ref.read(providerOfPolygraph);
+    var layout = plotly.activeWindow.layout;
     setState(() {
+      _errorMarginLeft = null;
       var value = num.tryParse(controllerMarginLeft.text);
       if (value != null) {
         var margin = layout.margin ?? PlotlyMargin();
@@ -513,13 +707,16 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
         ref.read(providerOfPlotlyLayout.notifier).state =
             layout.copyWith(margin: margin);
       } else {
-        _errorMarginLeft = 'Incorrect number of px for left margin';
+        _errorMarginLeft = 'Incorrect number of pixels for left margin';
       }
     });
   }
 
   void setBottomMargin() {
+    var plotly = ref.read(providerOfPolygraph);
+    var layout = plotly.activeWindow.layout;
     setState(() {
+      _errorMarginBottom = null;
       var value = num.tryParse(controllerMarginBottom.text);
       if (value != null) {
         var margin = layout.margin ?? PlotlyMargin();
@@ -529,13 +726,16 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
         ref.read(providerOfPlotlyLayout.notifier).state =
             layout.copyWith(margin: margin);
       } else {
-        _errorMarginBottom = 'Incorrect number of px for bottom margin';
+        _errorMarginBottom = 'Incorrect number of pixels for bottom margin';
       }
     });
   }
 
   void setTopMargin() {
+    var plotly = ref.read(providerOfPolygraph);
+    var layout = plotly.activeWindow.layout;
     setState(() {
+      _errorMarginTop = null;
       var value = num.tryParse(controllerMarginTop.text);
       if (value != null) {
         var margin = layout.margin ?? PlotlyMargin();
@@ -545,13 +745,16 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
         ref.read(providerOfPlotlyLayout.notifier).state =
             layout.copyWith(margin: margin);
       } else {
-        _errorMarginTop = 'Incorrect number of px for top margin';
+        _errorMarginTop = 'Incorrect number of pixels for top margin';
       }
     });
   }
 
   void setRightMargin() {
+    var plotly = ref.read(providerOfPolygraph);
+    var layout = plotly.activeWindow.layout;
     setState(() {
+      _errorMarginRight = null;
       var value = num.tryParse(controllerMarginRight.text);
       if (value != null) {
         var margin = layout.margin ?? PlotlyMargin();
@@ -561,15 +764,15 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
         ref.read(providerOfPlotlyLayout.notifier).state =
             layout.copyWith(margin: margin);
       } else {
-        _errorMarginRight = 'Incorrect number of px for right margin';
+        _errorMarginRight = 'Incorrect number of pixels for right margin';
       }
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    layout = ref.watch(providerOfPlotlyLayout);
+
+    var layout = ref.watch(providerOfPlotlyLayout);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -659,9 +862,13 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
             const SizedBox(
               height: 16,
             ),
-            if (activeTab == 0) _makeTab0(),
-            if (activeTab == 1) _makeTab1(),
-            // if (activeTab == 2) _makeTab2(),
+            if (activeTab == 0) _makeTabMain(layout),
+            if (activeTab == 1) _makeTabXAxis(layout),
+            if (activeTab == 2) _makeTabYAxis(layout),
+
+            const SizedBox(
+              height: 16,
+            ),
           ],
         ),
       ],
