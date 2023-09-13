@@ -107,7 +107,7 @@ class TransformedVariable extends PolygraphVariable {
         }) {
       var v = TransformedVariable(expression: expression, label: label);
       if (x['displayConfig'] != null) {
-        v.displayConfig = VariableDisplayConfig.fromMap(x['displayConfig']);
+        v.displayConfig = VariableDisplayConfig.fromJson(x['displayConfig']);
       }
       return v;
     } else {

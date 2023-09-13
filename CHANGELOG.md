@@ -9,6 +9,9 @@
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
 
+## Release 2023-09-13
+- Polygraph
+  - More work on Plotly js objects.  This is bigger work than I expected ...
 
 ## Release 2023-09-08
 - Polygraph

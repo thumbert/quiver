@@ -517,7 +517,7 @@ class PlotlyFont {
   String? family;
   int? size;
 
-  static PlotlyFont fromMap(Map<String, dynamic> x) {
+  static PlotlyFont fromJson(Map<String, dynamic> x) {
     var font = PlotlyFont();
     if (x.containsKey('color')) font.color = x['color'];
     if (x.containsKey('family')) font.family = x['family'];
@@ -525,7 +525,7 @@ class PlotlyFont {
     return font;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       if (color != null) 'color': color,
       if (family != null) 'family': family,
@@ -543,7 +543,7 @@ class PlotlyAxisTitle {
     var title = PlotlyAxisTitle();
     if (x.containsKey('text')) title.text = x['text'];
     if (x.containsKey('standoff')) title.standoff = x['standoff'];
-    if (x.containsKey('font')) title.font = PlotlyFont.fromMap(x['font']);
+    if (x.containsKey('font')) title.font = PlotlyFont.fromJson(x['font']);
     return title;
   }
 
@@ -551,7 +551,7 @@ class PlotlyAxisTitle {
     return <String, dynamic>{
       if (text != '') 'text': text,
       if (standoff != null) 'standoff': standoff,
-      if (font != null) 'font': font!.toMap(),
+      if (font != null) 'font': font!.toJson(),
     };
   }
 }
@@ -698,3 +698,27 @@ class PlotlyYAxis {
     };
   }
 }
+
+enum PlotlyOrientation {
+  horizontal('h'),
+  vertical('v');
+
+  const PlotlyOrientation(this._value);
+  final String _value;
+
+  static PlotlyOrientation parse(String value) {
+    return switch (value) {
+      'h' => PlotlyOrientation.horizontal,
+      'v' => PlotlyOrientation.vertical,
+      _ => throw ArgumentError('Invalid value $value for PlotlyOrientation'),
+    };
+  }
+
+  @override
+  String toString() => _value;
+}
+
+
+
+
+

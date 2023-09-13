@@ -75,7 +75,7 @@ class VariableMarksAsOfDate extends PolygraphVariable {
         v.label = x['label'];
       }
       if (x['displayConfig'] != null) {
-        var config = VariableDisplayConfig.fromMap(x['displayConfig']);
+        var config = VariableDisplayConfig.fromJson(x['displayConfig']);
         v.displayConfig = config;
       }
       return v;

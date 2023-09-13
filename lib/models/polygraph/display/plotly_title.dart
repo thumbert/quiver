@@ -23,7 +23,7 @@ class PlotlyTitle {
     var title = PlotlyTitle();
     if (x.containsKey('text')) title.text = x['text'];
     if (x.containsKey('automargin')) title.autoMargin = x['automargin'];
-    if (x.containsKey('font')) title.font = PlotlyFont.fromMap(x['font']);
+    if (x.containsKey('font')) title.font = PlotlyFont.fromJson(x['font']);
     if (x.containsKey('x')) title.x = x['x'];
 
     /// TODO: continue me
@@ -34,7 +34,7 @@ class PlotlyTitle {
     return <String, dynamic>{
       if (text != '') 'text': text,
       if (!autoMargin) 'automargin': autoMargin,
-      if (font != null) 'font': font!.toMap(),
+      if (font != null) 'font': font!.toJson(),
       if (x != 0.5) 'x': x,
       if (anchorX != AnchorXTitle.auto) 'xanchor': anchorX.toString(),
       if (xRef != RefPosition.container) 'xref': xRef.toString(),

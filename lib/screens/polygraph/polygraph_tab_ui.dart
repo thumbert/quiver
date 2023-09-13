@@ -809,7 +809,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
               height: 28,
               decoration: BoxDecoration(
                 color: tab.activeWindowIndex == i
-                    ? Colors.orange[300]
+                    ? Colors.orange[100]
                     : Colors.blueGrey[200],
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8),
@@ -834,11 +834,11 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   .activeTab = tab;
                             });
                           },
-                          icon: const Tooltip(
+                          icon: Tooltip(
                             message: 'Split window horizontally',
                             child: Icon(
                               Icons.horizontal_split,
-                              color: Colors.white,
+                              color: Colors.blueGrey[800],
                               size: 18,
                             ),
                           )),
@@ -860,11 +860,11 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   .activeTab = tab;
                             });
                           },
-                          icon: const Tooltip(
+                          icon: Tooltip(
                             message: 'Split window vertically',
                             child: Icon(
                               Icons.vertical_split,
-                              color: Colors.white,
+                              color: Colors.blueGrey[800],
                               size: 18,
                             ),
                           )),
@@ -888,9 +888,9 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                   .activeTab = tab;
                             });
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.close,
-                            color: Colors.white,
+                            color: Colors.blueGrey[800],
                             size: 18,
                           )),
                     ],
@@ -907,7 +907,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                 border: tab.activeWindowIndex == i
                     ? Border.all(color: Colors.orange[300]!)
                     : null),
-            // child: Center(child: Text('Window ($i,$j)')),
             child: asyncCache.when(
                 loading: () => const Center(
                     child: SizedBox(

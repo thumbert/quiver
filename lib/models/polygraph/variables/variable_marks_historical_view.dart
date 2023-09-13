@@ -77,7 +77,7 @@ class VariableMarksHistoricalView extends PolygraphVariable {
         v.label = x['label'];
       }
       if (x['displayConfig'] != null) {
-        var displayConfig = VariableDisplayConfig.fromMap(x['displayConfig']);
+        var displayConfig = VariableDisplayConfig.fromJson(x['displayConfig']);
         v.displayConfig = displayConfig;
       }
       return  v;

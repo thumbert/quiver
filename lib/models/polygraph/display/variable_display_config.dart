@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class VariableDisplayConfig {
-  static VariableDisplayConfig fromMap(Map<String,dynamic> x) {
+
+  static VariableDisplayConfig fromJson(Map<String,dynamic> x) {
     var config = VariableDisplayConfig();
     if (x.containsKey('mode')) {
       config.mode = x['mode'];
@@ -24,16 +25,38 @@ class VariableDisplayConfig {
     return config;
   }
 
-  String mode = 'lines'; // 'lines+markers',
+  String mode = 'lines'; //  'lines+markers',
   String? color; // what format?
   int? width; // default is 1
   DashStyle? dash;
   bool? connectGaps;
   String visible = 'true';
 
-  static final allModes = ['lines', 'lines+markers', ''];
+  static final allModes = ['lines', 'markers', 'lines+markers', 'none'];
   static final allShapes = ['linear', 'spline', 'hv', 'vh', 'hvh', 'vhv'];
   static final allVisible = ['true', 'false', 'legendonly'];
+
+  /// From [Color(0xFF1f77b4)] return '#1f77b4'.
+  static String colorToHex(Color color) {
+    return '#${(0x00ffffff & color.value).toRadixString(16)}';
+  }
+
+  /// TODO:  Maybe set line['shape'] = 'hv' for period beginning, and 'vh' for
+  /// period ending.
+  Map<String, dynamic>? line;
+
+  Map<String, dynamic> toJson() {
+    var out = <String, dynamic>{
+      'mode': mode,
+    };
+    if (color != null) out['color'] = color;
+    if (width != null) out['width'] = width;
+    if (dash != null) out['dash'] = dash;
+    if (connectGaps != null) out['connectgaps'] = connectGaps;
+
+    return out;
+  }
+
 
   /// taken from plotly
   static final defaultColors = <Color>[
@@ -61,24 +84,5 @@ class VariableDisplayConfig {
   ];
 
 
-  /// From [Color(0xFF1f77b4)] return '#1f77b4'.
-  static String colorToHex(Color color) {
-    return '#${(0x00ffffff & color.value).toRadixString(16)}';
-  }
 
-  /// TODO:  Maybe set line['shape'] = 'hv' for period beginning, and 'vh' for
-  /// period ending.
-  Map<String, dynamic>? line;
-
-  Map<String, dynamic> toJson() {
-    var out = <String, dynamic>{
-      'mode': mode,
-    };
-    if (color != null) out['color'] = color;
-    if (width != null) out['width'] = width;
-    if (dash != null) out['dash'] = dash;
-    if (connectGaps != null) out['connectgaps'] = connectGaps;
-
-    return out;
-  }
 }

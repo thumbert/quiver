@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
+import 'package:flutter_quiver/screens/examples/yaru_popup_menu_button_example.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -83,6 +84,9 @@ class MyApp extends StatelessWidget {
     // GoRoute(
     //     path: VlrStage2.route, builder: (context, state) => const VlrStage2()),
     GoRoute(path: Weather.route, builder: (context, state) => const Weather()),
+    GoRoute(
+        path: YaruPopupMenuButtonExample.route,
+        builder: (context, state) => const YaruPopupMenuButtonExample()),
   ], errorBuilder: (context, state) => const Error404());
 
   @override
