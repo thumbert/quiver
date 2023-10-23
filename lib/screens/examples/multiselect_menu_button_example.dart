@@ -19,28 +19,34 @@ class SelectionModel {
   Set<String> selection = <String>{
     '(All)',
   };
-  String title = 'Select';
+  // String title = 'Select';
 
   static Set<String> allValues = <String>{'(All)'};
+
+  String getTitle() {
+    if (selection.isEmpty) return '(None)';
+    if (!selection.contains('(All)')) {
+      return '(Some)';
+    } else {
+      return '(All)';
+    }
+
+  }
 
   void add(String value) {
     if (value == '(All)') {
       selection = {...SelectionModel.allValues};
-      title = '(All)';
     } else {
       selection.add(value);
-      if (!selection.contains('(All)')) title = '(Some)';
     }
   }
 
   void remove(String value) {
     if (value == '(All)') {
       selection.clear();
-      title = '(None)';
     } else {
       selection.remove(value);
-      if (selection.contains('(All)')) selection.remove('(All)');
-      title = '(Some)';
+      selection.remove('(All)');
     }
   }
 
@@ -178,7 +184,7 @@ class _DropdownExampleState extends ConsumerState<MultiSelectMenuButtonExample> 
                             data: (cities) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(model.title),
+                                child: Text(model.getTitle()),
                               );
                             },
                             error: (err, stack) => const Text('Oops'),

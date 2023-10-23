@@ -37,8 +37,6 @@ class CtSuppliersBacklogModel {
   Set<String> selectedSuppliers;
   bool aggregate = false;
 
-  String supplierDropdownLabel = '(All)';
-
   /// what to plot, e.g. 'Customer count'
   final String variableName;
 
@@ -57,6 +55,7 @@ class CtSuppliersBacklogModel {
     Utility.ui: <Map<String, dynamic>>[],
   };
 
+  /// Including '(All)'
   Set<String> getAllSupplierNames() {
     if (cache[utility]!.isEmpty) {
       return {'(All)'};
@@ -154,26 +153,29 @@ class CtSuppliersBacklogModel {
     return traces;
   }
 
+  String getSupplierDropdownLabel() {
+    if (selectedSuppliers.isEmpty) return '(None)';
+    if (!selectedSuppliers.contains('(All)')) {
+      return '(Some)';
+    } else {
+      return '(All)';
+    }
+  }
+
   void addSupplier(String value) {
     if (value == '(All)') {
       selectedSuppliers = getAllSupplierNames();
-      supplierDropdownLabel = '(All)';
     } else {
       selectedSuppliers.add(value);
-      if (!selectedSuppliers.contains('(All)'))
-        supplierDropdownLabel = '(Some)';
     }
   }
 
   void removeSupplier(String value) {
     if (value == '(All)') {
       selectedSuppliers.clear();
-      supplierDropdownLabel = '(None)';
     } else {
       selectedSuppliers.remove(value);
-      if (selectedSuppliers.contains('(All)'))
-        selectedSuppliers.remove('(All)');
-      supplierDropdownLabel = '(Some)';
+      selectedSuppliers.remove('(All)');
     }
   }
 
