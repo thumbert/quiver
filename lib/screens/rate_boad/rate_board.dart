@@ -78,13 +78,13 @@ class _RateBoardState extends ConsumerState<RateBoard> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return SimpleDialog(
+                    return const SimpleDialog(
                       children: [
                         SizedBox(
                           width: 500,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                   'Display retail competitive offers in ISONE.  '
                                   'CT data is '
@@ -102,7 +102,7 @@ class _RateBoardState extends ConsumerState<RateBoard> {
                           ),
                         )
                       ],
-                      contentPadding: const EdgeInsets.all(12),
+                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },

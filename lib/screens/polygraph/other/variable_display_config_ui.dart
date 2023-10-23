@@ -5,6 +5,7 @@ import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_margin.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_title.dart';
+import 'package:flutter_quiver/screens/polygraph/other/plotly_layout_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

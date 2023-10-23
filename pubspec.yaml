@@ -43,6 +43,7 @@ dependencies:
     git: https://github.com/thumbert/timeseries.git
   timezone: '>=0.5.5 <1.0.0'
   tuple: ^2.0.0
+  url_launcher: ^6.1.14
   yaru_widgets: ^3.1.0
 
 

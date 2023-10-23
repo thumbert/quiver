@@ -1,9 +1,10 @@
 library screens.homepage.calculator_list;
 
 import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
-import 'package:flutter_quiver/screens/examples/yaru_popup_menu_button_example.dart';
+import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -30,6 +31,7 @@ class AppGroup extends StatefulWidget {
       MenuItem(url: HistoricalPlc.route, title: 'Historical PLC'),
       MenuItem(url: PoolLoadStats.route, title: 'Pool load statistics'),
       MenuItem(url: VlrStage2.route, title: 'Realized Stage 2 VLR'),
+      MenuItem(url: CtSuppliersBacklog.route, title: 'CT suppliers backlog'),
     ],
     //
     'Reports': [
@@ -54,7 +56,7 @@ class AppGroup extends StatefulWidget {
     ],
     'Examples': [
       MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
-      MenuItem(title: 'Yaru multi-select dropdown', url: YaruPopupMenuButtonExample.route),
+      MenuItem(title: 'Multi-select dropdown', url: MultiSelectMenuButtonExample.route),
     ],
   };
 

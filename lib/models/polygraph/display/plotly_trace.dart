@@ -1,5 +1,6 @@
 library models.polygraph.display.plotly_trace;
 
+import 'package:flutter_quiver/models/polygraph/display/plotly_enums.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_legend_group_title.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_text_position.dart';
