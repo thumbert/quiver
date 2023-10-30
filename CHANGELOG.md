@@ -8,7 +8,12 @@
 - Implement Load/Save functionality for the plot config // What is this?  9/3/2023
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
+- Use MenuAnchor (from Flutter) to implement right-click menus.  See example for shortcuts too.
 
+
+## Release 2023-10-30
+- Have two multiselect_menu_button implementations, one with Riverpod, one with ValueNotifier.
+  Code is in screen/examples/
 
 ## Release 2023-10-23
 - Add CT suppliers backlog app

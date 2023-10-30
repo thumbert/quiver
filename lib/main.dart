@@ -3,6 +3,7 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
+import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
@@ -57,6 +58,9 @@ class MyApp extends StatelessWidget {
         path: HistoricalPlc.route,
         builder: (context, state) => const HistoricalPlc()),
     GoRoute(
+        path: InheritedWidgetExample.route,
+        builder: (context, state) => const InheritedWidgetExample(child: MyStorePage())),
+    GoRoute(
         path: MccSurfer.route, builder: (context, state) => const MccSurfer()),
     GoRoute(
         path: MonthlyAssetNcpc.route,
@@ -105,6 +109,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Quiver',
       routerConfig: _router,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         appBarTheme: AppBarTheme(

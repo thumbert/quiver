@@ -233,7 +233,7 @@ class _DropdownExampleState
                                       style: const TextStyle(fontFamily: 'Ubuntu', fontSize: 16),),
                                     const Spacer(),
                                     const Icon(
-                                        Icons.keyboard_arrow_down_outlined, color: Colors.blueGrey,),
+                                      Icons.keyboard_arrow_down_outlined, color: Colors.blueGrey,),
                                   ],
                                 ),
                               );

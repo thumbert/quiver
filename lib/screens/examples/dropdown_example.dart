@@ -15,9 +15,13 @@ Future<List<Map<String, String>>> getData() async {
     {'country': 'USA', 'city': 'Denver'},
     {'country': 'USA', 'city': 'Philadelphia'},
     {'country': 'USA', 'city': 'Washington, DC'},
+    {'country': 'Belgium', 'city': 'Bruxelles'},
     {'country': 'Canada', 'city': 'Montreal'},
     {'country': 'Canada', 'city': 'Quebec'},
     {'country': 'Canada', 'city': 'Toronto'},
+    {'country': 'France', 'city': 'Paris'},
+    {'country': 'Germany', 'city': 'Paris'},
+    {'country': 'Italy', 'city': 'Rome'},
   ];
 }
 
@@ -175,6 +179,10 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
               const SizedBox(
                 height: 48,
               ),
+
+
+
+
             ],
           ),
         ),
