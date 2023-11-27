@@ -200,29 +200,30 @@ class RateBoardState {
     // print(data.length);
 
     /// sort decreasingly by rate and 'sortedColumn'
-    var byRate =
-        naturalComparator<num>().onResultOf((RetailSupplyOffer e) => e.rate);
+    var byRate = naturalComparable<num>.onResultOf((RetailSupplyOffer e) => e.rate);
     var comparator = byRate;
 
     // var sign = sortAscending ? 1 : -1;
 
     if (sortColumn == 'Months') {
-      var byMonths = naturalComparator<int>()
+      var byMonths = naturalComparable<num>
           .onResultOf((RetailSupplyOffer e) => e.countOfBillingCycles);
+      // var byMonths3 = naturalComparable<num>.onResultOf((RetailSupplyOffer e) => e.countOfBillingCycles);
+
       if (sortAscending) byMonths = byMonths.reversed;
       comparator = byMonths.thenCompare(byRate);
     } else if (sortColumn == 'Posted Date') {
-      var byDate = naturalComparator<int>()
+      var byDate = naturalComparable<num>
           .onResultOf((RetailSupplyOffer e) => e.offerPostedOnDate.value);
       if (sortAscending) byDate = byDate.reversed;
       comparator = byDate.thenCompare(byRate);
     } else if (sortColumn == 'Supplier') {
-      var bySupplier = naturalComparator<String>()
+      var bySupplier = naturalComparable<String>
           .onResultOf((RetailSupplyOffer e) => e.supplierName);
       if (sortAscending) bySupplier = bySupplier.reversed;
       comparator = bySupplier.thenCompare(byRate);
     } else if (sortColumn == 'Recs') {
-      var byRecs = naturalComparator<num>()
+      var byRecs = naturalComparable<num>
           .onResultOf((RetailSupplyOffer e) => e.minimumRecs);
       if (sortAscending) byRecs = byRecs.reversed;
       comparator = byRecs.thenCompare(byRate);

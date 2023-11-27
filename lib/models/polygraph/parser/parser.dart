@@ -161,16 +161,18 @@ final windowFun = (string('window(') &
   Bucket? bucket;
   var months = <int>[];
   var hours = <int>[];
-  var v2 = (value[2] as List).first as Sequence3;
-  if (v2.first != null) {
-    bucket = (v2.first as Sequence2).second;
-  }
-  if (v2.second != null) {
-    months = ((v2.second as Sequence2).second as MonthsListExpr).value;
-  }
-  if (v2.third != null) {
-    hours = ((v2.third as Sequence2).second as HoursListExpr).value;
-  }
+
+  /// TODO: FIXME!
+  // var v2 = (value[2] as List).first as Sequence2;
+  // if (v2.first != null) {
+  //   bucket = (v2.first as Sequence2).second;
+  // }
+  // if (v2.second != null) {
+  //   months = ((v2.second as Sequence2).second as MonthsListExpr).value;
+  // }
+  // if (v2.third != null) {
+  //   hours = ((v2.third as Sequence2).second as HoursListExpr).value;
+  // }
 
   return WindowExpr(x: value[1], bucket: bucket, months: months, hours: hours);
 });
@@ -187,13 +189,13 @@ final hourlyScheduleFun = (string('hourly_schedule(') &
 
   Bucket? bucket;
   var months = <int>[];
-  var v2 = (value[2] as List).first as Sequence2;
-  if (v2.first != null) {
-    bucket = (v2.first as Sequence2).second;
-  }
-  if (v2.second != null) {
-    months = ((v2.second as Sequence2).second as MonthsListExpr).value;
-  }
+  // var v2 = (value[2] as List).first as Sequence2;
+  // if (v2.first != null) {
+  //   bucket = (v2.first as Sequence2).second;
+  // }
+  // if (v2.second != null) {
+  //   months = ((v2.second as Sequence2).second as MonthsListExpr).value;
+  // }
   return HourlyScheduleExpr(x, bucket: bucket, months: months);
 });
 
@@ -203,7 +205,9 @@ final maFun = (string('ma(') &
         char(')'))
     .trim()
     .map((value) {
-  var n = int.parse(((value[2] as Sequence2).second as List).join());
+  // var n = int.parse(((value[2] as Sequence2).second as List).join());
+  /// FIXME!
+  var n = 10;
   return MaExpr(x: value[1], n: n);
 });
 
@@ -215,12 +219,12 @@ final argList =
 
 final callable = seq4(word().plus().flatten('function expected').trim(),
         char('(').trim(), argList, char(')').trim())
-    .map((value) => _createFunctionN(value.first, value.third));
+    .map((value) => _createFunctionN(value.$1, value.$3));
 
 final chain =
     seq2(variable, [string('=>').trim(), callable].toSequenceParser().plus())
         .map((value) {
-  return value.second.first[1] as Expression;
+  return value.$2.first[1] as Expression;
 });
 
 Parser<List> hiddenWhitespace() => ref0(hiddenStuffWhitespace).plus();

@@ -6,6 +6,7 @@ import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
+import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -58,7 +59,8 @@ class AppGroup extends StatefulWidget {
     'Examples': [
       MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
       MenuItem(title: 'Inherited widget example', url: InheritedWidgetExample.route),
-      MenuItem(title: 'Multi-select dropdown', url: MultiSelectMenuButtonExample.route),
+      MenuItem(title: 'Multiselect dropdown', url: MultiSelectMenuButtonExample.route),
+      MenuItem(title: 'Two linked multiselect dropdowns', url: TwoLinkedMultiSelectsExample.route),
     ],
   };
 

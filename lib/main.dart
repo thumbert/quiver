@@ -5,6 +5,7 @@ import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
+import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -102,6 +103,9 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: MultiSelectMenuButtonExample.route,
         builder: (context, state) => const MultiSelectMenuButtonExample()),
+    GoRoute(
+        path: TwoLinkedMultiSelectsExample.route,
+        builder: (context, state) => const TwoLinkedMultiSelectsExample()),
   ], errorBuilder: (context, state) => const Error404());
 
   @override

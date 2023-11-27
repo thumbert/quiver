@@ -14,9 +14,9 @@ final providerOfCtSuppliersBacklogModel =
     StateNotifierProvider<CtSupplierBacklogNotifier, CtSuppliersBacklogModel>(
         (ref) => CtSupplierBacklogNotifier(ref));
 
-final providerOfCtSuppliersBacklogData = FutureProvider((ref) async {
-  var model = ref.watch(providerOfCtSuppliersBacklogModel);
-  await CtSuppliersBacklogModel.getData(model.term, model.utility);
+final providerOfCtSuppliersBacklogData = FutureProvider.family<List<Map<String,dynamic>>, Term>((ref, term) async {
+  var model = ref.read(providerOfCtSuppliersBacklogModel);
+  await CtSuppliersBacklogModel.getData(term, model.utility);
   return CtSuppliersBacklogModel.cache[model.utility] ??
       <Map<String, dynamic>>[];
 });
@@ -85,22 +85,18 @@ class CtSuppliersBacklogModel {
   ///
   static Future<List<Map<String, dynamic>>> getData(
       Term? term, Utility utility) async {
-    if (cache[utility]!.isEmpty) {
-      var _api =
-          CtSupplierBacklogRates(client, rootUrl: dotenv.env['ROOT_URL']!);
-      if (term == null) {
-        var start = Month.utc(2022, 1).startDate;
-        var end = Month.current(location: UTC).startDate.previous;
-        term = Term(start, end);
-      }
-      var start = Month.containing(term.startDate.start);
-      var end = Month.containing(term.endDate.start);
-      var aux = await _api.getBacklogForUtility(
-          utility: utility, start: start, end: end);
-      for (Map<String, dynamic> e in aux) {
-        cache[utility]!.add(e);
-      }
+    cache[utility]!.clear();
+    var _api = CtSupplierBacklogRates(client, rootUrl: dotenv.env['ROOT_URL']!);
+    if (term == null) {
+      var start = Month.utc(2022, 1).startDate;
+      var end = Month.current(location: UTC).startDate.previous;
+      term = Term(start, end);
     }
+    var start = Month.containing(term.startDate.start);
+    var end = Month.containing(term.endDate.start);
+    var aux = await _api.getBacklogForUtility(
+        utility: utility, start: start, end: end);
+    cache[utility]!.addAll(aux);
     return cache[utility]!;
   }
 
@@ -201,15 +197,19 @@ class CtSuppliersBacklogModel {
     };
   }
 
-  static CtSuppliersBacklogModel getDefault() => CtSuppliersBacklogModel(
-        term: Term.parse('Jan22-Jul23', IsoNewEngland.location),
-        utility: Utility.eversource,
-        customerClass: 'Residential',
-        selectedSuppliers: {'(All)'},
-        variableName: 'Customer count',
-        aggregate: false,
-      );
-
+  static CtSuppliersBacklogModel getDefault() {
+    var start = Month(2022, 1, location: IsoNewEngland.location);
+    var end = Month.current(location: IsoNewEngland.location).previous;
+    return CtSuppliersBacklogModel(
+      term: Term(start.startDate, end.endDate),
+      utility: Utility.eversource,
+      customerClass: 'Residential',
+      selectedSuppliers: {'(All)'},
+      variableName: 'Customer count',
+      aggregate: false,
+    );
+  } 
+  
   CtSuppliersBacklogModel copyWith({
     Term? term,
     Utility? utility,

@@ -126,7 +126,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
   @override
   Widget build(BuildContext context) {
     final model = ref.watch(providerOfCtSuppliersBacklogModel);
-    final asyncData = ref.watch(providerOfCtSuppliersBacklogData);
+    final asyncData = ref.watch(providerOfCtSuppliersBacklogData(model.term));
 
     return Scaffold(
       appBar: AppBar(

@@ -9,7 +9,15 @@
 - Implement VariableMarksHistoricalView.getAllCurveNames() as a method in the DataService instance
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
 - Use MenuAnchor (from Flutter) to implement right-click menus.  See example for shortcuts too.
+- fix more deprecation from rate_board_model!
 
+## Release 2023-11-xx
+- Bump up petitparser to 6.0.1, broke some code.  Need to fix.
+- Fixed the ct_suppliers_backlog.  Now only get the data when term changes.  
+
+## Release 2023-11-22
+- Create models/multiple_selection.dart and MultiSelectionNotifier. 
+- Make an example with two linked dropdowns.
 
 ## Release 2023-10-30
 - Have two multiselect_menu_button implementations, one with Riverpod, one with ValueNotifier.

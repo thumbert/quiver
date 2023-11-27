@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
+import 'package:flutter_quiver/models/common/multiple_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// A Multiselect dropdown with async values.
+///
 /// NOTE: Implementation done with Riverpod.
 ///
-/// No issues
-///
 
-final providerOfCitySelection =
-StateNotifierProvider<SelectionNotifier, SelectionModel>(
-        (ref) => SelectionNotifier(ref));
+final providerOfCitySelection = StateNotifierProvider<
+    MultipleSelectionNotifier<String>,
+    MultipleSelectionModel<String>>((ref) => MultipleSelectionNotifier(ref));
 
 final providerOfCities = FutureProvider((ref) async {
   await Future.delayed(const Duration(seconds: 1));
@@ -33,86 +34,6 @@ final providerOfCities = FutureProvider((ref) async {
   return choices;
 });
 
-enum SelectionState {
-  all('(All)'),
-  none('(None)'),
-  some('(Some)');
-
-  const SelectionState(this._value);
-  final String _value;
-
-  @override
-  String toString() => _value;
-
-  SelectionState parse(String value) {
-    return switch (value) {
-      '(All)' => SelectionState.all,
-      '(None)' => SelectionState.none,
-      '(Some)' => SelectionState.some,
-      _ => throw ArgumentError('Invalid SelectionState $value'),
-    };
-  }
-}
-
-class SelectionModel {
-  SelectionModel({required this.selection, required this.choices});
-
-  late final Set<String> selection;
-  final Set<String> choices;
-
-  SelectionState get selectionState {
-    if (selection.isEmpty) return SelectionState.none;
-    if (choices.difference(selection).isNotEmpty) {
-      return SelectionState.some;
-    } else {
-      return SelectionState.all;
-    }
-  }
-
-  SelectionModel add(String value) {
-    return SelectionModel(selection: selection..add(value), choices: choices);
-  }
-
-  SelectionModel remove(String value) {
-    selection.remove(value);
-    return SelectionModel(selection: selection, choices: choices);
-  }
-
-  SelectionModel selectAll() {
-    return SelectionModel(selection: {...choices}, choices: choices);
-  }
-
-  SelectionModel selectNone() {
-    return SelectionModel(selection: <String>{}, choices: choices);
-  }
-
-  SelectionModel copyWith({Set<String>? selection, Set<String>? choices}) {
-    return SelectionModel(
-        selection: selection ?? this.selection,
-        choices: choices ?? this.choices);
-  }
-}
-
-class SelectionNotifier extends StateNotifier<SelectionModel> {
-  SelectionNotifier(this.ref)
-      : super(SelectionModel(selection: <String>{}, choices: <String>{}));
-  final Ref ref;
-  set add(String value) {
-    state = state.add(value);
-  }
-  void selectAll() {
-    state = state.selectAll();
-  }
-  set remove(String value) {
-    state = state.remove(value);
-  }
-  void selectNone() {
-    state = state.selectNone();
-  }
-  void init(Set<String> selection, Set<String> choices) {
-    state = state.copyWith(selection: selection, choices: choices);
-  }
-}
 
 class MultiSelectMenuButtonExample extends ConsumerStatefulWidget {
   const MultiSelectMenuButtonExample({super.key});
@@ -129,11 +50,11 @@ class _DropdownExampleState
   List<PopupMenuItem<String>> getList() {
     var model = ref.watch(providerOfCitySelection);
     var out = <PopupMenuItem<String>>[];
-    if (model.selectionState == SelectionState.all) {
+    if (model.selectionState == MultipleSelectionState.all) {
       setState(() {
         ref.read(providerOfCitySelection.notifier).selectAll();
       });
-    } else if (model.selectionState == SelectionState.none) {
+    } else if (model.selectionState == MultipleSelectionState.none) {
       setState(() {
         ref.read(providerOfCitySelection.notifier).selectNone();
       });
@@ -145,9 +66,12 @@ class _DropdownExampleState
         builder: (context, ref, child) {
           var model = ref.watch(providerOfCitySelection);
           return CheckboxListTile(
-            value: model.selectionState == SelectionState.all,
+            value: model.selectionState == MultipleSelectionState.all,
             controlAffinity: ListTileControlAffinity.leading,
-            title: const Text('(All)', style: TextStyle(fontFamily: 'Ubuntu'),),
+            title: const Text(
+              '(All)',
+              style: TextStyle(fontFamily: 'Ubuntu'),
+            ),
             onChanged: (bool? checked) {
               setState(() {
                 if (checked!) {
@@ -229,22 +153,27 @@ class _DropdownExampleState
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
                                   children: [
-                                    Text(model.selectionState.toString(),
-                                      style: const TextStyle(fontFamily: 'Ubuntu', fontSize: 16),),
+                                    Text(
+                                      model.selectionState.toString(),
+                                      style: const TextStyle(
+                                          fontFamily: 'Ubuntu', fontSize: 16),
+                                    ),
                                     const Spacer(),
                                     const Icon(
-                                        Icons.keyboard_arrow_down_outlined, color: Colors.blueGrey,),
+                                      Icons.keyboard_arrow_down_outlined,
+                                      color: Colors.blueGrey,
+                                    ),
                                   ],
                                 ),
                               );
                             },
                             error: (err, stack) => const Text('Oops'),
                             loading: () => const Row(
-                              children: [
-                                CircularProgressIndicator(),
-                                Text('    Fetching ...'),
-                              ],
-                            )),
+                                  children: [
+                                    CircularProgressIndicator(),
+                                    Text('    Fetching ...'),
+                                  ],
+                                )),
                         itemBuilder: (context) {
                           return getList();
                         },
