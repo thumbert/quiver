@@ -14,7 +14,7 @@ final providerOfTransformedVariable =
         (ref) => TransformedVariableNotifier(ref));
 
 class TransformedVariableEditor extends ConsumerStatefulWidget {
-  const TransformedVariableEditor({Key? key}) : super(key: key);
+  const TransformedVariableEditor({super.key});
 
   @override
   ConsumerState<TransformedVariableEditor> createState() =>

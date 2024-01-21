@@ -14,7 +14,7 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CtSuppliersBacklog extends ConsumerStatefulWidget {
-  const CtSuppliersBacklog({Key? key}) : super(key: key);
+  const CtSuppliersBacklog({super.key});
 
   static const route = '/ct_suppliers_backlog';
 
@@ -139,6 +139,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                   context: context,
                   builder: (BuildContext context) {
                     return SimpleDialog(
+                      contentPadding: const EdgeInsets.all(12),
                       children: [
                         PointerInterceptor(
                           child: RichText(
@@ -162,7 +163,6 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                           )),
                         ),
                       ],
-                      contentPadding: const EdgeInsets.all(12),
                     );
                   });
             },

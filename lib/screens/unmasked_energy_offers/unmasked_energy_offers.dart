@@ -8,10 +8,9 @@ import 'package:flutter_quiver/models/unmasked_energy_offers/unmasked_energy_off
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart';
 
 class UnmaskedEnergyOffers extends ConsumerStatefulWidget {
-  const UnmaskedEnergyOffers({Key? key}) : super(key: key);
+  const UnmaskedEnergyOffers({super.key});
 
   static const route = '/unmasked_energy_offers';
 
@@ -113,9 +112,9 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
             isCollapsed: true,
             filled: true,
             fillColor: Colors.blueGrey.shade50,
-            contentPadding: EdgeInsets.symmetric(vertical: 4.0),
-            border: OutlineInputBorder(borderSide: BorderSide.none),
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+            contentPadding: const EdgeInsets.symmetric(vertical: 4.0),
+            border: const OutlineInputBorder(borderSide: BorderSide.none),
+            enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
           ),
           onSelected: (Map<String, dynamic>? asset) {
             setState(() {
@@ -150,6 +149,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
                   context: context,
                   builder: (BuildContext context) {
                     return const SimpleDialog(
+                      contentPadding: EdgeInsets.all(12),
                       children: [
                         Text('Historical energy offers for all assets in '
                             'ISONE and NYISO.  Unmasking has been done in a different '
@@ -159,7 +159,6 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
                             '\n\nBest to select the term one month at a time.'
                             '\n\nData is provided on a 4 month lag.'),
                       ],
-                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },

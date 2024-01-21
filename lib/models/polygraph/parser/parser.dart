@@ -83,7 +83,7 @@ Expression _createIntList(List x) {
 }
 
 /// Parse a bucket argument for a function.
-/// For example, `bucket = 7x24`, or `bucket = offpeak`, etc.
+/// For example, `bucket = '7x24'`, or `bucket = 'offpeak'`, etc.
 final bucketArg = (string('bucket').trim() &
         char('=').trim() &
         char("'") &
@@ -148,6 +148,9 @@ final expression = () {
   return builder.build();
 }();
 
+
+/// Parse expressions like
+/// `window(bucket='5x16', months=[1,2], hours=[8-20])`
 final windowArg = seq3(
     seq2(char(',').trim(), bucketArg).optional(),
     seq2(char(',').trim(), monthsArg).optional(),
@@ -177,6 +180,7 @@ final windowFun = (string('window(') &
   return WindowExpr(x: value[1], bucket: bucket, months: months, hours: hours);
 });
 
+///
 final hourlyScheduleArg = seq2(seq2(char(',').trim(), bucketArg).optional(),
     seq2(char(',').trim(), monthsArg).optional());
 final hourlyScheduleFun = (string('hourly_schedule(') &
@@ -189,6 +193,7 @@ final hourlyScheduleFun = (string('hourly_schedule(') &
 
   Bucket? bucket;
   var months = <int>[];
+  /// FIXME!
   // var v2 = (value[2] as List).first as Sequence2;
   // if (v2.first != null) {
   //   bucket = (v2.first as Sequence2).second;
@@ -199,15 +204,16 @@ final hourlyScheduleFun = (string('hourly_schedule(') &
   return HourlyScheduleExpr(x, bucket: bucket, months: months);
 });
 
+
+/// Parse expressions like `ma(x, 10)`
 final maFun = (string('ma(') &
         expression &
-        seq2(char(',').trim(), digit().plus()).trim() &
+        char(',').trim() &
+        digit().plus().trim() &
         char(')'))
     .trim()
     .map((value) {
-  // var n = int.parse(((value[2] as Sequence2).second as List).join());
-  /// FIXME!
-  var n = 10;
+  var n = int.parse((value[3] as List).join(''));
   return MaExpr(x: value[1], n: n);
 });
 

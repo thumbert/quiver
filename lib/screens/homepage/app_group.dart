@@ -7,6 +7,7 @@ import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -22,7 +23,7 @@ import 'package:flutter_quiver/models/homepage/homepage_model.dart';
 import 'package:flutter_quiver/screens/ftr_path/ftr_path.dart';
 
 class AppGroup extends StatefulWidget {
-  const AppGroup(this.groupName, {Key? key}) : super(key: key);
+  const AppGroup(this.groupName, {super.key});
 
   final String groupName;
 
@@ -34,6 +35,7 @@ class AppGroup extends StatefulWidget {
       MenuItem(url: PoolLoadStats.route, title: 'Pool load statistics'),
       MenuItem(url: VlrStage2.route, title: 'Realized Stage 2 VLR'),
       MenuItem(url: CtSuppliersBacklog.route, title: 'CT suppliers backlog'),
+      MenuItem(url: HourlyShapeApp.route, title: 'Hourly shape'),
     ],
     //
     'Reports': [
@@ -52,15 +54,26 @@ class AppGroup extends StatefulWidget {
           icon: const Icon(Icons.surfing)),
       MenuItem(url: Polygraph.route, title: 'Polygraph 🌈'),
       MenuItem(url: MonthlyLmp.route, title: 'Monthly LMP'),
-      MenuItem(url: RateBoard.route, title: 'Competitive offers rate board  ', icon: const Icon(Icons.dashboard_outlined, color: Colors.purple,)),
+      MenuItem(
+          url: RateBoard.route,
+          title: 'Competitive offers rate board  ',
+          icon: const Icon(
+            Icons.dashboard_outlined,
+            color: Colors.purple,
+          )),
       MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),
       MenuItem(url: Weather.route, title: 'Weather'),
     ],
     'Examples': [
       MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
-      MenuItem(title: 'Inherited widget example', url: InheritedWidgetExample.route),
-      MenuItem(title: 'Multiselect dropdown', url: MultiSelectMenuButtonExample.route),
-      MenuItem(title: 'Two linked multiselect dropdowns', url: TwoLinkedMultiSelectsExample.route),
+      MenuItem(
+          title: 'Inherited widget example', url: InheritedWidgetExample.route),
+      MenuItem(
+          title: 'Multiselect dropdown',
+          url: MultiSelectMenuButtonExample.route),
+      MenuItem(
+          title: 'Two linked multiselect dropdowns',
+          url: TwoLinkedMultiSelectsExample.route),
     ],
   };
 
@@ -139,7 +152,9 @@ class _AppGroupState extends State<AppGroup> {
           visualDensity: const VisualDensity(vertical: -4),
           dense: true,
           leading: Icon(
-            item.isHighlighted ? Icons.label_important : Icons.label_important_outline,
+            item.isHighlighted
+                ? Icons.label_important
+                : Icons.label_important_outline,
             color:
                 item.isHighlighted ? Colors.orange : Colors.blueGrey.shade400,
           ),
@@ -153,7 +168,9 @@ class _AppGroupState extends State<AppGroup> {
                   item.title,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: item.isHighlighted ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: item.isHighlighted
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
                 if (item.icon != null) item.icon!,

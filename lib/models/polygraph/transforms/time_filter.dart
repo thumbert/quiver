@@ -64,7 +64,7 @@ class TimeFilter extends Object with Transform {
   bool isYearly() => !isMonthly() && years.isNotEmpty;
 
   /// Construct a time filter from the minimal description only.
-  static TimeFilter fromMongo(Map<String, dynamic> x) {
+  static TimeFilter fromJson(Map<String, dynamic> x) {
     var years = x['years'] ?? <int>{};
     var months = x['months'] ?? <int>{};
     var days = x['days'] ?? <int>{};
@@ -126,23 +126,12 @@ class TimeFilter extends Object with Transform {
         res = res && daysOfWeek.contains(x.start.weekday);
       }
       if (holidays.isNotEmpty) {
-        var date = Date.fromTZDateTime(x.start);
-        res = res && holidays.any((holiday) => holiday.isDate(date));
+        res = res &&
+            holidays.any((holiday) =>
+                holiday.isDate3(x.start.year, x.start.month, x.start.day));
       }
 
       return res;
-    };
-  }
-
-  Map<String, dynamic> toMongo() {
-    return <String, dynamic>{
-      if (years.isNotEmpty) 'years': years,
-      if (months.isNotEmpty) 'months': months,
-      if (days.isNotEmpty) 'days': days,
-      if (bucket != Bucket.atc) 'bucket': bucket.name,
-      if (daysOfWeek.isNotEmpty) 'daysOfWeek': daysOfWeek,
-      if (holidays.isNotEmpty)
-        'holidays': holidays.map((e) => e.holidayType.name).toSet(),
     };
   }
 
@@ -169,8 +158,15 @@ class TimeFilter extends Object with Transform {
 
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return <String, dynamic>{
+      if (years.isNotEmpty) 'years': years,
+      if (months.isNotEmpty) 'months': months,
+      if (days.isNotEmpty) 'days': days,
+      if (bucket != Bucket.atc) 'bucket': bucket.name,
+      if (daysOfWeek.isNotEmpty) 'daysOfWeek': daysOfWeek,
+      if (holidays.isNotEmpty)
+        'holidays': holidays.map((e) => e.holidayType.name).toSet(),
+    };
   }
 }
 
@@ -203,4 +199,3 @@ class TimeFilterNotifier extends StateNotifier<TimeFilter> {
     state = state.copyWith(bucket: value);
   }
 }
-

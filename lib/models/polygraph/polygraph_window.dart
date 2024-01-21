@@ -11,7 +11,6 @@ import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
 import 'package:timeseries/timeseries.dart';

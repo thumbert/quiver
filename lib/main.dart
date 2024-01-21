@@ -4,8 +4,9 @@ import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
-import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
+import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -33,7 +34,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  MyApp({super.key});
 
   static final background = Colors.orange[100]!;
   static final background2 = Colors.green[100]!;
@@ -47,7 +48,8 @@ class MyApp extends StatelessWidget {
     ),
     GoRoute(
         path: CtSuppliersBacklog.route,
-        builder: (context, state) => const ProviderScope(child: CtSuppliersBacklog())),
+        builder: (context, state) =>
+            const ProviderScope(child: CtSuppliersBacklog())),
     GoRoute(
         path: DemandBids.route,
         builder: (context, state) => const DemandBids()),
@@ -59,8 +61,12 @@ class MyApp extends StatelessWidget {
         path: HistoricalPlc.route,
         builder: (context, state) => const HistoricalPlc()),
     GoRoute(
+        path: HourlyShapeApp.route,
+        builder: (context, state) => const HourlyShapeApp()),
+    GoRoute(
         path: InheritedWidgetExample.route,
-        builder: (context, state) => const InheritedWidgetExample(child: MyStorePage())),
+        builder: (context, state) =>
+            const InheritedWidgetExample(child: MyStorePage())),
     GoRoute(
         path: MccSurfer.route, builder: (context, state) => const MccSurfer()),
     GoRoute(

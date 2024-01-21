@@ -20,7 +20,7 @@ mixin Transform {
 
   /// TODO: define rolling functions
   static final transforms = {
-    'cumsum': (Iterable<num> xs) => cumsum(xs),
+    'cumsum': (Iterable<num> xs) => cumSum(xs),
   };
 
   /// How it's going to be persisted to the database

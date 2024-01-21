@@ -11,7 +11,10 @@
 - Use MenuAnchor (from Flutter) to implement right-click menus.  See example for shortcuts too.
 - fix more deprecation from rate_board_model!
 
-## Release 2023-11-xx
+## Release 2024-01-21
+- Add Hourly Shape visualization.  Using signals.  Upgraded to signals 3.0.0
+
+## Release 2023-11-20
 - Bump up petitparser to 6.0.1, broke some code.  Need to fix.
 - Fixed the ct_suppliers_backlog.  Now only get the data when term changes.  
 
