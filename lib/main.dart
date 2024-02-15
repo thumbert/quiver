@@ -6,6 +6,7 @@ import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
@@ -57,6 +58,9 @@ class MyApp extends StatelessWidget {
         path: DropdownExample.route,
         builder: (context, state) => const DropdownExample()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
+    GoRoute(
+        path: HistoricalGas.route,
+        builder: (context, state) => const HistoricalGas()),
     GoRoute(
         path: HistoricalPlc.route,
         builder: (context, state) => const HistoricalPlc()),

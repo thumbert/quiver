@@ -34,8 +34,8 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
               children: [
                 const SizedBox(width: 140, child: TermUi()),
                 const Entity(),
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     SizedBox(
                       width: 120,
                       child: Text(
@@ -172,6 +172,7 @@ class _DemandBidsUiState extends State<DemandBidsUi> {
                   height: 12,
                 ),
                 Text('Selected: ${getSelection(context)}'),
+                const CircularProgressIndicator(),
               ],
             ),
           ),

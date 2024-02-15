@@ -33,13 +33,19 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
   final dayFilter = signal(DayFilter.getDefault());
 
   late final traces = futureSignal(() async {
+    // print('in traces ...');
+    seriesName.value = seriesNameController.text;
     try {
       await HourlyShapeModel.getData(seriesName.value);
     } catch (e) {
       rethrow;
     }
     return HourlyShapeModel.getTraces(dayFilter.value, settings.value);
-  });
+  }, dependencies: [
+    seriesName,
+    dayFilter,
+    settings,
+  ]);
 
   final scrollControllerV = ScrollController();
   final scrollControllerH = ScrollController();
@@ -168,8 +174,8 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                                       borderSide: BorderSide.none),
                                 ),
                                 onSelected: (String? name) {
-                                  seriesName.value = name!;
                                   HourlyShapeModel.ts = TimeSeries<num>();
+                                  traces.reload();
                                 },
                               )),
                         ),
@@ -254,17 +260,17 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                         ///
                         /// Refresh button
                         ///
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple.shade100),
-                              child: const Text('Refresh'),
-                              onPressed: () => traces.refresh(),
-                            ),
-                          ),
-                        ),
+                        // Center(
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(top: 12.0),
+                        //     child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: Colors.purple.shade100),
+                        //       child: const Text('Refresh'),
+                        //       onPressed: () => traces.refresh(),
+                        //     ),
+                        //   ),
+                        // ),
                       ]),
                 ),
                 const SizedBox(width: 15),

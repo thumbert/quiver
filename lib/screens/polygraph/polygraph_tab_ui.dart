@@ -316,6 +316,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                     context: context,
                     builder: (BuildContext context) {
                       return SimpleDialog(
+                        contentPadding: const EdgeInsets.all(12),
                         children: [
                           SizedBox(
                             width: 500,
@@ -327,7 +328,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 }),
                           )
                         ],
-                        contentPadding: const EdgeInsets.all(12),
                       );
                     });
               },
@@ -474,15 +474,15 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                   height: 28,
                   child: TextButton(
                     onPressed: () {},
-                    child: Text(
-                      window.xVariable.label,
-                      style: const TextStyle(color: Colors.black, fontSize: 14),
-                    ),
                     style: TextButton.styleFrom(
                       padding:
                           const EdgeInsets.only(left: 0, top: 0, bottom: 0),
                       alignment: Alignment.centerLeft,
                       // backgroundColor: Colors.orange,
+                    ),
+                    child: Text(
+                      window.xVariable.label,
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
                     ),
                   ),
                 ),
