@@ -3,8 +3,10 @@ library screens.historical_lmp.historical_gas_ui;
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/historical_gas_model.dart';
+import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:flutter_quiver/screens/common/signal/term.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
 class HistoricalGas extends StatefulWidget {
@@ -25,6 +27,10 @@ class _State extends State<HistoricalGas> {
   late Signal<String?> termErrorSignal;
   final Signal<String> timeAggregation = signal('Daily');
   final timeAggregationController = TextEditingController();
+
+  final SelectionModel region = SelectionModel(
+      selection: setSignal(<String>{}),
+      choices: HistoricalGasModel.regions().toSet());
 
   static late Signal<HistoricalGasModel> model;
 
@@ -182,41 +188,49 @@ class _State extends State<HistoricalGas> {
                       const SizedBox(
                         width: 8,
                       ),
+                      Container(
+                          width: 226,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          // color: Colors.blueGrey.shade50,
+                          child: MultiselectUi(model: region)),
                     ],
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Row(
-                    children: [
-                      const Text(
-                        'Region',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      ...[
-                        for (var i = 0; i < allRegions.length; i++)
-                          Padding(
-                              padding: const EdgeInsets.only(right: 4.0),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: regions.value[i]
-                                        ? Colors.purple.shade100
-                                        : Colors.blueGrey.shade50,
-                                  ),
-                                  onPressed: () {
-                                    regions.value[i] = !regions.value[i];
-                                    setState(() {});
-                                  },
-                                  child: Text(allRegions[i]))),
-                      ]
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  // Row(
+                  //   children: [
+                  //     const Text(
+                  //       'Region',
+                  //       style: TextStyle(fontSize: 14),
+                  //     ),
+                  //     const SizedBox(
+                  //       width: 8,
+                  //     ),
+                  //     ...[
+                  //       for (var i = 0; i < allRegions.length; i++)
+                  //         Padding(
+                  //             padding: const EdgeInsets.only(right: 4.0),
+                  //             child: ElevatedButton(
+                  //                 style: ElevatedButton.styleFrom(
+                  //                   backgroundColor: regions.value[i]
+                  //                       ? Colors.purple.shade100
+                  //                       : Colors.blueGrey.shade50,
+                  //                 ),
+                  //                 onPressed: () {
+                  //                   regions.value[i] = !regions.value[i];
+                  //                   setState(() {});
+                  //                 },
+                  //                 child: Text(allRegions[i]))),
+                  //     ]
+                  //   ],
+                  // ),
+                  // const SizedBox(
+                  //   height: 12,
+                  // ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
