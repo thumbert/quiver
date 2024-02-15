@@ -3,6 +3,7 @@ library screens.historical_lmp.historical_gas_ui;
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/historical_gas_model.dart';
+import 'package:flutter_quiver/screens/common/signal/dropdown.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:flutter_quiver/screens/common/signal/term.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
@@ -31,6 +32,9 @@ class _State extends State<HistoricalGas> {
   final SelectionModel region = SelectionModel(
       selection: setSignal(<String>{}),
       choices: HistoricalGasModel.regions().toSet());
+
+  final DropdownModel timeAggregationModel =
+      DropdownModel(selection: signal('Daily'), choices: {'Daily', 'Monthly'});
 
   static late Signal<HistoricalGasModel> model;
 
@@ -174,6 +178,21 @@ class _State extends State<HistoricalGas> {
                               timeAggregationController.text;
                         },
                       ),
+                      const SizedBox(
+                        width: 36,
+                      ),
+
+                      ///
+                      /// Time aggregation
+                      ///
+                      Container(
+                          width: 226,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          // color: Colors.blueGrey.shade50,
+                          child: DropdownUi(model: timeAggregationModel)),
                       const SizedBox(
                         width: 36,
                       ),
