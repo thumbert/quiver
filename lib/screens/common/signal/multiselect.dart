@@ -59,9 +59,10 @@ class SelectionModel {
 }
 
 class MultiselectUi extends StatefulWidget {
-  const MultiselectUi({required this.model, super.key});
+  const MultiselectUi({required this.model, required this.width, super.key});
 
   final SelectionModel model;
+  final double width;
 
   @override
   State<MultiselectUi> createState() => _MultiselectUiState();
@@ -106,32 +107,33 @@ class _MultiselectUiState extends State<MultiselectUi> {
   List<MenuItemButton> getList() {
     var out = <MenuItemButton>[];
     out.add(MenuItemButton(
-        style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
-        child: Watch(
-          (_) => SizedBox(
-            width: 226,
-            child: CheckboxListTile(
-              dense: true,
-              value: widget.model.selectionState == SelectionState.all,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: const Text('(All)'),
-              onChanged: (bool? checked) {
-                if (checked!) {
-                  widget.model.selectAll();
-                } else {
-                  widget.model.selectNone();
-                }
-              },
-            ),
+      style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+      child: SizedBox(
+        width: widget.width,
+        child: PointerInterceptor(
+          child: CheckboxListTile(
+            dense: true,
+            value: widget.model.selectionState == SelectionState.all,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: const Text('(All)'),
+            onChanged: (bool? checked) {
+              if (checked!) {
+                widget.model.selectAll();
+              } else {
+                widget.model.selectNone();
+              }
+            },
           ),
-        )));
+        ),
+      ),
+    ));
 
     for (final value in widget.model.choices) {
       out.add(MenuItemButton(
           style:
               ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
           child: Watch((_) => SizedBox(
-                width: 226,
+                width: widget.width,
                 child: PointerInterceptor(
                   child: CheckboxListTile(
                     dense: true,
@@ -152,74 +154,3 @@ class _MultiselectUiState extends State<MultiselectUi> {
     return out;
   }
 }
-
-
-
-// class _MultiselectUiState extends State<MultiselectUi> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return PopupMenuButton<String>(
-//       constraints: const BoxConstraints(maxHeight: 600),
-//       position: PopupMenuPosition.under,
-//       child: Padding(
-//         padding: const EdgeInsets.all(8.0),
-//         child: Row(
-//           children: [
-//             Watch((context) => Text(widget.model.selectionState.toString())),
-//             const Spacer(),
-//             const Icon(
-//               Icons.keyboard_arrow_down,
-//               size: 18,
-//             ),
-//           ],
-//         ),
-//       ),
-//       itemBuilder: (context) => getList(),
-//     );
-//   }
-
-//   /// create the list of checkboxes + dropdown values
-//   List<PopupMenuItem<String>> getList() {
-//     var out = <PopupMenuItem<String>>[];
-//     out.add(PopupMenuItem<String>(
-//         padding: EdgeInsets.zero,
-//         value: '(All)',
-//         child: Watch(
-//           (_) => CheckboxListTile(
-//             value: widget.model.selectionState == SelectionState.all,
-//             controlAffinity: ListTileControlAffinity.leading,
-//             title: const Text('(All)'),
-//             onChanged: (bool? checked) {
-//               if (checked!) {
-//                 widget.model.selectAll();
-//               } else {
-//                 widget.model.selectNone();
-//               }
-//             },
-//           ),
-//         )));
-
-//     for (final value in widget.model.choices) {
-//       out.add(PopupMenuItem<String>(
-//           padding: EdgeInsets.zero,
-//           value: value,
-//           child: Watch((_) => PointerInterceptor(
-//                 child: CheckboxListTile(
-//                   value: widget.model.selection.value.contains(value),
-//                   controlAffinity: ListTileControlAffinity.leading,
-//                   title: Text(value),
-//                   onChanged: (bool? checked) {
-//                     if (checked!) {
-//                       widget.model.add(value);
-//                     } else {
-//                       widget.model.remove(value);
-//                     }
-//                   },
-//                 ),
-//               ))));
-//     }
-//     return out;
-//   }
-// }
-
-

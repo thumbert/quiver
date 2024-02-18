@@ -9,7 +9,6 @@ import 'package:flutter_quiver/models/hourly_shape/hourly_shape_model.dart';
 import 'package:flutter_quiver/models/hourly_shape/day_filter.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timeseries/timeseries.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 

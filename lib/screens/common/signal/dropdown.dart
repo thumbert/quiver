@@ -11,9 +11,10 @@ class DropdownModel {
 }
 
 class DropdownUi extends StatefulWidget {
-  const DropdownUi({required this.model, super.key});
+  const DropdownUi({required this.model, required this.width, super.key});
 
   final DropdownModel model;
+  final double width;
 
   @override
   State<DropdownUi> createState() => _DropdownUiState();
@@ -62,10 +63,22 @@ class _DropdownUiState extends State<DropdownUi> {
           onPressed: () {
             widget.model.selection.value = value;
           },
-          style:
-              ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          style: ButtonStyle(
+            /// Can't make this button with a smaller height!!!
+            // backgroundColor: MaterialStateProperty.all(Colors.green),
+            // fixedSize: MaterialStateProperty.all(const Size.fromHeight(16)),
+            visualDensity: const VisualDensity(vertical: -4.0),
+            padding: MaterialStateProperty.all(const EdgeInsets.all(0.0)),
+          ),
+          // child: Text(value),
           child: Watch((_) => SizedBox(
-              width: 226, child: PointerInterceptor(child: Text(value))))));
+              width: widget.width,
+              child: PointerInterceptor(
+                  child: ListTile(
+                title: Text(value),
+                contentPadding: const EdgeInsets.only(left: 12),
+                dense: true,
+              ))))));
     }
     return out;
   }

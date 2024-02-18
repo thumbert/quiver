@@ -2,12 +2,11 @@ library screens.historical_lmp.historical_gas_ui;
 
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/historical_gas_model.dart';
+import 'package:flutter_quiver/models/historical_gas_model.dart' as tab1;
 import 'package:flutter_quiver/screens/common/signal/dropdown.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:flutter_quiver/screens/common/signal/term.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
-import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
 class HistoricalGas extends StatefulWidget {
@@ -26,56 +25,76 @@ class _State extends State<HistoricalGas> {
 
   static late Signal<Term> termSignal;
   late Signal<String?> termErrorSignal;
-  final Signal<String> timeAggregation = signal('Daily');
-  final timeAggregationController = TextEditingController();
-
-  final SelectionModel region = SelectionModel(
-      selection: setSignal(<String>{}),
-      choices: HistoricalGasModel.regions().toSet());
 
   final DropdownModel timeAggregationModel =
       DropdownModel(selection: signal('Daily'), choices: {'Daily', 'Monthly'});
 
-  static late Signal<HistoricalGasModel> model;
-
-  ListSignal<bool> regions =
-      listSignal(List.filled(HistoricalGasModel.mappedLocations.length, false));
+  final SelectionModel region = SelectionModel(
+      selection: tab1.regions, choices: tab1.allRegions().toSet());
 
   late final traces = futureSignal(() async {
     // print('in traces ...');
     // print('model location: ${model.value.locations}');
     // print('model indices: ${model.value.indices}');
     // print('term: ${termSignal.value}');
-    if (!HistoricalGasModel.cacheTerm.interval
-        .containsInterval(termSignal.value.interval)) {
-      HistoricalGasModel.cache.clear();
-      HistoricalGasModel.cacheTerm = termSignal.value;
+    if (!tab1.cacheTerm.interval.containsInterval(termSignal.value.interval)) {
+      tab1.cache.clear();
+      tab1.cacheTerm = termSignal.value;
     }
     try {
-      await HistoricalGasModel.getData(
-          termSignal.value, model.value.locations, model.value.indices);
+      await tab1.getData(termSignal.value, tab1.rows.value);
     } catch (e) {
       rethrow;
     }
-    return model.value.makeTraces(termSignal.value);
+    return tab1.makeTraces(tab1.rows.value, termSignal.value);
   }, dependencies: [
     termSignal,
-    model,
+    tab1.rows,
   ]);
+
+  List<Widget> _rows = <Widget>[];
 
   @override
   void initState() {
-    model = signal(HistoricalGasModel.getDefault());
-    termSignal = signal(HistoricalGasModel.getDefaultTerm());
+    termSignal = signal(tab1.getDefaultTerm());
     termErrorSignal = signal(null);
-    timeAggregationController.text = timeAggregation.value;
+    // tab1.registerEffects();
+    // timeAggregationController.text = timeAggregation.value;
 
     var aux = DateTime.now().hashCode;
     plotly = Plotly(
       viewId: 'plotly-hist-gas-$aux',
       data: const [],
-      layout: HistoricalGasModel.layout,
+      layout: tab1.layout,
     );
+
+    effect(() {
+      if (tab1.regions.value != tab1.regions.previousValue) {
+        var newLocations = {
+          ...tab1.regions.expand((region) => tab1.mappedLocations[region]!)
+        };
+        if (newLocations.isEmpty) {
+          newLocations =
+              tab1.getDefaultRows().map((e) => e.location.value).toSet();
+        }
+        var newRows = <tab1.RowId>[];
+        for (var location in newLocations) {
+          newRows.add((location: signal(location), index: signal('Gas Daily')));
+        }
+        tab1.rows.value = [...newRows];
+      }
+
+      print('in effect ... ${tab1.rows.value}');
+      setState(() {
+        _rows = [
+          for (var i = 0; i < tab1.rows.value.length; i++)
+            Row2(
+              index: i,
+              key: UniqueKey(), // need this
+            )
+        ];
+      });
+    });
 
     super.initState();
   }
@@ -89,8 +108,6 @@ class _State extends State<HistoricalGas> {
 
   @override
   Widget build(BuildContext context) {
-    final allRegions = HistoricalGasModel.regions();
-
     return Scaffold(
         body: SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -137,67 +154,6 @@ class _State extends State<HistoricalGas> {
                       ),
 
                       ///
-                      /// Aggregation
-                      ///
-                      const Text(
-                        'Time Aggregation',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      DropdownMenu<String>(
-                        width: 120.0,
-                        menuHeight: 600.0,
-                        trailingIcon: const Icon(
-                          Icons.keyboard_arrow_down,
-                        ),
-                        selectedTrailingIcon: const Icon(
-                          Icons.keyboard_arrow_up,
-                        ),
-                        controller: timeAggregationController,
-                        textStyle: const TextStyle(fontSize: 14),
-                        dropdownMenuEntries: const [
-                          DropdownMenuEntry(value: 'Daily', label: 'Daily'),
-                          DropdownMenuEntry(value: 'Monthly', label: 'Monthly'),
-                        ],
-                        inputDecorationTheme: InputDecorationTheme(
-                          isDense: true,
-                          isCollapsed: true,
-                          filled: true,
-                          fillColor: Colors.blueGrey.shade50,
-                          contentPadding: const EdgeInsets.only(left: 8.0),
-                          border: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                          enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none),
-                          constraints: const BoxConstraints(maxHeight: 36),
-                        ),
-                        onSelected: (String? name) {
-                          timeAggregation.value =
-                              timeAggregationController.text;
-                        },
-                      ),
-                      const SizedBox(
-                        width: 36,
-                      ),
-
-                      ///
-                      /// Time aggregation
-                      ///
-                      Container(
-                          width: 226,
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade50,
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          // color: Colors.blueGrey.shade50,
-                          child: DropdownUi(model: timeAggregationModel)),
-                      const SizedBox(
-                        width: 36,
-                      ),
-
-                      ///
                       /// Region
                       ///
                       const Text(
@@ -214,57 +170,47 @@ class _State extends State<HistoricalGas> {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           // color: Colors.blueGrey.shade50,
-                          child: MultiselectUi(model: region)),
+                          child: MultiselectUi(model: region, width: 226,)),
+                      const SizedBox(
+                        width: 36,
+                      ),
+
+                      ///
+                      /// Time aggregation
+                      ///
+                      const Text(
+                        'Time Aggregation',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          // color: Colors.blueGrey.shade50,
+                          child: DropdownUi(
+                            model: timeAggregationModel,
+                            width: 150.0,
+                          )),
+                      const SizedBox(
+                        width: 36,
+                      ),
                     ],
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  // Row(
-                  //   children: [
-                  //     const Text(
-                  //       'Region',
-                  //       style: TextStyle(fontSize: 14),
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 8,
-                  //     ),
-                  //     ...[
-                  //       for (var i = 0; i < allRegions.length; i++)
-                  //         Padding(
-                  //             padding: const EdgeInsets.only(right: 4.0),
-                  //             child: ElevatedButton(
-                  //                 style: ElevatedButton.styleFrom(
-                  //                   backgroundColor: regions.value[i]
-                  //                       ? Colors.purple.shade100
-                  //                       : Colors.blueGrey.shade50,
-                  //                 ),
-                  //                 onPressed: () {
-                  //                   regions.value[i] = !regions.value[i];
-                  //                   setState(() {});
-                  //                 },
-                  //                 child: Text(allRegions[i]))),
-                  //     ]
-                  //   ],
-                  // ),
-                  // const SizedBox(
-                  //   height: 12,
-                  // ),
+
+                  /// rows with the locations & index
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Column(
-                        children: [
-                          ...[
-                            for (var i = 0;
-                                i < model.value.locations.length;
-                                i++)
-                              Row2(
-                                index: i,
-                                key: UniqueKey(), // need this
-                              )
-                          ],
-                        ],
+                        children: _rows,
                       ),
                       Watch((context) {
                         switch (traces.value) {
@@ -307,8 +253,7 @@ class _State extends State<HistoricalGas> {
   }
 
   Widget updatePlot() {
-    plotly.plot.react(traces.requireValue, HistoricalGasModel.layout,
-        displaylogo: false);
+    plotly.plot.react(traces.requireValue, tab1.layout, displaylogo: false);
     return Row(children: [
       SizedBox(width: 900, height: 600, child: plotly),
     ]);
@@ -319,6 +264,7 @@ class Row2 extends StatefulWidget {
   const Row2({required this.index, super.key});
 
   final int index;
+  // final Signal<({String location, String index})> row;
 
   @override
   State<Row2> createState() => _Row2State();
@@ -328,21 +274,21 @@ class _Row2State extends State<Row2> {
   bool isMouseOver = false;
 
   final locationController = TextEditingController();
-  final gasIndexController = TextEditingController();
-
   Signal<String> locationError = signal('');
-  Signal<String> gasIndexError = signal('');
+  late final DropdownModel gasIndex;
 
   @override
   void initState() {
     super.initState();
-    locationController.text = _State.model.value.locations[widget.index];
-    gasIndexController.text = _State.model.value.indices[widget.index];
+    locationController.text = tab1.rows.value[widget.index].location.value;
+    gasIndex = DropdownModel(
+        selection: tab1.rows.value[widget.index].index,
+        choices: tab1.allGasIndices.toSet());
+    // tab1.registerEffects();
   }
 
   @override
   void dispose() {
-    gasIndexController.dispose();
     locationController.dispose();
     super.dispose();
   }
@@ -350,7 +296,6 @@ class _Row2State extends State<Row2> {
   @override
   Widget build(BuildContext context) {
     checkErrorLocation();
-    checkErrorGasIndex();
 
     return MouseRegion(
       onEnter: (_) {
@@ -395,10 +340,10 @@ class _Row2State extends State<Row2> {
                         leadingIcon: const Icon(Icons.search),
                         textStyle: const TextStyle(fontSize: 14),
                         dropdownMenuEntries: [
-                          for (var asset in HistoricalGasModel.allLocations())
+                          for (var location in tab1.allLocations())
                             DropdownMenuEntry(
-                                value: asset,
-                                label: asset,
+                                value: location,
+                                label: location,
                                 style: const ButtonStyle(
                                     padding: MaterialStatePropertyAll(
                                         EdgeInsets.only(left: 8)),
@@ -418,10 +363,12 @@ class _Row2State extends State<Row2> {
                           constraints: const BoxConstraints(maxHeight: 36),
                         ),
                         onSelected: (String? name) {
-                          var locations = [..._State.model.value.locations];
-                          locations[widget.index] = name!;
-                          _State.model.value =
-                              _State.model.value.copyWith(locations: locations);
+                          var rs = tab1.rows.value;
+                          rs[widget.index] = (
+                            location: signal(name!),
+                            index: rs[widget.index].index
+                          );
+                          tab1.rows.value = [...rs];
                           locationError.value = '';
                         },
                       ),
@@ -443,50 +390,55 @@ class _Row2State extends State<Row2> {
                   ///
                   /// Gas index
                   ///
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownMenu(
-                        controller: gasIndexController,
-                        onSelected: (value) {
-                          _State.model.value.indices[widget.index] = value!;
-                          gasIndexError.value = '';
-                        },
-                        trailingIcon: const Icon(
-                          Icons.keyboard_arrow_down_outlined,
-                        ),
-                        selectedTrailingIcon: const Icon(
-                          Icons.keyboard_arrow_up_outlined,
-                        ),
-                        textStyle: const TextStyle(fontSize: 14),
-                        dropdownMenuEntries: const [
-                          DropdownMenuEntry(
-                              value: 'Gas Daily', label: 'Gas Daily'),
-                          DropdownMenuEntry(value: 'IFerc', label: 'IFerc'),
-                        ],
-                        inputDecorationTheme: InputDecorationTheme(
-                          contentPadding: const EdgeInsets.only(left: 8),
-                          border: InputBorder.none,
-                          outlineBorder: BorderSide.none,
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          isDense: true,
-                          fillColor: Colors.blueGrey.shade50,
-                          filled: true,
-                          constraints: const BoxConstraints(maxHeight: 36),
-                        ),
-                      ),
-                      if (gasIndexError.value != '')
-                        Watch((context) => Text(
-                              gasIndexError.value,
-                              style: const TextStyle(
-                                  color: Colors.red,
-                                  fontFamily: 'Italic',
-                                  fontSize: 11),
-                            )),
-                    ],
-                  ),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     DropdownMenu(
+                  //       controller: gasIndexController,
+                  //       onSelected: (value) {
+                  //         _State.model.value.indices[widget.index] = value!;
+                  //         gasIndexError.value = '';
+                  //       },
+                  //       trailingIcon: const Icon(
+                  //         Icons.keyboard_arrow_down_outlined,
+                  //       ),
+                  //       selectedTrailingIcon: const Icon(
+                  //         Icons.keyboard_arrow_up_outlined,
+                  //       ),
+                  //       textStyle: const TextStyle(fontSize: 14),
+                  //       dropdownMenuEntries: const [
+                  //         DropdownMenuEntry(
+                  //             value: 'Gas Daily', label: 'Gas Daily'),
+                  //         DropdownMenuEntry(value: 'IFerc', label: 'IFerc'),
+                  //       ],
+                  //       inputDecorationTheme: InputDecorationTheme(
+                  //         contentPadding: const EdgeInsets.only(left: 8),
+                  //         border: InputBorder.none,
+                  //         outlineBorder: BorderSide.none,
+                  //         disabledBorder: InputBorder.none,
+                  //         enabledBorder: InputBorder.none,
+                  //         isDense: true,
+                  //         fillColor: Colors.blueGrey.shade50,
+                  //         filled: true,
+                  //         constraints: const BoxConstraints(maxHeight: 36),
+                  //       ),
+                  //     ),
+                  //     if (gasIndexError.value != '')
+                  //       Watch((context) => Text(
+                  //             gasIndexError.value,
+                  //             style: const TextStyle(
+                  //                 color: Colors.red,
+                  //                 fontFamily: 'Italic',
+                  //                 fontSize: 11),
+                  //           )),
+                  //   ],
+                  // ),
+                  Container(
+                      width: 120,
+                      height: 36,
+                      color: Colors.blueGrey.shade50,
+                      child: DropdownUi(model: gasIndex, width: 120)),
 
                   /// The pop-up menu on the side ...
                   if (isMouseOver)
@@ -499,8 +451,11 @@ class _Row2State extends State<Row2> {
                           IconButton(
                             tooltip: 'Remove',
                             onPressed: () {
-                              _State.model.value =
-                                  _State.model.value.removeRowAt(widget.index);
+                              setState(() {
+                                var rs = tab1.rows.value;
+                                rs.removeAt(widget.index);
+                                tab1.rows.value = [...rs];
+                              });
                             }, // delete the sucker
                             visualDensity: VisualDensity.compact,
                             constraints: const BoxConstraints(),
@@ -517,8 +472,14 @@ class _Row2State extends State<Row2> {
                             tooltip: 'Add',
                             onPressed: () {
                               setState(() {
-                                _State.model.value =
-                                    _State.model.value.addRowAt(widget.index);
+                                var rs = tab1.rows.value;
+                                var row = (
+                                  location:
+                                      signal(rs[widget.index].location.value),
+                                  index: signal(rs[widget.index].index.value),
+                                );
+                                rs.insert(widget.index, row);
+                                tab1.rows.value = [...rs];
                               });
                             },
                             visualDensity: VisualDensity.compact,
@@ -540,16 +501,8 @@ class _Row2State extends State<Row2> {
     );
   }
 
-  void checkErrorGasIndex() {
-    if (!HistoricalGasModel.allGasIndices.contains(gasIndexController.text)) {
-      gasIndexError.value = 'Invalid gas index';
-    } else {
-      gasIndexError.value = '';
-    }
-  }
-
   void checkErrorLocation() {
-    if (!HistoricalGasModel.allLocations().contains(locationController.text)) {
+    if (!tab1.allLocations().contains(locationController.text)) {
       locationError.value = 'Invalid location';
     } else {
       locationError.value = '';
