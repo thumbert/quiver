@@ -29,8 +29,8 @@ class _State extends State<HistoricalGas> {
   final DropdownModel timeAggregationModel =
       DropdownModel(selection: signal('Daily'), choices: {'Daily', 'Monthly'});
 
-  final SelectionModel region = SelectionModel(
-      selection: tab1.regions, choices: tab1.allRegions().toSet());
+  // final SelectionModel region = SelectionModel(
+  //     initialSelection: tab1.regions, choices: tab1.allRegions().toSet());
 
   late final traces = futureSignal(() async {
     // print('in traces ...');
@@ -71,7 +71,8 @@ class _State extends State<HistoricalGas> {
     effect(() {
       if (tab1.regions.value != tab1.regions.previousValue) {
         var newLocations = {
-          ...tab1.regions.expand((region) => tab1.mappedLocations[region]!)
+          ...tab1.regions.value
+              .expand((region) => tab1.mappedLocations[region]!)
         };
         if (newLocations.isEmpty) {
           newLocations =
@@ -170,7 +171,10 @@ class _State extends State<HistoricalGas> {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           // color: Colors.blueGrey.shade50,
-                          child: MultiselectUi(model: region, width: 226,)),
+                          child: MultiselectUi(
+                            model: tab1.region,
+                            width: 226,
+                          )),
                       const SizedBox(
                         width: 36,
                       ),

@@ -26,14 +26,27 @@ enum SelectionState {
 }
 
 class SelectionModel {
-  SelectionModel({required this.selection, required this.choices});
+  SelectionModel(
+      {required Set<String> initialSelection, required this.choices}) {
+    currentSelection = initialSelection.toSignal();
+    selection = {...initialSelection}.toSignal();
+  }
 
-  late final Signal<Set<String>> selection;
   final Set<String> choices;
 
+  /// Contains the partial selection when the dropdown is still open.
+  /// Allows you to react to changes in the app as they happen.
+  late final Signal<Set<String>> currentSelection;
+
+  /// Contains the final selection when the dropdown closes.
+  /// Allows you to update the state only when the selection is finished!
+  /// Use this field, if any selection triggers a time consuming update,
+  /// for example a network request.
+  late final Signal<Set<String>> selection;
+
   SelectionState get selectionState {
-    if (selection.value.isEmpty) return SelectionState.none;
-    if (choices.difference(selection.value).isNotEmpty) {
+    if (currentSelection.value.isEmpty) return SelectionState.none;
+    if (choices.difference(currentSelection.value).isNotEmpty) {
       return SelectionState.some;
     } else {
       return SelectionState.all;
@@ -41,20 +54,20 @@ class SelectionModel {
   }
 
   void add(String value) {
-    selection.value = {...selection.value, value};
+    currentSelection.value = {...currentSelection.value, value};
   }
 
   void remove(String value) {
-    selection.value.remove(value);
-    selection.value = {...selection.value};
+    currentSelection.value.remove(value);
+    currentSelection.value = {...currentSelection.value};
   }
 
   void selectAll() {
-    selection.value = {...choices};
+    currentSelection.value = {...choices};
   }
 
   void selectNone() {
-    selection.value = <String>{};
+    currentSelection.value = <String>{};
   }
 }
 
@@ -73,6 +86,9 @@ class _MultiselectUiState extends State<MultiselectUi> {
   Widget build(BuildContext context) {
     return MenuAnchor(
       menuChildren: getList(),
+      onClose: () {
+        widget.model.selection.value = widget.model.currentSelection.value;
+      },
       builder: (context, controller, child) {
         return TextButton(
           style: TextButton.styleFrom(
@@ -82,11 +98,15 @@ class _MultiselectUiState extends State<MultiselectUi> {
                 borderRadius: BorderRadius.circular(4.0)),
           ),
           onPressed: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
+            setState(() {
+              if (controller.isOpen) {
+                widget.model.selection.value =
+                    widget.model.currentSelection.value;
+                controller.close();
+              } else {
+                controller.open();
+              }
+            });
           },
           child: Row(
             children: [
@@ -107,26 +127,28 @@ class _MultiselectUiState extends State<MultiselectUi> {
   List<MenuItemButton> getList() {
     var out = <MenuItemButton>[];
     out.add(MenuItemButton(
-      style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
-      child: SizedBox(
-        width: widget.width,
-        child: PointerInterceptor(
-          child: CheckboxListTile(
-            dense: true,
-            value: widget.model.selectionState == SelectionState.all,
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text('(All)'),
-            onChanged: (bool? checked) {
-              if (checked!) {
-                widget.model.selectAll();
-              } else {
-                widget.model.selectNone();
-              }
-            },
+        style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+        child: Watch(
+          (context) => SizedBox(
+            width: widget.width,
+            child: PointerInterceptor(
+              child: CheckboxListTile(
+                dense: true,
+                value: widget.model.selectionState == SelectionState.all,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: const Text('(All)'),
+                onChanged: (bool? checked) {
+                  if (checked!) {
+                    widget.model.selectAll();
+                  } else {
+                    widget.model.selectNone();
+                  }
+                  setState(() {});
+                },
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        )));
 
     for (final value in widget.model.choices) {
       out.add(MenuItemButton(
@@ -137,7 +159,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
                 child: PointerInterceptor(
                   child: CheckboxListTile(
                     dense: true,
-                    value: widget.model.selection.value.contains(value),
+                    value: widget.model.currentSelection.value.contains(value),
                     controlAffinity: ListTileControlAffinity.leading,
                     title: Text(value),
                     onChanged: (bool? checked) {
@@ -146,6 +168,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
                       } else {
                         widget.model.remove(value);
                       }
+                      setState(() {});
                     },
                   ),
                 ),

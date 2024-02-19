@@ -4,14 +4,18 @@ import 'dart:math';
 
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
+import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
 typedef RowId = ({Signal<String> location, Signal<String> index});
 
+final SelectionModel region = SelectionModel(
+    initialSelection: setSignal(<String>{}), choices: allRegions().toSet());
+
 // /// Which regions are selected
-final regions = setSignal(<String>{});
+final regions = region.currentSelection;
 // /// Which rows to show
 final rows = getDefaultRows().toSignal();
 
