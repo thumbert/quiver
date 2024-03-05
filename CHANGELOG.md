@@ -11,6 +11,10 @@
 - Use MenuAnchor (from Flutter) to implement right-click menus.  See example for shortcuts too.
 - fix more deprecation from rate_board_model!
 
+## Release 2024-03-04
+- Work on historical_option_pricing.  More examples of using signals for a moderately 
+  complicated UI
+
 ## Release 2024-02-18
 - Various improvements to screens/historical_gas_ui.dart.  
 - Created several **reusable** components using signals!  Very happy with it.

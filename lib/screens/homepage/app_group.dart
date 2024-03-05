@@ -1,6 +1,7 @@
 library screens.homepage.calculator_list;
 
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/material.dart';
+import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
+import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
@@ -48,7 +50,11 @@ class AppGroup extends StatefulWidget {
     ],
     //
     'Other': [
+      MenuItem(url: Connect4.route, title: 'Connect4'),
       MenuItem(url: HistoricalGas.route, title: 'Historical gas prices'),
+      MenuItem(
+          url: HistoricalOptionPricing.route,
+          title: 'Historical option pricing'),
       MenuItem(url: FtrPath.route, title: 'FTR path analysis'),
       MenuItem(
           url: MccSurfer.route,

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals/signals_flutter.dart';
 
-class DropdownModel {
+class DropdownModel<T> {
   DropdownModel({required this.selection, required this.choices});
-  late final Signal<String> selection;
-  final Set<String> choices;
+  late final Signal<T> selection;
+  final Set<T> choices;
 }
 
-class DropdownUi extends StatefulWidget {
+class DropdownUi<T> extends StatefulWidget {
   const DropdownUi({required this.model, required this.width, super.key});
 
-  final DropdownModel model;
+  final DropdownModel<T> model;
   final double width;
 
   @override
@@ -42,7 +42,7 @@ class _DropdownUiState extends State<DropdownUi> {
           },
           child: Row(
             children: [
-              Watch((context) => Text(widget.model.selection.value)),
+              Watch((context) => Text(widget.model.selection.value.toString())),
               const Spacer(),
               const Icon(
                 Icons.keyboard_arrow_down,
@@ -70,12 +70,11 @@ class _DropdownUiState extends State<DropdownUi> {
             visualDensity: const VisualDensity(vertical: -4.0),
             padding: MaterialStateProperty.all(const EdgeInsets.all(0.0)),
           ),
-          // child: Text(value),
           child: Watch((_) => SizedBox(
               width: widget.width,
               child: PointerInterceptor(
                   child: ListTile(
-                title: Text(value),
+                title: Text(value.toString()),
                 contentPadding: const EdgeInsets.only(left: 12),
                 dense: true,
               ))))));

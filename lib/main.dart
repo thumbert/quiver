@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
+import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
+import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
@@ -48,6 +50,10 @@ class MyApp extends StatelessWidget {
       builder: (context, state) => const HomePage(),
     ),
     GoRoute(
+      path: Connect4.route,
+      builder: (context, state) => const Connect4(),
+    ),
+    GoRoute(
         path: CtSuppliersBacklog.route,
         builder: (context, state) =>
             const ProviderScope(child: CtSuppliersBacklog())),
@@ -61,6 +67,9 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: HistoricalGas.route,
         builder: (context, state) => const HistoricalGas()),
+    GoRoute(
+        path: HistoricalOptionPricing.route,
+        builder: (context, state) => const HistoricalOptionPricing()),
     GoRoute(
         path: HistoricalPlc.route,
         builder: (context, state) => const HistoricalPlc()),
