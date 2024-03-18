@@ -5,6 +5,7 @@ import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
+import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
@@ -74,6 +75,7 @@ class AppGroup extends StatefulWidget {
     ],
     'Examples': [
       MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
+      MenuItem(title: 'Expansion panel', url: ExpansionPanelExample.route),
       MenuItem(
           title: 'Inherited widget example', url: InheritedWidgetExample.route),
       MenuItem(

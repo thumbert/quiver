@@ -10,6 +10,8 @@
 - Figure out what the tabAction field does in polygraph_tab.  Is it used at all anymore?
 - Use MenuAnchor (from Flutter) to implement right-click menus.  See example for shortcuts too.
 - fix more deprecation from rate_board_model!
+- Improve screens/signal/term.dart to add a validation function, 
+  for example to accept only a month range, etc. 
 
 ## Release 2024-03-04
 - Work on historical_option_pricing.  More examples of using signals for a moderately 

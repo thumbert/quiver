@@ -67,7 +67,7 @@ final showD = computed(() {
   }
 });
 final show = computed(() {
-  return showD.value.selection;
+  return showD.value.selection.value;
 });
 
 final tableData = <Map<String, dynamic>>[].toSignal();

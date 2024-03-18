@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:signals/signals_flutter.dart';
 

@@ -4,6 +4,7 @@ import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
+import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
 import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
         path: DropdownExample.route,
         builder: (context, state) => const DropdownExample()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
+    GoRoute(path: ExpansionPanelExample.route, builder: (context, state) => const ExpansionPanelExample()),
     GoRoute(
         path: HistoricalGas.route,
         builder: (context, state) => const HistoricalGas()),
