@@ -58,8 +58,9 @@ class SelectionModel {
   }
 
   void remove(String value) {
-    currentSelection.value.remove(value);
-    currentSelection.value = {...currentSelection.value};
+    var aux = {...currentSelection.value};
+    aux.remove(value);
+    currentSelection.value = aux;
   }
 
   void selectAll() {

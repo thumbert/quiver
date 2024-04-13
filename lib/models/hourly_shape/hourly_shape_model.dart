@@ -123,6 +123,7 @@ class HourlyShapeModel {
 
   static List<Map<String, dynamic>> _getTracesWeightsByDay(
       DayFilter dayFilter) {
+    print('in get tracesWeightsByDay...');
     var traces = <Map<String, dynamic>>[];
     var aux = dayFilter.getDays(Term.fromInterval(
         term.interval.withTimeZone(_dailyGroupsDemand.keys.first.location)));
@@ -214,12 +215,14 @@ class HourlyShapeModel {
       // even better, calculate the lenght of the curve between hour 7 and 18!
     }
 
-    return [{
-      'x': x,
-      'y': y, 
-      'mode': 'markers',
-      'type': 'scatter',
-    }];
+    return [
+      {
+        'x': x,
+        'y': y,
+        'mode': 'markers',
+        'type': 'scatter',
+      }
+    ];
   }
 
   static final layout = {

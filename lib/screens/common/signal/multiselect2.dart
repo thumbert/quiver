@@ -5,7 +5,6 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals/signals_flutter.dart';
 
 /// A variation on multiselect.dart without the summary (All), (Some), (None).
-
 class Selection2Model {
   Selection2Model(
       {required Set<String> initialSelection, required this.choices}) {

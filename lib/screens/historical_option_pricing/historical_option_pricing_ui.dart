@@ -3,7 +3,6 @@ library screens.historical_option_pricing_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/dropdown.dart';
 import 'package:flutter_quiver/models/historical_option_pricing_model.dart';
-import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect2.dart';
 import 'package:flutter_quiver/screens/common/signal/number_field.dart';
 import 'package:flutter_quiver/screens/common/signal/term.dart';

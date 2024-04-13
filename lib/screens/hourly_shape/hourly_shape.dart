@@ -33,8 +33,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
   final dayFilter = signal(DayFilter.getDefault());
 
   late final traces = futureSignal(() async {
-    // print('in traces ...');
-    seriesName.value = seriesNameController.text;
+    // seriesName.value = seriesNameController.text;
     try {
       await HourlyShapeModel.getData(seriesName.value);
     } catch (e) {
@@ -175,6 +174,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                                 ),
                                 onSelected: (String? name) {
                                   HourlyShapeModel.ts = TimeSeries<num>();
+                                  seriesName.value = name!;
                                   traces.reload();
                                 },
                               )),

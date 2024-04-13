@@ -13,6 +13,11 @@
 - Improve screens/signal/term.dart to add a validation function, 
   for example to accept only a month range, etc. 
 
+## Release 2024-04-13
+- Updated signals to 5.0.0.  
+- Added screens/examples/daterange_example.dart
+- Added screens/examples/linked_multiselects_example.dart
+
 ## Release 2024-03-04
 - Work on historical_option_pricing.  More examples of using signals for a moderately 
   complicated UI

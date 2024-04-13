@@ -3,11 +3,12 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
-import 'package:flutter_quiver/screens/examples/two_linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
@@ -58,6 +59,9 @@ class MyApp extends StatelessWidget {
         path: CtSuppliersBacklog.route,
         builder: (context, state) =>
             const ProviderScope(child: CtSuppliersBacklog())),
+    GoRoute(
+        path: DateRangePickerExample.route,
+        builder: (context, state) => const DateRangePickerExample()),
     GoRoute(
         path: DemandBids.route,
         builder: (context, state) => const DemandBids()),
@@ -125,8 +129,8 @@ class MyApp extends StatelessWidget {
         path: MultiSelectMenuButtonExample.route,
         builder: (context, state) => const MultiSelectMenuButtonExample()),
     GoRoute(
-        path: TwoLinkedMultiSelectsExample.route,
-        builder: (context, state) => const TwoLinkedMultiSelectsExample()),
+        path: LinkedMultiSelectsExample.route,
+        builder: (context, state) => const LinkedMultiSelectsExample()),
   ], errorBuilder: (context, state) => const Error404());
 
   @override
