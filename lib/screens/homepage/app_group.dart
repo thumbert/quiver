@@ -10,6 +10,7 @@ import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/exchange_trades/exchange_trades_ui.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
@@ -44,6 +45,7 @@ class AppGroup extends StatefulWidget {
     ],
     //
     'Reports': [
+      MenuItem(url: ExchangeTradesUi.route, title: 'Exchange trades'),
       MenuItem(
           url: '/realized_ancillaries_load',
           title: 'Realized ancillaries load'),

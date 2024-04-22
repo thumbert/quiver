@@ -9,6 +9,7 @@ import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
 import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
 import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
+import 'package:flutter_quiver/screens/exchange_trades/exchange_trades_ui.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: DropdownExample.route,
         builder: (context, state) => const DropdownExample()),
+    GoRoute(path: ExchangeTradesUi.route, builder: (context, state) => const ExchangeTradesUi()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
     GoRoute(path: ExpansionPanelExample.route, builder: (context, state) => const ExpansionPanelExample()),
     GoRoute(

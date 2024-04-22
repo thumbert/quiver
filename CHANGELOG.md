@@ -13,6 +13,9 @@
 - Improve screens/signal/term.dart to add a validation function, 
   for example to accept only a month range, etc. 
 
+## Release 2024-04-22
+- Mock Nodal exchange trade browser app working with signals.   
+
 ## Release 2024-04-13
 - Updated signals to 5.0.0.  
 - Added screens/examples/daterange_example.dart
