@@ -7,7 +7,9 @@ import 'package:timezone/timezone.dart';
 
 final cache = <Map<String, dynamic>>[].toSignal();
 
-/// Trades comes from a Db or from the cache if they're already there
+/// Trades comes from a Db or from the cache if they're already there.
+/// Keep this function separated from the rows signal to allow for better
+/// testing.
 Future<List<Map<String, dynamic>>> getTrades(Term term) async {
   await Future.delayed(const Duration(milliseconds: 200));
   if (!cachedTerm.value.interval.containsInterval(term.interval) ||
@@ -19,6 +21,15 @@ Future<List<Map<String, dynamic>>> getTrades(Term term) async {
         'strip': 'Cal24',
         'price': 10,
         'tradeDate': '2024-04-01',
+        'bucket': 'Peak',
+        'tradeKind': 'Outright',
+      },
+      {
+        'iso': 'PJM',
+        'location': 'PECO',
+        'strip': 'Cal24',
+        'price': 12,
+        'tradeDate': '2024-04-03',
         'bucket': 'Peak',
         'tradeKind': 'Outright',
       },
@@ -87,15 +98,9 @@ Future<List<Map<String, dynamic>>> getTrades(Term term) async {
       },
     ];
   }
-  var trades = [
-    ...cache.where((e) =>
-        e['tradeDate'].compareTo(term.startDate.toString()) >= 0 &&
-        e['tradeDate'].compareTo(term.endDate.toString()) <= 0)
-  ];
-  return trades;
+  return cache.value;
 }
 
-/// Filter only the trades that will be displayed
 final rows = futureSignal(() async {
   try {
     return getTrades(Term(startDate.value, endDate.value));
@@ -107,31 +112,51 @@ final rows = futureSignal(() async {
   endDate,
 ]);
 
-/// Apply this function before displaying results
-List<Map<String, dynamic>> filterRows(Iterable<Map<String, dynamic>> xs) {
-  if (selectedIsos.isNotEmpty) {
-    xs = xs.where((e) => selectedIsos.contains(e['iso']));
+/// All filtering is done functionally (stateless, on the fly) on the entire
+/// local cache.
+///
+/// Function is applied before displaying results, and used to calculate the
+/// filter dropdowns on the fly in the computed signals.
+/// This setup guarantees that the filter dropdowns are always correct.
+///
+List<Map<String, dynamic>> filterRows({
+  Set<String> isos = const <String>{},
+  String tradeKind = 'Outright',
+  Set<String> locations = const <String>{},
+  Set<String> strips = const <String>{},
+  Set<String> buckets = const <String>{},
+}) {
+  var xs = cache.value.where((e) =>
+      e['tradeDate'].compareTo(startDate.toString()) >= 0 &&
+      e['tradeDate'].compareTo(endDate.toString()) <= 0);
+  if (tradeKind == 'Outright') {
+    xs = xs.where((e) => e['tradeKind'] == tradeKind);
+  } else {
+    throw StateError('Trade kind $tradeKind not implemented yet!');
   }
-  if (selectedLocations.isNotEmpty) {
-    xs = xs.where((e) => selectedLocations.contains(e['location']));
+  if (isos.isNotEmpty) {
+    xs = xs.where((e) => isos.contains(e['iso']));
   }
-  if (selectedStrips.isNotEmpty) {
-    xs = xs.where((e) => selectedStrips.contains(e['strip']));
+  if (locations.isNotEmpty) {
+    xs = xs.where((e) => locations.contains(e['location']));
   }
-  if (selectedBuckets.isNotEmpty) {
-    xs = xs.where((e) => selectedBuckets.contains(e['bucket']));
+  if (strips.isNotEmpty) {
+    xs = xs.where((e) => strips.contains(e['strip']));
   }
-  xs = xs.where((e) => e['tradeKind'] == tradeKind.value);
+  if (buckets.isNotEmpty) {
+    xs = xs.where((e) => buckets.contains(e['bucket']));
+  }
   return xs.toList();
 }
 
 /// Start, end date filter
-// final startDate = Date.today(location: UTC).subtract(10).toSignal();
 final startDate = Date.utc(2024, 4, 1).toSignal();
 final startError = signal<String?>(null);
 final endDate = Date.today(location: UTC).toSignal();
 final endError = signal<String?>(null);
-// calculate the date range of trades cached
+
+/// Calculate the date range of trades cached.  Need this to be able to decide
+/// if the cache needs to be updated.
 final cachedTerm = computed(() {
   var start = '1900-01-01';
   var end = '2100-01-01';
@@ -139,13 +164,19 @@ final cachedTerm = computed(() {
     if (trade['tradeDate'].compareTo(start) > 0) end = trade['tradeDate'];
     if (trade['tradeDate'].compareTo(end) < 0) start = trade['tradeDate'];
   }
-  // print('start: $start, end: $end');
   return Term(Date.fromIsoString(start), Date.fromIsoString(end));
 });
 
-/// ISO filter
-final allIsos = computed(() => cache.map<String>((e) => e['iso']).toSet());
-final selectedIsos = {'PJM'}.toSignal();
+/// ISO filter{
+final allIsos = computed(() {
+  var isos = filterRows(tradeKind: tradeKind.value)
+      .map<String>((e) => e['iso'])
+      .toList();
+  isos.sort();
+  return isos.toSet();
+});
+// final selectedIsos = {'PJM'}.toSignal();
+final selectedIsos = {...allIsos.value}.toSignal();
 final labelIsos = computed(() {
   if (allIsos.value.isEmpty) return SelectionState.all.toString();
   if (selectedIsos.isEmpty) return SelectionState.none.toString();
@@ -160,10 +191,11 @@ final tempSelectionIso = <String>{}.toSignal();
 
 /// Location filter
 final allLocations = computed(() {
-  return cache.value
-      .where((e) => selectedIsos.value.contains(e['iso']))
-      .map<String>((e) => e['location'])
-      .toSet();
+  var locations =
+      filterRows(tradeKind: tradeKind.value, isos: {...selectedIsos.value})
+          .map<String>((e) => e['location'])
+          .toSet();
+  return locations;
 });
 final selectedLocations = {...allLocations.value}.toSignal();
 final labelLocations = computed(() {
@@ -180,11 +212,14 @@ final tempSelectionLocation = <String>{}.toSignal();
 
 // Strip filter
 final allStrips = computed(() {
-  return cache.value
-      .where((e) => selectedIsos.value.contains(e['iso']))
-      .where((e) => selectedLocations.value.contains(e['location']))
+  var aux = filterRows(
+          tradeKind: tradeKind.value,
+          isos: {...selectedIsos.value},
+          locations: {...selectedLocations.value})
       .map<String>((e) => e['strip'])
-      .toSet();
+      .toList();
+  aux.sort();
+  return aux.toSet();
 });
 final selectedStrips = {...allStrips.value}.toSignal();
 final labelStrips = computed(() {
@@ -201,12 +236,14 @@ final tempSelectionStrip = <String>{}.toSignal();
 
 // Bucket filter
 final allBuckets = computed(() {
-  return cache.value
-      .where((e) => selectedIsos.value.contains(e['iso']))
-      .where((e) => selectedLocations.value.contains(e['location']))
-      .where((e) => selectedStrips.value.contains(e['strip']))
+  var buckets = filterRows(
+          tradeKind: tradeKind.value,
+          isos: {...selectedIsos.value},
+          locations: {...selectedLocations.value},
+          strips: {...selectedStrips.value})
       .map<String>((e) => e['bucket'])
       .toSet();
+  return buckets;
 });
 final selectedBuckets = {...allBuckets.value}.toSignal();
 final labelBuckets = computed(() {
@@ -225,80 +262,5 @@ final tempSelectionBucket = <String>{}.toSignal();
 final allTradeKinds = ['Outright', 'Spread', 'Option'];
 final tradeKind = 'Outright'.toSignal();
 
-final updateRows = effect(() {
-  // if (regions.value != regions.previousValue) {
-  //   var newLocations = {
-  //     ...regions.value
-  //         .expand((region) => mappedLocations[region]!)
-  //   };
-  //   if (newLocations.isEmpty) {
-  //     newLocations =
-  //         getDefaultRows().map((e) => e.location.value).toSet();
-  //   }
-  //   var newRows = <RowId>[];
-  //   for (var location in newLocations) {
-  //     newRows.add((location: signal(location), index: signal('Gas Daily')));
-  //   }
-  //   rows.value = [...newRows];
-  // }
-});
-
-/// What to plot
-// final traces = futureSignal(() async {
-// //   if (!cacheTerm.interval.containsInterval(termSignal.value.interval)) {
-// //     cache.clear();
-// //     cacheTerm = termSignal.value;
-// //   }
-// //   try {
-// //     await getData(termSignal.value, rows.value);
-// //   } catch (e) {
-// //     rethrow;
-// //   }
-//   await Future.delayed(Duration(seconds: 1));
-//   return makeTraces(rows.value);
-// }, dependencies: [
-//   startDate,
-//   endDate,
-//   selectedIsos,
-//   selectedLocations,
-//   selectedStrips,
-//   rows,
-// ]);
-
-List<Map<String, dynamic>> makeTraces(List<Map<String, dynamic>> rows) {
-  var out = <Map<String, dynamic>>[];
-  // for (var i = 0; i < rows.length; i++) {
-  //   var t2 = (location: rows[i].location.value, index: rows[i].index.value);
-  //   var ts = cache[t2]!.window(term.interval);
-  //   out.add({
-  //     'x': ts.map((e) => e.interval.start.toString().substring(0, 10)).toList(),
-  //     'y': ts.map((e) => e.value),
-  //     'name': '${rows[i].location}_${rows[i].index}',
-  //     'type': 'lines',
-  //   });
-  // }
-  return out;
-}
-
-final Map<String, dynamic> layout = {
-  'width': 900,
-  'height': 600,
-  'title': '',
-  'xaxis': {
-    'title': '',
-    'showgrid': true,
-  },
-  'yaxis': {
-    'showgrid': true,
-    'zeroline': false,
-    'title': 'Price, \$/MMBtu',
-  },
-  'showlegend': true,
-  'legend': {
-    'orientation': 'h',
-  },
-  'hovermode': 'closest',
-  'margin': {
-    't': 40,
-  },
-};
+// Paginate the trades displayed on the screen
+final pageNumber = signal(0);

@@ -1,6 +1,10 @@
 library screens.exchange_trades.tab_nodal_exchange;
 
+import 'dart:math';
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:table/table_base.dart' as table;
 import 'package:flutter_quiver/models/exchange_trades/nodal_model.dart'
     as nodal;
 import 'package:flutter_quiver/screens/common/signal/date_field.dart';
@@ -16,39 +20,64 @@ class TabNodalExchange extends StatefulWidget {
 
 class _State extends State<TabNodalExchange> {
   late Plotly plotly;
+  late void Function() updateIsos;
   late void Function() updateLocations;
   late void Function() updateStrips;
   late void Function() updateBuckets;
 
+  late Set<String> previousIsos,
+      previousLocations,
+      previousStrips,
+      previousBuckets;
+  final equality = const SetEquality();
+
   @override
   void initState() {
     super.initState();
-    var aux = DateTime.now().hashCode;
-    plotly = Plotly(
-      viewId: 'plotly-nodal-exchange-$aux',
-      data: const [],
-      layout: nodal.layout,
-    );
+    previousIsos = nodal.selectedIsos.value;
+    previousLocations = nodal.selectedLocations.value;
+    previousStrips = nodal.selectedStrips.value;
+    previousBuckets = nodal.selectedBuckets.value;
+
+    updateIsos = effect(() {
+      nodal.selectedIsos.value = {...nodal.allIsos.value};
+      nodal.tempSelectionIso.value = {...nodal.allIsos.value};
+      setState(() {});
+    });
 
     /// NOTE: Need to register this effect here!
     /// After [allLocations] change, reset [selectedLocations] and [tempSelectionLocation]
     updateLocations = effect(() {
-      nodal.selectedLocations.value = {...nodal.allLocations.value};
-      nodal.tempSelectionLocation.value = {...nodal.allLocations.value};
-      // Need to setState below to update the location dropdown!
-      setState(() {});
+      // only update the locations if the isos actually change
+      if (!equality.equals(previousIsos, nodal.selectedIsos.value)) {
+        nodal.selectedLocations.value = {...nodal.allLocations.value};
+        nodal.tempSelectionLocation.value = {...nodal.allLocations.value};
+        setState(() {
+          previousIsos = nodal.selectedIsos.value;
+        });
+      }
     });
     updateStrips = effect(() {
-      nodal.selectedStrips.value = {...nodal.allStrips.value};
-      nodal.tempSelectionStrip.value = {...nodal.allStrips.value};
-      // Need to setState below to update the strip dropdown!
-      setState(() {});
+      // only update the strips if the locations actually change
+      if (!equality.equals(previousLocations, nodal.selectedLocations.value)) {
+        nodal.selectedStrips.value = {...nodal.allStrips.value};
+        nodal.tempSelectionStrip.value = {...nodal.allStrips.value};
+        // Need to setState below to update the strip dropdown!
+        setState(() {
+          previousLocations = nodal.selectedLocations.value;
+        });
+      }
     });
     updateBuckets = effect(() {
-      nodal.selectedBuckets.value = {...nodal.allBuckets.value};
-      nodal.tempSelectionBucket.value = {...nodal.allBuckets.value};
-      // Need to setState below to update the strip dropdown!
-      setState(() {});
+      // only update the buckets if the strips actually change
+      if (!equality.equals(previousStrips, nodal.selectedStrips.value)) {
+        nodal.selectedBuckets.value = {...nodal.allBuckets.value};
+        nodal.tempSelectionBucket.value = {...nodal.allBuckets.value};
+        // Need to setState below to update the strip dropdown!
+        setState(() {
+          previousStrips = nodal.selectedStrips.value;
+        });
+      }
     });
   }
 
@@ -306,8 +335,100 @@ class _State extends State<TabNodalExchange> {
   }
 
   Widget updateTable() {
-    var xs = nodal.filterRows(nodal.rows.requireValue);
-    var contents = [for (var row in xs) row.toString()].join('\n');
-    return Text(contents);
+    var xs = nodal.filterRows(
+      tradeKind: nodal.tradeKind.value,
+      isos: nodal.selectedIsos.value,
+      locations: nodal.selectedLocations.value,
+      strips: nodal.selectedStrips.value,
+      buckets: nodal.selectedBuckets.value,
+    );
+    const pageSize = 6;
+    var indStart = nodal.pageNumber.value * pageSize;
+    var indEnd = min((nodal.pageNumber.value + 1) * pageSize, xs.length);
+
+    var summary = 'Found ${xs.length} trade';
+    if (xs.length != 1) {
+      summary += 's';
+    }
+    if (xs.isNotEmpty) {
+      summary += '. Showing trades ${indStart + 1}-$indEnd.';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Tooltip(
+              message: 'Copy to clipboard',
+              child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.content_copy,
+                    color: Color.fromRGBO(103, 80, 164, 1.0),
+                  )),
+            ),
+          ],
+        ),
+        Text(
+          // contents,
+          table.Table.from(xs.sublist(indStart, indEnd),
+              options: {'columnSeparation': '  '}).toString(),
+          style: const TextStyle(fontSize: 14, fontFamily: 'UbuntuMono'),
+          maxLines: 30,
+        ),
+        Row(
+          children: [
+            Text(
+              summary,
+              style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Color.fromRGBO(103, 80, 164, 0.9)),
+            ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    nodal.pageNumber.value = 0;
+                  });
+                },
+                icon: const Icon(
+                  Icons.skip_previous,
+                  color: Color.fromRGBO(103, 80, 164, 0.9),
+                )),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    nodal.pageNumber.value = max(0, nodal.pageNumber.value - 1);
+                  });
+                },
+                icon: const Icon(
+                  Icons.navigate_before,
+                  color: Color.fromRGBO(103, 80, 164, 0.9),
+                )),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    nodal.pageNumber.value =
+                        min(xs.length ~/ 30, nodal.pageNumber.value + 1);
+                  });
+                },
+                icon: const Icon(
+                  Icons.navigate_next,
+                  color: Color.fromRGBO(103, 80, 164, 0.9),
+                )),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    nodal.pageNumber.value = xs.length ~/ 30;
+                  });
+                },
+                icon: const Icon(
+                  Icons.skip_next,
+                  color: Color.fromRGBO(103, 80, 164, 0.9),
+                )),
+          ],
+        ),
+      ],
+    );
   }
 }

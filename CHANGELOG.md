@@ -12,6 +12,12 @@
 - fix more deprecation from rate_board_model!
 - Improve screens/signal/term.dart to add a validation function, 
   for example to accept only a month range, etc. 
+- Make MultiselectUi work with generic data not only with Strings
+
+## Release 2024-05-03
+- Add pagination to exchange_trades app.  Keep track of previous value of the filter and 
+  reset lower filters only if the filter value changes.  This prevents wiping out lower 
+  filter values if upstream filters are just opened but not modified. 
 
 ## Release 2024-04-22
 - Mock Nodal exchange trade browser app working with signals.   
