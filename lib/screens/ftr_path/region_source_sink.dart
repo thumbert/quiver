@@ -69,7 +69,7 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
-            var nameToPtid = snapshot.data! as Map<String, int>;
+            var nameToPtid = snapshot.data!;
             children = [
               //
               // Region

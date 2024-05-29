@@ -16,6 +16,7 @@
 
 ## Release 2024-05-29
 - Add a widget to do multiselect with search.  See `screens/common/signal/multiselect_search.dart`.
+- Add a widget to do an autocomplete selection.  See `screens/common/signal/autocomplete.dart`.
 
 
 ## Release 2024-05-03

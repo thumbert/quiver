@@ -32,7 +32,8 @@ class SelectionModel {
     selection = {...initialSelection}.toSignal();
   }
 
-  final Set<String> choices;
+  // don't make it final, allow for updates after a call to db is made
+  Set<String> choices;
 
   /// Contains the partial selection when the dropdown is still open.
   /// Allows you to react to changes in the app as they happen.

@@ -1,4 +1,4 @@
-library screens.signal.multiselect;
+library screens.signal.multiselect_search;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
