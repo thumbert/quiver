@@ -14,6 +14,10 @@
   for example to accept only a month range, etc. 
 - Make MultiselectUi work with generic data not only with Strings
 
+## Release 2024-05-29
+- Add a widget to do multiselect with search.  See `screens/common/signal/multiselect_search.dart`.
+
+
 ## Release 2024-05-03
 - Add pagination to exchange_trades app.  Keep track of previous value of the filter and 
   reset lower filters only if the filter value changes.  This prevents wiping out lower 
@@ -24,8 +28,8 @@
 
 ## Release 2024-04-13
 - Updated signals to 5.0.0.  
-- Added screens/examples/daterange_example.dart
-- Added screens/examples/linked_multiselects_example.dart
+- Added `screens/examples/daterange_example.dart`
+- Added `screens/examples/linked_multiselects_example.dart`
 
 ## Release 2024-03-04
 - Work on historical_option_pricing.  More examples of using signals for a moderately 

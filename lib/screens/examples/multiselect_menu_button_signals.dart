@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
+import 'package:flutter_quiver/screens/common/signal/multiselect_search.dart';
 import 'package:signals/signals_flutter.dart';
 
 /// NOTES: Use signals 🤷‍♂️
@@ -37,32 +38,78 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: 226,
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey.shade50,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Watch(
-                      (_) => MultiselectUi(
-                        model: model,
-                        width: 226,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 400,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text('Simple selection'),
+                      Container(
+                          width: 226,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: Watch(
+                            (_) => MultiselectUi(
+                              model: model,
+                              width: 226,
+                            ),
+                          )),
+                      const SizedBox(
+                        height: 500,
                       ),
-                    )),
-
+                      Watch((context) => Text(
+                          'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
+                      Watch((context) => Text(
+                          'Selected cities: ${model.selection.value.join(', ')}')),
+                    ],
+                  ),
+                ),
                 ///
                 ///
                 ///
                 const SizedBox(
-                  height: 500,
+                  width: 48,
                 ),
-                Watch((context) => Text(
-                    'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
-                Watch((context) => Text(
-                    'Selected cities: ${model.selection.value.join(', ')}')),
+                ///
+                ///
+                ///
+                SizedBox(
+                  width: 400,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text('Selection with search'),
+
+                      Container(
+                          width: 226,
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade50,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: Watch(
+                            (_) => MultiselectSearchUi(
+                              model: model,
+                              width: 226,
+                            ),
+                          )),
+
+                      ///
+                      ///
+                      ///
+                      const SizedBox(
+                        height: 500,
+                      ),
+                      Watch((context) => Text(
+                          'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
+                      Watch((context) => Text(
+                          'Selected cities: ${model.selection.value.join(', ')}')),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
