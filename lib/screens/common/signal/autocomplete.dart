@@ -12,16 +12,20 @@ import 'package:signals/signals_flutter.dart';
 ///
 ///
 class AutocompleteUi extends StatefulWidget {
-  const AutocompleteUi(
+  AutocompleteUi(
       {required this.selection,
       required this.choices,
+      ListSignal<String>? accumulatedSelection,
       required this.width,
       this.height = 500.0,
-      super.key});
+      super.key}) {
+    this.accumulatedSelection = accumulatedSelection ?? <String>[].toSignal();
+  }
 
   // what gets selected
-  final Signal<String?> selection;
+  final Signal<String> selection;
   final Set<String> choices;
+  late final ListSignal<String> accumulatedSelection;
   final double width;
   // height of the dropdown
   final double height;
@@ -73,6 +77,9 @@ class _AutocompleteUiState extends State<AutocompleteUi> {
         },
         onSelected: (String selection) {
           widget.selection.value = selection;
+          var aux = widget.accumulatedSelection.value.toSet();
+          aux.add(selection);
+          widget.accumulatedSelection.value = aux.toList();
         },
         optionsViewBuilder: (BuildContext context,
             void Function(String) onSelected, Iterable<String> options) {

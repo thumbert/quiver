@@ -14,10 +14,13 @@
   for example to accept only a month range, etc. 
 - Make MultiselectUi work with generic data not only with Strings
 
+## Release 2024-06-05
+- Experiment with using signals for a dropdown where the lis of values is async.  See 
+  `examples/dropdown_example.dart`.
+
 ## Release 2024-05-29
 - Add a widget to do multiselect with search.  See `screens/common/signal/multiselect_search.dart`.
 - Add a widget to do an autocomplete selection.  See `screens/common/signal/autocomplete.dart`.
-
 
 ## Release 2024-05-03
 - Add pagination to exchange_trades app.  Keep track of previous value of the filter and 

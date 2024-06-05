@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_quiver/main.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' as rp;
+import 'package:signals/signals_flutter.dart';
 
-final providerOfExampleData = FutureProvider((ref) async {
+final selection = 'State'.toSignal();
+
+final choices = futureSignal(() async {
+  await Future.delayed(const Duration(seconds: 2));
+  if (selection.value == 'State') {
+    return ['CA', 'MA', 'MD', 'NY'];
+  } else {
+    return ['Atlanta', 'Boston', 'Chicago', 'Denver'];
+  }
+}, dependencies: [selection]);
+
+final providerOfExampleData = rp.FutureProvider((ref) async {
   return getData();
 });
 
@@ -39,20 +52,21 @@ List<String> getCity(List<Map<String, String>> data, String country) {
       .toList();
 }
 
-class DropdownExample extends ConsumerStatefulWidget {
+class DropdownExample extends rp.ConsumerStatefulWidget {
   const DropdownExample({super.key});
 
   static const route = '/dropdown_example';
 
   @override
-  ConsumerState<DropdownExample> createState() => _DropdownExampleState();
+  rp.ConsumerState<DropdownExample> createState() => _DropdownExampleState();
 }
 
-class _DropdownExampleState extends ConsumerState<DropdownExample> {
+class _DropdownExampleState extends rp.ConsumerState<DropdownExample> {
   final TextEditingController colorController = TextEditingController();
   final TextEditingController iconController = TextEditingController();
   ColorLabel? selectedColor;
   IconLabel? selectedIcon;
+  final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Push me!');
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +130,9 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
                         });
                       },
                     ),
-                    const SizedBox(width: 12,),
+                    const SizedBox(
+                      width: 12,
+                    ),
                     DropdownMenu<IconLabel>(
                       controller: iconController,
                       enableFilter: true,
@@ -154,35 +170,63 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
                 )
               else
                 const Text('Please select a color and an icon.'),
-
-              ///
-              ///
-              ///
               const SizedBox(
                 height: 48,
               ),
-              const Text('A dropdown with async values, and progress indicator next to it'),
+
+              ///
+              ///
+              /// A Signals example .......
+              ///
+              ///
+              const Text(
+                  'With Signals:  A dropdown that changes depending on the button you press!'),
               const SizedBox(
                 height: 8,
               ),
-              asyncData.when(
-                data: (data) => ExampleHeader(data),
-                error: (e, trace) => const Text('Boo'),
-                loading: () => const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+
+              SizedBox(
+                width: 500,
+                child: Row(
                   children: [
-                    ExampleHeader([]),
-                    CircularProgressIndicator(),
+                    SegmentedButton(
+                      segments: const [
+                        ButtonSegment(value: 'State', label: Text('State')),
+                        ButtonSegment(value: 'City', label: Text('City')),
+                      ],
+                      selected: {selection.value},
+                      onSelectionChanged: (Set<String> newSelection) {
+                        selection.value = newSelection.first;
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(
+                      width: 24,
+                    ),
+                    Watch((context) => MenuAnchor(
+                            menuChildren: [
+                              for (var e in choices.value.value ?? [])
+                                MenuItemButton(child: Text(e))
+                            ],
+                            builder: (BuildContext context,
+                                MenuController controller, Widget? child) {
+                              return TextButton(
+                                  focusNode: _buttonFocusNode,
+                                  onPressed: () {
+                                    if (controller.isOpen) {
+                                      controller.close();
+                                    } else {
+                                      controller.open();
+                                    }
+                                  },
+                                  child: switch (choices.value) {
+                                    AsyncLoading() => const Text('Loading...'),
+                                    _ => const Text('PUSH ME'),
+                                  });
+                            })),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 48,
-              ),
-
-
-
-
             ],
           ),
         ),
@@ -191,16 +235,16 @@ class _DropdownExampleState extends ConsumerState<DropdownExample> {
   }
 }
 
-class ExampleHeader extends ConsumerStatefulWidget {
+class ExampleHeader extends rp.ConsumerStatefulWidget {
   const ExampleHeader(this.data, {super.key});
 
   final List<Map<String, String>> data;
 
   @override
-  ConsumerState<ExampleHeader> createState() => _ExampleHeaderState();
+  rp.ConsumerState<ExampleHeader> createState() => _ExampleHeaderState();
 }
 
-class _ExampleHeaderState extends ConsumerState<ExampleHeader> {
+class _ExampleHeaderState extends rp.ConsumerState<ExampleHeader> {
   final controllerCountry = TextEditingController();
 
   @override
@@ -263,3 +307,29 @@ enum IconLabel {
   final String label;
   final IconData icon;
 }
+
+
+              ///
+              /// An example with Riverpod
+              ///
+              // const SizedBox(
+              //   height: 48,
+              // ),
+              // const Text('With Riverpod:  A dropdown with async values, and progress indicator next to it'),
+              // const SizedBox(
+              //   height: 8,
+              // ),
+              // asyncData.when(
+              //   data: (data) => ExampleHeader(data),
+              //   error: (e, trace) => const Text('Boo'),
+              //   loading: () => const Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       ExampleHeader([]),
+              //       CircularProgressIndicator(),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 48,
+              // ),

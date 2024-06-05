@@ -22,8 +22,6 @@ final cities = <String>{
   'Washington, DC',
 };
 
-/// Just use my custom multiselect widget.
-///
 class MultiSelectMenuButtonExample extends StatelessWidget {
   const MultiSelectMenuButtonExample({super.key});
   static const route = '/multiselect_menu_button_example';
@@ -31,7 +29,8 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
       SelectionModel(initialSelection: cities.toSignal(), choices: cities);
   static final model2 = SelectionModel(
       initialSelection: {'PJM WH RT'}.toSignal(), choices: locations.toSet());
-  static final location = Signal<String?>('');
+  static final location = Signal<String>('');
+  static final hubs = ['PJM WH RT', 'NI Hub RT', 'AD Hub DA'].toSignal();
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
                 /// Simple selection (no search)
                 ///
                 SizedBox(
-                  width: 400,
+                  width: 300,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -84,7 +83,7 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
                 /// Multiselect with search (small number of items)
                 ///
                 SizedBox(
-                  width: 400,
+                  width: 300,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -113,16 +112,16 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
                 ),
 
                 ///
-                /// Multiselect with search (many items -- performant)
+                /// Select one item with search
                 ///
                 SizedBox(
-                  width: 500,
+                  width: 340,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const Text('Selection with search'),
                       Container(
-                        width: 500,
+                        width: 300,
                         decoration: BoxDecoration(
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
@@ -131,7 +130,7 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
                           (_) => AutocompleteUi(
                             selection: location,
                             choices: locations.toSet(),
-                            width: 500,
+                            width: 300,
                           ),
                         ),
                       ),
@@ -140,6 +139,60 @@ class MultiSelectMenuButtonExample extends StatelessWidget {
                       ),
                       Watch((context) => Text(
                           'Currently selected location: ${location.value}')),
+                    ],
+                  ),
+                ),
+
+                ///
+                /// Select several items with search
+                ///
+                SizedBox(
+                  width: 300,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text('Accumulating selection'),
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Watch(
+                          (_) => AutocompleteUi(
+                            selection: location,
+                            choices: locations.toSet(),
+                            accumulatedSelection: hubs,
+                            width: 300,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      Watch((context) {
+                        return Wrap(
+                          direction: Axis.vertical,
+                          spacing: 5.0,
+                          children: List.generate(hubs.value.length, (index) {
+                            return InputChip(
+                              label: Text(hubs.value[index]),
+                              backgroundColor: Colors.purple.shade50,
+                              side: BorderSide.none,
+                              onDeleted: () {
+                                var aux = [...hubs.value];
+                                aux.removeAt(index);
+                                hubs.value = aux;
+                              },
+                            );
+                          }),
+                        );
+                      }),
+                      const SizedBox(
+                        height: 400,
+                      ),
+                      Watch((context) => Text(
+                          'Currently selected locations: ${hubs.value.join(', ')}')),
                     ],
                   ),
                 ),
