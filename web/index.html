@@ -20,8 +20,7 @@
   <link rel="stylesheet" type="text/css" href="splash/style.css">
 
   <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
+    var serviceWorkerVersion = '{{flutter_service_worker_version}}';
   </script>
   <script src="flutter.js" defer></script>
 
@@ -29,15 +28,18 @@
 <body style="position: fixed; inset: 0px; overflow: hidden; padding: 0px; margin: 0px; user-select: none; touch-action: none; font: 14px sans-serif; color: red;" oncontextmenu="return false;">
 <script>
     window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
+      {{flutter_js}}
+      {{flutter_build_config}}
+        _flutter.loader.load({
         serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
+          serviceWorkerVersion: '{{flutter_service_worker_version}}',
         },
         onEntrypointLoaded: function(engineInitializer) {
           engineInitializer.initializeEngine({
             useColorEmoji: true,
           }).then(function(appRunner) {
+            if(document.getElementById('splash'))
+              document.getElementById('splash').remove();
             appRunner.runApp();
           });
         }
