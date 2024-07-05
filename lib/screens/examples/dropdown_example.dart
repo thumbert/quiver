@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as rp;
 import 'package:signals/signals_flutter.dart';
@@ -86,7 +85,7 @@ class _DropdownExampleState extends rp.ConsumerState<DropdownExample> {
           .add(DropdownMenuEntry<IconLabel>(value: icon, label: icon.label));
     }
 
-    var asyncData = ref.watch(providerOfExampleData);
+    // var asyncData = ref.watch(providerOfExampleData);
 
     return MaterialApp(
       theme: ThemeData(

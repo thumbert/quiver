@@ -68,7 +68,7 @@ class _DropdownUiState extends State<DropdownUi> {
             // backgroundColor: MaterialStateProperty.all(Colors.green),
             // fixedSize: MaterialStateProperty.all(const Size.fromHeight(16)),
             visualDensity: const VisualDensity(vertical: -4.0),
-            padding: MaterialStateProperty.all(const EdgeInsets.all(0.0)),
+            padding: WidgetStateProperty.all(const EdgeInsets.all(0.0)),
           ),
           child: Watch((_) => SizedBox(
               width: widget.width,

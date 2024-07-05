@@ -14,7 +14,8 @@
   for example to accept only a month range, etc. 
 - Make MultiselectUi work with generic data not only with Strings
 
-## Release 2024-06-xx
+## Release 2024-07-05
+- Added example of chart with slider.  Slider min/max range is updated async. 
 
 
 ## Release 2024-06-05

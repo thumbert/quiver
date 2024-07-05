@@ -11,6 +11,7 @@ import 'package:signals/signals_flutter.dart';
 /// everything on the screen like `multiselect_search.dart` does.
 ///
 ///
+///
 class AutocompleteUi extends StatefulWidget {
   AutocompleteUi(
       {required this.selection,
@@ -37,6 +38,12 @@ class AutocompleteUi extends StatefulWidget {
 class _AutocompleteUiState extends State<AutocompleteUi> {
   final focusNode = FocusNode();
   final controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.selection.value;
+  }
 
   @override
   void dispose() {
