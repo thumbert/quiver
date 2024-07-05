@@ -16,7 +16,7 @@
 
 ## Release 2024-07-05
 - Added example of chart with slider.  Slider min/max range is updated async. 
-
+- Factor out screens/common/signal/day_filter.dart and the associated model 
 
 ## Release 2024-06-05
 - Experiment with using signals for a dropdown where the lis of values is async.  See 
