@@ -1,10 +1,9 @@
 library screens.hourly_shape;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/hourly_shape/day_filter.dart';
 import 'package:flutter_quiver/models/hourly_shape/hourly_shape_model.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
-import 'package:flutter_quiver/screens/hourly_shape/day_filter_widget.dart';
+import 'package:flutter_quiver/screens/common/signal/day_filter.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
@@ -30,7 +29,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
       _ => throw 'Unsupported analysis ${analysisName.value}',
     };
   });
-  final dayFilter = signal(DayFilter.getDefault());
+  final dayFilter = signal(HourlyShapeModel.getDefaultDailyFilter());
 
   late final traces = futureSignal(() async {
     // seriesName.value = seriesNameController.text;
@@ -155,7 +154,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                                         value: asset,
                                         label: asset,
                                         style: const ButtonStyle(
-                                            padding: MaterialStatePropertyAll(
+                                            padding: WidgetStatePropertyAll(
                                                 EdgeInsets.only(left: 8)),
                                             visualDensity:
                                                 VisualDensity.compact))

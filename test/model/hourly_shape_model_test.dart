@@ -6,7 +6,6 @@ import 'package:date/date.dart';
 import 'package:elec/time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/hourly_shape/hourly_shape_model.dart';
-import 'package:flutter_quiver/models/hourly_shape/day_filter.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';

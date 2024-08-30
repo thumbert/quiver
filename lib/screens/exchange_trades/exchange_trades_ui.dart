@@ -1,8 +1,8 @@
 library screens.exchange_trades.exchange_trades_ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/screens/exchange_trades/tab_ice_exchange.dart';
 import 'package:flutter_quiver/screens/exchange_trades/tab_nodal_exchange.dart';
-import 'package:flutter_quiver/screens/historical_gas/tab1_historical_gas.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
 class ExchangeTradesUi extends StatefulWidget {
@@ -33,72 +33,71 @@ class _State extends State<ExchangeTradesUi> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
-            padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-            child: Watch(
-              (context) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.only(top: 12.0, left: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      TextButton(
-                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                        onPressed: () {
-                          setState(() {
-                            activeTabIndex = 0;
-                          });
-                        },
-                        child: Container(
-                            width: 240,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    width: 2,
-                                    color: activeTabIndex == 0
-                                        ? Colors.deepOrange
-                                        : Colors.grey[300]!),
-                              ),
-                            ),
-                            child: const Center(
-                                child: Text(
-                              'ICE',
-                              style: TextStyle(fontSize: 18),
-                            ))),
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                        onPressed: () {
-                          setState(() {
-                            activeTabIndex = 1;
-                          });
-                        },
-                        child: Container(
-                            width: 240,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    width: 2,
-                                    color: activeTabIndex == 1
-                                        ? Colors.deepOrange
-                                        : Colors.grey[300]!),
-                              ),
-                            ),
-                            child: const Center(
-                                child: Text(
-                              'Nodal',
-                              style: TextStyle(fontSize: 18),
-                            ))),
-                      )
-                    ],
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () {
+                      setState(() {
+                        activeTabIndex = 0;
+                      });
+                    },
+                    child: Container(
+                        width: 240,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                                width: 2,
+                                color: activeTabIndex == 0
+                                    ? Colors.deepOrange
+                                    : Colors.grey[300]!),
+                          ),
+                        ),
+                        child: const Center(
+                            child: Text(
+                          'ICE',
+                          style: TextStyle(fontSize: 18),
+                        ))),
                   ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  if (activeTabIndex == 1) const TabNodalExchange(),
+                  TextButton(
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    onPressed: () {
+                      setState(() {
+                        activeTabIndex = 1;
+                      });
+                    },
+                    child: Container(
+                        width: 240,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                                width: 2,
+                                color: activeTabIndex == 1
+                                    ? Colors.deepOrange
+                                    : Colors.grey[300]!),
+                          ),
+                        ),
+                        child: const Center(
+                            child: Text(
+                          'Nodal',
+                          style: TextStyle(fontSize: 18),
+                        ))),
+                  )
                 ],
               ),
-            )),
+              const SizedBox(
+                height: 24,
+              ),
+              if (activeTabIndex == 0) const TabIceExchange(),
+              if (activeTabIndex == 1) const TabNodalExchange(),
+            ],
+          ),
+        ),
       ),
     ));
   }
 }
-

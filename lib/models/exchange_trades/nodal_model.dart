@@ -1,7 +1,6 @@
 library models.exchange_trades.nodal_model;
 
 import 'package:date/date.dart';
-import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:timezone/timezone.dart';
 
@@ -11,7 +10,7 @@ final cache = <Map<String, dynamic>>[].toSignal();
 /// Keep this function separated from the rows signal to allow for better
 /// testing.
 Future<List<Map<String, dynamic>>> getTrades(Term term) async {
-  await Future.delayed(const Duration(milliseconds: 200));
+  await Future.delayed(const Duration(milliseconds: 2000));
   if (!cachedTerm.value.interval.containsInterval(term.interval) ||
       cache.value.isEmpty) {
     cache.value = <Map<String, dynamic>>[
@@ -110,7 +109,7 @@ final rows = futureSignal(() async {
 }, dependencies: [
   startDate,
   endDate,
-]);
+], debugLabel: 'rows');
 
 /// All filtering is done functionally (stateless, on the fly) on the entire
 /// local cache.
@@ -150,9 +149,9 @@ List<Map<String, dynamic>> filterRows({
 }
 
 /// Start, end date filter
-final startDate = Date.utc(2024, 4, 1).toSignal();
+final startDate = Date.utc(2024, 4, 1).asSignal();
 final startError = signal<String?>(null);
-final endDate = Date.today(location: UTC).toSignal();
+final endDate = Date.today(location: UTC).asSignal();
 final endError = signal<String?>(null);
 
 /// Calculate the date range of trades cached.  Need this to be able to decide
@@ -165,102 +164,55 @@ final cachedTerm = computed(() {
     if (trade['tradeDate'].compareTo(end) < 0) start = trade['tradeDate'];
   }
   return Term(Date.fromIsoString(start), Date.fromIsoString(end));
-});
+}, debugLabel: 'cachedTerm');
 
-/// ISO filter{
-final allIsos = computed(() {
+//
+final getAllIsos = futureSignal(() async {
+  await rows.future;
   var isos = filterRows(tradeKind: tradeKind.value)
       .map<String>((e) => e['iso'])
       .toList();
   isos.sort();
   return isos.toSet();
 });
-// final selectedIsos = {'PJM'}.toSignal();
-final selectedIsos = {...allIsos.value}.toSignal();
-final labelIsos = computed(() {
-  if (allIsos.value.isEmpty) return SelectionState.all.toString();
-  if (selectedIsos.isEmpty) return SelectionState.none.toString();
-  if (selectedIsos.length == 1) return selectedIsos.first;
-  if (allIsos.value.length == selectedIsos.value.length) {
-    return SelectionState.all.toString();
-  } else {
-    return SelectionState.some.toString();
-  }
-});
-final tempSelectionIso = <String>{}.toSignal();
+final isos = ListSignal(<String>['PJM'], debugLabel: 'isos');
 
-/// Location filter
-final allLocations = computed(() {
-  var locations =
-      filterRows(tradeKind: tradeKind.value, isos: {...selectedIsos.value})
-          .map<String>((e) => e['location'])
-          .toSet();
-  return locations;
+//
+final getAllLocations = futureSignal(() async {
+  await rows.future;
+  var locations = filterRows(tradeKind: tradeKind.value)
+      .map<String>((e) => e['location'])
+      .toList();
+  locations.sort();
+  return locations.toSet();
 });
-final selectedLocations = {...allLocations.value}.toSignal();
-final labelLocations = computed(() {
-  if (allLocations.value.isEmpty) return SelectionState.all.toString();
-  if (selectedLocations.isEmpty) return SelectionState.none.toString();
-  if (selectedLocations.length == 1) return selectedLocations.first;
-  if (allLocations.value.length == selectedLocations.value.length) {
-    return SelectionState.all.toString();
-  } else {
-    return SelectionState.some.toString();
-  }
-});
-final tempSelectionLocation = <String>{}.toSignal();
+final locations = ListSignal(<String>[], debugLabel: 'locations');
 
-// Strip filter
-final allStrips = computed(() {
-  var aux = filterRows(
-          tradeKind: tradeKind.value,
-          isos: {...selectedIsos.value},
-          locations: {...selectedLocations.value})
+//
+final getAllStrips = futureSignal(() async {
+  await rows.future;
+  var strips = filterRows(tradeKind: tradeKind.value)
       .map<String>((e) => e['strip'])
       .toList();
-  aux.sort();
-  return aux.toSet();
+  strips.sort();
+  return strips.toSet();
 });
-final selectedStrips = {...allStrips.value}.toSignal();
-final labelStrips = computed(() {
-  if (allStrips.value.isEmpty) return SelectionState.all.toString();
-  if (selectedStrips.isEmpty) return SelectionState.none.toString();
-  if (selectedStrips.length == 1) return selectedStrips.first;
-  if (allStrips.value.length == selectedStrips.value.length) {
-    return SelectionState.all.toString();
-  } else {
-    return SelectionState.some.toString();
-  }
-});
-final tempSelectionStrip = <String>{}.toSignal();
+final strips = ListSignal(<String>[], debugLabel: 'strips');
 
-// Bucket filter
-final allBuckets = computed(() {
-  var buckets = filterRows(
-          tradeKind: tradeKind.value,
-          isos: {...selectedIsos.value},
-          locations: {...selectedLocations.value},
-          strips: {...selectedStrips.value})
+//
+final getAllBuckets = futureSignal(() async {
+  await rows.future;
+  var strips = filterRows(tradeKind: tradeKind.value)
       .map<String>((e) => e['bucket'])
-      .toSet();
-  return buckets;
+      .toList();
+  strips.sort();
+  return strips.toSet();
 });
-final selectedBuckets = {...allBuckets.value}.toSignal();
-final labelBuckets = computed(() {
-  if (allBuckets.value.isEmpty) return SelectionState.all.toString();
-  if (selectedBuckets.isEmpty) return SelectionState.none.toString();
-  if (selectedBuckets.length == 1) return selectedBuckets.first;
-  if (allBuckets.value.length == selectedBuckets.value.length) {
-    return SelectionState.all.toString();
-  } else {
-    return SelectionState.some.toString();
-  }
-});
-final tempSelectionBucket = <String>{}.toSignal();
+final buckets = ListSignal(<String>[], debugLabel: 'buckets');
 
 // Trade kind
 final allTradeKinds = ['Outright', 'Spread', 'Option'];
-final tradeKind = 'Outright'.toSignal();
+final tradeKind = 'Outright'.asSignal();
 
 // Paginate the trades displayed on the screen
 final pageNumber = signal(0);

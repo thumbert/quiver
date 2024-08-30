@@ -5,11 +5,12 @@ import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/risk_system.dart';
+import 'package:elec/time.dart';
 import 'package:elec_server/client/isoexpress/zonal_demand.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/models/hourly_shape/day_filter.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
 import 'package:http/http.dart';
+import 'package:more/collection.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 
@@ -123,7 +124,6 @@ class HourlyShapeModel {
 
   static List<Map<String, dynamic>> _getTracesWeightsByDay(
       DayFilter dayFilter) {
-    print('in get tracesWeightsByDay...');
     var traces = <Map<String, dynamic>>[];
     var aux = dayFilter.getDays(Term.fromInterval(
         term.interval.withTimeZone(_dailyGroupsDemand.keys.first.location)));
@@ -246,4 +246,17 @@ class HourlyShapeModel {
     'showlegend': true,
     'hovermode': 'closest',
   };
+
+  static DayFilter getDefaultDailyFilter() {
+    var yearEnd = DateTime.now().year;
+    var yearStart = yearEnd - 4;
+    var years = IntegerRange(yearStart, yearEnd + 1).toSet();
+    return DayFilter(
+        years: years,
+        months: <int>{3},
+        days: <int>{},
+        daysOfWeek: <int>{1, 2, 3, 4, 5},
+        specialDays: <Date>{},
+        holidays: <Holiday>{});
+  }
 }

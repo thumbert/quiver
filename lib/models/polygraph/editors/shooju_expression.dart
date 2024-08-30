@@ -7,7 +7,6 @@ import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
-import 'package:timezone/timezone.dart';
 
 enum PeriodConvention {
   beginning('beginning'),
@@ -53,7 +52,6 @@ class ShoojuExpression extends PolygraphVariable {
       timeFilter: TimeFilter.empty(),
       timeAggregation: TimeAggregation.empty());
 
-  @override
   TimeSeries<num> timeSeries(Term term) {
     // TimeSeries<num> ts, aux;
 

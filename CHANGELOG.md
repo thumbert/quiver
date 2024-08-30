@@ -14,6 +14,18 @@
   for example to accept only a month range, etc. 
 - Make MultiselectUi work with generic data not only with Strings
 
+## BUGS
+
+
+
+## Release 2024-08-30
+- In multiselect_menu_button_example
+  * Selection with search now clears the textfield when the clear icon is pressed
+  * Multiple selection with search was not working correctly.  When you pressed g it didn't 
+    show Los Angeles!  Fixed.
+- Rewrote nodal_model by replacing the linked filters.  They stopped working and they were an 
+  eye sore!
+
 ## Release 2024-07-05
 - Added example of chart with slider.  Slider min/max range is updated async. 
 - Factor out screens/common/signal/day_filter.dart and the associated model 

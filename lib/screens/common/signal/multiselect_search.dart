@@ -108,8 +108,7 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
     if (_controller.text == '') {
       // only show the (All) checkbox when there is nothing in the search box
       out.add(MenuItemButton(
-          style:
-              ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
           child: Watch(
             (context) => SizedBox(
               width: widget.width,
@@ -136,28 +135,28 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
     for (final value in widget.model.choices) {
       if (value.toLowerCase().contains(content)) {
         out.add(MenuItemButton(
-            style: ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.zero)),
-            child: Watch((_) => SizedBox(
-                  width: widget.width,
-                  child: PointerInterceptor(
-                    child: CheckboxListTile(
-                      dense: true,
-                      value:
-                          widget.model.currentSelection.value.contains(value),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(value),
-                      onChanged: (bool? checked) {
-                        if (checked!) {
-                          widget.model.add(value);
-                        } else {
-                          widget.model.remove(value);
-                        }
-                        setState(() {});
-                      },
-                    ),
+          style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
+          key: UniqueKey(),   // need this to display the correct values
+          child: Watch((_) => SizedBox(
+                width: widget.width,
+                child: PointerInterceptor(
+                  child: CheckboxListTile(
+                    dense: true,
+                    value: widget.model.currentSelection.value.contains(value),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(value),
+                    onChanged: (bool? checked) {
+                      if (checked!) {
+                        widget.model.add(value);
+                      } else {
+                        widget.model.remove(value);
+                      }
+                      setState(() {});
+                    },
                   ),
-                ))));
+                ),
+              )),
+        ));
       }
     }
     return out;

@@ -9,7 +9,7 @@ import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
 import 'package:flutter_quiver/screens/examples/inherited_widget_example.dart';
-import 'package:flutter_quiver/screens/examples/multiselect_menu_button_signals.dart';
+import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.dart';
 import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/exchange_trades/exchange_trades_ui.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
@@ -85,7 +85,7 @@ class AppGroup extends StatefulWidget {
       MenuItem(
           title: 'Inherited widget example', url: InheritedWidgetExample.route),
       MenuItem(
-          title: 'Multiselect dropdown',
+          title: 'Multiselect dropdown + Autocomplete',
           url: MultiSelectMenuButtonExample.route),
       MenuItem(
           title: 'Linked multiselect dropdowns',

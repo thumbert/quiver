@@ -5,14 +5,18 @@ import 'package:elec/time.dart';
 import 'package:elec_server/utils.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
-import 'package:flutter_quiver/models/common/day_filter.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timezone/timezone.dart';
 
 class DayFilterWidget extends StatefulWidget {
-  const DayFilterWidget(this.model, {super.key});
+  const DayFilterWidget(this.model,
+      {super.key, this.skipFields = const <String>{}});
 
   final Signal<DayFilter> model;
+
+  /// Fields that the UI should skip.  Valid values are 
+  /// `{'years', 'months', 'days', 'daysOfWeek', 'specialDays', 'holidays'}`
+  final Set<String> skipFields;
 
   @override
   State<DayFilterWidget> createState() => _DayFilterEditorState();
@@ -111,7 +115,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Years
         ///
-        if (!widget.model.value.skipFields.contains('years'))
+        if (!widget.skipFields.contains('years'))
           Row(
             children: [
               Container(
@@ -149,7 +153,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Months
         ///
-        if (!widget.model.value.skipFields.contains('months'))
+        if (!widget.skipFields.contains('months'))
           Row(
             children: [
               Container(
@@ -187,7 +191,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Days of month
         ///
-        if (!widget.model.value.skipFields.contains('days'))
+        if (!widget.skipFields.contains('days'))
           Row(
             children: [
               Container(
@@ -226,7 +230,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Days of week
         ///
-        if (!widget.model.value.skipFields.contains('daysOfWeek'))
+        if (!widget.skipFields.contains('daysOfWeek'))
           Row(
             children: [
               Container(
@@ -265,7 +269,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Special days
         ///
-        if (!widget.model.value.skipFields.contains('specialDays'))
+        if (!widget.skipFields.contains('specialDays'))
           Row(
             children: [
               Container(
@@ -301,7 +305,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
         ///
         /// Federal holidays
         ///
-        if (!widget.model.value.skipFields.contains('holidays'))
+        if (!widget.skipFields.contains('holidays'))
           Row(
             children: [
               const SizedBox(

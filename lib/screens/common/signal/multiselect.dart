@@ -28,8 +28,8 @@ enum SelectionState {
 class SelectionModel {
   SelectionModel(
       {required Set<String> initialSelection, required this.choices}) {
-    currentSelection = initialSelection.toSignal();
-    selection = {...initialSelection}.toSignal();
+    currentSelection = SetSignal({...initialSelection});
+    selection = SetSignal({...initialSelection});
   }
 
   // don't make it final, allow for updates after a call to db is made
@@ -37,13 +37,13 @@ class SelectionModel {
 
   /// Contains the partial selection when the dropdown is still open.
   /// Allows you to react to changes in the app as they happen.
-  late final Signal<Set<String>> currentSelection;
+  late final SetSignal<String> currentSelection;
 
   /// Contains the final selection when the dropdown closes.
   /// Allows you to update the state only when the selection is finished!
   /// Use this field, if any selection triggers a time consuming update,
   /// for example a network request.
-  late final Signal<Set<String>> selection;
+  late final SetSignal<String> selection;
 
   SelectionState get selectionState {
     if (currentSelection.value.isEmpty) return SelectionState.none;
@@ -129,7 +129,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
   List<MenuItemButton> getList() {
     var out = <MenuItemButton>[];
     out.add(MenuItemButton(
-        style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+        style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
         child: Watch(
           (context) => SizedBox(
             width: widget.width,
@@ -154,8 +154,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
 
     for (final value in widget.model.choices) {
       out.add(MenuItemButton(
-          style:
-              ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
           child: Watch((_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(

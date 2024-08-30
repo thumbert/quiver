@@ -54,7 +54,8 @@ class _AutocompleteUiState extends State<AutocompleteUi> {
 
   @override
   Widget build(BuildContext context) {
-    return RawAutocomplete(
+    controller.text = widget.selection.value;
+    return Watch((_) => RawAutocomplete(
         focusNode: focusNode,
         textEditingController: controller,
         fieldViewBuilder: (BuildContext context,
@@ -136,7 +137,7 @@ class _AutocompleteUiState extends State<AutocompleteUi> {
               ),
             ),
           );
-        });
+        }));
   }
 }
 

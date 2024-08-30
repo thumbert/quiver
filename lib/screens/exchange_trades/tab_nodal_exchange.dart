@@ -4,11 +4,11 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quiver/screens/common/signal/autocomplete.dart';
 import 'package:table/table_base.dart' as table;
 import 'package:flutter_quiver/models/exchange_trades/nodal_model.dart'
     as nodal;
 import 'package:flutter_quiver/screens/common/signal/date_field.dart';
-import 'package:flutter_quiver/screens/common/signal/multiselect3.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
@@ -34,51 +34,6 @@ class _State extends State<TabNodalExchange> {
   @override
   void initState() {
     super.initState();
-    previousIsos = nodal.selectedIsos.value;
-    previousLocations = nodal.selectedLocations.value;
-    previousStrips = nodal.selectedStrips.value;
-    previousBuckets = nodal.selectedBuckets.value;
-
-    updateIsos = effect(() {
-      nodal.selectedIsos.value = {...nodal.allIsos.value};
-      nodal.tempSelectionIso.value = {...nodal.allIsos.value};
-      setState(() {});
-    });
-
-    /// NOTE: Need to register this effect here!
-    /// After [allLocations] change, reset [selectedLocations] and [tempSelectionLocation]
-    updateLocations = effect(() {
-      // only update the locations if the isos actually change
-      if (!equality.equals(previousIsos, nodal.selectedIsos.value)) {
-        nodal.selectedLocations.value = {...nodal.allLocations.value};
-        nodal.tempSelectionLocation.value = {...nodal.allLocations.value};
-        setState(() {
-          previousIsos = nodal.selectedIsos.value;
-        });
-      }
-    });
-    updateStrips = effect(() {
-      // only update the strips if the locations actually change
-      if (!equality.equals(previousLocations, nodal.selectedLocations.value)) {
-        nodal.selectedStrips.value = {...nodal.allStrips.value};
-        nodal.tempSelectionStrip.value = {...nodal.allStrips.value};
-        // Need to setState below to update the strip dropdown!
-        setState(() {
-          previousLocations = nodal.selectedLocations.value;
-        });
-      }
-    });
-    updateBuckets = effect(() {
-      // only update the buckets if the strips actually change
-      if (!equality.equals(previousStrips, nodal.selectedStrips.value)) {
-        nodal.selectedBuckets.value = {...nodal.allBuckets.value};
-        nodal.tempSelectionBucket.value = {...nodal.allBuckets.value};
-        // Need to setState below to update the strip dropdown!
-        setState(() {
-          previousStrips = nodal.selectedStrips.value;
-        });
-      }
-    });
   }
 
   @override
@@ -147,133 +102,9 @@ class _State extends State<TabNodalExchange> {
                     )
                 ],
               ),
-            ],
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-
-          ///
-          /// Second row
-          ///
-          Row(
-            children: [
-              const Text(
-                'ISO',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Container(
-                width: 160,
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade50,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Watch((context) => MultiselectUi(
-                    allValues: nodal.allIsos,
-                    selectedValues: nodal.selectedIsos,
-                    label: nodal.labelIsos,
-                    temporarySelection: nodal.tempSelectionIso,
-                    width: 160)),
-              ),
               const SizedBox(
                 width: 36,
               ),
-
-              ///
-              /// Location
-              ///
-              const Text(
-                'Location',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Container(
-                width: 250,
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade50,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Watch((context) => MultiselectUi(
-                    allValues: nodal.allLocations,
-                    selectedValues: nodal.selectedLocations,
-                    label: nodal.labelLocations,
-                    temporarySelection: nodal.tempSelectionLocation,
-                    width: 250)),
-              ),
-              const SizedBox(
-                width: 36,
-              ),
-
-              ///
-              /// Strip
-              ///
-              const Text(
-                'Strip',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Container(
-                width: 200,
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade50,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Watch((context) => MultiselectUi(
-                    allValues: nodal.allStrips,
-                    selectedValues: nodal.selectedStrips,
-                    label: nodal.labelStrips,
-                    temporarySelection: nodal.tempSelectionStrip,
-                    width: 200)),
-              ),
-              const SizedBox(
-                width: 36,
-              ),
-
-              ///
-              /// Bucket
-              ///
-              const Text(
-                'Bucket',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Container(
-                width: 200,
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade50,
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                child: Watch((context) => MultiselectUi(
-                    allValues: nodal.allBuckets,
-                    selectedValues: nodal.selectedBuckets,
-                    label: nodal.labelBuckets,
-                    temporarySelection: nodal.tempSelectionBucket,
-                    width: 200)),
-              ),
-              const SizedBox(
-                width: 36,
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-
-          ///
-          /// TradeKind
-          ///
-          Row(
-            children: [
-              //
               SegmentedButton(
                 segments: const [
                   ButtonSegment(value: 'Outright', label: Text('Outright')),
@@ -287,6 +118,330 @@ class _State extends State<TabNodalExchange> {
               ),
             ],
           ),
+          const SizedBox(
+            height: 16,
+          ),
+
+          ///
+          /// Second row
+          ///
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ///
+              /// ISO
+              ///
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          'ISO',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Watch((context) {
+                          var allIsos = switch (nodal.getAllIsos.value) {
+                            AsyncData<Set<String>> data => data.value,
+                            _ => <String>{},
+                          };
+                          return AutocompleteUi(
+                            selection: ''.asSignal(),
+                            choices: allIsos,
+                            accumulatedSelection: nodal.isos,
+                            width: 150,
+                            key: UniqueKey(),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 60,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: Watch((context) {
+                          return Wrap(
+                              direction: Axis.vertical,
+                              spacing: 5.0,
+                              children: List.generate(nodal.isos.value.length,
+                                  (index) {
+                                return InputChip(
+                                  label: Text(nodal.isos.value[index]),
+                                  backgroundColor: Colors.purple.shade50,
+                                  side: BorderSide.none,
+                                  onDeleted: () {
+                                    var aux = [...nodal.isos.value];
+                                    aux.removeAt(index);
+                                    nodal.isos.value = aux;
+                                  },
+                                );
+                              }));
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 36,
+              ),
+
+              ///
+              /// Location
+              ///
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          'Location',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Watch((context) {
+                          var allLocations =
+                              switch (nodal.getAllLocations.value) {
+                            AsyncData<Set<String>> data => data.value,
+                            _ => <String>{},
+                          };
+                          return AutocompleteUi(
+                            selection: ''.asSignal(),
+                            choices: allLocations,
+                            accumulatedSelection: nodal.locations,
+                            width: 150,
+                            key: UniqueKey(),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 60,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: Watch((context) {
+                          return Wrap(
+                              direction: Axis.vertical,
+                              spacing: 5.0,
+                              children: List.generate(
+                                  nodal.locations.value.length, (index) {
+                                return InputChip(
+                                  label: Text(nodal.locations.value[index]),
+                                  backgroundColor: Colors.purple.shade50,
+                                  side: BorderSide.none,
+                                  onDeleted: () {
+                                    var aux = [...nodal.locations.value];
+                                    aux.removeAt(index);
+                                    nodal.locations.value = aux;
+                                  },
+                                );
+                              }));
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 36,
+              ),
+
+              ///
+              /// Strip
+              ///
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          'Strip',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Watch((context) {
+                          var allStrips = switch (nodal.getAllStrips.value) {
+                            AsyncData<Set<String>> data => data.value,
+                            _ => <String>{},
+                          };
+                          return AutocompleteUi(
+                            selection: ''.asSignal(),
+                            choices: allStrips,
+                            accumulatedSelection: nodal.strips,
+                            width: 150,
+                            key: UniqueKey(),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 40,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: Watch((context) {
+                          return Wrap(
+                              direction: Axis.vertical,
+                              spacing: 5.0,
+                              children: List.generate(nodal.strips.value.length,
+                                  (index) {
+                                return InputChip(
+                                  label: Text(nodal.strips.value[index]),
+                                  backgroundColor: Colors.purple.shade50,
+                                  side: BorderSide.none,
+                                  onDeleted: () {
+                                    var aux = [...nodal.strips.value];
+                                    aux.removeAt(index);
+                                    nodal.strips.value = aux;
+                                  },
+                                );
+                              }));
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 36,
+              ),
+
+              ///
+              /// Bucket
+              ///
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        alignment: Alignment.centerRight,
+                        child: const Text(
+                          'Bucket',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Watch((context) {
+                          var allBuckets = switch (nodal.getAllBuckets.value) {
+                            AsyncData<Set<String>> data => data.value,
+                            _ => <String>{},
+                          };
+                          return AutocompleteUi(
+                            selection: ''.asSignal(),
+                            choices: allBuckets,
+                            accumulatedSelection: nodal.buckets,
+                            width: 150,
+                            key: UniqueKey(),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      SizedBox(
+                        width: 150,
+                        child: Watch((context) {
+                          return Wrap(
+                              direction: Axis.vertical,
+                              spacing: 5.0,
+                              children: List.generate(
+                                  nodal.buckets.value.length, (index) {
+                                return InputChip(
+                                  label: Text(nodal.buckets.value[index]),
+                                  backgroundColor: Colors.purple.shade50,
+                                  side: BorderSide.none,
+                                  onDeleted: () {
+                                    var aux = [...nodal.buckets.value];
+                                    aux.removeAt(index);
+                                    nodal.buckets.value = aux;
+                                  },
+                                );
+                              }));
+                        }),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                width: 36,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+
           const SizedBox(
             height: 24,
           ),
@@ -337,12 +492,12 @@ class _State extends State<TabNodalExchange> {
   Widget updateTable() {
     var xs = nodal.filterRows(
       tradeKind: nodal.tradeKind.value,
-      isos: nodal.selectedIsos.value,
-      locations: nodal.selectedLocations.value,
-      strips: nodal.selectedStrips.value,
-      buckets: nodal.selectedBuckets.value,
+      isos: nodal.isos.value.toSet(),
+      locations: nodal.locations.value.toSet(),
+      strips: nodal.strips.value.toSet(),
+      buckets: nodal.buckets.value.toSet(),
     );
-    const pageSize = 6;
+    const pageSize = 12;
     var indStart = nodal.pageNumber.value * pageSize;
     var indEnd = min((nodal.pageNumber.value + 1) * pageSize, xs.length);
 
