@@ -67,7 +67,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
       var aux = DateTime.now().hashCode;
       plotly = Plotly(
         viewId: 'plotly-unmasked-energy-offers-$aux',
-        data: const [],
+        traces: const [],
         layout: model.layout,
       );
     });
@@ -114,7 +114,8 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
             fillColor: Colors.blueGrey.shade50,
             contentPadding: const EdgeInsets.symmetric(vertical: 4.0),
             border: const OutlineInputBorder(borderSide: BorderSide.none),
-            enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
+            enabledBorder:
+                const OutlineInputBorder(borderSide: BorderSide.none),
           ),
           onSelected: (Map<String, dynamic>? asset) {
             setState(() {
@@ -270,8 +271,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
                               layout['title'] =
                                   'MW weighted Energy Offer price';
                             }
-                            plotly.plot
-                                .react(traces, layout, displaylogo: false);
+                            plotly.react(traces, layout, plotly.config);
                             children = [
                               SizedBox(width: 900, height: 600, child: plotly),
                             ];

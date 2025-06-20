@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!--  <base href="/">-->
-  <base href="/quiver/">
+  <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -19,33 +18,9 @@
   <script src="js/plotly-latest.min.js"></script>
   <link rel="stylesheet" type="text/css" href="splash/style.css">
 
-  <script>
-    var serviceWorkerVersion = '{{flutter_service_worker_version}}';
-  </script>
-  <script src="flutter.js" defer></script>
-
 </head>
 <body style="position: fixed; inset: 0px; overflow: hidden; padding: 0px; margin: 0px; user-select: none; touch-action: none; font: 14px sans-serif; color: red;" oncontextmenu="return false;">
-<script>
-    window.addEventListener('load', function(ev) {
-      {{flutter_js}}
-      {{flutter_build_config}}
-        _flutter.loader.load({
-        serviceWorker: {
-          serviceWorkerVersion: '{{flutter_service_worker_version}}',
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine({
-            useColorEmoji: true,
-          }).then(function(appRunner) {
-            if(document.getElementById('splash'))
-              document.getElementById('splash').remove();
-            appRunner.runApp();
-          });
-        }
-      });
-    });
-  </script>
+<script src="flutter_bootstrap.js" async></script>
 
   <picture id="splash">
     <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">

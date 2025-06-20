@@ -2,8 +2,14 @@
 
 Keep all your arrows in one place
 
-## Information
+```
+flutter build web --base-href=/quiver/
+rm -r ~/Software/Apps/public/quiver/*
+cp -r build/web/* ~/Software/Apps/public/quiver
+```
 
+
+## Information
 To start the polygraph documentation, go to `docs/polygraph` and do 
 ```
 mdbook serve --open

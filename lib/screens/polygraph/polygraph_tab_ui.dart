@@ -66,7 +66,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       var window = tab.windows[j];
       plotly.add(Plotly(
         viewId: 'polygraph-div-${tab.name}-w$j-$aux',
-        data: const [],
+        traces: const [],
         layout: window.layout.toJson(),
       ));
     }
@@ -100,7 +100,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
             Plotly(
               viewId:
                   'polygraph-div-${tab.name}-w${tab.windows.length - 1}-$aux',
-              data: const [],
+              traces: const [],
               layout: window.layout.toJson(),
             ));
       } else if (tab.tabAction.keys.contains('windowRemoved')) {
@@ -931,7 +931,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                     'height': nodes[i].height() - 30,
                     ...window.layout.toJson(),
                   };
-                  plotly[i].plot.react(traces, layout, displaylogo: false);
+                  plotly[i].react(traces, layout, plotly[i].config);
                   return plotly[i];
                 }),
           ),

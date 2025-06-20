@@ -3,7 +3,6 @@ library screens.exchange_trades.exchange_trades_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/exchange_trades/tab_ice_exchange.dart';
 import 'package:flutter_quiver/screens/exchange_trades/tab_nodal_exchange.dart';
-import 'package:signals_flutter/signals_flutter.dart';
 
 class ExchangeTradesUi extends StatefulWidget {
   const ExchangeTradesUi({super.key});

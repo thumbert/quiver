@@ -23,7 +23,7 @@ class _LoadStatsPlotState extends ConsumerState<LoadStatsPlot> {
       var aux = DateTime.now().hashCode;
       plotly = Plotly(
         viewId: 'plotly-pool-load-stats-$aux',
-        data: const [],
+        traces: const [],
         layout: model.layout(),
       );
     });
@@ -48,7 +48,7 @@ class _LoadStatsPlotState extends ConsumerState<LoadStatsPlot> {
           }
           var traces = model.makeTraces();
           print(traces.first['x'].take(3));
-          plotly.plot.react(traces, model.layout(), displaylogo: false);
+          plotly.react(traces, model.layout(), plotly.config);
 
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +79,7 @@ class _LoadStatsPlotState extends ConsumerState<LoadStatsPlot> {
   Widget justPlot() {
     final model = ref.watch(providerOfPoolLoadStats);
     var traces = model.makeTraces();
-    plotly.plot.react(traces, model.layout(), displaylogo: false);
+    plotly.react(traces, model.layout(), plotly.config);
     return SizedBox(width: 850, height: 550, child: plotly);
   }
 }

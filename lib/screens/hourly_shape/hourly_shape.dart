@@ -1,5 +1,8 @@
 library screens.hourly_shape;
 
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/hourly_shape/hourly_shape_model.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
@@ -7,8 +10,6 @@ import 'package:flutter_quiver/screens/common/signal/day_filter.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:js' as js;
 
 class HourlyShapeApp extends StatefulWidget {
   const HourlyShapeApp({super.key});
@@ -59,32 +60,31 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
     plotly = [0, 1]
         .map((i) => Plotly(
               viewId: 'plotly-hourly-shape-$i-$aux',
-              data: const [],
+              traces: const [],
               layout: HourlyShapeModel.layout,
             ))
         .toList();
 
     // for Hourly weights by day, register the callbacks...
-    plotly[0].plot.onHover.forEach((data) {
-      var xs = js.context['Object'].callMethod('values', data['points']);
-      int traceNumber = xs[2];
+    // for Hourly weights by day, register the callbacks...
+    plotly[0].onHover((JSObject data) {
+      var points = (data.getProperty('points'.toJS) as JSArray).toDart;
+      int traceNumber =
+          ((points[0] as JSObject).getProperty('curveNumber'.toJS) as JSNumber)
+              .toDartInt;
 
       // ignore: no_leading_underscores_for_local_identifiers
       var _traces = traces.requireValue;
       var one = Map<String, dynamic>.from(_traces[traceNumber]);
       one['line'] = {'color': '#ff9900', 'width': 4};
       _traces[_traces.length - 1] = one;
-      plotly[0]
-          .plot
-          .react(_traces, HourlyShapeModel.layout, displaylogo: false);
+      plotly[0].react(_traces, HourlyShapeModel.layout, plotly[0].config);
     });
-    plotly[0].plot.onUnhover.forEach((data) {
+    plotly[0].onUnhover((JSObject data) {
       // ignore: no_leading_underscores_for_local_identifiers
       var _traces = traces.requireValue;
       _traces[_traces.length - 1]['line'] = {'color': '#add8e6', 'width': 2};
-      plotly[0]
-          .plot
-          .react(_traces, HourlyShapeModel.layout, displaylogo: false);
+      plotly[0].react(_traces, HourlyShapeModel.layout, plotly[0].config);
     });
     super.initState();
   }
@@ -320,8 +320,8 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
       SettingsIndividualDays() => 0,
       SettingsForMedianByYear() => 1,
     };
-    plotly[i].plot.react(traces.requireValue, HourlyShapeModel.layout,
-        displaylogo: false);
+    plotly[i]
+        .react(traces.requireValue, HourlyShapeModel.layout, plotly[i].config);
     return Row(children: [
       SizedBox(width: 900, height: 600, child: plotly[i]),
     ]);

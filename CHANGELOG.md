@@ -16,6 +16,8 @@
 
 ## BUGS
 
+## Release 2025-06-20
+- Migrate to flutter_web_plotly 1.0.0
 
 
 ## Release 2024-08-30

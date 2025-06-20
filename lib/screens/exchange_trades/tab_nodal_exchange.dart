@@ -2,14 +2,12 @@ library screens.exchange_trades.tab_nodal_exchange;
 
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/autocomplete.dart';
 import 'package:table/table_base.dart' as table;
 import 'package:flutter_quiver/models/exchange_trades/nodal_model.dart'
     as nodal;
 import 'package:flutter_quiver/screens/common/signal/date_field.dart';
-import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
 class TabNodalExchange extends StatefulWidget {
@@ -19,30 +17,7 @@ class TabNodalExchange extends StatefulWidget {
 }
 
 class _State extends State<TabNodalExchange> {
-  late Plotly plotly;
-  late void Function() updateIsos;
-  late void Function() updateLocations;
-  late void Function() updateStrips;
-  late void Function() updateBuckets;
 
-  late Set<String> previousIsos,
-      previousLocations,
-      previousStrips,
-      previousBuckets;
-  final equality = const SetEquality();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    updateLocations();
-    updateStrips();
-    updateBuckets();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

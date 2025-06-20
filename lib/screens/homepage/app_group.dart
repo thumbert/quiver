@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/examples/chart_with_slider_example.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -78,7 +77,6 @@ class AppGroup extends StatefulWidget {
       MenuItem(url: Weather.route, title: 'Weather'),
     ],
     'Examples': [
-      MenuItem(title: 'Chart with slider', url: ChartWithSliderExample.route),
       MenuItem(title: 'Date range picker', url: DateRangePickerExample.route),
       MenuItem(title: 'Dropdown without lag', url: DropdownExample.route),
       MenuItem(title: 'Expansion panel', url: ExpansionPanelExample.route),

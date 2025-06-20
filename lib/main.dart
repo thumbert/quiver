@@ -3,7 +3,6 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
-import 'package:flutter_quiver/screens/examples/chart_with_slider_example.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -37,6 +36,7 @@ import 'package:timezone/data/latest.dart';
 void main() async {
   initializeTimeZones();
   await dotenv.load(fileName: '.env');
+  dotenv.env['RUST_SERVER'] = 'http://localhost:8111';
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -52,10 +52,6 @@ class MyApp extends StatelessWidget {
     GoRoute(
       path: '/',
       builder: (context, state) => const HomePage(),
-    ),
-    GoRoute(
-      path: ChartWithSliderExample.route,
-      builder: (context, state) => const ChartWithSliderExample(),
     ),
     GoRoute(
       path: Connect4.route,

@@ -33,7 +33,7 @@ class _State extends State<Tab1HistoricalGas> {
     var aux = DateTime.now().hashCode;
     plotly = Plotly(
       viewId: 'plotly-hist-gas-tab1-$aux',
-      data: const [],
+      traces: const [],
       layout: tab1.layout,
     );
     super.initState();
@@ -204,8 +204,7 @@ class _State extends State<Tab1HistoricalGas> {
   }
 
   Widget updatePlot() {
-    plotly.plot
-        .react(tab1.traces.requireValue, tab1.layout, displaylogo: false);
+    plotly.react(tab1.traces.requireValue, tab1.layout, plotly.config);
     return Row(children: [
       SizedBox(width: 900, height: 600, child: plotly),
     ]);

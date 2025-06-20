@@ -27,7 +27,7 @@ class _State extends State<HistoricalOptionPricing> {
     var aux = DateTime.now().hashCode;
     plotly = Plotly(
       viewId: 'plotly-hist-opt-pricing-$aux',
-      data: const [],
+      traces: const [],
       layout: layout,
     );
     super.initState();
@@ -278,7 +278,7 @@ class _State extends State<HistoricalOptionPricing> {
   }
 
   Widget updatePlot() {
-    plotly.plot.react(traces.requireValue, layout, displaylogo: false);
+    plotly.react(traces.requireValue, layout, plotly.config);
     return Row(children: [
       SizedBox(width: 900, height: 600, child: plotly),
     ]);

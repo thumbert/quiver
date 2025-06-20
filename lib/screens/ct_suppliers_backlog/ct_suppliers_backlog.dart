@@ -61,7 +61,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
       var aux = DateTime.now().hashCode;
       plotly = Plotly(
         viewId: 'plotly-ct-supplier-backlog-$aux',
-        data: const [],
+        traces: const [],
         layout: model.getLayout(),
       );
     });
@@ -424,7 +424,7 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                     if (snapshot.hasData) {
                       var traces = snapshot.data!;
                       var layout = model.getLayout();
-                      plotly.plot.react(traces, layout, displaylogo: false);
+                      plotly.react(traces, layout, plotly.config);
                       children = [
                         SizedBox(width: 1200, height: 700, child: plotly),
                       ];

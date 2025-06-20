@@ -1,7 +1,6 @@
 library screens.mcc_surfer.congestion_chart;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
@@ -28,7 +27,7 @@ class _CongestionChartState extends State<CongestionChart> {
     var aux = DateTime.now().hashCode;
     plotly = Plotly(
       viewId: 'mcc-surfer-div-$aux',
-      data: const [],
+      traces: const [],
       layout: chartModel.layout,
     );
     super.initState();
@@ -49,7 +48,7 @@ class _CongestionChartState extends State<CongestionChart> {
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
-            var traces = snapshot.data! as List;
+            var traces = (snapshot.data! as List).cast<Map<String,dynamic>>();
             // highlight the selected constraints
             var aux = constraintTableModel.getHighlightedBlocks();
             chartModel.layout['shapes'] = [
@@ -72,7 +71,7 @@ class _CongestionChartState extends State<CongestionChart> {
             // if (constraintTableModel.hasChangedHighlight) {
             //   plotly.relayout(chartModel.layout);
             // } else {
-            plotly.plot.react(traces, chartModel.layout, displaylogo: false);
+            plotly.react(traces, chartModel.layout, plotly.config);
             // }
             children = [
               SizedBox(
