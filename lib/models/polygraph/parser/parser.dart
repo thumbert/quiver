@@ -1,5 +1,3 @@
-library petitparser.parser;
-
 import 'dart:math' as math;
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast/custom/hourly_schedule_expr.dart';
@@ -148,19 +146,16 @@ final expression = () {
   return builder.build();
 }();
 
-
 /// Parse expressions like
 /// `window(bucket='5x16', months=[1,2], hours=[8-20])`
 final windowArg = seq3(
     seq2(char(',').trim(), bucketArg).optional(),
     seq2(char(',').trim(), monthsArg).optional(),
     seq2(char(',').trim(), hoursArg).optional());
-final windowFun = (string('window(') &
-        variable &
-        windowArg.times(1) &
-        char(')'))
-    .trim()
-    .map((value) {
+final windowFun =
+    (string('window(') & variable & windowArg.times(1) & char(')'))
+        .trim()
+        .map((value) {
   Bucket? bucket;
   var months = <int>[];
   var hours = <int>[];
@@ -193,6 +188,7 @@ final hourlyScheduleFun = (string('hourly_schedule(') &
 
   Bucket? bucket;
   var months = <int>[];
+
   /// FIXME!
   // var v2 = (value[2] as List).first as Sequence2;
   // if (v2.first != null) {
@@ -203,7 +199,6 @@ final hourlyScheduleFun = (string('hourly_schedule(') &
   // }
   return HourlyScheduleExpr(x, bucket: bucket, months: months);
 });
-
 
 /// Parse expressions like `ma(x, 10)`
 final maFun = (string('ma(') &

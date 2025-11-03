@@ -22,8 +22,7 @@ class AppState {
 }
 
 class AppStateScope extends InheritedWidget {
-  const AppStateScope(this.data, {Key? key, required Widget child})
-      : super(key: key, child: child);
+  const AppStateScope(this.data, {super.key, required super.child});
 
   final AppState data;
 
@@ -38,7 +37,7 @@ class AppStateScope extends InheritedWidget {
 }
 
 class InheritedWidgetExample extends StatefulWidget {
-  const InheritedWidgetExample({required this.child, Key? key}) : super(key: key);
+  const InheritedWidgetExample({required this.child, super.key});
   static const route = '/inherited_widget_example';
   final MyStorePage child;
 
@@ -99,7 +98,7 @@ class InheritedWidgetExampleState extends State<InheritedWidgetExample> {
 }
 
 class MyStorePage extends StatefulWidget {
-  const MyStorePage({Key? key}) : super(key: key);
+  const MyStorePage({super.key});
 
   @override
   MyStorePageState createState() => MyStorePageState();
@@ -182,7 +181,7 @@ class MyStorePageState extends State<MyStorePage> {
 }
 
 class ShoppingCartIcon extends StatelessWidget {
-  const ShoppingCartIcon({Key? key}) : super(key: key);
+  const ShoppingCartIcon({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +219,7 @@ class ShoppingCartIcon extends StatelessWidget {
 }
 
 class ProductListWidget extends StatelessWidget {
-  const ProductListWidget({Key? key}) : super(key: key);
+  const ProductListWidget({super.key});
 
   void _handleAddToCart(String id, BuildContext context) {
     InheritedWidgetExample.of(context).addToCart(id);
@@ -251,12 +250,12 @@ class ProductListWidget extends StatelessWidget {
 
 class ProductTile extends StatelessWidget {
   const ProductTile({
-    Key? key,
+    super.key,
     required this.product,
     required this.purchased,
     required this.onAddToCart,
     required this.onRemoveFromCart,
-  }) : super(key: key);
+  });
   final Product product;
   final bool purchased;
   final VoidCallback onAddToCart;
@@ -298,15 +297,15 @@ class ProductTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20),
             child: OutlinedButton(
-              child: purchased
-                  ? const Text('Remove from cart')
-                  : const Text('Add to cart'),
               style: ButtonStyle(
                 foregroundColor:
                 MaterialStateProperty.resolveWith(getButtonColor),
                 side: MaterialStateProperty.resolveWith(getButtonSide),
               ),
               onPressed: purchased ? onRemoveFromCart : onAddToCart,
+              child: purchased
+                  ? const Text('Remove from cart')
+                  : const Text('Add to cart'),
             ),
           ),
           Image.network(product.pictureURL),

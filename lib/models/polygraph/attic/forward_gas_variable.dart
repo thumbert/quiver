@@ -1,7 +1,4 @@
-library models.polygraph.variables.forward_gas_variable;
-
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/src/timeseries_base.dart';
@@ -26,9 +23,7 @@ class ForwardGasVariable extends PolygraphVariable {
   String product;
   Term strip;
 
-  static final allProducts = [
-    'IFerc', 'GasDaily', 'Physical'
-  ];
+  static final allProducts = ['IFerc', 'GasDaily', 'Physical'];
 
   @override
   Map<String, dynamic> toJson() {
@@ -41,7 +36,7 @@ class ForwardGasVariable extends PolygraphVariable {
   }
 
   @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+  PolygraphVariable fromMongo(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
   }

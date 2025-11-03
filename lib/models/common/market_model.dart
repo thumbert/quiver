@@ -1,5 +1,3 @@
-library models.market_model;
-
 import 'package:flutter/material.dart';
 
 mixin MarketMixin on ChangeNotifier {

@@ -1,5 +1,3 @@
-library screens.historical_lmp.historical_gas_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/historical_gas/tab1_historical_gas.dart';
 import 'package:signals_flutter/signals_flutter.dart';

@@ -1,12 +1,10 @@
-library weather.strike;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/multiple/strike_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Strike extends StatefulWidget {
-  const Strike({this.index = 0, Key? key}) : super(key: key);
+  const Strike({this.index = 0, super.key});
 
   final int index;
 

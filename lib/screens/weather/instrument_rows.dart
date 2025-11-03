@@ -1,5 +1,3 @@
-library screens.weather.instrument_rows;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/multiple/buysell_model.dart';
 import 'package:flutter_quiver/models/common/multiple/maxpayoff_model.dart';
@@ -20,7 +18,7 @@ import 'package:flutter_quiver/screens/weather/notional.dart';
 import 'package:flutter_quiver/screens/weather/strike.dart';
 
 class InstrumentRows extends StatefulWidget {
-  const InstrumentRows({Key? key}) : super(key: key);
+  const InstrumentRows({super.key});
 
   @override
   _InstrumentRowsState createState() => _InstrumentRowsState();

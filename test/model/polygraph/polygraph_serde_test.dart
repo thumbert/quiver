@@ -1,29 +1,18 @@
-library test.models.polygraph_serde_test;
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
-import 'package:elec/time.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_margin.dart';
-import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/fill_transform.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
-import 'package:flutter_quiver/models/polygraph/variables/slope_intercept_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_historical_view.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/data/latest.dart';
@@ -67,7 +56,7 @@ Future<void> tests(String rootUrl) async {
       var term = Term.parse('Jan21-Dec21', IsoNewEngland.location);
       var v = TransformedVariable(
           expression:
-          "hourly_schedule(50, bucket='Peak') .+\n hourly_schedule(10, bucket='Offpeak')",
+              "hourly_schedule(50, bucket='Peak') .+\n hourly_schedule(10, bucket='Offpeak')",
           label: 'flat');
       var env = <String, dynamic>{'_domain': term.interval};
       v.eval(env);
@@ -120,7 +109,7 @@ Future<void> tests(String rootUrl) async {
       var window = PolygraphWindow.empty(size: const Size(900, 600));
       var today = Date.today(location: UTC);
       var term =
-      Term(Month.containing(today.start).subtract(14).startDate, today);
+          Term(Month.containing(today.start).subtract(14).startDate, today);
       var out = {
         'term': term.toString(),
         'tzLocation': 'UTC',
@@ -323,7 +312,8 @@ Future<void> tests(String rootUrl) async {
 
 ///
 void exportExampleProjects() {
-  var dir = Directory('${Platform.environment['HOME']}/Downloads/Archive/Polygraph/Projects/Raw');
+  var dir = Directory(
+      '${Platform.environment['HOME']}/Downloads/Archive/Polygraph/Projects/Raw');
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }
@@ -357,9 +347,7 @@ Future<void> importExampleProjects(String rootUrl) async {
   test('e47187/project 1', () async {
     var poly = await PolygraphState.getProject('e47187', 'project 1');
   });
-
 }
-
 
 Future<void> main() async {
   initializeTimeZones();
@@ -371,4 +359,3 @@ Future<void> main() async {
 
   exportExampleProjects();
 }
-

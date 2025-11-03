@@ -1,5 +1,3 @@
-library models.hourly_shape.hourly_shape_model;
-
 import 'package:collection/collection.dart';
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';

@@ -1,5 +1,3 @@
-library screens.ftr_path.ftr_path_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/models/ftr_path/data_model.dart';
@@ -10,7 +8,7 @@ import 'package:flutter_quiver/screens/ftr_path/table_cpsp.dart';
 import 'package:provider/provider.dart';
 
 class FtrPathUi extends StatefulWidget {
-  const FtrPathUi({Key? key}) : super(key: key);
+  const FtrPathUi({super.key});
 
   @override
   _FtrPathUiState createState() => _FtrPathUiState();
@@ -50,6 +48,7 @@ class _FtrPathUiState extends State<FtrPathUi> {
                       context: context,
                       builder: (BuildContext context) {
                         return SimpleDialog(
+                          contentPadding: const EdgeInsets.all(12),
                           children: [
                             SizedBox(
                               width: 500,
@@ -63,7 +62,6 @@ class _FtrPathUiState extends State<FtrPathUi> {
                               ),
                             )
                           ],
-                          contentPadding: const EdgeInsets.all(12),
                         );
                       });
                 },

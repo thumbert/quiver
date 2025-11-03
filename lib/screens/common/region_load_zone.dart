@@ -1,11 +1,9 @@
-library screens.common.region_load_zone;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:provider/provider.dart';
 
 class RegionLoadZone extends StatefulWidget {
-  const RegionLoadZone({Key? key}) : super(key: key);
+  const RegionLoadZone({super.key});
 
   @override
   _RegionLoadZoneState createState() => _RegionLoadZoneState();

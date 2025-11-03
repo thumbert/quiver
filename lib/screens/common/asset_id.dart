@@ -1,11 +1,9 @@
-library screens.common.asset_id;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/asset_id_model.dart';
 import 'package:provider/provider.dart';
 
 class AssetId extends StatefulWidget {
-  const AssetId({Key? key}) : super(key: key);
+  const AssetId({super.key});
 
   @override
   _AssetIdState createState() => _AssetIdState();

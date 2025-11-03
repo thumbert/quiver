@@ -1,12 +1,7 @@
-library test.models.ftr_path_test;
-
 import 'dart:io';
 
-import 'package:date/date.dart';
-import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timezone/data/latest.dart';
 
 Future<void> tests(String rootUrl) async {
   group('Power location model test', () {

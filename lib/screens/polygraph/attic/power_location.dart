@@ -1,9 +1,5 @@
-library screens.polygraph.editors.editor_power_location;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
-import 'package:flutter_quiver/models/common/lmp_component_model.dart';
-import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:flutter_quiver/screens/common/lmp_component.dart';
 import 'package:flutter_quiver/screens/common/region.dart';
@@ -12,7 +8,7 @@ import 'package:flutter_quiver/screens/polygraph/attic/power_market.dart';
 import 'package:provider/provider.dart';
 
 class PowerLocation extends StatefulWidget {
-  const PowerLocation({Key? key}) : super(key: key);
+  const PowerLocation({super.key});
 
   @override
   _PowerLocationState createState() => _PowerLocationState();

@@ -1,5 +1,3 @@
-library models.unmasked_energy_offers.unmasked_energy_offers_model;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec_server/client/da_energy_offer.dart';
@@ -13,7 +11,8 @@ final providerOfUnmaskedEnergyOffersModel = StateNotifierProvider<
     UnmaskedEnergyOfferNotifier,
     UnmaskedEnergyOffersModel>((ref) => UnmaskedEnergyOfferNotifier(ref));
 
-final providerOfUnmaskedAssets = FutureProvider.family<List<Map<String, dynamic>>, Iso>((ref, iso) async {
+final providerOfUnmaskedAssets =
+    FutureProvider.family<List<Map<String, dynamic>>, Iso>((ref, iso) async {
   await UnmaskedEnergyOffersModel.getMaskedAssetIds(iso);
   return UnmaskedEnergyOffersModel.assetData;
 });
@@ -56,7 +55,7 @@ class UnmaskedEnergyOffersModel {
     var _maskedAssetsApi =
         MaskedIds(Client(), iso: iso, rootUrl: dotenv.env['ROOT_URL']!);
     var aux = await _maskedAssetsApi.getAssets(type: 'generator');
-    aux.sort((a,b) => a['name'].compareTo(b['name']));
+    aux.sort((a, b) => a['name'].compareTo(b['name']));
     assetData = aux;
   }
 
@@ -95,7 +94,7 @@ class UnmaskedEnergyOffersModel {
 
   final layout = {
     'width': 900,
-    'height':600,
+    'height': 600,
     'title': 'Energy offer prices',
     'xaxis': {
       'showgrid': true,

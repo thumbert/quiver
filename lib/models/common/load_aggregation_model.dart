@@ -1,5 +1,3 @@
-library models.load_aggregation_model;
-
 import 'package:flutter/material.dart';
 
 class LoadAggregationModel extends ChangeNotifier {

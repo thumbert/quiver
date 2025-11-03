@@ -117,7 +117,8 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
 
                 ///
                 /// Select one item with Autocomplete search
-                ///
+                /// Best for large number of items
+                /// 
                 SizedBox(
                   width: 380,
                   child: Column(

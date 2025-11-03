@@ -1,7 +1,3 @@
-library models.pool_load_stats;
-
-import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import 'package:dama/dama.dart';
 import 'package:elec/src/time/calendar/calendars/nerc_calendar.dart';
@@ -231,7 +227,7 @@ class PoolLoadStatsState {
         traces.add({
           'x': xy.map((e) => e['x']).toList(),
           'y': xy.map((e) => e['y']).toList(),
-          'text': xy.map((e) => '${e['date']} ${e['holiday']??''}').toList(),
+          'text': xy.map((e) => '${e['date']} ${e['holiday'] ?? ''}').toList(),
           'mode': 'markers',
         });
       } else if (colorBy == 'Year') {
@@ -240,7 +236,9 @@ class PoolLoadStatsState {
           traces.add({
             'x': byYear[year]!.map((e) => e['x']).toList(),
             'y': byYear[year]!.map((e) => e['y']).toList(),
-            'text': byYear[year]!.map((e) => '${e['date']} ${e['holiday']??''}').toList(),
+            'text': byYear[year]!
+                .map((e) => '${e['date']} ${e['holiday'] ?? ''}')
+                .toList(),
             'mode': 'markers',
             'name': year,
           });

@@ -1,5 +1,3 @@
-library models.polygraph.variables.realized_electricity_variable;
-
 import 'package:date/src/term.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
@@ -31,7 +29,7 @@ class RealizedElectricityVariable extends PolygraphVariable {
 
   @override
   Map<String, dynamic> toJson() {
-    var out = <String,dynamic>{
+    var out = <String, dynamic>{
       'region': region,
       'deliveryPoint': deliveryPoint,
       'market': market,
@@ -67,7 +65,7 @@ class RealizedElectricityVariable extends PolygraphVariable {
   }
 
   @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+  PolygraphVariable fromMongo(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
   }

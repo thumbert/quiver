@@ -1,5 +1,3 @@
-library models.common.region_load_zone_model;
-
 import 'package:elec/elec.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';

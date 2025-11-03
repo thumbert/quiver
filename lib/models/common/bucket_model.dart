@@ -1,5 +1,3 @@
-library models.bucket_model;
-
 import 'package:elec/elec.dart';
 import 'package:flutter/material.dart';
 

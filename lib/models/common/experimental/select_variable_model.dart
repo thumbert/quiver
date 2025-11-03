@@ -1,5 +1,3 @@
-library models.experimental.select_variable_model;
-
 import 'package:flutter/material.dart';
 
 /// Something to use when you want to plot different variables on the screen.

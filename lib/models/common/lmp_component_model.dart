@@ -1,5 +1,3 @@
-library models.common.lmp_component_model;
-
 import 'package:flutter/material.dart';
 
 mixin LmpComponentMixin on ChangeNotifier {

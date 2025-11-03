@@ -1,5 +1,3 @@
-library screens.signal.multiselect;
-
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals/signals_flutter.dart';

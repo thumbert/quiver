@@ -1,6 +1,3 @@
-library models.polygraph.display.plotly_enums;
-
-
 enum PlotlyAlignment {
   start('start'),
   middle('middle'),
@@ -66,8 +63,6 @@ enum PlotlyExponentFormat {
   String toString() => _value;
 }
 
-
-
 enum PlotlyGroupNorm {
   none(''),
   fraction('fraction'),
@@ -89,7 +84,6 @@ enum PlotlyGroupNorm {
   String toString() => _value;
 }
 
-
 enum PlotlyLenMode {
   fraction,
   pixels;
@@ -102,7 +96,6 @@ enum PlotlyLenMode {
     };
   }
 }
-
 
 enum PlotlyShowExponent {
   all,
@@ -120,4 +113,3 @@ enum PlotlyShowExponent {
     };
   }
 }
-

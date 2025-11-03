@@ -1,5 +1,3 @@
-library models.asset_id_model;
-
 import 'package:flutter/material.dart';
 
 class AssetIdModel extends ChangeNotifier {

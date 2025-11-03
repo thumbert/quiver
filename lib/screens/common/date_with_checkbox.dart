@@ -1,11 +1,9 @@
-library screens.common.load_zone_with_checkbox;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/date_with_checkbox_model.dart';
 import 'package:provider/provider.dart';
 
 class DateWithCheckbox extends StatefulWidget {
-  const DateWithCheckbox({Key? key}) : super(key: key);
+  const DateWithCheckbox({super.key});
 
   @override
   _DateWithCheckboxState createState() => _DateWithCheckboxState();

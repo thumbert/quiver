@@ -1,7 +1,4 @@
-library models.weather.instrument_model;
-
 import 'package:flutter/material.dart';
-import 'package:elec/src/risk_system/pricing/calculators/weather/cdd_hdd.dart';
 
 class InstrumentModel extends ChangeNotifier {
   InstrumentModel() {

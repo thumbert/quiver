@@ -1,5 +1,3 @@
-library models.polygraph.polygraph_tab;
-
 import 'package:dama/dama.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
@@ -10,9 +8,9 @@ sealed class WindowNode {
 
   static WindowNode fromJson(Map<String, dynamic> x) {
     if (x
-    case {
-    'node': String nodeType,
-    }) {
+        case {
+          'node': String nodeType,
+        }) {
       return switch (nodeType) {
         'Single' => SingleNode.fromJson(x),
         'Column' => ColumnNode.fromJson(x),
@@ -55,10 +53,10 @@ class SingleNode extends WindowNode {
 
   static SingleNode fromJson(Map<String, dynamic> x) {
     if (x
-    case {
-    'node': 'Single',
-    'size': {'width': num width, 'height': num height}
-    }) {
+        case {
+          'node': 'Single',
+          'size': {'width': num width, 'height': num height}
+        }) {
       return SingleNode(width, height);
     } else {
       throw ArgumentError('Can\'t parse $x as a Single');
@@ -69,7 +67,8 @@ class SingleNode extends WindowNode {
   RowNode splitVertically(int n) {
     assert(n > 1);
     var width = _width / n;
-    var children = List<WindowNode>.generate(n, (index) => SingleNode(width, _height));
+    var children =
+        List<WindowNode>.generate(n, (index) => SingleNode(width, _height));
     return RowNode(children);
   }
 
@@ -77,7 +76,8 @@ class SingleNode extends WindowNode {
   ColumnNode splitHorizontally(int n) {
     assert(n > 1);
     var height = _height / n;
-    var children = List<WindowNode>.generate(n, (index) => SingleNode(_width, height));
+    var children =
+        List<WindowNode>.generate(n, (index) => SingleNode(_width, height));
     return ColumnNode(children);
   }
 
@@ -106,10 +106,10 @@ class ColumnNode extends WindowNode {
 
   static ColumnNode fromJson(Map<String, dynamic> x) {
     if (x
-    case {
-    'node': 'Column',
-    'children': List<Map<String, dynamic>> children,
-    }) {
+        case {
+          'node': 'Column',
+          'children': List<Map<String, dynamic>> children,
+        }) {
       var nodes = [for (var child in children) WindowNode.fromJson(child)];
       return ColumnNode(nodes);
     } else {
@@ -137,7 +137,7 @@ class ColumnNode extends WindowNode {
     } else {
       /// need to remove the correct node from the children ...
       var sizes =
-      children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+          children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
       var indexChild = sizes.indexWhere((e) => e > i);
 
       switch (children[indexChild]) {
@@ -158,9 +158,10 @@ class ColumnNode extends WindowNode {
   ///
   WindowNode splitHorizontally(int i, {int n = 2}) {
     assert(i >= 0);
+
     /// need to find the correct node from the children ...
     var sizes =
-    children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+        children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
     var indexChild = sizes.indexWhere((e) => e > i);
 
     switch (children[indexChild]) {
@@ -181,9 +182,10 @@ class ColumnNode extends WindowNode {
   ///
   WindowNode splitVertically(int i, {int n = 2}) {
     assert(i >= 0);
+
     /// need to find the correct node from the children ...
     var sizes =
-    children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+        children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
     var indexChild = sizes.indexWhere((e) => e > i);
 
     switch (children[indexChild]) {
@@ -241,7 +243,7 @@ class RowNode extends WindowNode {
     } else {
       /// need to remove the correct node from the children ...
       var sizes =
-      children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+          children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
       var indexChild = sizes.indexWhere((e) => e > i);
 
       switch (children[indexChild]) {
@@ -261,9 +263,10 @@ class RowNode extends WindowNode {
   ///
   WindowNode splitHorizontally(int i, {int n = 2}) {
     assert(i >= 0);
+
     /// need to find the correct node from the children ...
     var sizes =
-    children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+        children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
     var indexChild = sizes.indexWhere((e) => e > i);
 
     switch (children[indexChild]) {
@@ -284,9 +287,10 @@ class RowNode extends WindowNode {
   ///
   WindowNode splitVertically(int i, {int n = 2}) {
     assert(i >= 0);
+
     /// need to find the correct node from the children ...
     var sizes =
-    children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
+        children.map((e) => e.flatten().length).cumSum().toList().cast<int>();
     var indexChild = sizes.indexWhere((e) => e > i);
 
     switch (children[indexChild]) {
@@ -310,10 +314,10 @@ class RowNode extends WindowNode {
 
   static RowNode fromJson(Map<String, dynamic> x) {
     if (x
-    case {
-    'node': 'Row',
-    'children': List<Map<String, dynamic>> children,
-    }) {
+        case {
+          'node': 'Row',
+          'children': List<Map<String, dynamic>> children,
+        }) {
       var nodes = [for (var child in children) WindowNode.fromJson(child)];
       return RowNode(nodes);
     } else {
@@ -362,7 +366,6 @@ class PolygraphTab {
   final List<PolygraphWindow> windows;
   final int activeWindowIndex;
 
-
   /// Use this variable to communicate if a window was added or removed,
   /// so I can modify the list of plotly in the UI.
   var tabAction = <String, dynamic>{};
@@ -407,7 +410,6 @@ class PolygraphTab {
     );
   }
 
-
   /// The original window is split into two windows stacked on top of each other.
   /// The height of each new window equals one half of the height of the
   /// original window.  The original window is squeezed in the top window, and
@@ -423,7 +425,7 @@ class PolygraphTab {
 
     var newWindows = <PolygraphWindow>[...windows];
     // the +1 below is such that the new window comes after the original one
-    newWindows.insert(i+1, PolygraphWindow.empty(size: const Size(0, 0)));
+    newWindows.insert(i + 1, PolygraphWindow.empty(size: const Size(0, 0)));
     for (var i = 0; i < newWindows.length; i++) {
       newWindows[i] = newWindows[i].copyWith(
           layout: newWindows[i]
@@ -435,12 +437,11 @@ class PolygraphTab {
       rootNode: newRoot,
       windows: newWindows,
     )..tabAction = {
-      'windowAdded': {'index': i}
-    };
+        'windowAdded': {'index': i}
+      };
 
     return tab;
   }
-
 
   PolygraphTab splitWindowVertically(int i) {
     var newRoot = switch (rootNode) {
@@ -452,7 +453,7 @@ class PolygraphTab {
 
     var newWindows = <PolygraphWindow>[...windows];
     // the +1 below is such that the new window comes after the original one
-    newWindows.insert(i+1, PolygraphWindow.empty(size: const Size(0, 0)));
+    newWindows.insert(i + 1, PolygraphWindow.empty(size: const Size(0, 0)));
     for (var i = 0; i < newWindows.length; i++) {
       newWindows[i] = newWindows[i].copyWith(
           layout: newWindows[i]
@@ -464,12 +465,11 @@ class PolygraphTab {
       rootNode: newRoot,
       windows: newWindows,
     )..tabAction = {
-      'windowAdded': {'index': i},
-    };
+        'windowAdded': {'index': i},
+      };
 
     return tab;
   }
-
 
   PolygraphTab removeWindow(int i) {
     if (rootNode is SingleNode) return this;
@@ -496,8 +496,8 @@ class PolygraphTab {
       windows: newWindows,
       activeWindowIndex: 0,
     )..tabAction = {
-      'windowRemoved': {'index': i},
-    };
+        'windowRemoved': {'index': i},
+      };
     return tab;
   }
 
@@ -523,19 +523,18 @@ class PolygraphTab {
 
   static PolygraphTab fromJson(Map<String, dynamic> x) {
     if (x
-    case {
-    'name': String name,
-    'tabLayout': Map _layout,
-    'windows': List _windows,
-    }) {
-      var root = WindowNode.fromJson(_layout.cast<String,dynamic>());
-      var windows = [for (Map<String,dynamic> e in _windows) PolygraphWindow.fromJson(e)];
+        case {
+          'name': String name,
+          'tabLayout': Map _layout,
+          'windows': List _windows,
+        }) {
+      var root = WindowNode.fromJson(_layout.cast<String, dynamic>());
+      var windows = [
+        for (Map<String, dynamic> e in _windows) PolygraphWindow.fromJson(e)
+      ];
 
       return PolygraphTab(
-          name: name,
-          rootNode: root,
-          windows: windows,
-          activeWindowIndex: 0);
+          name: name, rootNode: root, windows: windows, activeWindowIndex: 0);
     } else {
       throw StateError('Can\'t parse input $x into a PolygraphTab');
     }

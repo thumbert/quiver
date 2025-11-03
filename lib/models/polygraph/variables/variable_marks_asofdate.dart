@@ -1,5 +1,3 @@
-library models.polygraph.variables.variable_marks_asofdate;
-
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -102,8 +100,10 @@ class VariableMarksAsOfDate extends PolygraphVariable {
   }
 }
 
-class VariableMarksAsOfDateNotifier extends StateNotifier<VariableMarksAsOfDate> {
-  VariableMarksAsOfDateNotifier(this.ref) : super(VariableMarksAsOfDate.getDefault());
+class VariableMarksAsOfDateNotifier
+    extends StateNotifier<VariableMarksAsOfDate> {
+  VariableMarksAsOfDateNotifier(this.ref)
+      : super(VariableMarksAsOfDate.getDefault());
 
   final Ref ref;
 

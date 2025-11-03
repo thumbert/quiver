@@ -1,5 +1,3 @@
-library models.common.multiple_selection;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum MultipleSelectionState {

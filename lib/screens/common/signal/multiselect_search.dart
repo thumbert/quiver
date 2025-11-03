@@ -1,5 +1,3 @@
-library screens.signal.multiselect_search;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -136,7 +134,7 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
       if (value.toLowerCase().contains(content)) {
         out.add(MenuItemButton(
           style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
-          key: UniqueKey(),   // need this to display the correct values
+          key: UniqueKey(), // need this to display the correct values
           child: Watch((_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(

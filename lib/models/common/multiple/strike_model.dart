@@ -1,5 +1,3 @@
-library models.weather.strike_model;
-
 import 'package:flutter/material.dart';
 
 class StrikeModel extends ChangeNotifier {

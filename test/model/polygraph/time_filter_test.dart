@@ -1,5 +1,3 @@
-library test.models.polygraph.time_filter_test;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/time.dart';
@@ -52,6 +50,4 @@ Future<void> tests() async {
 Future<void> main() async {
   initializeTimeZones();
   await tests();
-
-
 }

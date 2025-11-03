@@ -1,5 +1,3 @@
-library screens.polygraph.other.trace_settings_ui;
-
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
@@ -13,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // StateProvider((ref) => PlotlyLayout()..legend = PlotlyLegend.getDefault());
 
 class TraceSettingsUi extends ConsumerStatefulWidget {
-  const TraceSettingsUi({Key? key}) : super(key: key);
+  const TraceSettingsUi({super.key});
 
   @override
   ConsumerState<TraceSettingsUi> createState() => _TraceSettingsUiState();
@@ -689,7 +687,6 @@ class _TraceSettingsUiState extends ConsumerState<TraceSettingsUi> {
             )
           ],
         ),
-
       ],
     );
   }
@@ -772,7 +769,6 @@ class _TraceSettingsUiState extends ConsumerState<TraceSettingsUi> {
 
   @override
   Widget build(BuildContext context) {
-
     var layout = ref.watch(providerOfPlotlyLayout);
 
     return Column(

@@ -1,5 +1,3 @@
-library screens.ftr_path.table_csps;
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -13,7 +11,7 @@ import 'package:flutter_quiver/utils/empty_download.dart'
     if (dart.library.html) '../../utils/download.dart';
 
 class TableCpsp extends StatefulWidget {
-  const TableCpsp({Key? key}) : super(key: key);
+  const TableCpsp({super.key});
 
   @override
   State<StatefulWidget> createState() => _TableCpspState();

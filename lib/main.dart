@@ -11,6 +11,7 @@ import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.
 import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/exchange_trades/exchange_trades_ui.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
+import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
@@ -36,7 +37,6 @@ import 'package:timezone/data/latest.dart';
 void main() async {
   initializeTimeZones();
   await dotenv.load(fileName: '.env');
-  dotenv.env['RUST_SERVER'] = 'http://localhost:8111';
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
   static final background = Colors.orange[100]!;
   static final background2 = Colors.green[100]!;
   static final rootUrl = dotenv.env['ROOT_URL']!;
+  static final rustServer = dotenv.env['RUST_SERVER']!;
   static final client = Client();
 
   final _router = GoRouter(routes: [
@@ -76,6 +77,9 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: HistoricalGas.route,
         builder: (context, state) => const HistoricalGas()),
+    GoRoute(
+        path: HistoricalLmp.route,
+        builder: (context, state) => const HistoricalLmp()),
     GoRoute(
         path: HistoricalOptionPricing.route,
         builder: (context, state) => const HistoricalOptionPricing()),
@@ -171,7 +175,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStateProperty.all(Colors.blueGrey.shade300),
+          fillColor: WidgetStateProperty.all(Colors.blueGrey.shade300),
           // overlayColor: MaterialStateProperty.all(Colors.green),
         ),
       ),

@@ -1,5 +1,3 @@
-library screens.signal.number_field;
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:signals_flutter/signals_flutter.dart';
@@ -70,13 +68,10 @@ class _NumberFieldUiState extends State<NumberFieldUi> {
   void validateInput() {
     try {
       var aux = widget.fmt.parse(controller.text);
-      widget.number.value = aux; 
+      widget.number.value = aux;
       widget.error.value = null; // all good
     } catch (e) {
       widget.error.value = 'Invalid number format';
     }
   }
 }
-
-
-

@@ -1,12 +1,10 @@
-library screens.common.load_zone_with_checkbox;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/load_zone_with_checkbox_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 
 class LoadZoneWithCheckbox extends StatefulWidget {
-  const LoadZoneWithCheckbox({Key? key}) : super(key: key);
+  const LoadZoneWithCheckbox({super.key});
 
   @override
   _LoadZoneWithCheckboxState createState() => _LoadZoneWithCheckboxState();

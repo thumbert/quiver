@@ -1,11 +1,9 @@
-library screens.common.ptid;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/ptid_model.dart';
 import 'package:provider/provider.dart';
 
 class Ptid extends StatefulWidget {
-  const Ptid({Key? key}) : super(key: key);
+  const Ptid({super.key});
 
   @override
   _PtidState createState() => _PtidState();

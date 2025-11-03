@@ -1,5 +1,3 @@
-library models.polygraph.polygraph_model;
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -68,7 +66,8 @@ class PolygraphState {
     var url = '$rootUrl/polygraph/v1/user/$userId/project_names';
     var res = await http.get(Uri.parse(url));
     if (res.statusCode != 200) {
-      throw StateError('Error getting the project list for user $userId from the database.');
+      throw StateError(
+          'Error getting the project list for user $userId from the database.');
     }
     var projectNames = json.decode(res.body) as List;
     print('Getting projects from the Db');
@@ -76,24 +75,29 @@ class PolygraphState {
   }
 
   /// Get a project.  Throws [StateError] if an issue with parsing or else.
-  static Future<PolygraphState> getProject(String userId, String projectName) async {
+  static Future<PolygraphState> getProject(
+      String userId, String projectName) async {
     final rootUrl = dotenv.env['ROOT_URL'] as String;
     var url = '$rootUrl/polygraph/v1/user/$userId/project_name/$projectName';
     var res = await http.get(Uri.parse(url));
     if (res.statusCode != 200) {
-      throw StateError('Error getting the project $projectName for user $userId');
+      throw StateError(
+          'Error getting the project $projectName for user $userId');
     }
-    var data = json.decode(res.body) as Map<String,dynamic>;
+    var data = json.decode(res.body) as Map<String, dynamic>;
     var poly = PolygraphState.fromJson(data);
     return poly;
   }
 
   /// Throws [ArgumentError] if parsing fails.
   static PolygraphState fromJson(Map<String, dynamic> x) {
-    if (x case {
-      'tabs': List _tabs,
-    }) {
-      var tabs = [for (Map<String,dynamic> e in _tabs) PolygraphTab.fromJson(e)];
+    if (x
+        case {
+          'tabs': List _tabs,
+        }) {
+      var tabs = [
+        for (Map<String, dynamic> e in _tabs) PolygraphTab.fromJson(e)
+      ];
       var poly = PolygraphState(tabs: tabs, activeTabIndex: 0)
         ..userId = x['userId']
         ..projectName = x['projectName'];
@@ -191,11 +195,10 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
 
   final Ref ref;
 
-
   set tabs(List<PolygraphTab> values) {
     state = state.copyWith(tabs: values);
   }
-  
+
   set activeTabIndex(int value) {
     state = state.copyWith(activeTabIndex: value);
   }
@@ -221,5 +224,4 @@ class PolygraphNotifier extends StateNotifier<PolygraphState> {
     activeTab = activeTab.copyWith(windows: windows);
     this.activeTab = activeTab;
   }
-
 }

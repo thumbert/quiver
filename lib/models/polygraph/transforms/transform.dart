@@ -1,14 +1,11 @@
-library models.polygraph.transforms.transform;
-
 import 'package:dama/dama.dart';
 import 'package:timeseries/timeseries.dart';
 
 /// Data transformations
 mixin Transform {
-
   Iterable<IntervalTuple<num>> apply(Iterable<IntervalTuple<num>> ts);
 
-  static final aggregations = <String, num Function(Iterable<num>)> {
+  static final aggregations = <String, num Function(Iterable<num>)>{
     'count': (Iterable<num> xs) => xs.length,
     'first': (Iterable<num> xs) => xs.first,
     'last': (Iterable<num> xs) => xs.last,
@@ -24,8 +21,5 @@ mixin Transform {
   };
 
   /// How it's going to be persisted to the database
-  Map<String,dynamic> toJson();
+  Map<String, dynamic> toJson();
 }
-
-
-

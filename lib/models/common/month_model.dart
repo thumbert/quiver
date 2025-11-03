@@ -1,5 +1,3 @@
-library models.month_model;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,3 @@
-library screens.signal.term;
-
 import 'package:flutter/material.dart';
 import 'package:date/date.dart';
 import 'package:timezone/timezone.dart';

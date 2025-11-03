@@ -1,5 +1,3 @@
-library test.models.polygraph.parser.parser_test;
-
 import 'dart:io';
 import 'dart:math';
 
@@ -7,7 +5,6 @@ import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/parser/parser.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:petitparser/debug.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/data/latest.dart';
@@ -39,14 +36,16 @@ Future<void> tests(String rootUrl) async {
       // expect(res, 4);
     });
     test('try to eval for a value that isn\'t there', () {
-      expect(() => parser.parse('x + 2').value.eval({}), throwsA('Unknown variable x'));
+      expect(() => parser.parse('x + 2').value.eval({}),
+          throwsA('Unknown variable x'));
     });
   });
   group('Parse basic function arguments:', () {
     test('Bucket function argument', () {
       expect(bucketArg.parse("bucket = 'atc'").value, Bucket.atc);
       expect(bucketArg.parse("bucket='5x16'").value, Bucket.b5x16);
-      expect(() => bucketArg.parse("bucket = '5y16'").value, throwsArgumentError);
+      expect(
+          () => bucketArg.parse("bucket = '5y16'").value, throwsArgumentError);
     });
     test('Comma separated ints', () {
       // trace(intList).parse('[4, 5, 6, 13, 15, 17-19]');
@@ -62,46 +61,66 @@ Future<void> tests(String rootUrl) async {
       expect(intList.parse('[3, 5 ]').value.eval({}), [3, 5]);
       expect(intList.parse('[3, 5 ] ').value.eval({}), <int>[3, 5]);
       expect(intList.parse('[1, 4, 17]').value.eval({}), [1, 4, 17]);
-      expect(intList.parse('[1, 4-6, 17, 19-20]').value.eval({}), [1, 4, 5, 6, 17, 19, 20]);
+      expect(intList.parse('[1, 4-6, 17, 19-20]').value.eval({}),
+          [1, 4, 5, 6, 17, 19, 20]);
     });
     test('Months argument', () {
-      expect(monthsArg.parse('months = [1-2, 7-8]').value.eval({}), [1, 2, 7, 8]);
+      expect(
+          monthsArg.parse('months = [1-2, 7-8]').value.eval({}), [1, 2, 7, 8]);
       expect(monthsArg.parse('months=[1-2, 7-8]').value.eval({}), [1, 2, 7, 8]);
-      expect(monthsArg.parse('months = [11, 3, 7-8]').value.eval({}), [3, 7, 8, 11]);
-      expect(() => monthsArg.parse('months = [4, 11-14]').value.eval({}), throwsException);
-      expect(() => monthsArg.parse('months = 1').value.eval({}), throwsException);
+      expect(monthsArg.parse('months = [11, 3, 7-8]').value.eval({}),
+          [3, 7, 8, 11]);
+      expect(() => monthsArg.parse('months = [4, 11-14]').value.eval({}),
+          throwsException);
+      expect(
+          () => monthsArg.parse('months = 1').value.eval({}), throwsException);
     });
   });
 
   group('Parse hourly_schedule function', () {
     test('basic', () {
-      TimeSeries<num> ts = parser.parse('hourly_schedule(50)').value
-          .eval({'_domain': Term.parse('Jan22', IsoNewEngland.location).interval});
+      TimeSeries<num> ts = parser.parse('hourly_schedule(50)').value.eval(
+          {'_domain': Term.parse('Jan22', IsoNewEngland.location).interval});
       expect(ts.length, 744);
-      expect(ts.first.interval, Hour.beginning(TZDateTime(IsoNewEngland.location, 2022)));
+      expect(ts.first.interval,
+          Hour.beginning(TZDateTime(IsoNewEngland.location, 2022)));
       expect(ts.first.value, 50);
     });
 
     test('with bucket argument', () {
-        TimeSeries<num> ts = parser.parse("hourly_schedule(50, bucket='Peak')").value
-            .eval({'_domain': Term.parse('Jan22', IsoNewEngland.location).interval});
-        expect(ts.length, 336);
-        expect(ts.first.interval, Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 1, 3, 7)));
-        expect(ts.first.value, 50);
+      TimeSeries<num> ts = parser
+          .parse("hourly_schedule(50, bucket='Peak')")
+          .value
+          .eval({
+        '_domain': Term.parse('Jan22', IsoNewEngland.location).interval
+      });
+      expect(ts.length, 336);
+      expect(ts.first.interval,
+          Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 1, 3, 7)));
+      expect(ts.first.value, 50);
     });
 
     test('with months argument', () {
-        TimeSeries<num> ts = parser.parse("hourly_schedule(50, months=[1,2])").value
-            .eval({'_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval});
-        expect(ts.length, 1416);
-        expect(ts.last.interval, Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 2, 28, 23)));
-        expect(ts.last.value, 50);
+      TimeSeries<num> ts = parser
+          .parse("hourly_schedule(50, months=[1,2])")
+          .value
+          .eval({
+        '_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval
+      });
+      expect(ts.length, 1416);
+      expect(ts.last.interval,
+          Hour.containing(TZDateTime(IsoNewEngland.location, 2022, 2, 28, 23)));
+      expect(ts.last.value, 50);
     });
 
     test('with bucket and months argument', () {
-        TimeSeries<num> ts = parser.parse("hourly_schedule(50, bucket='Peak', months=[1,2])").value
-            .eval({'_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval});
-        expect(ts.length, 656);
+      TimeSeries<num> ts = parser
+          .parse("hourly_schedule(50, bucket='Peak', months=[1,2])")
+          .value
+          .eval({
+        '_domain': Term.parse('Jan22-Mar22', IsoNewEngland.location).interval
+      });
+      expect(ts.length, 656);
     });
   }, skip: true);
 
@@ -128,7 +147,8 @@ Future<void> tests(String rootUrl) async {
     });
     test('bucket filter', () {
       var x = TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0);
-      var ts = windowFun.parse("window(x, bucket='7x8')").value.eval({'x': x}) as TimeSeries;
+      var ts = windowFun.parse("window(x, bucket='7x8')").value.eval({'x': x})
+          as TimeSeries;
       expect(ts.length, 8);
     });
     test('filter combo: bucket + months', () {
@@ -136,7 +156,10 @@ Future<void> tests(String rootUrl) async {
         ...TimeSeries<num>.fill(Date(2022, 1, 1, location: tz).hours(), 1.0),
         ...TimeSeries<num>.fill(Date(2022, 3, 1, location: tz).hours(), 3.0),
       ]);
-      var ts = windowFun.parse("window(x, bucket='7x8', months=[3])").value.eval({'x': x}) as TimeSeries;
+      var ts = windowFun
+          .parse("window(x, bucket='7x8', months=[3])")
+          .value
+          .eval({'x': x}) as TimeSeries;
       expect(ts.length, 8);
     });
   }, skip: true);
@@ -204,7 +227,8 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 2), pi / 6),
         IntervalTuple(Date.utc(2022, 1, 3), pi / 2),
       ]);
-      expect(parser.parse('sin(x)').value.eval({'x': x}), x.apply((e) => sin(e)));
+      expect(
+          parser.parse('sin(x)').value.eval({'x': x}), x.apply((e) => sin(e)));
     });
     test('linear transform of sin function ', () {
       // trace(parser).parse('sin(0.0)');
@@ -212,8 +236,6 @@ Future<void> tests(String rootUrl) async {
       expect(parser.parse('3 + 2*sin(x)').value.eval({'x': pi / 6}), 4.0);
     });
   }, skip: true);
-
-
 
   group('Parse basic timeseries operations:', () {
     test('Unary negation', () {
@@ -232,9 +254,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
         IntervalTuple(Date.utc(2022, 1, 3), 3.0),
       ]);
-      expect(parser.parse('ts + 1').value.eval({'ts': ts}), ts.apply((e) => e + 1));
-      expect(parser.parse('2 + ts').value.eval({'ts': ts}), ts.apply((e) => e + 2));
-      expect(parser.parse('ts + ts').value.eval({'ts': ts}), ts.apply((e) => e + e));
+      expect(parser.parse('ts + 1').value.eval({'ts': ts}),
+          ts.apply((e) => e + 1));
+      expect(parser.parse('2 + ts').value.eval({'ts': ts}),
+          ts.apply((e) => e + 2));
+      expect(parser.parse('ts + ts').value.eval({'ts': ts}),
+          ts.apply((e) => e + e));
     });
     test('Subtraction with one timeseries', () {
       var ts = TimeSeries.fromIterable([
@@ -242,9 +267,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
         IntervalTuple(Date.utc(2022, 1, 3), 3.0),
       ]);
-      expect(parser.parse('ts - 1').value.eval({'ts': ts}), ts.apply((e) => e - 1));
-      expect(parser.parse('2 - ts').value.eval({'ts': ts}), ts.apply((e) => 2 - e));
-      expect(parser.parse('ts - ts').value.eval({'ts': ts}), ts.apply((e) => e - e));
+      expect(parser.parse('ts - 1').value.eval({'ts': ts}),
+          ts.apply((e) => e - 1));
+      expect(parser.parse('2 - ts').value.eval({'ts': ts}),
+          ts.apply((e) => 2 - e));
+      expect(parser.parse('ts - ts').value.eval({'ts': ts}),
+          ts.apply((e) => e - e));
     });
     test('Multiplication with one timeseries', () {
       var ts = TimeSeries.fromIterable([
@@ -252,9 +280,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
         IntervalTuple(Date.utc(2022, 1, 3), 3.0),
       ]);
-      expect(parser.parse('ts * 2').value.eval({'ts': ts}), ts.apply((e) => e * 2));
-      expect(parser.parse('2 * ts').value.eval({'ts': ts}), ts.apply((e) => e * 2));
-      expect(parser.parse('ts * ts').value.eval({'ts': ts}), ts.apply((e) => e * e));
+      expect(parser.parse('ts * 2').value.eval({'ts': ts}),
+          ts.apply((e) => e * 2));
+      expect(parser.parse('2 * ts').value.eval({'ts': ts}),
+          ts.apply((e) => e * 2));
+      expect(parser.parse('ts * ts').value.eval({'ts': ts}),
+          ts.apply((e) => e * e));
     });
     test('Division with one timeseries', () {
       var ts = TimeSeries.fromIterable([
@@ -262,9 +293,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 2), 2.0),
         IntervalTuple(Date.utc(2022, 1, 3), 3.0),
       ]);
-      expect(parser.parse('ts / 2').value.eval({'ts': ts}), ts.apply((e) => e / 2));
-      expect(parser.parse('2 / ts').value.eval({'ts': ts}), ts.apply((e) => 2 / e));
-      expect(parser.parse('ts / ts').value.eval({'ts': ts}), ts.apply((e) => 1));
+      expect(parser.parse('ts / 2').value.eval({'ts': ts}),
+          ts.apply((e) => e / 2));
+      expect(parser.parse('2 / ts').value.eval({'ts': ts}),
+          ts.apply((e) => 2 / e));
+      expect(
+          parser.parse('ts / ts').value.eval({'ts': ts}), ts.apply((e) => 1));
     });
     test('More complicated arithmetic with timeseries', () {
       var x = TimeSeries.fromIterable([
@@ -353,7 +387,8 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Month.utc(2021, 4), 13.0),
         IntervalTuple(Month.utc(2021, 5), 12.0),
       ]);
-      expect(parser.parse('ma(ts, 4)').value.eval({'ts': x}),
+      expect(
+          parser.parse('ma(ts, 4)').value.eval({'ts': x}),
           TimeSeries<num>.fromIterable([
             IntervalTuple(Month.utc(2021, 4), 12.25),
             IntervalTuple(Month.utc(2021, 5), 12.75),
@@ -373,9 +408,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 3), 5.0),
         IntervalTuple(Date.utc(2022, 1, 4), 4.0),
       ]);
-      expect(parser.parse('max(ts, 1.5)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
-      expect(parser.parse('max(1.5, ts)').value.eval({'ts': x}), x.apply((e) => max(e, 1.5)));
-      expect(parser.parse('max(x, y)').value.eval({'x': x, 'y': y}), x.merge(y, f: (x, y) => max<num>(x!, y!)));
+      expect(parser.parse('max(ts, 1.5)').value.eval({'ts': x}),
+          x.apply((e) => max(e, 1.5)));
+      expect(parser.parse('max(1.5, ts)').value.eval({'ts': x}),
+          x.apply((e) => max(e, 1.5)));
+      expect(parser.parse('max(x, y)').value.eval({'x': x, 'y': y}),
+          x.merge(y, f: (x, y) => max<num>(x!, y!)));
     });
     test('min', () {
       var x = TimeSeries<num>.fromIterable([
@@ -388,9 +426,12 @@ Future<void> tests(String rootUrl) async {
         IntervalTuple(Date.utc(2022, 1, 3), 5.0),
         IntervalTuple(Date.utc(2022, 1, 4), 4.0),
       ]);
-      expect(parser.parse('min(ts, 1.5)').value.eval({'ts': x}), x.apply((e) => min(e, 1.5)));
-      expect(parser.parse('min(1.5, ts)').value.eval({'ts': x}), x.apply((e) => min(e, 1.5)));
-      expect(parser.parse('min(x, y)').value.eval({'x': x, 'y': y}), x.merge(y, f: (x, y) => min<num>(x!, y!)));
+      expect(parser.parse('min(ts, 1.5)').value.eval({'ts': x}),
+          x.apply((e) => min(e, 1.5)));
+      expect(parser.parse('min(1.5, ts)').value.eval({'ts': x}),
+          x.apply((e) => min(e, 1.5)));
+      expect(parser.parse('min(x, y)').value.eval({'x': x, 'y': y}),
+          x.merge(y, f: (x, y) => min<num>(x!, y!)));
     });
     test('toMonthly', () {
       var x = TimeSeries<num>.fromIterable([

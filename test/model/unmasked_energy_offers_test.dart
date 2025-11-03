@@ -1,5 +1,3 @@
-library test.models.unmasked_energy_offers_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';
@@ -14,7 +12,8 @@ Future<void> tests(String rootUrl) async {
   final location = getLocation('America/New_York');
   group('Unmasked energy offers test', () {
     var model = UnmaskedEnergyOffersModel.getDefault();
-    setUp(() async => await UnmaskedEnergyOffersModel.getMaskedAssetIds(model.iso));
+    setUp(() async =>
+        await UnmaskedEnergyOffersModel.getMaskedAssetIds(model.iso));
     test('get traces one asset', () async {
       var traces = await model.makeTraces();
       expect(traces.length, 4);
@@ -49,8 +48,7 @@ Future<void> tests(String rootUrl) async {
       expect(t0['name'], 'KLEEN ENERGY');
       expect(t0['mode'], 'lines');
     });
-    
-    
+
     // test('nyiso asset', () async {
     //   model.iso = Iso.newYork;
     //   await model.getMaskedAssetIds(); // selects Bethlehem

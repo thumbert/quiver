@@ -1,17 +1,10 @@
-library test.models.rate_board_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
-import 'package:elec/ftr.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
-import 'package:flutter_quiver/models/pool_load_stats/pool_load_stats_model.dart';
 import 'package:flutter_quiver/models/rate_board/rate_board_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:timezone/timezone.dart';
 
 Future<void> tests(String rootUrl) async {
   var state = RateBoardState.getDefault();
@@ -25,7 +18,8 @@ Future<void> tests(String rootUrl) async {
       // All offers are Residential, per the default state
       expect(xs.map((e) => e.accountType).toSet(), {'Residential'});
       // there are several offers by this supplier
-      var x0 = xs.firstWhere((e) => e.supplierName == 'Constellation NewEnergy, Inc.');
+      var x0 = xs
+          .firstWhere((e) => e.supplierName == 'Constellation NewEnergy, Inc.');
       // offers are returned sorted by # months by default
       expect(x0.countOfBillingCycles, 24);
       expect(x0.rate, 169.9);
@@ -34,13 +28,16 @@ Future<void> tests(String rootUrl) async {
       expect(state.getAllUtilities(), ['Eversource', 'United Illuminating']);
     });
     test('make table for MA NEMA NGrid', () async {
-      state = state.copyWith(stateName: 'MA', loadZone: 'NEMA',
-        utility: 'NGrid', accountType: 'Residential', billingCycles: '(All)');
+      state = state.copyWith(
+          stateName: 'MA',
+          loadZone: 'NEMA',
+          utility: 'NGrid',
+          accountType: 'Residential',
+          billingCycles: '(All)');
       await RateBoardState.getOffers('ISONE', 'MA');
       var xs = state.makeOfferTable(asOfDate: Date.utc(2022, 12, 14));
       expect(xs.length, 16);
     });
-
   });
 }
 

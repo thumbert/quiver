@@ -1,5 +1,3 @@
-library test.models.weather_model_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';

@@ -1,5 +1,3 @@
-library ast.variable;
-
 import 'expression.dart';
 
 /// A variable expression.

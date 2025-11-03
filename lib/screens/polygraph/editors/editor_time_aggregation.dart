@@ -1,5 +1,3 @@
-library screens.polygraph.editors.editor_time_aggregation;
-
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
@@ -8,14 +6,15 @@ import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final providerOfTimeAggregation =
-StateNotifierProvider<TimeAggregationNotifier, TimeAggregation>(
+    StateNotifierProvider<TimeAggregationNotifier, TimeAggregation>(
         (ref) => TimeAggregationNotifier(ref));
 
 class TimeAggregationEditor extends ConsumerStatefulWidget {
-  const TimeAggregationEditor({Key? key}) : super(key: key);
+  const TimeAggregationEditor({super.key});
 
   @override
-  ConsumerState<TimeAggregationEditor> createState() => _TimeAggregationEditorState();
+  ConsumerState<TimeAggregationEditor> createState() =>
+      _TimeAggregationEditorState();
 }
 
 class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
@@ -34,7 +33,6 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
     super.initState();
     controllerFrequency.text = '';
     controllerFunction.text = '';
-
 
     // focusFrequency.addListener(() {
     //   if (!focusFrequency.hasFocus) {
@@ -66,7 +64,6 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
     //     });
     //   }
     // });
-
   }
 
   @override
@@ -109,9 +106,9 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                   focusNode: focusFrequency,
                   textEditingController: controllerFrequency,
                   fieldViewBuilder: (BuildContext context,
-                      TextEditingController textEditingController,
-                      FocusNode focusNode,
-                      VoidCallback onFieldSubmitted) =>
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted) =>
                       TextField(
                         focusNode: focusNode,
                         controller: textEditingController,
@@ -120,9 +117,10 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: const EdgeInsets.all(10),
-                          enabledBorder: state.error != '' && controllerFrequency.text == '' ?
-                          const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red))
+                          enabledBorder: state.error != '' &&
+                                  controllerFrequency.text == ''
+                              ? const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red))
                               : InputBorder.none,
                           fillColor: MyApp.background,
                           filled: true,
@@ -132,24 +130,27 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                     if (textEditingValue == TextEditingValue.empty) {
                       return const Iterable<String>.empty();
                     }
-                    var aux = TimeAggregation.allFrequencies.where((e) => e
-                        .toUpperCase()
-                        .contains(textEditingValue.text.toUpperCase())).toList();
+                    var aux = TimeAggregation.allFrequencies
+                        .where((e) => e
+                            .toUpperCase()
+                            .contains(textEditingValue.text.toUpperCase()))
+                        .toList();
                     return aux;
                   },
                   onSelected: (String selection) {
                     setState(() {
-                      ref.read(providerOfTimeAggregation.notifier).frequency = selection;
+                      ref.read(providerOfTimeAggregation.notifier).frequency =
+                          selection;
                       // state.validate();
                       // print('in editor_time_aggregation onSelected(), state.error=${state.error}');
                       // ref.read(providerOfTimeAggregation.notifier).error = state.error;
-                    //   if (selection != '') {
-                    //     needsFunction = state.function == '';
-                    //   } else {
-                    //     ref.read(providerOfTimeAggregation.notifier).function = '';
-                    //     needsFunction = false;
-                    //   }
-                    //   needsFrequency = false;
+                      //   if (selection != '') {
+                      //     needsFunction = state.function == '';
+                      //   } else {
+                      //     ref.read(providerOfTimeAggregation.notifier).function = '';
+                      //     needsFunction = false;
+                      //   }
+                      //   needsFrequency = false;
                     });
                   },
                   optionsViewBuilder: (BuildContext context,
@@ -160,41 +161,39 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                       child: Material(
                         elevation: 4.0,
                         child: ConstrainedBox(
-                          constraints:
-                          const BoxConstraints(maxHeight: 300, maxWidth: 200),
+                          constraints: const BoxConstraints(
+                              maxHeight: 300, maxWidth: 200),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: options.length,
-                            itemBuilder:
-                                (BuildContext context, int index) {
+                            itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
                               return InkWell(
                                 onTap: () {
                                   onSelected(option);
                                 },
-                                child: Builder(
-                                    builder: (BuildContext context) {
-                                      final bool highlight =
-                                          AutocompleteHighlightedOption.of(
+                                child: Builder(builder: (BuildContext context) {
+                                  final bool highlight =
+                                      AutocompleteHighlightedOption.of(
                                               context) ==
-                                              index;
-                                      if (highlight) {
-                                        SchedulerBinding.instance
-                                            .addPostFrameCallback(
-                                                (Duration timeStamp) {
-                                              Scrollable.ensureVisible(context,
-                                                  alignment: 0.5);
-                                            });
-                                      }
-                                      return Container(
-                                        color: highlight
-                                            ? Theme.of(context).focusColor
-                                            : null,
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(option),
-                                      );
-                                    }),
+                                          index;
+                                  if (highlight) {
+                                    SchedulerBinding.instance
+                                        .addPostFrameCallback(
+                                            (Duration timeStamp) {
+                                      Scrollable.ensureVisible(context,
+                                          alignment: 0.5);
+                                    });
+                                  }
+                                  return Container(
+                                    color: highlight
+                                        ? Theme.of(context).focusColor
+                                        : null,
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(option),
+                                  );
+                                }),
                               );
                             },
                           ),
@@ -206,15 +205,17 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
             const SizedBox(
               width: 8,
             ),
-            if (controllerFrequency.text == '') Text(
-              state.error,
-              style: const TextStyle(color: Colors.red, fontSize: 10),
-            ),
+            if (controllerFrequency.text == '')
+              Text(
+                state.error,
+                style: const TextStyle(color: Colors.red, fontSize: 10),
+              ),
           ],
         ),
         const SizedBox(
           height: 4,
         ),
+
         ///
         /// Function
         ///
@@ -236,9 +237,9 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                   focusNode: focusFunction,
                   textEditingController: controllerFunction,
                   fieldViewBuilder: (BuildContext context,
-                      TextEditingController textEditingController,
-                      FocusNode focusNode,
-                      VoidCallback onFieldSubmitted) =>
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted) =>
                       TextField(
                         focusNode: focusNode,
                         controller: textEditingController,
@@ -247,10 +248,11 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: const EdgeInsets.all(10),
-                          enabledBorder: state.error != '' && controllerFunction.text == '' ?
-                          const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red))
-                              : InputBorder.none,
+                          enabledBorder:
+                              state.error != '' && controllerFunction.text == ''
+                                  ? const OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red))
+                                  : InputBorder.none,
                           fillColor: MyApp.background,
                           filled: true,
                         ),
@@ -259,13 +261,16 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                     if (textEditingValue == TextEditingValue.empty) {
                       return const Iterable<String>.empty();
                     }
-                    var aux = ['', ...Transform.aggregations.keys].where((e) => e
-                        .contains(textEditingValue.text.toLowerCase())).toList();
+                    var aux = ['', ...Transform.aggregations.keys]
+                        .where((e) =>
+                            e.contains(textEditingValue.text.toLowerCase()))
+                        .toList();
                     return aux;
                   },
                   onSelected: (String selection) {
                     setState(() {
-                      ref.read(providerOfTimeAggregation.notifier).function = selection;
+                      ref.read(providerOfTimeAggregation.notifier).function =
+                          selection;
                       // state.validate();
                     });
                   },
@@ -277,41 +282,39 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                       child: Material(
                         elevation: 4.0,
                         child: ConstrainedBox(
-                          constraints:
-                          const BoxConstraints(maxHeight: 300, maxWidth: 200),
+                          constraints: const BoxConstraints(
+                              maxHeight: 300, maxWidth: 200),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: options.length,
-                            itemBuilder:
-                                (BuildContext context, int index) {
+                            itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
                               return InkWell(
                                 onTap: () {
                                   onSelected(option);
                                 },
-                                child: Builder(
-                                    builder: (BuildContext context) {
-                                      final bool highlight =
-                                          AutocompleteHighlightedOption.of(
+                                child: Builder(builder: (BuildContext context) {
+                                  final bool highlight =
+                                      AutocompleteHighlightedOption.of(
                                               context) ==
-                                              index;
-                                      if (highlight) {
-                                        SchedulerBinding.instance
-                                            .addPostFrameCallback(
-                                                (Duration timeStamp) {
-                                              Scrollable.ensureVisible(context,
-                                                  alignment: 0.5);
-                                            });
-                                      }
-                                      return Container(
-                                        color: highlight
-                                            ? Theme.of(context).focusColor
-                                            : null,
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(option),
-                                      );
-                                    }),
+                                          index;
+                                  if (highlight) {
+                                    SchedulerBinding.instance
+                                        .addPostFrameCallback(
+                                            (Duration timeStamp) {
+                                      Scrollable.ensureVisible(context,
+                                          alignment: 0.5);
+                                    });
+                                  }
+                                  return Container(
+                                    color: highlight
+                                        ? Theme.of(context).focusColor
+                                        : null,
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(option),
+                                  );
+                                }),
                               );
                             },
                           ),
@@ -321,12 +324,13 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
                   }),
             ),
             const SizedBox(
-                width: 8,
-              ),
-            if (controllerFunction.text == '') Text(
-              state.error,
-              style: const TextStyle(color: Colors.red, fontSize: 10),
+              width: 8,
             ),
+            if (controllerFunction.text == '')
+              Text(
+                state.error,
+                style: const TextStyle(color: Colors.red, fontSize: 10),
+              ),
           ],
         ),
         // const SizedBox(
@@ -350,7 +354,4 @@ class _TimeAggregationEditorState extends ConsumerState<TimeAggregationEditor> {
   //     ref.read(providerOfTimeFilter.notifier).years = <int>{};
   //   }
   // }
-
 }
-
-

@@ -1,5 +1,3 @@
-library models.term_model;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart';
@@ -22,9 +20,9 @@ class TermModel extends ChangeNotifier {
 }
 
 class ForwardTermModel extends TermModel {
-  ForwardTermModel({required Term term}) : super(term: term);
+  ForwardTermModel({required super.term});
 }
 
 class HistoricalTermModel extends TermModel {
-  HistoricalTermModel({required Term term}) : super(term: term);
+  HistoricalTermModel({required super.term});
 }

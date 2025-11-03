@@ -1,12 +1,10 @@
-library weather.max_payoff;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/multiple/maxpayoff_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MaxPayoff extends StatefulWidget {
-  const MaxPayoff({this.index = 0, Key? key}) : super(key: key);
+  const MaxPayoff({this.index = 0, super.key});
 
   final int index;
 

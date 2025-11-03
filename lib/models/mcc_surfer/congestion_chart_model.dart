@@ -1,5 +1,3 @@
-library models.congestion_chart;
-
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:elec_server/client/dacongestion.dart';
@@ -7,17 +5,18 @@ import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CongestionChartModel extends ChangeNotifier {
-  late final PtidsApi ptidClient;
-  final _client = http.Client();
-
-  CongestionChartModel() {
+  CongestionChartModel({required this.rootUrl, required this.rustServer}) {
     _currentRegion = 'NYISO';
-    ptidClient = PtidsApi(_client, rootUrl: dotenv.env['ROOT_URL']!);
+    ptidClient = PtidsApi(_client, rootUrl: rootUrl);
     getPtidMap(_currentRegion);
   }
+
+  final String rootUrl;
+  final String rustServer;
+  late final PtidsApi ptidClient;
+  final _client = http.Client();
 
   Term? _term;
   late String _currentRegion;
@@ -36,7 +35,8 @@ class CongestionChartModel extends ChangeNotifier {
   ///
   DaCongestion get mccClient => DaCongestion(_client,
       iso: RegionLoadZoneModel.allowedRegions[_currentRegion]!,
-      rootUrl: dotenv.env['ROOT_URL']!);
+      rootUrl: rootUrl, 
+      rustServer: rustServer);
 
   final layout = <String, dynamic>{
     'width': 900.0,
@@ -60,8 +60,8 @@ class CongestionChartModel extends ChangeNotifier {
   Future<Map<int, Map<String, dynamic>>> getPtidMap(String region) async {
     if (!_ptidMapCache.containsKey(region)) {
       var aux = await ptidClient.getPtidTable(region: region.toLowerCase());
-      var _ptidMap = {for (var e in aux) e['ptid'] as int: e};
-      _ptidMapCache[region] = _ptidMap;
+      var ptidMap = {for (var e in aux) e['ptid'] as int: e};
+      _ptidMapCache[region] = ptidMap;
     }
     return _ptidMapCache[region]!;
   }

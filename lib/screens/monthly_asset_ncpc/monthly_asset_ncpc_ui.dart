@@ -1,5 +1,3 @@
-library screens.monthly_asset_ncpc.monthly_asset_ncpc_ui;
-
 import 'dart:math';
 import 'package:flutter/services.dart';
 
@@ -19,7 +17,7 @@ import 'package:flutter_quiver/utils/empty_download.dart'
     if (dart.library.html) '../../utils/download.dart';
 
 class MonthlyAssetNcpcUi extends StatefulWidget {
-  const MonthlyAssetNcpcUi({Key? key}) : super(key: key);
+  const MonthlyAssetNcpcUi({super.key});
 
   @override
   _MonthlyAssetNcpcUiState createState() => _MonthlyAssetNcpcUiState();
@@ -54,12 +52,12 @@ class _MonthlyAssetNcpcUiState extends State<MonthlyAssetNcpcUi> {
                   context: context,
                   builder: (BuildContext context) {
                     return const SimpleDialog(
+                      contentPadding: EdgeInsets.all(12),
                       children: [
                         Text(
                             'ISO publishes the data every month, with a 4 month lag '
                             'beginning in Jan19.\nData has monthly granularity.'),
                       ],
-                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },

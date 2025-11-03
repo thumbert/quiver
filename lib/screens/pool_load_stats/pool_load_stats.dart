@@ -1,5 +1,3 @@
-library screens.pool_load_stats.pool_load_stats;
-
 import 'package:date/date.dart';
 import 'package:elec_server/utils.dart';
 import 'package:flutter/material.dart' hide Interval;
@@ -11,7 +9,7 @@ import 'package:timezone/timezone.dart';
 import 'load_stats_plot.dart';
 
 class PoolLoadStats extends ConsumerStatefulWidget {
-  const PoolLoadStats({Key? key}) : super(key: key);
+  const PoolLoadStats({super.key});
 
   static const route = '/pool_load_stats';
 

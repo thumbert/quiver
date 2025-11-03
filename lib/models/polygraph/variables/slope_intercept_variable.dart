@@ -1,11 +1,7 @@
-library models.polygraph.variables.slope_intercept_variable;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
 import 'package:timeseries/timeseries.dart';
-
 
 class SlopeInterceptVariable extends PolygraphVariable {
   SlopeInterceptVariable({
@@ -30,7 +26,7 @@ class SlopeInterceptVariable extends PolygraphVariable {
 
   @override
   Map<String, dynamic> toJson() {
-    var out = <String,dynamic>{
+    var out = <String, dynamic>{
       'slope': slope,
       'intercept': intercept,
     };
@@ -45,7 +41,7 @@ class SlopeInterceptVariable extends PolygraphVariable {
   }
 
   @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+  PolygraphVariable fromMongo(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
   }

@@ -1,11 +1,9 @@
-library screens.common.bucket;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/bucket_model.dart';
 import 'package:provider/provider.dart';
 
 class Bucket extends StatefulWidget {
-  const Bucket({Key? key}) : super(key: key);
+  const Bucket({super.key});
 
   @override
   _BucketState createState() => _BucketState();

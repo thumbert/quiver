@@ -1,7 +1,4 @@
-library parser.ast.custom.hourly_schedule_expr;
-
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
 import 'package:elec/time.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast.dart';
 import 'package:timeseries/timeseries.dart';
@@ -25,16 +22,22 @@ class HourlyScheduleExpr extends Expression {
 
     if (months.isNotEmpty) {
       var monthsS = months.toSet();
-      ts = ts.where((e) => monthsS.contains(e.interval.start.month)).toTimeSeries();
+      ts = ts
+          .where((e) => monthsS.contains(e.interval.start.month))
+          .toTimeSeries();
     }
 
     if (bucket != null) {
-      ts = ts.where((e) => bucket!.containsHour(e.interval as Hour)).toTimeSeries();
+      ts = ts
+          .where((e) => bucket!.containsHour(e.interval as Hour))
+          .toTimeSeries();
     }
 
     return ts;
   }
 
   @override
-  String toString() => 'hourly_schedule($x, bla-bla)';  /// TODO:
+  String toString() => 'hourly_schedule($x, bla-bla)';
+
+  /// TODO:
 }

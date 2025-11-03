@@ -1,5 +1,3 @@
-library screens.constraint_table;
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -10,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ConstraintTable extends StatefulWidget {
-  const ConstraintTable({Key? key}) : super(key: key);
+  const ConstraintTable({super.key});
 
   @override
   State<StatefulWidget> createState() => _ConstraintTable();

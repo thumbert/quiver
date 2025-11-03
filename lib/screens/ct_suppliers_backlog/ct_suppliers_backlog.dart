@@ -1,5 +1,3 @@
-library screens.unmasked_energy_offers.unmasked_energy_offers;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec_server/client/utilities/ct_supplier_backlog_rates.dart';
@@ -134,7 +132,8 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
         actions: [
           IconButton(
             onPressed: () {
-              const _url = 'https://energizect.com/rate-board-residential-standard-service-generation-rates';
+              const _url =
+                  'https://energizect.com/rate-board-residential-standard-service-generation-rates';
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -150,14 +149,18 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                                       'Historical data on retail competitive suppliers in CT '
                                       'from Jan22 forward. \n\n'
                                       'Data is published on '),
-                              TextSpan(text: _url,
-                                style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                              recognizer: TapGestureRecognizer()..onTap = () async {
-                                final url = Uri.parse(_url);
-                                if (!await launchUrl(url)) {
-                                  throw 'Could not launch $url';
-                                }
-                              }),
+                              TextSpan(
+                                  text: _url,
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      final url = Uri.parse(_url);
+                                      if (!await launchUrl(url)) {
+                                        throw 'Could not launch $url';
+                                      }
+                                    }),
                               const TextSpan(text: '\nwith a 4 months lag.')
                             ],
                           )),
@@ -176,11 +179,11 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           controller: scrollControllerV,
-          child:
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,8 +302,8 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                               },
                               items: model
                                   .getCustomerClasses()
-                                  .map((e) =>
-                                      DropdownMenuItem(value: e, child: Text(e)))
+                                  .map((e) => DropdownMenuItem(
+                                      value: e, child: Text(e)))
                                   .toList(),
                             ),
                           ),
@@ -340,8 +343,8 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                                     .variableName = newValue!;
                               },
                               items: model.variableNames.keys
-                                  .map((e) =>
-                                      DropdownMenuItem(value: e, child: Text(e)))
+                                  .map((e) => DropdownMenuItem(
+                                      value: e, child: Text(e)))
                                   .toList(),
                             ),
                           ),
@@ -356,13 +359,15 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                                   visualDensity: VisualDensity.compact,
                                   dense: true,
                                   value: model.aggregate,
-                                  controlAffinity: ListTileControlAffinity.leading,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
                                   title: const Text('Aggregate?'),
                                   onChanged: (bool? checked) {
                                     setState(() {
                                       ref
-                                          .read(providerOfCtSuppliersBacklogModel
-                                              .notifier)
+                                          .read(
+                                              providerOfCtSuppliersBacklogModel
+                                                  .notifier)
                                           .aggregate = checked!;
                                     });
                                   }),
@@ -393,7 +398,8 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                                     return Padding(
                                       padding: const EdgeInsets.only(
                                           left: 10.0, top: 6.0, bottom: 6.0),
-                                      child: Text(model.getSupplierDropdownLabel()),
+                                      child: Text(
+                                          model.getSupplierDropdownLabel()),
                                     );
                                   },
                                   error: (err, stack) =>
@@ -412,12 +418,11 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                     ],
                   ),
                 ],
-            ),
-            const SizedBox(
+              ),
+              const SizedBox(
                 height: 12,
-            ),
-
-            FutureBuilder(
+              ),
+              FutureBuilder(
                   future: model.makeTraces(),
                   builder: (context, snapshot) {
                     List<Widget> children;
@@ -452,11 +457,11 @@ class _UnmaskedEnergyOffersState extends ConsumerState<CtSuppliersBacklog> {
                     }
                     return Row(children: children);
                   }),
-            const SizedBox(
+              const SizedBox(
                 width: 1500,
-            ),
-          ]),
               ),
+            ]),
+          ),
         ),
       ),
     );

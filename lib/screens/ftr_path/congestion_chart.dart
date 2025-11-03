@@ -1,5 +1,3 @@
-library screens.ftr_path.congestion_chart;
-
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -11,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 
 class CongestionChart extends StatefulWidget {
-  const CongestionChart({Key? key}) : super(key: key);
+  const CongestionChart({super.key});
 
   @override
   State<StatefulWidget> createState() => _CongestionChartState();
@@ -65,6 +63,7 @@ class _CongestionChartState extends State<CongestionChart> {
           List<Widget> children;
           if (snapshot.hasData) {
             var traces = snapshot.data!;
+            print(traces);
             plotly.react(traces, dataModel.layout, plotly.config);
             children = [
               SizedBox(

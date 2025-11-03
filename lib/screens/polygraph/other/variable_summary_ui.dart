@@ -1,11 +1,9 @@
-library lib.screens.polygraph.other.variable_summary_ui;
-
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
 import 'package:flutter/material.dart' hide Interval;
 
 class VariableSummaryUi extends StatelessWidget {
-  const VariableSummaryUi(this.window, {Key? key}) : super(key: key);
+  const VariableSummaryUi(this.window, {super.key});
 
   final PolygraphWindow window;
 
@@ -26,10 +24,12 @@ class VariableSummaryUi extends StatelessWidget {
                   ys[i].label,
                   style: TextStyle(
                       fontSize: 18,
-                      color:
-                          ys[i].color ?? VariableDisplayConfig.defaultColors[i]),
+                      color: ys[i].color ??
+                          VariableDisplayConfig.defaultColors[i]),
                 ),
-                const SizedBox(height: 8,),
+                const SizedBox(
+                  height: 8,
+                ),
                 ...[for (var r = 0; r < content.length; r++) Text(content[r])]
               ],
             ),
@@ -43,8 +43,4 @@ class VariableSummaryUi extends StatelessWidget {
       children: cards,
     );
   }
-
 }
-
-
-

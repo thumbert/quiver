@@ -1,5 +1,3 @@
-library screens.polygraph.other.variable_selection_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
@@ -10,7 +8,7 @@ final providerOfVariableSelection =
         (ref) => VariableSelectionNotifier(ref));
 
 class VariableSelectionUi extends ConsumerStatefulWidget {
-  const VariableSelectionUi({Key? key}) : super(key: key);
+  const VariableSelectionUi({super.key});
 
   @override
   ConsumerState<VariableSelectionUi> createState() =>
@@ -69,7 +67,8 @@ class _VariableSelectionUiState extends ConsumerState<VariableSelectionUi> {
         ),
         Row(
           children: [
-            if (variableSelection.categories.isNotEmpty) const Text('Selection  '),
+            if (variableSelection.categories.isNotEmpty)
+              const Text('Selection  '),
             ...List.generate(variableSelection.categories.length, (index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 8.0),

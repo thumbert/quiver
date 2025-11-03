@@ -1,5 +1,3 @@
-library screens.demand_bids.demand_bids_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/entity_model.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +6,7 @@ import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
 
 class DemandBidsUi extends StatefulWidget {
-  const DemandBidsUi({Key? key}) : super(key: key);
+  const DemandBidsUi({super.key});
 
   @override
   _DemandBidsUiState createState() => _DemandBidsUiState();

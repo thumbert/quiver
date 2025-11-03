@@ -1,5 +1,3 @@
-library screens.connect4;
-
 import 'package:flutter/material.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 

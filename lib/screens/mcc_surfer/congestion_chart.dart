@@ -1,5 +1,3 @@
-library screens.mcc_surfer.congestion_chart;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
@@ -10,7 +8,7 @@ import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:timezone/timezone.dart';
 
 class CongestionChart extends StatefulWidget {
-  const CongestionChart({Key? key}) : super(key: key);
+  const CongestionChart({super.key});
 
   @override
   State<StatefulWidget> createState() => _CongestionChartState();
@@ -48,7 +46,7 @@ class _CongestionChartState extends State<CongestionChart> {
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
-            var traces = (snapshot.data! as List).cast<Map<String,dynamic>>();
+            var traces = (snapshot.data! as List).cast<Map<String, dynamic>>();
             // highlight the selected constraints
             var aux = constraintTableModel.getHighlightedBlocks();
             chartModel.layout['shapes'] = [

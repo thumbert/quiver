@@ -1,5 +1,3 @@
-library screens.homepage.calculator_list;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
@@ -12,6 +10,7 @@ import 'package:flutter_quiver/screens/examples/multiselect_menu_button_example.
 import 'package:flutter_quiver/screens/examples/linked_multiselects_example.dart';
 import 'package:flutter_quiver/screens/exchange_trades/exchange_trades_ui.dart';
 import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
+import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -56,6 +55,7 @@ class AppGroup extends StatefulWidget {
     'Other': [
       MenuItem(url: Connect4.route, title: 'Connect4'),
       MenuItem(url: HistoricalGas.route, title: 'Historical gas prices'),
+      MenuItem(url: HistoricalLmp.route, title: 'Historical LMP'),
       MenuItem(
           url: HistoricalOptionPricing.route,
           title: 'Historical option pricing'),
@@ -65,7 +65,6 @@ class AppGroup extends StatefulWidget {
           title: 'MCC surfer ',
           icon: const Icon(Icons.surfing)),
       MenuItem(url: Polygraph.route, title: 'Polygraph 🌈'),
-      MenuItem(url: MonthlyLmp.route, title: 'Monthly LMP'),
       MenuItem(
           url: RateBoard.route,
           title: 'Competitive offers rate board  ',

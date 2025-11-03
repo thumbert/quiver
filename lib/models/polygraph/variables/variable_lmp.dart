@@ -1,5 +1,3 @@
-library models.polygraph.variables.variable_lmp;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/risk_system.dart';

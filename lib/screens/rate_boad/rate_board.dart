@@ -1,5 +1,3 @@
-library screens.pool_load_stats.rate_board;
-
 import 'dart:math';
 
 import 'package:date/date.dart';
@@ -16,7 +14,7 @@ import 'package:flutter_quiver/utils/empty_download.dart'
     if (dart.library.html) '../../utils/download.dart';
 
 class RateBoard extends ConsumerStatefulWidget {
-  const RateBoard({Key? key}) : super(key: key);
+  const RateBoard({super.key});
 
   static const route = '/rate_board';
 
@@ -79,6 +77,7 @@ class _RateBoardState extends ConsumerState<RateBoard> {
                   context: context,
                   builder: (BuildContext context) {
                     return const SimpleDialog(
+                      contentPadding: EdgeInsets.all(12),
                       children: [
                         SizedBox(
                           width: 500,
@@ -102,7 +101,6 @@ class _RateBoardState extends ConsumerState<RateBoard> {
                           ),
                         )
                       ],
-                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },
@@ -462,9 +460,11 @@ class _RateBoardState extends ConsumerState<RateBoard> {
                             ),
                           ),
                           if (state.stateName == 'MA')
-                            const Text('*A mention of 100% in plan Features indicates '
-                                'that the plan is supplied with 100% green power. '
-                              , style: TextStyle(fontStyle: FontStyle.italic),),
+                            const Text(
+                              '*A mention of 100% in plan Features indicates '
+                              'that the plan is supplied with 100% green power. ',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
                         ];
                       }
                     } else if (snapshot.hasError) {

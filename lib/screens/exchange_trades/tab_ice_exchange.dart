@@ -1,14 +1,8 @@
-library screens.exchange_trades.tab_ice_exchange;
-
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:table/table_base.dart' as table;
 import 'package:flutter_quiver/models/exchange_trades/nodal_model.dart'
     as nodal;
 import 'package:flutter_quiver/screens/common/signal/date_field.dart';
-import 'package:flutter_quiver/screens/common/signal/multiselect3.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 

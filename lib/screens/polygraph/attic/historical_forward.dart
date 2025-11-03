@@ -1,20 +1,15 @@
-library screens.polygraph.editors.historical_forward;
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
-import 'package:provider/provider.dart';
 
 /// A widget to select between a historical of forward view of the data
 class HistoricalOrForward extends StatefulWidget {
-  const HistoricalOrForward({Key? key}) : super(key: key);
+  const HistoricalOrForward({super.key});
 
   @override
   _HistoricalOrForwardState createState() => _HistoricalOrForwardState();
 }
 
 class _HistoricalOrForwardState extends State<HistoricalOrForward> {
-
   String selectedTab = 'Realized';
 
   @override
@@ -31,8 +26,9 @@ class _HistoricalOrForwardState extends State<HistoricalOrForward> {
                   border: Border(
                 bottom: BorderSide(
                     width: 3,
-                    color:
-                        selectedTab == 'Realized' ? Colors.blueGrey : Colors.white),
+                    color: selectedTab == 'Realized'
+                        ? Colors.blueGrey
+                        : Colors.white),
               )),
               child: TextButton(
                   onPressed: () {
@@ -93,12 +89,20 @@ class _HistoricalOrForwardState extends State<HistoricalOrForward> {
             ),
           ],
         ),
-        if (selectedTab == 'Forward, as of') const Column(children: [
-          Row(children: [
-            Text('Forward Term', style: TextStyle(fontSize: 16),),
-            TermUi(),
-          ],)
-        ],),
+        if (selectedTab == 'Forward, as of')
+          const Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Forward Term',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  TermUi(),
+                ],
+              )
+            ],
+          ),
       ],
     );
   }

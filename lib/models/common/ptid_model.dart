@@ -1,5 +1,3 @@
-library models.ptid_model;
-
 import 'package:flutter/material.dart';
 
 class PtidModel extends ChangeNotifier {

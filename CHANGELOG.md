@@ -13,12 +13,24 @@
 - Improve screens/signal/term.dart to add a validation function, 
   for example to accept only a month range, etc. 
 - Make MultiselectUi work with generic data not only with Strings
+- Upgrade Plotly 3.1.x in web/js/plotly-latest.min.js
+- Allow multiple Sink rows to Historical LMP, congestion, spreads page.  Do that by adding 
+  an ... icon, etc.
+
 
 ## BUGS
 
+## Release 2025-11-03
+- Bump up Flutter to 3.35.6
+- Switch MCC surfer to use the new DuckDB backend + API
+- Apply dart-fix on some lints 6.0.0 issues
+- Working version of Historical LMP, congestion, spreads.  Good clean example  <--------
+  of an app with signals.    <--------
+- Made several of the signal widgets generic. 
+
+
 ## Release 2025-06-20
 - Migrate to flutter_web_plotly 1.0.0
-
 
 ## Release 2024-08-30
 - In multiselect_menu_button_example

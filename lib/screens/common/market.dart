@@ -1,11 +1,9 @@
-library screens.common.dart_radio;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:provider/provider.dart';
 
 class Market extends StatefulWidget {
-  const Market({Key? key}) : super(key: key);
+  const Market({super.key});
 
   @override
   _MarketState createState() => _MarketState();

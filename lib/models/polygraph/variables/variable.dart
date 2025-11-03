@@ -1,11 +1,8 @@
-library models.polygraph.variables.variable;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
-import 'package:flutter_quiver/models/polygraph/variables/transformed_variable.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_lmp.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_asofdate.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable_marks_historical_view.dart';
@@ -38,7 +35,7 @@ class PolygraphVariable {
   // /// For the yAxis only.  If you want it displayed on the right,
   // /// set [axisPosition] to 'right'.
   // String? axisPosition;
-  
+
   /// Customize the display on the screen
   VariableDisplayConfig? displayConfig;
 
@@ -48,10 +45,10 @@ class PolygraphVariable {
   }
 
   /// How it's going to be persisted to the database
-  Map<String,dynamic> toJson() => <String,dynamic>{};
+  Map<String, dynamic> toJson() => <String, dynamic>{};
 
   /// Not the cleanest implementation.  Good for now.
-  static PolygraphVariable fromJson(Map<String,dynamic> x) {
+  static PolygraphVariable fromJson(Map<String, dynamic> x) {
     return switch (x['type']) {
       'TimeVariable' => TimeVariable.fromJson(x),
       'TransformedVariable' => TransformedVariable.fromJson(x),
@@ -63,9 +60,7 @@ class PolygraphVariable {
   }
 }
 
-
 class EmptyVariable extends PolygraphVariable {
-
   static PolygraphVariable fromMap(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
@@ -82,7 +77,4 @@ class EmptyVariable extends PolygraphVariable {
     // TODO: implement toMap
     throw UnimplementedError();
   }
-
 }
-
-

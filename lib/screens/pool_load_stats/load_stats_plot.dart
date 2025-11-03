@@ -1,12 +1,10 @@
-library screens.ny_spreads.ny_spreads_plot;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/pool_load_stats/pool_load_stats_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 
 class LoadStatsPlot extends ConsumerStatefulWidget {
-  const LoadStatsPlot({Key? key}) : super(key: key);
+  const LoadStatsPlot({super.key});
 
   @override
   ConsumerState<LoadStatsPlot> createState() => _LoadStatsPlotState();

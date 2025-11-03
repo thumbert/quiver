@@ -1,5 +1,3 @@
-library screens.signal.date_field;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:signals_flutter/signals_flutter.dart';

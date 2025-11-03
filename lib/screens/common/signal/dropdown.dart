@@ -1,5 +1,3 @@
-library screens.signal.dropdown;
-
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:signals/signals_flutter.dart';
@@ -10,6 +8,7 @@ class DropdownModel<T> {
   final Set<T> choices;
 }
 
+/// Suggest using dropdown2.dart!  It allows you to pass the model directly!
 class DropdownUi<T> extends StatefulWidget {
   const DropdownUi({required this.model, required this.width, super.key});
 

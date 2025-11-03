@@ -1,5 +1,3 @@
-library screens.polygraph.other.add_variable_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/polygraph/editors/transformed_variable_editor.dart';

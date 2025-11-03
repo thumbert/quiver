@@ -1,11 +1,9 @@
-library screens.common.load_zone;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 
 class LoadZone extends StatefulWidget {
-  const LoadZone({Key? key}) : super(key: key);
+  const LoadZone({super.key});
 
   @override
   _LoadZoneState createState() => _LoadZoneState();

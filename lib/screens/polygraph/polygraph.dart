@@ -1,5 +1,3 @@
-library screens.polygraph.polygraph;
-
 import 'dart:convert';
 
 import 'package:contextmenu/contextmenu.dart';
@@ -19,7 +17,7 @@ final providerOfPolygraph =
         (ref) => PolygraphNotifier(ref));
 
 class Polygraph extends ConsumerStatefulWidget {
-  const Polygraph({Key? key}) : super(key: key);
+  const Polygraph({super.key});
 
   static const route = '/polygraph';
 
@@ -285,6 +283,7 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                   context: context,
                   builder: (BuildContext context) {
                     return const SimpleDialog(
+                      contentPadding: EdgeInsets.all(12),
                       children: [
                         SizedBox(
                           width: 500,
@@ -297,7 +296,6 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                           ),
                         )
                       ],
-                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },
@@ -344,128 +342,127 @@ class _PolygraphState extends ConsumerState<Polygraph> {
                               child: Center(
                                 child: poly.activeTabIndex == index
                                     ? ContextMenuArea(
-                                      verticalPadding: 8.0,
-                                      width: 260,
-                                      builder: (context) {
-                                        return [
-                                          /// Add tab
-                                          PointerInterceptor(
-                                            child: ListTile(
-                                              dense: true,
-                                              horizontalTitleGap: 0.0,
-                                              leading: Icon(
-                                                Icons.add,
-                                                color: Colors.blueGrey[300],
+                                        verticalPadding: 8.0,
+                                        width: 260,
+                                        builder: (context) {
+                                          return [
+                                            /// Add tab
+                                            PointerInterceptor(
+                                              child: ListTile(
+                                                dense: true,
+                                                horizontalTitleGap: 0.0,
+                                                leading: Icon(
+                                                  Icons.add,
+                                                  color: Colors.blueGrey[300],
+                                                ),
+                                                title: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 12.0),
+                                                  child: Text('Add tab'),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  setState(() {
+                                                    poly.addTab();
+                                                  });
+                                                },
                                               ),
-                                              title: const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: Text('Add tab'),
-                                              ),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                setState(() {
-                                                  poly.addTab();
-                                                });
-                                              },
                                             ),
-                                          ),
 
-                                          /// Delete tab
-                                          PointerInterceptor(
-                                            child: ListTile(
-                                              dense: true,
-                                              horizontalTitleGap: 0.0,
-                                              leading: Icon(
-                                                Icons.delete_forever,
-                                                color: Colors.blueGrey[300],
-                                              ),
-                                              title: const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: Text('Delete tab'),
-                                              ),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                setState(() {
-                                                  poly.deleteTab(
-                                                      poly.activeTabIndex);
+                                            /// Delete tab
+                                            PointerInterceptor(
+                                              child: ListTile(
+                                                dense: true,
+                                                horizontalTitleGap: 0.0,
+                                                leading: Icon(
+                                                  Icons.delete_forever,
+                                                  color: Colors.blueGrey[300],
+                                                ),
+                                                title: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 12.0),
+                                                  child: Text('Delete tab'),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  setState(() {
+                                                    poly.deleteTab(
+                                                        poly.activeTabIndex);
 
-                                                  /// TODO: which tab is now active?
-                                                });
-                                              },
+                                                    /// TODO: which tab is now active?
+                                                  });
+                                                },
+                                              ),
                                             ),
-                                          ),
 
-                                          /// Rename
-                                          PointerInterceptor(
-                                            child: ListTile(
-                                              dense: true,
-                                              horizontalTitleGap: 0.0,
-                                              leading: Icon(
-                                                Icons.edit,
-                                                color: Colors.blueGrey[300],
+                                            /// Rename
+                                            PointerInterceptor(
+                                              child: ListTile(
+                                                dense: true,
+                                                horizontalTitleGap: 0.0,
+                                                leading: Icon(
+                                                  Icons.edit,
+                                                  color: Colors.blueGrey[300],
+                                                ),
+                                                title: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 12.0),
+                                                  child: Text('Rename'),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  setState(() {
+                                                    editableTabIndex = index;
+                                                  });
+                                                },
                                               ),
-                                              title: const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: Text('Rename'),
-                                              ),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                setState(() {
-                                                  editableTabIndex = index;
-                                                });
-                                              },
                                             ),
-                                          ),
 
-                                          /// Tab display config
-                                          PointerInterceptor(
-                                            child: ListTile(
-                                              dense: true,
-                                              horizontalTitleGap: 0.0,
-                                              leading: Icon(
-                                                Icons.tune,
-                                                color: Colors.blueGrey[300],
-                                              ),
-                                              title: const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 12.0),
-                                                child: Text(
-                                                    'Display configuration'),
-                                              ),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                        context) {
-                                                      return SimpleDialog(
-                                                          children: [
-                                                            PointerInterceptor(
-                                                                child:
-                                                                    Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(
-                                                                      16.0),
-                                                              child: ProviderScope(
-                                                                  parent:
-                                                                      container,
+                                            /// Tab display config
+                                            PointerInterceptor(
+                                              child: ListTile(
+                                                dense: true,
+                                                horizontalTitleGap: 0.0,
+                                                leading: Icon(
+                                                  Icons.tune,
+                                                  color: Colors.blueGrey[300],
+                                                ),
+                                                title: const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 12.0),
+                                                  child: Text(
+                                                      'Display configuration'),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return SimpleDialog(
+                                                            children: [
+                                                              PointerInterceptor(
                                                                   child:
-                                                                      const TabLayoutUi()),
-                                                            )),
-                                                          ]);
-                                                    });
-                                              },
+                                                                      Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        16.0),
+                                                                child: ProviderScope(
+                                                                    parent:
+                                                                        container,
+                                                                    child:
+                                                                        const TabLayoutUi()),
+                                                              )),
+                                                            ]);
+                                                      });
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ];
-                                      },
-                                      child:
-                                          _makeTabTextButton(index, poly),
-                                    )
+                                          ];
+                                        },
+                                        child: _makeTabTextButton(index, poly),
+                                      )
                                     : _makeTabTextButton(index, poly),
                               ),
                             ),

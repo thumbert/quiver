@@ -1,19 +1,13 @@
-library screens.ftr_path.table_binding_constraints;
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quiver/models/ftr_path/data_model.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:table/table_base.dart' as table;
-import 'package:flutter_quiver/utils/empty_download.dart'
-    if (dart.library.html) '../../utils/download.dart';
 
 class TableBindingConstraints extends StatefulWidget {
-  const TableBindingConstraints({Key? key}) : super(key: key);
+  const TableBindingConstraints({super.key});
 
   @override
   State<StatefulWidget> createState() => _TableBindingConstraintsState();

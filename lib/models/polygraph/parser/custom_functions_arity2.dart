@@ -1,5 +1,3 @@
-library models.polygraph.parser.custom_functions_arity2;
-
 // import 'dart:math' as math;
 //
 // import 'package:elec/elec.dart';
@@ -43,8 +41,6 @@ library models.polygraph.parser.custom_functions_arity2;
 //   }
 //   return TimeSeries<num>();
 // }
-
-
 
 // Result min(dynamic ts, dynamic value) {
 //   if (ts is! TimeSeries) {

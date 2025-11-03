@@ -1,11 +1,9 @@
-library screens.common.lmp_component;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/lmp_component_model.dart';
 import 'package:provider/provider.dart';
 
 class LmpComponent extends StatefulWidget {
-  const LmpComponent({Key? key}) : super(key: key);
+  const LmpComponent({super.key});
 
   @override
   _LmpComponentState createState() => _LmpComponentState();

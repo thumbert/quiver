@@ -1,5 +1,3 @@
-library lib.screens.polygraph.polygraph_window_ui;
-
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //     return tab.windows[tab.activeWindowIndex];
 //   });
 
-
 /// Used in polygraph_tab_ui in _makePlotWindows()
 
 final providerOfPolygraphWindowCache =
@@ -26,4 +23,3 @@ final providerOfPolygraphWindowCache =
 
 /// Don't need to have a window ui as all the windows are part of a tab.
 /// Keep all the logic in polygraph_tab_ui.
-

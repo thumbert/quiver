@@ -1,5 +1,3 @@
-library screens.ftr_path.ftr_path;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/models/common/term_model.dart';
@@ -10,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 class FtrPath extends StatefulWidget {
-  const FtrPath({Key? key}) : super(key: key);
+  const FtrPath({super.key});
 
   static const String route = '/ftr_path_analysis';
 

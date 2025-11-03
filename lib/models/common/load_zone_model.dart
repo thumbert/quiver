@@ -1,5 +1,3 @@
-library models.load_zone_model;
-
 import 'package:flutter/material.dart';
 
 class LoadZoneModel extends ChangeNotifier {

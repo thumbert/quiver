@@ -1,12 +1,10 @@
-library screens.common.signal.multiselect3;
-
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// The recommended version to use for a dropdown widget with multi-selection!
-/// May rename the filename in the future. 
-/// 
+/// May rename the filename in the future.
+///
 class MultiselectUi extends StatefulWidget {
   const MultiselectUi(
       {required this.allValues,

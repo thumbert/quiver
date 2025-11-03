@@ -1,5 +1,3 @@
-library screens.daily_plc.historical_plc;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
@@ -13,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 class HistoricalPlc extends StatefulWidget {
-  const HistoricalPlc({Key? key}) : super(key: key);
+  const HistoricalPlc({super.key});
 
   static const route = '/historical_plc';
 

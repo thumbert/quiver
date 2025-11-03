@@ -1,5 +1,3 @@
-library models.common.multiple.notional_model;
-
 import 'package:flutter/material.dart';
 
 class NotionalModel extends ChangeNotifier {

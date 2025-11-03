@@ -1,14 +1,11 @@
-library models.entity_model;
-
 import 'package:flutter_quiver/models/common/entity_model.dart';
 
 class EntityWithCheckboxModel extends EntityModel {
   EntityWithCheckboxModel(
-      {required String entity,
-      required String subaccount,
+      {required super.entity,
+      required super.subaccount,
       required bool checkboxEntity,
-      required bool checkboxSubaccount})
-      : super(entity: entity, subaccount: subaccount) {
+      required bool checkboxSubaccount}) {
     _checkboxEntity = checkboxEntity;
     _checkboxSubaccount = checkboxSubaccount;
   }

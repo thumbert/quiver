@@ -1,5 +1,3 @@
-library screens.historical_plc.historical_plc_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/entity_model.dart';
 import 'package:flutter_quiver/models/common/load_aggregation_model.dart';
@@ -13,7 +11,7 @@ import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
 
 class HistoricalPlcUi extends StatefulWidget {
-  const HistoricalPlcUi({Key? key}) : super(key: key);
+  const HistoricalPlcUi({super.key});
 
   @override
   _HistoricalPlcUiState createState() => _HistoricalPlcUiState();

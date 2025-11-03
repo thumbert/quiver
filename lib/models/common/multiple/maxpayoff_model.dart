@@ -1,5 +1,3 @@
-library models.common.multiple.maxpayoff_model;
-
 import 'package:flutter/material.dart';
 
 class MaxPayoffModel extends ChangeNotifier {

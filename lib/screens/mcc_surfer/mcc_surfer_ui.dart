@@ -1,23 +1,18 @@
-library screens.mcc_surfer.mcc_surfer_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Interval;
-import 'package:flutter_quiver/models/mcc_surfer/congestion_chart_model.dart';
-import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/region_load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/congestion_chart.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/constraint_table.dart';
-import 'package:provider/provider.dart';
 
 class MccSurferUi extends StatefulWidget {
-  const MccSurferUi({Key? key}) : super(key: key);
+  const MccSurferUi({super.key});
 
   @override
-  _MccSurferUiState createState() => _MccSurferUiState();
+  MccSurferUiState createState() => MccSurferUiState();
 }
 
-class _MccSurferUiState extends State<MccSurferUi> {
+class MccSurferUiState extends State<MccSurferUi> {
   late ScrollController _scrollController;
   late ScrollController _scrollControllerH;
 
@@ -37,8 +32,6 @@ class _MccSurferUiState extends State<MccSurferUi> {
 
   @override
   Widget build(BuildContext context) {
-    // final chartModel = context.watch<CongestionChartModel>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('MCC surfer'),
@@ -49,6 +42,7 @@ class _MccSurferUiState extends State<MccSurferUi> {
                   context: context,
                   builder: (BuildContext context) {
                     return SimpleDialog(
+                      contentPadding: const EdgeInsets.all(12),
                       children: [
                         SizedBox(
                           width: 500,
@@ -81,7 +75,6 @@ class _MccSurferUiState extends State<MccSurferUi> {
                           ),
                         )
                       ],
-                      contentPadding: const EdgeInsets.all(12),
                     );
                   });
             },

@@ -1,5 +1,3 @@
-library test.models.ct_suppliers_backlog_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';
@@ -15,7 +13,8 @@ Future<void> tests(String rootUrl) async {
   group('CT suppliers backlog tests:', () {
     var model = CtSuppliersBacklogModel.getDefault();
     var term = Term.parse('Jan22-Jul23', UTC);
-    setUp(() async => await CtSuppliersBacklogModel.getData(term, Utility.eversource));
+    setUp(() async =>
+        await CtSuppliersBacklogModel.getData(term, Utility.eversource));
     test('get traces', () async {
       var traces = await model.makeTraces();
       expect(traces.length, 35);
@@ -26,11 +25,13 @@ Future<void> tests(String rootUrl) async {
       expect(t0['mode'], 'lines+markers');
     });
     test('change term', () async {
-      model = model.copyWith(term: Term.parse('Jan22-Oct23', IsoNewEngland.location));
+      model = model.copyWith(
+          term: Term.parse('Jan22-Oct23', IsoNewEngland.location));
       await CtSuppliersBacklogModel.getData(model.term, Utility.eversource);
       var traces = await model.makeTraces();
       expect(traces.length, 35);
-      var t0 = traces.firstWhere((e) => e['name'] == 'CONSTELLATION NEWENERGY RES');
+      var t0 =
+          traces.firstWhere((e) => e['name'] == 'CONSTELLATION NEWENERGY RES');
       expect(t0['x'].length, 22);
     });
   });

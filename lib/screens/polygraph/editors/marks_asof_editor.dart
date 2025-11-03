@@ -1,5 +1,3 @@
-library screens.polygraph.editors.forward_asof;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -12,12 +10,11 @@ import 'package:go_router/go_router.dart';
 import 'package:timezone/timezone.dart';
 
 final providerOfMarksAsOf =
-StateNotifierProvider<VariableMarksAsOfDateNotifier, VariableMarksAsOfDate>(
+    StateNotifierProvider<VariableMarksAsOfDateNotifier, VariableMarksAsOfDate>(
         (ref) => VariableMarksAsOfDateNotifier(ref));
 
-
 class MarksAsOfEditor extends ConsumerStatefulWidget {
-  const MarksAsOfEditor({Key? key}) : super(key: key);
+  const MarksAsOfEditor({super.key});
 
   @override
   _MarksAsOfEditorState createState() => _MarksAsOfEditorState();
@@ -169,9 +166,9 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                         focusNode: focusCurveName,
                         textEditingController: controllerCurveName,
                         fieldViewBuilder: (BuildContext context,
-                            TextEditingController textEditingController,
-                            FocusNode focusNode,
-                            VoidCallback onFieldSubmitted) =>
+                                TextEditingController textEditingController,
+                                FocusNode focusNode,
+                                VoidCallback onFieldSubmitted) =>
                             TextField(
                               focusNode: focusNode,
                               controller: textEditingController,
@@ -180,21 +177,25 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding: const EdgeInsets.all(10),
-                                enabledBorder: _errorCurveName != null  ?
-                                const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))
+                                enabledBorder: _errorCurveName != null
+                                    ? const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red))
                                     : InputBorder.none,
                                 fillColor: MyApp.background,
                                 filled: true,
                               ),
                             ),
-                        optionsBuilder: (TextEditingValue textEditingValue) async {
+                        optionsBuilder:
+                            (TextEditingValue textEditingValue) async {
                           if (textEditingValue == TextEditingValue.empty) {
                             return const Iterable<String>.empty();
                           }
-                          var aux = (await VariableMarksHistoricalView.getAllCurveNames()).where((e) => e
-                              .toUpperCase()
-                              .contains(textEditingValue.text.toUpperCase())).toList();
+                          var aux = (await VariableMarksHistoricalView
+                                  .getAllCurveNames())
+                              .where((e) => e.toUpperCase().contains(
+                                  textEditingValue.text.toUpperCase()))
+                              .toList();
                           return aux;
                         },
                         onSelected: (String selection) {
@@ -211,8 +212,8 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                             child: Material(
                               elevation: 4.0,
                               child: ConstrainedBox(
-                                constraints:
-                                const BoxConstraints(maxHeight: 300, maxWidth: 240),
+                                constraints: const BoxConstraints(
+                                    maxHeight: 300, maxWidth: 240),
                                 child: ListView.builder(
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
@@ -226,26 +227,30 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                                       },
                                       child: Builder(
                                           builder: (BuildContext context) {
-                                            final bool highlight =
-                                                AutocompleteHighlightedOption.of(
+                                        final bool highlight =
+                                            AutocompleteHighlightedOption.of(
                                                     context) ==
-                                                    index;
-                                            if (highlight) {
-                                              SchedulerBinding.instance
-                                                  .addPostFrameCallback(
-                                                      (Duration timeStamp) {
-                                                    Scrollable.ensureVisible(context,
-                                                        alignment: 0.5);
-                                                  });
-                                            }
-                                            return Container(
-                                              color: highlight
-                                                  ? Theme.of(context).focusColor
-                                                  : null,
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(option, style: const TextStyle(fontSize: 13),),
-                                            );
-                                          }),
+                                                index;
+                                        if (highlight) {
+                                          SchedulerBinding.instance
+                                              .addPostFrameCallback(
+                                                  (Duration timeStamp) {
+                                            Scrollable.ensureVisible(context,
+                                                alignment: 0.5);
+                                          });
+                                        }
+                                        return Container(
+                                          color: highlight
+                                              ? Theme.of(context).focusColor
+                                              : null,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            option,
+                                            style:
+                                                const TextStyle(fontSize: 13),
+                                          ),
+                                        );
+                                      }),
                                     );
                                   },
                                 ),
@@ -274,7 +279,8 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 8),
                     child: const Tooltip(
-                      message: 'A date like 7Jul23, or a relative expression like -1b, -3d',
+                      message:
+                          'A date like 7Jul23, or a relative expression like -1b, -3d',
                       child: Text(
                         'As of date',
                       ),
@@ -309,7 +315,6 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
               const SizedBox(
                 height: 8,
               ),
-
 
               ///
               /// Label
@@ -381,7 +386,9 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
                     if (state.getErrors().isEmpty) {
                       context.pop(state);
                       setState(() {
-                        ref.read(providerOfPolygraph.notifier).refreshActiveWindow = true;
+                        ref
+                            .read(providerOfPolygraph.notifier)
+                            .refreshActiveWindow = true;
                         ref.read(providerOfMarksAsOf.notifier).reset();
                       });
                     }
@@ -391,7 +398,6 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
             ),
           ),
         ),
-
       ],
     );
   }
@@ -399,9 +405,8 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
   void validateCurveName() {
     _errorCurveName = null;
     if (controllerCurveName.text != '') {
-      ref
-          .read(providerOfMarksAsOf.notifier)
-          .curveName = controllerCurveName.text;
+      ref.read(providerOfMarksAsOf.notifier).curveName =
+          controllerCurveName.text;
     } else {
       _errorLabel = 'Curve name can\'t be empty';
     }
@@ -422,17 +427,12 @@ class _MarksAsOfEditorState extends ConsumerState<MarksAsOfEditor> {
     }
   }
 
-
-
   void validateLabel() {
     _errorLabel = null;
     if (controllerLabel.text != '') {
-      ref
-          .read(providerOfMarksAsOf.notifier)
-          .label = controllerLabel.text;
+      ref.read(providerOfMarksAsOf.notifier).label = controllerLabel.text;
     } else {
       _errorLabel = 'Label can\'t be empty';
     }
   }
-
 }

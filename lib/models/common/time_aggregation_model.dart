@@ -1,5 +1,3 @@
-library models.time_aggregation_model;
-
 import 'package:flutter/material.dart';
 
 class TimeAggregationModel extends ChangeNotifier {

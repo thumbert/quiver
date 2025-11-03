@@ -1,10 +1,7 @@
-library models.load_zone_with_checkbox_model;
-
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 
 class LoadZoneWithCheckboxModel extends LoadZoneModel {
-  LoadZoneWithCheckboxModel({required String zone, required bool checkbox})
-      : super(zone: zone) {
+  LoadZoneWithCheckboxModel({required super.zone, required bool checkbox}) {
     _checkbox = checkbox;
   }
 

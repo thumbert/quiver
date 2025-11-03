@@ -1,12 +1,10 @@
-library screens.weather.month_range;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/weather/month_range_model.dart';
 
 /// Support one or more MonthRange dropdowns.
 class MonthRange extends StatefulWidget {
-  const MonthRange({this.index = 0, Key? key}) : super(key: key);
+  const MonthRange({this.index = 0, super.key});
 
   final int index;
 

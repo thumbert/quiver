@@ -1,5 +1,3 @@
-library screens.common.signal.day_filter;
-
 import 'package:date/date.dart';
 import 'package:elec/time.dart';
 import 'package:elec_server/utils.dart';
@@ -14,7 +12,7 @@ class DayFilterWidget extends StatefulWidget {
 
   final Signal<DayFilter> model;
 
-  /// Fields that the UI should skip.  Valid values are 
+  /// Fields that the UI should skip.  Valid values are
   /// `{'years', 'months', 'days', 'daysOfWeek', 'specialDays', 'holidays'}`
   final Set<String> skipFields;
 

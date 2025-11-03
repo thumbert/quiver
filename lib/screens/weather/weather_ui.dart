@@ -1,7 +1,3 @@
-library screens.weather.weather_ui;
-
-import 'package:elec/risk_system.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/weather_model.dart';
 import 'package:flutter_quiver/screens/weather/instrument_rows.dart';
@@ -9,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class WeatherUi extends StatefulWidget {
-  const WeatherUi({Key? key}) : super(key: key);
+  const WeatherUi({super.key});
 
   @override
   _WeatherUiState createState() => _WeatherUiState();
@@ -44,11 +40,11 @@ class _WeatherUiState extends State<WeatherUi> {
                   context: context,
                   builder: (BuildContext context) {
                     return const SimpleDialog(
+                      contentPadding: EdgeInsets.all(12),
                       children: [
                         Text(
                             'Price weather instruments and get quick historical stats on weather indices.'),
                       ],
-                      contentPadding: EdgeInsets.all(12),
                     );
                   });
             },

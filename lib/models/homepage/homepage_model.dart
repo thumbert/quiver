@@ -1,5 +1,3 @@
-library models.homepage.homepage_model.dart;
-
 import 'package:flutter/material.dart';
 
 class MenuItem {

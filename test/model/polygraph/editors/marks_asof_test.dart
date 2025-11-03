@@ -1,5 +1,3 @@
-library test.models.polygraph.editors.marks_asof_test;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';

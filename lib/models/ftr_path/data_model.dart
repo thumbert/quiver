@@ -1,5 +1,3 @@
-library models.ftr_path.data_model;
-
 import 'package:date/date.dart';
 import 'package:elec/ftr.dart';
 import 'package:elec_server/client/binding_constraints.dart';
@@ -70,10 +68,14 @@ class DataModel extends ChangeNotifier {
   /// Get the data and make the Plotly hourly traces.
   ///
   Future<List<Map<String, dynamic>>> makeHourlyTrace(FtrPath ftrPath) async {
-    var sp = await ftrPath.getDailySettlePrices(term: focusTerm);
+    // var sp = await ftrPath.getDailySettlePrices(term: focusTerm);
+    // mock the prices for now
+    var sp = TimeSeries.fill(
+        focusTerm!.days(), ftrPath.sinkPtid - ftrPath.sourcePtid);
+
     return [
       {
-        'x': sp.intervals.map((e) => e.start).toList(),
+        'x': sp.intervals.map((e) => e.start.toIso8601String()).toList(),
         'y': sp.values.toList(),
         'type': 'bar',
       }

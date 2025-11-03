@@ -1,5 +1,3 @@
-library models.historical_option_pricing;
-
 import 'dart:math' as math show max;
 
 import 'package:dama/dama.dart';
@@ -30,7 +28,7 @@ enum Location {
 }
 
 // main row
-final term = getDefaultTerm().toSignal();
+final term = signal(getDefaultTerm());
 final termError = signal<String?>(null);
 final location = signal<Location>(Location.massHub);
 final market = signal<Market>(Market.da);
@@ -40,7 +38,7 @@ final strikeError = signal<String?>(null);
 final callPut = signal<CallPut>(CallPut.call);
 final optionType = signal<String>('Daily');
 // second row
-final historicalTerm = getDefaultHistoricalTerm().toSignal();
+final historicalTerm = signal(getDefaultHistoricalTerm());
 final historicalTermError = signal<String?>(null);
 final rescalingMethod = signal<String>('None');
 

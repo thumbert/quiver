@@ -1,5 +1,3 @@
-library models.polygraph.display.plotly_title;
-
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class PlotlyTitle {

@@ -1,5 +1,3 @@
-library screens.historical_gas.tab1_historical_gas;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/historical_gas_model.dart' as tab1;
 import 'package:flutter_quiver/screens/common/signal/dropdown.dart';

@@ -1,5 +1,3 @@
-library test.models.mcc_surfer_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';

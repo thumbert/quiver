@@ -1,5 +1,3 @@
-library test.models.ftr_path_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';

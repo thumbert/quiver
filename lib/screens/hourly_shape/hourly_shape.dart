@@ -1,5 +1,3 @@
-library screens.hourly_shape;
-
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -65,7 +63,6 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
             ))
         .toList();
 
-    // for Hourly weights by day, register the callbacks...
     // for Hourly weights by day, register the callbacks...
     plotly[0].onHover((JSObject data) {
       var points = (data.getProperty('points'.toJS) as JSArray).toDart;

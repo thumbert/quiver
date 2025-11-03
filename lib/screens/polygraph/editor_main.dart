@@ -1,5 +1,3 @@
-library screens.grim_spreader.editor;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
 import 'package:flutter_quiver/models/common/experimental/select_variable_model.dart';
@@ -10,7 +8,7 @@ import 'package:flutter_quiver/screens/polygraph/editors/editor_power.dart';
 import 'package:provider/provider.dart';
 
 class EditorMain extends StatefulWidget {
-  const EditorMain({Key? key}) : super(key: key);
+  const EditorMain({super.key});
   @override
   _EditorMainState createState() => _EditorMainState();
 }

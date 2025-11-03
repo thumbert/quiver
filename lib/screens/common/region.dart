@@ -1,11 +1,9 @@
-library screens.common.region;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:provider/provider.dart';
 
 class Region extends StatefulWidget {
-  const Region({Key? key}) : super(key: key);
+  const Region({super.key});
 
   @override
   _RegionState createState() => _RegionState();

@@ -1,5 +1,3 @@
-library ast.unary;
-
 import 'package:timeseries/timeseries.dart';
 
 import 'expression.dart';
@@ -40,5 +38,3 @@ class UnaryNegation extends Expression {
   @override
   String toString() => 'UnaryNegation';
 }
-
-

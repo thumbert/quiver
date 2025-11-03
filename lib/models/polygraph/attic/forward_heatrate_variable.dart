@@ -1,5 +1,3 @@
-library models.polygraph.variables.forward_heatrate_variable;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/attic/forward_electricity_variable.dart';
@@ -30,9 +28,11 @@ class ForwardHeatRateVariable extends PolygraphVariable {
     if (givenLabel != null) return givenLabel!;
 
     var eName = electricityVariable.deliveryPoint;
-    if (ForwardElectricityVariable.shortNames.containsKey(electricityVariable.deliveryPoint)) {
-      eName = ForwardElectricityVariable.shortNames[electricityVariable.deliveryPoint]!;
-     }
+    if (ForwardElectricityVariable.shortNames
+        .containsKey(electricityVariable.deliveryPoint)) {
+      eName = ForwardElectricityVariable
+          .shortNames[electricityVariable.deliveryPoint]!;
+    }
 
     out = 'Forward Heat Rate $eName ${electricityVariable.bucket.toString()} '
         'vs. ${gasVariable.deliveryPoint}';
@@ -46,7 +46,7 @@ class ForwardHeatRateVariable extends PolygraphVariable {
   }
 
   @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+  PolygraphVariable fromMongo(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
   }

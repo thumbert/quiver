@@ -1,11 +1,9 @@
-library screens.common.entity;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/common/entity_model.dart';
 
 class Entity extends StatefulWidget {
-  const Entity({Key? key}) : super(key: key);
+  const Entity({super.key});
 
   @override
   _EntityState createState() => _EntityState();
@@ -45,7 +43,8 @@ class _EntityState extends State<Entity> {
                     model.entity = newValue!;
                   });
                 },
-                items: model.entities()
+                items: model
+                    .entities()
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
               ),
@@ -79,7 +78,8 @@ class _EntityState extends State<Entity> {
                     model.subaccount = newValue!;
                   });
                 },
-                items: model.subaccounts(model.entity)
+                items: model
+                    .subaccounts(model.entity)
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
               ),

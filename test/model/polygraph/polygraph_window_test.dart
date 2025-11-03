@@ -1,27 +1,11 @@
-library test.models.polygraph_window_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/models/polygraph/data_service/data_service_local.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
-import 'package:flutter_quiver/models/polygraph/parser/parser.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_model.dart';
-import 'package:flutter_quiver/models/polygraph/polygraph_tab.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_window.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/fill_transform.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
-import 'package:flutter_quiver/models/polygraph/transforms/time_filter.dart';
-import 'package:flutter_quiver/models/polygraph/variables/slope_intercept_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/time_variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
-import 'package:flutter_quiver/models/polygraph/variables/variable_selection.dart';
-import 'package:flutter_quiver/models/polygraph/variables/temperature_variable.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timeseries/timeseries.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 

@@ -1,12 +1,10 @@
-library screens.ftr_path.region_source_sink;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:provider/provider.dart';
 
 class RegionSourceSink extends StatefulWidget {
-  const RegionSourceSink({Key? key}) : super(key: key);
+  const RegionSourceSink({super.key});
 
   @override
   _RegionSourceSinkState createState() => _RegionSourceSinkState();
@@ -145,11 +143,13 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
                           if (textEditingValue == TextEditingValue.empty) {
                             return const Iterable<String>.empty();
                           }
-                          var aux = nameToPtid.keys.where((e) => e
-                              .toUpperCase()
-                              .contains(textEditingValue.text.toUpperCase())).toList();
+                          var aux = nameToPtid.keys
+                              .where((e) => e.toUpperCase().contains(
+                                  textEditingValue.text.toUpperCase()))
+                              .toList();
                           // sort by increasing ptid
-                          aux.sort((a,b) => nameToPtid[a]!.compareTo(nameToPtid[b]!));
+                          aux.sort((a, b) =>
+                              nameToPtid[a]!.compareTo(nameToPtid[b]!));
                           return aux;
                         },
                         onSelected: (String selection) {
@@ -455,12 +455,12 @@ class _RegionSourceSinkState extends State<RegionSourceSink> {
 
 class _AutocompleteField extends StatelessWidget {
   const _AutocompleteField({
-    Key? key,
+    super.key,
     required this.focusNode,
     required this.textEditingController,
     required this.onFieldSubmitted,
     required this.options,
-  }) : super(key: key);
+  });
 
   final FocusNode focusNode;
 

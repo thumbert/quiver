@@ -1,5 +1,3 @@
-library models.unmasked_energy_offers.unmasked_energy_offers_model;
-
 import 'package:collection/collection.dart';
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
@@ -14,7 +12,8 @@ final providerOfCtSuppliersBacklogModel =
     StateNotifierProvider<CtSupplierBacklogNotifier, CtSuppliersBacklogModel>(
         (ref) => CtSupplierBacklogNotifier(ref));
 
-final providerOfCtSuppliersBacklogData = FutureProvider.family<List<Map<String,dynamic>>, Term>((ref, term) async {
+final providerOfCtSuppliersBacklogData =
+    FutureProvider.family<List<Map<String, dynamic>>, Term>((ref, term) async {
   var model = ref.read(providerOfCtSuppliersBacklogModel);
   await CtSuppliersBacklogModel.getData(term, model.utility);
   return CtSuppliersBacklogModel.cache[model.utility] ??
@@ -208,8 +207,8 @@ class CtSuppliersBacklogModel {
       variableName: 'Customer count',
       aggregate: false,
     );
-  } 
-  
+  }
+
   CtSuppliersBacklogModel copyWith({
     Term? term,
     Utility? utility,

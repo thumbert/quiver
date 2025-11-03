@@ -1,11 +1,8 @@
-library models.polygraph.variables.variable_display_config;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
 class VariableDisplayConfig {
-
-  static VariableDisplayConfig fromJson(Map<String,dynamic> x) {
+  static VariableDisplayConfig fromJson(Map<String, dynamic> x) {
     var config = VariableDisplayConfig();
     if (x.containsKey('mode')) {
       config.mode = x['mode'];
@@ -57,7 +54,6 @@ class VariableDisplayConfig {
     return out;
   }
 
-
   /// taken from plotly
   static final defaultColors = <Color>[
     const Color(0xFF1f77b4), // muted blue
@@ -82,7 +78,4 @@ class VariableDisplayConfig {
     const Color(0xFFFF97FF),
     const Color(0xFFFECB52),
   ];
-
-
-
 }

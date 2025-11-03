@@ -1,5 +1,3 @@
-library screens.monthly_lmp.monthly_lmp_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/bucket_model.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
@@ -8,7 +6,7 @@ import 'package:flutter_quiver/screens/common/market.dart';
 import 'package:provider/provider.dart';
 
 class MonthlyLmpUi extends StatefulWidget {
-  const MonthlyLmpUi({Key? key}) : super(key: key);
+  const MonthlyLmpUi({super.key});
 
   @override
   _MonthlyLmpUiState createState() => _MonthlyLmpUiState();

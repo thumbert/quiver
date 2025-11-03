@@ -1,11 +1,9 @@
-library screens.common.multiple.buy_sell;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/multiple/buysell_model.dart';
 import 'package:provider/provider.dart';
 
 class BuySell extends StatefulWidget {
-  const BuySell({this.index = 0, Key? key}) : super(key: key);
+  const BuySell({this.index = 0, super.key});
 
   final int index;
 

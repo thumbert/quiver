@@ -1,5 +1,3 @@
-library screens.polygraph.editors.editor_power;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
 import 'package:flutter_quiver/models/common/experimental/select_variable_model.dart';
@@ -11,7 +9,7 @@ import 'package:flutter_quiver/screens/polygraph/attic/power_location.dart';
 import 'package:provider/provider.dart';
 
 class EditorPower extends StatefulWidget {
-  const EditorPower({Key? key}) : super(key: key);
+  const EditorPower({super.key});
 
   @override
   _EditorPowerState createState() => _EditorPowerState();

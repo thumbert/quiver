@@ -1,5 +1,3 @@
-library models.common.region_model;
-
 import 'package:elec/elec.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:http/http.dart' as http;

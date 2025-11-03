@@ -1,5 +1,3 @@
-library models.polygraph.transforms.time_aggregation;
-
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeseries/timeseries.dart';
@@ -17,7 +15,9 @@ class TimeAggregation extends Object with Transform {
   final String function;
   String error = '';
 
-  TimeAggregation.empty() : frequency = '', function = '';
+  TimeAggregation.empty()
+      : frequency = '',
+        function = '';
 
   static final allFrequencies = [
     '',
@@ -26,7 +26,7 @@ class TimeAggregation extends Object with Transform {
     'week',
     'month',
     'year',
-    'contiguous term',   // allows for different month groupings, etc.
+    'contiguous term', // allows for different month groupings, etc.
   ];
 
   bool isEmpty() => frequency == '' && function == '';
@@ -43,7 +43,7 @@ class TimeAggregation extends Object with Transform {
     print('in time_aggregation validate(), error=$error');
   }
 
-  Map<String,dynamic> toMongo() {
+  Map<String, dynamic> toMongo() {
     return {
       'time': {
         'frequency': frequency,
@@ -51,10 +51,9 @@ class TimeAggregation extends Object with Transform {
       },
     };
   }
-  
-  
+
   @override
-  Map<String,dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'aggregate': {
         'time': {
@@ -77,12 +76,14 @@ class TimeAggregation extends Object with Transform {
       throw StateError('Unsupported timeFrequency $frequency');
     }
   }
-  
-  TimeAggregation copyWith({String? frequency, String? function, String? error}) =>
-      TimeAggregation(frequency: frequency ?? this.frequency, 
-          function: function ?? this.function, error: error ?? this.error);
-}
 
+  TimeAggregation copyWith(
+          {String? frequency, String? function, String? error}) =>
+      TimeAggregation(
+          frequency: frequency ?? this.frequency,
+          function: function ?? this.function,
+          error: error ?? this.error);
+}
 
 class TimeAggregationNotifier extends StateNotifier<TimeAggregation> {
   TimeAggregationNotifier(this.ref) : super(TimeAggregation.empty());

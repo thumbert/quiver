@@ -1,5 +1,3 @@
-library lib.screens.polygraph.polygraph_tab_ui;
-
 import 'package:dama/dama.dart';
 import 'package:date/date.dart';
 import 'package:flutter/scheduler.dart';
@@ -23,7 +21,7 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:timezone/timezone.dart';
 
 class PolygraphTabUi extends ConsumerStatefulWidget {
-  const PolygraphTabUi({Key? key}) : super(key: key);
+  const PolygraphTabUi({super.key});
 
   @override
   _PolygraphTabState createState() => _PolygraphTabState();
@@ -108,6 +106,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       } else {
         print('tabAction ${tab.tabAction.keys.first} is not supported!');
       }
+
       /// TODO: reset tabAction to an empty Map
     }
 
@@ -117,7 +116,6 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
       RowNode() => _addRow(tab.rootNode as RowNode, 0, tab),
     };
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -812,8 +810,7 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                     ? Colors.orange[100]
                     : Colors.blueGrey[200],
                 borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8)),
+                    topLeft: Radius.circular(8), topRight: Radius.circular(8)),
               ),
               child: Visibility(
                 visible: tab.activeWindowIndex == i,
@@ -829,9 +826,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                             setState(() {
                               // var tab = poly.tabs[poly.activeTabIndex];
                               tab = tab.splitWindowHorizontally(i);
-                              ref
-                                  .read(providerOfPolygraph.notifier)
-                                  .activeTab = tab;
+                              ref.read(providerOfPolygraph.notifier).activeTab =
+                                  tab;
                             });
                           },
                           icon: Tooltip(
@@ -855,9 +851,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                               // for (var w in tab.windows) {
                               //   print('(${w.layout.width}, ${w.layout.height})');
                               // }
-                              ref
-                                  .read(providerOfPolygraph.notifier)
-                                  .activeTab = tab;
+                              ref.read(providerOfPolygraph.notifier).activeTab =
+                                  tab;
                             });
                           },
                           icon: Tooltip(
@@ -883,9 +878,8 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
                                 );
                               }
                               tab = tab.removeWindow(i);
-                              ref
-                                  .read(providerOfPolygraph.notifier)
-                                  .activeTab = tab;
+                              ref.read(providerOfPolygraph.notifier).activeTab =
+                                  tab;
                             });
                           },
                           icon: Icon(
@@ -941,18 +935,23 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
   }
 
   Widget _addRow(RowNode node, int iOffset, PolygraphTab tab) {
-    var sizes = [0, ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()];
+    var sizes = [
+      0,
+      ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()
+    ];
     // print('in _addRow...');
     // print('sizes: $sizes');
     var children = <Widget>[];
-    for (var i=0; i<node.children.length; i++) {
+    for (var i = 0; i < node.children.length; i++) {
       /// j is the single window index for the rootNode
-      var j = sizes[i+1] - 1;
+      var j = sizes[i + 1] - 1;
       // print('iOffset: $iOffset, i: $i, j: $j');
       children.add(switch (node.children[i]) {
         SingleNode() => _addSingle(iOffset + j, tab),
-        ColumnNode() => _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
-        RowNode() => _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
+        ColumnNode() =>
+          _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
+        RowNode() =>
+          _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
       });
     }
     return Row(children: children);
@@ -960,21 +959,25 @@ class _PolygraphTabState extends ConsumerState<PolygraphTabUi> {
 
   /// The [iOffset] is the count of singles before this node.
   Widget _addColumn(ColumnNode node, int iOffset, PolygraphTab tab) {
-    var sizes = [0, ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()];
+    var sizes = [
+      0,
+      ...node.children.map((e) => e.flatten().length).cumSum().cast<int>()
+    ];
     // print('in _addColumn...');
     // print('sizes: $sizes');
     var children = <Widget>[];
-    for (var i=0; i<node.children.length; i++) {
+    for (var i = 0; i < node.children.length; i++) {
       /// j is the single window index relative to this node
-      var j = sizes[i+1] - 1;
+      var j = sizes[i + 1] - 1;
       // print('iOffset: $iOffset, i: $i, j: $j');
       children.add(switch (node.children[i]) {
         SingleNode() => _addSingle(iOffset + j, tab),
-        ColumnNode() => _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
-        RowNode() => _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
+        ColumnNode() =>
+          _addColumn(node.children[i] as ColumnNode, iOffset + sizes[i], tab),
+        RowNode() =>
+          _addRow(node.children[i] as RowNode, iOffset + sizes[i], tab),
       });
     }
     return Column(children: children);
   }
-
 }

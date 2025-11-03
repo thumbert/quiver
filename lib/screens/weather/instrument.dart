@@ -1,11 +1,9 @@
-library screens.weather.month_range;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/instrument_model.dart';
 import 'package:provider/provider.dart';
 
 class Instrument extends StatefulWidget {
-  const Instrument({this.index = 0, Key? key}) : super(key: key);
+  const Instrument({this.index = 0, super.key});
 
   final int index;
 

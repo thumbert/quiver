@@ -1,5 +1,3 @@
-library models.polygraph.editors.horizontal_line;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
@@ -28,7 +26,6 @@ class HorizontalLine extends PolygraphVariable {
       label: 'h=0',
       timeFilter: TimeFilter.empty(),
       timeAggregation: TimeAggregation.empty());
-
 
   TimeSeries<num> timeSeries(Term term) {
     late TimeSeries<num> ts, aux;
@@ -60,7 +57,6 @@ class HorizontalLine extends PolygraphVariable {
     return ts;
   }
 
-
   void validate() {
     timeAggregation.validate();
     error = timeAggregation.error;
@@ -83,7 +79,6 @@ class HorizontalLine extends PolygraphVariable {
           label: label ?? this.label,
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
-
 
   @override
   Future<TimeSeries<num>> get(DataService service, Term term) {

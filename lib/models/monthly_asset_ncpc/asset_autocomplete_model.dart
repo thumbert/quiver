@@ -1,5 +1,3 @@
-library models.monthly_asset_ncpc.asset_autocomplete_model;
-
 import 'package:flutter/material.dart';
 
 class AssetAutocompleteModel extends ChangeNotifier {

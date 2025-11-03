@@ -1,5 +1,3 @@
-library test.models.polygraph_test;
-
 import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,13 +14,11 @@ import 'polygraph_window_test.dart' as window;
 import 'editors/marks_asof_test.dart' as marks_asof;
 import 'editors/marks_historical_view_test.dart' as marks_historical_view;
 
-
 Future<void> main() async {
   initializeTimeZones();
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
   PolygraphState.service = DataServiceLocal(rootUrl: rootUrl);
-
 
   await data_service.tests(rootUrl);
   await parser.tests(rootUrl);

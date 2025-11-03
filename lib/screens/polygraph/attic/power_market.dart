@@ -1,11 +1,9 @@
-library screens.polygraph.editors.power_market;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/market_model.dart';
 import 'package:provider/provider.dart';
 
 class PowerMarket extends StatefulWidget {
-  const PowerMarket({Key? key}) : super(key: key);
+  const PowerMarket({super.key});
 
   @override
   _PowerMarketState createState() => _PowerMarketState();

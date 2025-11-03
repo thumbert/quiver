@@ -1,12 +1,7 @@
-library test.models.pool_load_stats_test;
-
 import 'dart:io';
 
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
-import 'package:elec/ftr.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
 import 'package:flutter_quiver/models/pool_load_stats/pool_load_stats_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';
@@ -34,7 +29,6 @@ Future<void> tests(String rootUrl) async {
       expect(traces.first['y'].first, 407226.122); // Energy
       expect(traces.first['text'].first, '2018-01-01');
     });
-
   });
 }
 

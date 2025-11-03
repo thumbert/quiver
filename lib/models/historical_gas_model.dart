@@ -1,5 +1,3 @@
-library models.historical_gas_model;
-
 import 'dart:math';
 
 import 'package:dama/dama.dart';
@@ -12,7 +10,7 @@ import 'package:timezone/timezone.dart';
 
 typedef RowId = ({Signal<String> location, Signal<String> index});
 
-final termSignal = getDefaultTerm().toSignal();
+final termSignal = signal(getDefaultTerm());
 final termErrorSignal = signal<String?>(null);
 
 final SelectionModel region = SelectionModel(
@@ -28,22 +26,22 @@ final regions = region.selection;
 final rows = getDefaultRows().toSignal();
 
 final updateRows = effect(() {
-      if (regions.value != regions.previousValue) {
-        var newLocations = {
-          ...regions.value
-              .expand((region) => mappedLocations[region]!)
-        };
-        if (newLocations.isEmpty) {
-          newLocations =
-              getDefaultRows().map((e) => e.location.value).toSet();
-        }
-        var newRows = <RowId>[];
-        for (var location in newLocations) {
-          newRows.add((location: signal(location), index: signal('Gas Daily')));
-        }
-        rows.value = [...newRows];
-      }
-    });
+  /// FIXME:: BROKEN WHEN MIGRATED TO SIGNALS 6!!!
+  /// 
+  // if (regions.value != regions.previousValue) {
+  //   var newLocations = {
+  //     ...regions.value.expand((region) => mappedLocations[region]!)
+  //   };
+  //   if (newLocations.isEmpty) {
+  //     newLocations = getDefaultRows().map((e) => e.location.value).toSet();
+  //   }
+  //   var newRows = <RowId>[];
+  //   for (var location in newLocations) {
+  //     newRows.add((location: signal(location), index: signal('Gas Daily')));
+  //   }
+  //   rows.value = [...newRows];
+  // }
+});
 
 /// What to plot
 final traces = futureSignal(() async {

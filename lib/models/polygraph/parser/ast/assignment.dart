@@ -1,5 +1,3 @@
-library ast.assignment;
-
 import 'expression.dart';
 
 /// An assignment expression.

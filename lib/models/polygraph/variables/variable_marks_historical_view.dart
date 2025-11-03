@@ -1,5 +1,3 @@
-library models.polygraph.variables.variable_marks_historical_view;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/display/variable_display_config.dart';
@@ -80,7 +78,7 @@ class VariableMarksHistoricalView extends PolygraphVariable {
         var displayConfig = VariableDisplayConfig.fromJson(x['displayConfig']);
         v.displayConfig = displayConfig;
       }
-      return  v;
+      return v;
     } else {
       throw ArgumentError(
           'Input $x is not a correctly formatted VariableMarksHistoricalVariable');

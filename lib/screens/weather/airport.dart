@@ -1,11 +1,9 @@
-library weather.airport;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:provider/provider.dart';
 
 class Airport extends StatefulWidget {
-  const Airport({this.index = 0, Key? key}) : super(key: key);
+  const Airport({this.index = 0, super.key});
 
   final int index;
 

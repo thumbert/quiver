@@ -1,5 +1,3 @@
-library screens.signal.autocomplete;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -163,7 +161,9 @@ class _AutocompleteField extends StatelessWidget {
       style: const TextStyle(fontSize: 12.0),
       decoration: const InputDecoration(
         isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(6, 10, 6, 10),
+        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+        // border: InputBorder.none,
+        enabledBorder: InputBorder.none,
       ),
       controller: textEditingController,
       focusNode: focusNode,

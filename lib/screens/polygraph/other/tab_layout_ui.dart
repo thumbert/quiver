@@ -1,12 +1,10 @@
-library screens.polygraph.other.tab_layout_ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TabLayoutUi extends ConsumerStatefulWidget {
-  const TabLayoutUi({Key? key}) : super(key: key);
+  const TabLayoutUi({super.key});
 
   @override
   ConsumerState<TabLayoutUi> createState() => _TabLayoutUiState();
@@ -57,11 +55,15 @@ class _TabLayoutUiState extends ConsumerState<TabLayoutUi> {
   }
 
   void validateWidth() {
-    _errorWidth = num.tryParse(controllerWidth.text) == null ? 'Please enter a number' : '';
+    _errorWidth = num.tryParse(controllerWidth.text) == null
+        ? 'Please enter a number'
+        : '';
   }
 
   void validateHeight() {
-    _errorHeight = num.tryParse(controllerHeight.text) == null ? 'Please enter a number' : '';
+    _errorHeight = num.tryParse(controllerHeight.text) == null
+        ? 'Please enter a number'
+        : '';
   }
 
   @override
@@ -174,9 +176,8 @@ class _TabLayoutUiState extends ConsumerState<TabLayoutUi> {
                   var newWindows = [...tab.windows];
                   for (var i = 0; i < newWindows.length; i++) {
                     newWindows[i] = newWindows[i].copyWith(
-                        layout: newWindows[i]
-                            .layout
-                            .copyWith(width: fs[i].width(), height: fs[i].height()));
+                        layout: newWindows[i].layout.copyWith(
+                            width: fs[i].width(), height: fs[i].height()));
                   }
                   tab = tab.copyWith(rootNode: newRoot, windows: newWindows);
                   ref.read(providerOfPolygraph.notifier).activeTab = tab;

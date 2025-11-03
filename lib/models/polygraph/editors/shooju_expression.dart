@@ -1,5 +1,3 @@
-library models.polygraph.editors.shooju_expression;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/time_aggregation.dart';
@@ -15,7 +13,7 @@ enum PeriodConvention {
   const PeriodConvention(this.value);
 
   final String value;
-  
+
   PeriodConvention parse(String value) {
     if (value == 'beginning') {
       return PeriodConvention.beginning;
@@ -88,19 +86,19 @@ class ShoojuExpression extends PolygraphVariable {
   }
 
   ShoojuExpression copyWith(
-      {String? expression,
-        String? label,
-        // PeriodConvention? periodConvention,
-        TimeFilter? timeFilter,
-        TimeAggregation? timeAggregation}) =>
+          {String? expression,
+          String? label,
+          // PeriodConvention? periodConvention,
+          TimeFilter? timeFilter,
+          TimeAggregation? timeAggregation}) =>
       ShoojuExpression(
-        expression: expression ?? this.expression,
+          expression: expression ?? this.expression,
           label: label ?? this.label,
           timeFilter: timeFilter ?? this.timeFilter,
           timeAggregation: timeAggregation ?? this.timeAggregation);
 
   @override
-  PolygraphVariable fromMongo(Map<String,dynamic> x) {
+  PolygraphVariable fromMongo(Map<String, dynamic> x) {
     // TODO: implement fromMongo
     throw UnimplementedError();
   }

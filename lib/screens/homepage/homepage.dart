@@ -1,11 +1,9 @@
-library screens.homepage.homepage;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/homepage/app_group.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   static const String route = '/';
 

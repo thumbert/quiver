@@ -1,5 +1,3 @@
-library models.polygraph.display.plotly_margins;
-
 class PlotlyMargin {
   PlotlyMargin();
 
@@ -10,7 +8,7 @@ class PlotlyMargin {
   num _bottom = defaultBottomPx;
   num _left = defaultLeftPx;
   num _right = defaultRightPx;
-  num _top = defaultTopPx;  // it's 100 in Plotly
+  num _top = defaultTopPx; // it's 100 in Plotly
   num _pad = 0;
 
   static const num defaultBottomPx = 80;
@@ -18,7 +16,7 @@ class PlotlyMargin {
   static const num defaultRightPx = 80;
   static const num defaultTopPx = 80;
 
-  static PlotlyMargin fromJson(Map<String,dynamic> x) {
+  static PlotlyMargin fromJson(Map<String, dynamic> x) {
     var margin = PlotlyMargin();
     if (x.containsKey('autoexpand')) {
       margin.autoexpand = x['autoexpand'];
@@ -41,8 +39,8 @@ class PlotlyMargin {
     return margin;
   }
 
-  Map<String,dynamic> toJson() {
-    return <String,dynamic> {
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
       if (!autoexpand) 'autoexpand': true,
       if (bottom != 80) 'b': bottom,
       if (left != 80) 'l': left,
@@ -59,6 +57,7 @@ class PlotlyMargin {
     }
     _bottom = value;
   }
+
   num get bottom => _bottom;
 
   /// Set the left margin (in px.)
@@ -68,6 +67,7 @@ class PlotlyMargin {
     }
     _left = value;
   }
+
   num get left => _left;
 
   /// Set the right margin (in px.)
@@ -77,6 +77,7 @@ class PlotlyMargin {
     }
     _right = value;
   }
+
   num get right => _right;
 
   /// Set the top margin (in px.)
@@ -86,6 +87,7 @@ class PlotlyMargin {
     }
     _top = value;
   }
+
   num get top => _top;
 
   /// Set the amount of padding (in px.) between the the plotting area and the
@@ -96,5 +98,6 @@ class PlotlyMargin {
     }
     _pad = value;
   }
+
   num get pad => _pad;
 }

@@ -1,11 +1,9 @@
-library screens.monthly_asset_ncpc.asset_autocomplete;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/monthly_asset_ncpc/asset_autocomplete_model.dart';
 import 'package:provider/provider.dart';
 
 class AssetAutocomplete extends StatefulWidget {
-  const AssetAutocomplete({Key? key}) : super(key: key);
+  const AssetAutocomplete({super.key});
 
   @override
   _AssetAutocompleteState createState() => _AssetAutocompleteState();

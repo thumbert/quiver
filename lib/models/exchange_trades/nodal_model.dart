@@ -1,5 +1,3 @@
-library models.exchange_trades.nodal_model;
-
 import 'package:date/date.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:timezone/timezone.dart';
@@ -149,9 +147,9 @@ List<Map<String, dynamic>> filterRows({
 }
 
 /// Start, end date filter
-final startDate = Date.utc(2024, 4, 1).asSignal();
+final startDate = signal(Date.utc(2024, 4, 1));
 final startError = signal<String?>(null);
-final endDate = Date.today(location: UTC).asSignal();
+final endDate = signal(Date.today(location: UTC));
 final endError = signal<String?>(null);
 
 /// Calculate the date range of trades cached.  Need this to be able to decide
@@ -212,7 +210,7 @@ final buckets = ListSignal(<String>[], debugLabel: 'buckets');
 
 // Trade kind
 final allTradeKinds = ['Outright', 'Spread', 'Option'];
-final tradeKind = 'Outright'.asSignal();
+final tradeKind = signal('Outright');
 
 // Paginate the trades displayed on the screen
 final pageNumber = signal(0);

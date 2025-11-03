@@ -1,5 +1,3 @@
-library screens.unmasked_energy_offers.unmasked_energy_offers;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter/material.dart' hide Interval;

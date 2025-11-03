@@ -1,5 +1,3 @@
-library models.polygraph.display.plotly_layout;
-
 import 'package:flutter_quiver/models/polygraph/display/plotly_margin.dart';
 
 import 'plotly_title.dart';
@@ -264,7 +262,7 @@ class AxisType {
   const AxisType._internal(this._value);
   final String _value;
 
-  static const theDefault = AxisType._internal('-');  // automatic
+  static const theDefault = AxisType._internal('-'); // automatic
   static const linear = AxisType._internal('linear');
   static const log = AxisType._internal('log');
   static const date = AxisType._internal('date');
@@ -717,8 +715,3 @@ enum PlotlyOrientation {
   @override
   String toString() => _value;
 }
-
-
-
-
-

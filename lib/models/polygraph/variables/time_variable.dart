@@ -1,5 +1,3 @@
-library models.polygraph.variables.time_variable;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:timeseries/timeseries.dart';

@@ -7,9 +7,9 @@ import 'package:timezone/timezone.dart';
 
 /// NOTE: Implementation done with signals.
 
-final startDate = Date.today(location: UTC).subtract(10).toSignal();
+final startDate = signal(Date.today(location: UTC).subtract(10));
 final startError = signal<String?>(null);
-final endDate = Date.today(location: UTC).toSignal();
+final endDate = signal(Date.today(location: UTC));
 final endError = signal<String?>(null);
 
 class DateRangePickerExample extends StatefulWidget {

@@ -1,5 +1,3 @@
-library screens.polygraph.editors.load_project_editor;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';
@@ -17,7 +15,7 @@ final providerOfProjectNames =
 });
 
 class LoadProjectEditor extends ConsumerStatefulWidget {
-  const LoadProjectEditor({Key? key}) : super(key: key);
+  const LoadProjectEditor({super.key});
 
   @override
   _LoadProjectEditorState createState() => _LoadProjectEditorState();
@@ -203,7 +201,7 @@ class _LoadProjectEditorState extends ConsumerState<LoadProjectEditor> {
                         },
                         error: (err, stack) => Text('$err'),
                         loading: () => const Center(
-                            child: SizedBox(
+                                child: SizedBox(
                               height: 32,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.0,
@@ -372,14 +370,19 @@ class _LoadProjectEditorState extends ConsumerState<LoadProjectEditor> {
                     var userId = controllerUserName.text;
                     var projectName = controllerProjectName.text;
                     try {
-                      var poly = await PolygraphState.getProject(userId, projectName);
+                      var poly =
+                          await PolygraphState.getProject(userId, projectName);
                       ref.read(providerOfPolygraph.notifier).tabs = poly.tabs;
                       ref.read(providerOfPolygraph.notifier).activeTabIndex = 0;
                       context.pop('Success');
                     } catch (e) {
-                      showDialog(context: context, builder: (context) {
-                        return SimpleDialog(title: Text(e.toString()),);
-                      });
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: Text(e.toString()),
+                            );
+                          });
                     }
                   },
                 ),
@@ -405,8 +408,7 @@ class _LoadProjectEditorState extends ConsumerState<LoadProjectEditor> {
         ref.read(providerOfProjectNames(controllerUserName.text)).value;
     if (projectNames != null &&
         !projectNames.contains(controllerProjectName.text)) {
-      _errorProjectName =
-          '  ${controllerProjectName.text} does not exist';
+      _errorProjectName = '  ${controllerProjectName.text} does not exist';
     }
   }
 }

@@ -1,5 +1,3 @@
-library screens.weather.weather;
-
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
 import 'package:flutter_quiver/models/common/multiple/buysell_model.dart';
@@ -15,7 +13,7 @@ import 'package:flutter_quiver/screens/weather/weather_ui.dart';
 import 'package:provider/provider.dart';
 
 class Weather extends StatefulWidget {
-  const Weather({Key? key}) : super(key: key);
+  const Weather({super.key});
 
   static const route = '/weather';
 

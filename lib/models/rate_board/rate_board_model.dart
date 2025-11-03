@@ -1,26 +1,12 @@
-library models.rate_board_model;
-
-import 'dart:convert';
-
-import 'package:collection/collection.dart';
-import 'package:dama/dama.dart';
-import 'package:elec/src/time/calendar/calendars/nerc_calendar.dart';
-import 'package:elec/risk_system.dart';
 import 'package:elec_server/client/utilities/retail_offers/retail_supply_offer.dart';
 import 'package:elec_server/client/utilities/retail_suppliers_offers.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:date/date.dart';
-import 'package:elec/elec.dart';
-import 'package:elec_server/client/weather/noaa_daily_summary.dart';
-import 'package:elec_server/client/isoexpress/zonal_demand.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:more/comparator.dart';
-import 'package:table/table.dart';
-import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
-import 'package:tuple/tuple.dart';
 
 final providerOfRateBoard =
     StateNotifierProvider<RateBoardNotifier, RateBoardState>(
@@ -200,31 +186,32 @@ class RateBoardState {
     // print(data.length);
 
     /// sort decreasingly by rate and 'sortedColumn'
-    var byRate = naturalComparable<num>.onResultOf((RetailSupplyOffer e) => e.rate);
+    var byRate =
+        naturalComparable<num>.onResultOf((RetailSupplyOffer e) => e.rate);
     var comparator = byRate;
 
     // var sign = sortAscending ? 1 : -1;
 
     if (sortColumn == 'Months') {
-      var byMonths = naturalComparable<num>
-          .onResultOf((RetailSupplyOffer e) => e.countOfBillingCycles);
+      var byMonths = naturalComparable<num>.onResultOf(
+          (RetailSupplyOffer e) => e.countOfBillingCycles);
       // var byMonths3 = naturalComparable<num>.onResultOf((RetailSupplyOffer e) => e.countOfBillingCycles);
 
       if (sortAscending) byMonths = byMonths.reversed;
       comparator = byMonths.thenCompare(byRate);
     } else if (sortColumn == 'Posted Date') {
-      var byDate = naturalComparable<num>
-          .onResultOf((RetailSupplyOffer e) => e.offerPostedOnDate.value);
+      var byDate = naturalComparable<num>.onResultOf(
+          (RetailSupplyOffer e) => e.offerPostedOnDate.value);
       if (sortAscending) byDate = byDate.reversed;
       comparator = byDate.thenCompare(byRate);
     } else if (sortColumn == 'Supplier') {
-      var bySupplier = naturalComparable<String>
-          .onResultOf((RetailSupplyOffer e) => e.supplierName);
+      var bySupplier = naturalComparable<String>.onResultOf(
+          (RetailSupplyOffer e) => e.supplierName);
       if (sortAscending) bySupplier = bySupplier.reversed;
       comparator = bySupplier.thenCompare(byRate);
     } else if (sortColumn == 'Recs') {
-      var byRecs = naturalComparable<num>
-          .onResultOf((RetailSupplyOffer e) => e.minimumRecs);
+      var byRecs = naturalComparable<num>.onResultOf(
+          (RetailSupplyOffer e) => e.minimumRecs);
       if (sortAscending) byRecs = byRecs.reversed;
       comparator = byRecs.thenCompare(byRate);
     }

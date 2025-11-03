@@ -1,5 +1,3 @@
-library screens.term;
-
 import 'package:flutter/material.dart';
 import 'package:date/date.dart' as date;
 import 'package:flutter_quiver/models/common/term_model.dart';
@@ -7,7 +5,7 @@ import 'package:timezone/timezone.dart';
 import 'package:provider/provider.dart';
 
 class TermUi extends StatefulWidget {
-  const TermUi({Key? key}) : super(key: key);
+  const TermUi({super.key});
 
   @override
   State<StatefulWidget> createState() => _TermUiState();

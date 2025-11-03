@@ -1,5 +1,3 @@
-library screens.polygraph.editors.power_deliverypoint;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/models/common/experimental/power_deliverypoint_model.dart';
@@ -7,7 +5,7 @@ import 'package:flutter_quiver/models/common/region_model.dart';
 import 'package:provider/provider.dart';
 
 class PowerDeliveryPoint extends StatefulWidget {
-  const PowerDeliveryPoint({Key? key}) : super(key: key);
+  const PowerDeliveryPoint({super.key});
 
   @override
   _PowerDeliveryPointState createState() => _PowerDeliveryPointState();
@@ -59,7 +57,7 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
       builder: (context, snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
-          var nameToPtid = snapshot.data! as Map<String, int>;
+          var nameToPtid = snapshot.data!;
           editingController.text = model.deliveryPointName;
           children = [
             Container(
@@ -172,12 +170,12 @@ class _PowerDeliveryPointState extends State<PowerDeliveryPoint> {
 
 class _AutocompleteField extends StatelessWidget {
   const _AutocompleteField({
-    Key? key,
+    super.key,
     required this.focusNode,
     required this.textEditingController,
     required this.onFieldSubmitted,
     required this.options,
-  }) : super(key: key);
+  });
 
   final FocusNode focusNode;
 

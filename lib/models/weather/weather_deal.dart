@@ -1,9 +1,6 @@
-library models.weather.weather_deal;
-
 import 'package:date/date.dart';
 import 'package:elec/risk_system.dart';
 import 'package:elec/calculators/weather.dart';
-import 'package:elec/src/weather/lib_weather_utils.dart';
 import 'package:flutter_quiver/models/weather/month_range_model.dart';
 import 'package:timeseries/timeseries.dart';
 

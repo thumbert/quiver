@@ -1,9 +1,6 @@
-library models.polygraph.display.plotly_markers;
-
 import 'package:flutter_quiver/models/polygraph/display/plotly_enums.dart';
 
 class PlotlyMarker {
-
   /// Default: 0
   /// Sets the marker angle in respect to `angleref`.
   num? angle;
@@ -57,8 +54,7 @@ class PlotlyMarker {
   /// the same color axis.
   String? colorAxis;
 
-
-  static PlotlyMarker fromJson(Map<String,dynamic> x) {
+  static PlotlyMarker fromJson(Map<String, dynamic> x) {
     var out = PlotlyMarker();
     if (x.containsKey('angle')) out.angle = x['angle'];
     if (x.containsKey('angleref')) {
@@ -68,19 +64,14 @@ class PlotlyMarker {
       out.autoColorScale = x['autocolorscale'];
     }
 
-
-
-
     return out;
   }
 
-
-  Map<String,dynamic> toJson() {
-    return <String,dynamic>{
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
       if (angle != null) 'angle': angle,
       if (angleRef != null) 'angleref': angleRef.toString(),
       if (!autoColorScale) 'autocolorscale': autoColorScale,
     };
   }
-
 }

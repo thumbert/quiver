@@ -1,11 +1,9 @@
-library screens.common.load_aggregation;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_quiver/models/common/load_aggregation_model.dart';
 
 class LoadAggregation extends StatefulWidget {
-  const LoadAggregation({Key? key}) : super(key: key);
+  const LoadAggregation({super.key});
 
   @override
   _LoadAggregationState createState() => _LoadAggregationState();

@@ -1,5 +1,3 @@
-library screens.demand_bids.demand_bids;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
@@ -9,12 +7,11 @@ import 'package:flutter_quiver/models/common/load_aggregation_model.dart';
 import 'package:flutter_quiver/models/common/load_zone_model.dart';
 import 'package:flutter_quiver/models/common/term_model.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids_ui.dart';
-import 'package:flutter_quiver/screens/historical_plc/historical_plc_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 class DemandBids extends StatefulWidget {
-  const DemandBids({Key? key}) : super(key: key);
+  const DemandBids({super.key});
 
   static const route = '/demand_bids';
 

@@ -1,5 +1,3 @@
-library screens.polygraph.editors.marks_historical_view_editor;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/scheduler.dart';
@@ -10,18 +8,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timezone/timezone.dart';
 
-final providerOfMarksHistoricalView =
-StateNotifierProvider<VariableMarksHistoricalViewNotifier, VariableMarksHistoricalView>(
-        (ref) => VariableMarksHistoricalViewNotifier(ref));
+final providerOfMarksHistoricalView = StateNotifierProvider<
+        VariableMarksHistoricalViewNotifier, VariableMarksHistoricalView>(
+    (ref) => VariableMarksHistoricalViewNotifier(ref));
 
 class MarksHistoricalViewEditor extends ConsumerStatefulWidget {
-  const MarksHistoricalViewEditor({Key? key}) : super(key: key);
+  const MarksHistoricalViewEditor({super.key});
 
   @override
-  ConsumerState<MarksHistoricalViewEditor> createState() => _MarksHistoricalViewState();
+  ConsumerState<MarksHistoricalViewEditor> createState() =>
+      _MarksHistoricalViewState();
 }
 
-class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor> {
+class _MarksHistoricalViewState
+    extends ConsumerState<MarksHistoricalViewEditor> {
   final controllerCurveName = TextEditingController();
   final controllerForwardStrip = TextEditingController();
   final controllerLabel = TextEditingController();
@@ -168,9 +168,9 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                         focusNode: focusCurveName,
                         textEditingController: controllerCurveName,
                         fieldViewBuilder: (BuildContext context,
-                            TextEditingController textEditingController,
-                            FocusNode focusNode,
-                            VoidCallback onFieldSubmitted) =>
+                                TextEditingController textEditingController,
+                                FocusNode focusNode,
+                                VoidCallback onFieldSubmitted) =>
                             TextField(
                               focusNode: focusNode,
                               controller: textEditingController,
@@ -179,21 +179,25 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                               decoration: InputDecoration(
                                 isDense: true,
                                 contentPadding: const EdgeInsets.all(10),
-                                enabledBorder: _errorCurveName != null  ?
-                                const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red))
+                                enabledBorder: _errorCurveName != null
+                                    ? const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red))
                                     : InputBorder.none,
                                 fillColor: MyApp.background,
                                 filled: true,
                               ),
                             ),
-                        optionsBuilder: (TextEditingValue textEditingValue) async {
+                        optionsBuilder:
+                            (TextEditingValue textEditingValue) async {
                           if (textEditingValue == TextEditingValue.empty) {
                             return const Iterable<String>.empty();
                           }
-                          var aux = (await VariableMarksHistoricalView.getAllCurveNames()).where((e) => e
-                              .toUpperCase()
-                              .contains(textEditingValue.text.toUpperCase())).toList();
+                          var aux = (await VariableMarksHistoricalView
+                                  .getAllCurveNames())
+                              .where((e) => e.toUpperCase().contains(
+                                  textEditingValue.text.toUpperCase()))
+                              .toList();
                           return aux;
                         },
                         onSelected: (String selection) {
@@ -210,8 +214,8 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                             child: Material(
                               elevation: 4.0,
                               child: ConstrainedBox(
-                                constraints:
-                                const BoxConstraints(maxHeight: 300, maxWidth: 240),
+                                constraints: const BoxConstraints(
+                                    maxHeight: 300, maxWidth: 240),
                                 child: ListView.builder(
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
@@ -225,26 +229,30 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                                       },
                                       child: Builder(
                                           builder: (BuildContext context) {
-                                            final bool highlight =
-                                                AutocompleteHighlightedOption.of(
+                                        final bool highlight =
+                                            AutocompleteHighlightedOption.of(
                                                     context) ==
-                                                    index;
-                                            if (highlight) {
-                                              SchedulerBinding.instance
-                                                  .addPostFrameCallback(
-                                                      (Duration timeStamp) {
-                                                    Scrollable.ensureVisible(context,
-                                                        alignment: 0.5);
-                                                  });
-                                            }
-                                            return Container(
-                                              color: highlight
-                                                  ? Theme.of(context).focusColor
-                                                  : null,
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(option, style: const TextStyle(fontSize: 13),),
-                                            );
-                                          }),
+                                                index;
+                                        if (highlight) {
+                                          SchedulerBinding.instance
+                                              .addPostFrameCallback(
+                                                  (Duration timeStamp) {
+                                            Scrollable.ensureVisible(context,
+                                                alignment: 0.5);
+                                          });
+                                        }
+                                        return Container(
+                                          color: highlight
+                                              ? Theme.of(context).focusColor
+                                              : null,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            option,
+                                            style:
+                                                const TextStyle(fontSize: 13),
+                                          ),
+                                        );
+                                      }),
                                     );
                                   },
                                 ),
@@ -273,7 +281,8 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 8),
                     child: const Tooltip(
-                      message: 'The forward term of interest, Nov24, Jan25-Feb25, Q2,24, Cal 25, etc.',
+                      message:
+                          'The forward term of interest, Nov24, Jan25-Feb25, Q2,24, Cal 25, etc.',
                       child: Text(
                         'Forward strip',
                       ),
@@ -308,7 +317,6 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
               const SizedBox(
                 height: 8,
               ),
-
 
               ///
               /// Label
@@ -380,8 +388,12 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
                     if (state.getErrors().isEmpty) {
                       context.pop(state);
                       setState(() {
-                        ref.read(providerOfPolygraph.notifier).refreshActiveWindow = true;
-                        ref.read(providerOfMarksHistoricalView.notifier).reset();
+                        ref
+                            .read(providerOfPolygraph.notifier)
+                            .refreshActiveWindow = true;
+                        ref
+                            .read(providerOfMarksHistoricalView.notifier)
+                            .reset();
                       });
                     }
                   },
@@ -390,7 +402,6 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
             ),
           ),
         ),
-
       ],
     );
   }
@@ -398,9 +409,8 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
   void validateCurveName(VariableMarksHistoricalView state) {
     _errorCurveName = null;
     if (controllerCurveName.text != '') {
-      ref
-          .read(providerOfMarksHistoricalView.notifier)
-          .curveName = controllerCurveName.text;
+      ref.read(providerOfMarksHistoricalView.notifier).curveName =
+          controllerCurveName.text;
     } else {
       _errorLabel = 'Curve name can\'t be empty';
     }
@@ -417,7 +427,8 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
       ref.read(providerOfMarksHistoricalView.notifier).forwardStrip = term;
     } catch (e) {
       if (e is ArgumentError) {
-        _errorForwardStrip = 'Don\'t know how to parse ${controllerForwardStrip.text}'
+        _errorForwardStrip =
+            'Don\'t know how to parse ${controllerForwardStrip.text}'
             '\nValid examples are: K27, Nov26-Mar27, Cal28, Q2,28, etc.';
       } else {
         _errorForwardStrip = e.toString();
@@ -425,18 +436,13 @@ class _MarksHistoricalViewState extends ConsumerState<MarksHistoricalViewEditor>
     }
   }
 
-
-
   void validateLabel(VariableMarksHistoricalView state) {
     _errorLabel = null;
     if (controllerLabel.text != '') {
-      ref
-          .read(providerOfMarksHistoricalView.notifier)
-          .label = controllerLabel.text;
+      ref.read(providerOfMarksHistoricalView.notifier).label =
+          controllerLabel.text;
     } else {
       _errorLabel = 'Label can\'t be empty';
     }
   }
 }
-
-

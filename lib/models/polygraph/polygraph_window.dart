@@ -1,5 +1,3 @@
-library models.polygraph.polygraph_window;
-
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -35,7 +33,6 @@ class PolygraphWindow {
   final List<PolygraphVariable> yVariables;
   final PlotlyLayout layout;
 
-
   /// Should we make a trip to the database when updating the cache?  This
   /// needs to happen when
   /// 1) We are at initialization (cache is empty)
@@ -54,7 +51,7 @@ class PolygraphWindow {
           'term': String _term,
           'tzLocation': String _tzLocation,
           'xVariable': Map<String, dynamic> _xVariable,
-          'yVariables': List _yVariables,  // can be an empty list
+          'yVariables': List _yVariables, // can be an empty list
           'layout': Map _layout,
         }) {
       var location = _tzLocation == 'UTC' ? UTC : getLocation(_tzLocation);
@@ -64,7 +61,7 @@ class PolygraphWindow {
         for (Map<String, dynamic> e in _yVariables)
           PolygraphVariable.fromJson(e)
       ];
-      var layout = PlotlyLayout.fromJson(_layout.cast<String,dynamic>());
+      var layout = PlotlyLayout.fromJson(_layout.cast<String, dynamic>());
       return PolygraphWindow(
           term: term,
           xVariable: xVariable,
@@ -222,7 +219,6 @@ class PolygraphWindow {
     ];
   }
 
-
   Map<String, dynamic> toJson() {
     return {
       'term': term.toString(),
@@ -286,8 +282,7 @@ class PolygraphWindow {
         TransformedVariable(
             expression: 'toMonthly(hub_da_lmp, mean)', label: 'monthly_mean'),
       ],
-      layout: PlotlyLayout()
-        ..legend = PlotlyLegend.getDefault(),
+      layout: PlotlyLayout()..legend = PlotlyLegend.getDefault(),
     );
     return window;
   }
@@ -300,8 +295,7 @@ class PolygraphWindow {
         TransformedVariable(
             expression: "hourly_schedule(50, bucket='Peak')", label: 'shape'),
       ],
-      layout: PlotlyLayout()
-        ..legend = PlotlyLegend.getDefault(),
+      layout: PlotlyLayout()..legend = PlotlyLegend.getDefault(),
     );
     return window;
   }

@@ -1,5 +1,3 @@
-library models.polygraph.display.plotly_colorbar;
-
 import 'package:flutter_quiver/models/polygraph/display/plotly_enums.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
 
@@ -85,9 +83,6 @@ class PlotlyColorbar {
   /// If "true", even 4-digit integers are separated
   bool? separateThousands;
 
-
-
-
   static PlotlyColorbar fromJson(Map<String, dynamic> x) {
     var out = PlotlyColorbar();
     if (x.containsKey('bgcolor')) out.bgColor = x['bgcolor'];
@@ -116,7 +111,6 @@ class PlotlyColorbar {
       if (len != null) 'len': len,
       if (lenMode != null) 'lenmode': lenMode.toString(),
       if (minExponent != null) 'minexponent': minExponent,
-
     };
   }
 }

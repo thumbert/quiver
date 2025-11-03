@@ -1,5 +1,3 @@
-library screens.polygraph.editors.editor_time_filter;
-
 import 'package:elec/time.dart';
 import 'package:elec_server/utils.dart';
 import 'package:flutter/material.dart' hide Interval;
@@ -14,7 +12,7 @@ final providerOfTimeFilter =
         (ref) => TimeFilterNotifier(ref));
 
 class TimeFilterEditor extends ConsumerStatefulWidget {
-  const TimeFilterEditor({Key? key}) : super(key: key);
+  const TimeFilterEditor({super.key});
 
   @override
   ConsumerState<TimeFilterEditor> createState() => _TimeFilterEditorState();
@@ -35,8 +33,12 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
   final focusDaysOfWeek = FocusNode();
   final focusBucket = FocusNode();
 
-  String? _errorYears, _errorMonths, _errorDays, _errorHours,
-      _errorDaysOfWeeek, _errorBucket;
+  String? _errorYears,
+      _errorMonths,
+      _errorDays,
+      _errorHours,
+      _errorDaysOfWeeek,
+      _errorBucket;
 
   @override
   void initState() {
@@ -264,7 +266,8 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 8),
               child: const Tooltip(
-                message: 'A number from 1 (Mon) to 7 (Sun), or a range e.g. 3,6-7.',
+                message:
+                    'A number from 1 (Mon) to 7 (Sun), or a range e.g. 3,6-7.',
                 child: Text(
                   'Days of week',
                 ),
@@ -362,9 +365,9 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
                   focusNode: focusBucket,
                   textEditingController: controllerBucket,
                   fieldViewBuilder: (BuildContext context,
-                      TextEditingController textEditingController,
-                      FocusNode focusNode,
-                      VoidCallback onFieldSubmitted) =>
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted) =>
                       AutocompleteField(
                         focusNode: focusNode,
                         textEditingController: textEditingController,
@@ -375,9 +378,11 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
                     if (textEditingValue == TextEditingValue.empty) {
                       return const Iterable<String>.empty();
                     }
-                    var aux = Bucket.buckets.keys.where((e) => e
-                        .toUpperCase()
-                        .contains(textEditingValue.text.toUpperCase())).toList();
+                    var aux = Bucket.buckets.keys
+                        .where((e) => e
+                            .toUpperCase()
+                            .contains(textEditingValue.text.toUpperCase()))
+                        .toList();
                     return aux;
                   },
                   onSelected: (String selection) {
@@ -404,41 +409,39 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
                       child: Material(
                         elevation: 4.0,
                         child: ConstrainedBox(
-                          constraints:
-                          const BoxConstraints(maxHeight: 300, maxWidth: 200),
+                          constraints: const BoxConstraints(
+                              maxHeight: 300, maxWidth: 200),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: options.length,
-                            itemBuilder:
-                                (BuildContext context, int index) {
+                            itemBuilder: (BuildContext context, int index) {
                               final option = options.elementAt(index);
                               return InkWell(
                                 onTap: () {
                                   onSelected(option);
                                 },
-                                child: Builder(
-                                    builder: (BuildContext context) {
-                                      final bool highlight =
-                                          AutocompleteHighlightedOption.of(
+                                child: Builder(builder: (BuildContext context) {
+                                  final bool highlight =
+                                      AutocompleteHighlightedOption.of(
                                               context) ==
-                                              index;
-                                      if (highlight) {
-                                        SchedulerBinding.instance
-                                            .addPostFrameCallback(
-                                                (Duration timeStamp) {
-                                              Scrollable.ensureVisible(context,
-                                                  alignment: 0.5);
-                                            });
-                                      }
-                                      return Container(
-                                        color: highlight
-                                            ? Theme.of(context).focusColor
-                                            : null,
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(option),
-                                      );
-                                    }),
+                                          index;
+                                  if (highlight) {
+                                    SchedulerBinding.instance
+                                        .addPostFrameCallback(
+                                            (Duration timeStamp) {
+                                      Scrollable.ensureVisible(context,
+                                          alignment: 0.5);
+                                    });
+                                  }
+                                  return Container(
+                                    color: highlight
+                                        ? Theme.of(context).focusColor
+                                        : null,
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(option),
+                                  );
+                                }),
                               );
                             },
                           ),
@@ -456,7 +459,6 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
         const SizedBox(
           height: 4,
         ),
-
       ],
     );
   }
@@ -529,5 +531,3 @@ class _TimeFilterEditorState extends ConsumerState<TimeFilterEditor> {
     }
   }
 }
-
-

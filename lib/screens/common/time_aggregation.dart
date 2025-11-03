@@ -1,11 +1,9 @@
-library screens.common.time_aggregation;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/time_aggregation_model.dart';
 import 'package:provider/provider.dart';
 
 class TimeAggregation extends StatefulWidget {
-  const TimeAggregation({Key? key}) : super(key: key);
+  const TimeAggregation({super.key});
 
   @override
   _TimeAggregationState createState() => _TimeAggregationState();

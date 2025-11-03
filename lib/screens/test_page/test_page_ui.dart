@@ -1,5 +1,3 @@
-library screens.monthly_asset_ncpc.monthly_asset_ncpc_ui;
-
 import 'package:date/date.dart';
 
 import 'package:flutter/material.dart';
@@ -11,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TestPageUi extends StatefulWidget {
-  const TestPageUi({Key? key}) : super(key: key);
+  const TestPageUi({super.key});
 
   @override
   _TestPageUiState createState() => _TestPageUiState();
@@ -60,10 +58,10 @@ class _TestPageUiState extends State<TestPageUi> {
                       context: context,
                       builder: (BuildContext context) {
                         return const SimpleDialog(
+                          contentPadding: EdgeInsets.all(12),
                           children: [
                             Text('Test your ideas easily ...'),
                           ],
-                          contentPadding: EdgeInsets.all(12),
                         );
                       });
                 },

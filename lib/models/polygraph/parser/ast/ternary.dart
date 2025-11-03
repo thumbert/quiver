@@ -1,5 +1,3 @@
-library ast.binary;
-
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:flutter_quiver/models/polygraph/parser/common.dart';
@@ -26,7 +24,6 @@ class Ternary extends Expression {
   String toString() => 'Ternary{$name}';
 }
 
-
 class ToMonthly3 extends Expression {
   ToMonthly3(this.x, this.function, this.bucketName);
 
@@ -39,12 +36,15 @@ class ToMonthly3 extends Expression {
     var bucket = Bucket.parse(bucketName);
     var ts = x.eval(variables);
     if (ts is! TimeSeries<num>) {
-      throw StateError('First argument to function toMonthly needs to be a timeseries');
+      throw StateError(
+          'First argument to function toMonthly needs to be a timeseries');
     }
     if (!baseFunctions.containsKey(function)) {
-      throw StateError('Can\'t find $function in the pre-defined aggregation functions list');
+      throw StateError(
+          'Can\'t find $function in the pre-defined aggregation functions list');
     }
-    return toMonthly(ts.where((e) => bucket.containsHour(e.interval as Hour)), baseFunctions[function]!);
+    return toMonthly(ts.where((e) => bucket.containsHour(e.interval as Hour)),
+        baseFunctions[function]!);
   }
 
   @override

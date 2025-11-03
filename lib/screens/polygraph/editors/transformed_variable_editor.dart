@@ -1,5 +1,3 @@
-library screens.polygraph.editors.transformed_variable_editor;
-
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
@@ -229,8 +227,8 @@ class _TransformedVariableEditorState
                         ),
                         Text(
                           error,
-                          style: const TextStyle(
-                              color: Colors.red, fontSize: 10),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 10),
                         ),
                       ],
                     ),
@@ -254,8 +252,12 @@ class _TransformedVariableEditorState
                       onPressed: () {
                         context.pop();
                         setState(() {
-                          ref.read(providerOfTransformedVariable.notifier).reset();
-                          ref.read(providerOfVariableSelection.notifier).categories = <String>[];
+                          ref
+                              .read(providerOfTransformedVariable.notifier)
+                              .reset();
+                          ref
+                              .read(providerOfVariableSelection.notifier)
+                              .categories = <String>[];
                         });
                       },
                     ),
@@ -266,8 +268,12 @@ class _TransformedVariableEditorState
                         if (state.getErrors().isEmpty) {
                           context.pop(state);
                           setState(() {
-                            ref.read(providerOfTransformedVariable.notifier).reset();
-                            ref.read(providerOfVariableSelection.notifier).categories = <String>[];
+                            ref
+                                .read(providerOfTransformedVariable.notifier)
+                                .reset();
+                            ref
+                                .read(providerOfVariableSelection.notifier)
+                                .categories = <String>[];
                           });
                         }
                       },

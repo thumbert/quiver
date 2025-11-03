@@ -1,18 +1,13 @@
-library screens.demand_bids.demand_bids_ui;
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/common/entity_model.dart';
 import 'package:flutter_quiver/models/common/entity_with_checkbox_model.dart';
 import 'package:flutter_quiver/screens/common/entity_with_checkbox.dart';
 import 'package:flutter_quiver/screens/common/load_zone_with_checkbox.dart';
 import 'package:flutter_quiver/screens/common/time_aggregation.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_quiver/screens/common/entity.dart';
-import 'package:flutter_quiver/screens/common/load_zone.dart';
 import 'package:flutter_quiver/screens/common/term.dart';
 
 class VlrStage2Ui extends StatefulWidget {
-  const VlrStage2Ui({Key? key}) : super(key: key);
+  const VlrStage2Ui({super.key});
 
   @override
   _VlrStage2UiState createState() => _VlrStage2UiState();

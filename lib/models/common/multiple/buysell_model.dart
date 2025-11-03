@@ -1,5 +1,3 @@
-library models.buysell_model;
-
 import 'package:flutter/material.dart';
 
 class BuySellModel extends ChangeNotifier {

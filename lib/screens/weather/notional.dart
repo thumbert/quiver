@@ -1,13 +1,10 @@
-library weather.notional;
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quiver/models/weather/airport_model.dart';
 import 'package:flutter_quiver/models/common/multiple/notional_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Notional extends StatefulWidget {
-  const Notional({this.index = 0, Key? key}) : super(key: key);
+  const Notional({this.index = 0, super.key});
 
   final int index;
 

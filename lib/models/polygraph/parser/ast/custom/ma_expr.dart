@@ -1,5 +1,3 @@
-library parser.ast.custom.ma_expr;
-
 import 'package:dama/stat/descriptive/moving_statistic.dart';
 import 'package:flutter_quiver/models/polygraph/parser/ast.dart';
 import 'package:timeseries/timeseries.dart';
@@ -23,10 +21,10 @@ class MaExpr extends Expression {
     if (n > ts.length) {
       throw StateError('Window length n too large.');
     }
-    var ms = MovingStatistics(leftWindow: n-1, rightWindow: 0);
+    var ms = MovingStatistics(leftWindow: n - 1, rightWindow: 0);
 
-    var aux = TimeSeries.from(ts.intervals.skip(n-1),
-        ms.movingMean(ts.values.toList()).skip(n-1));
+    var aux = TimeSeries.from(ts.intervals.skip(n - 1),
+        ms.movingMean(ts.values.toList()).skip(n - 1));
 
     return aux;
   }

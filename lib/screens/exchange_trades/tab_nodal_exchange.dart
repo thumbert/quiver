@@ -1,5 +1,3 @@
-library screens.exchange_trades.tab_nodal_exchange;
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,8 +15,6 @@ class TabNodalExchange extends StatefulWidget {
 }
 
 class _State extends State<TabNodalExchange> {
-
-
   @override
   Widget build(BuildContext context) {
     return Watch(
@@ -133,7 +129,7 @@ class _State extends State<TabNodalExchange> {
                             _ => <String>{},
                           };
                           return AutocompleteUi(
-                            selection: ''.asSignal(),
+                            selection: signal(''),
                             choices: allIsos,
                             accumulatedSelection: nodal.isos,
                             width: 150,
@@ -211,7 +207,7 @@ class _State extends State<TabNodalExchange> {
                             _ => <String>{},
                           };
                           return AutocompleteUi(
-                            selection: ''.asSignal(),
+                            selection: signal(''),
                             choices: allLocations,
                             accumulatedSelection: nodal.locations,
                             width: 150,
@@ -288,7 +284,7 @@ class _State extends State<TabNodalExchange> {
                             _ => <String>{},
                           };
                           return AutocompleteUi(
-                            selection: ''.asSignal(),
+                            selection: signal(''),
                             choices: allStrips,
                             accumulatedSelection: nodal.strips,
                             width: 150,
@@ -365,7 +361,7 @@ class _State extends State<TabNodalExchange> {
                             _ => <String>{},
                           };
                           return AutocompleteUi(
-                            selection: ''.asSignal(),
+                            selection: signal(''),
                             choices: allBuckets,
                             accumulatedSelection: nodal.buckets,
                             width: 150,

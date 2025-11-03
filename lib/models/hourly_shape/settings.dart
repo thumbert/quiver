@@ -1,5 +1,3 @@
-library models.hourly_shape.settings;
-
 sealed class Settings {
   static String comments = '';
 }

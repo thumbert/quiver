@@ -1,5 +1,3 @@
-library models.weather.airport_model;
-
 import 'package:flutter/material.dart';
 
 class AirportModel extends ChangeNotifier {

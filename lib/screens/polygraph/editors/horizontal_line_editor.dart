@@ -1,5 +1,3 @@
-library screens.polygraph.editors.editor_line_horizontal;
-
 import 'package:flutter/material.dart' hide Interval, Transform;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/editors/horizontal_line.dart';
@@ -12,7 +10,7 @@ final providerOfHorizontalLine =
         (ref) => HorizontalLineNotifier(ref));
 
 class HorizontalLineEditor extends ConsumerStatefulWidget {
-  const HorizontalLineEditor({Key? key}) : super(key: key);
+  const HorizontalLineEditor({super.key});
 
   @override
   ConsumerState<HorizontalLineEditor> createState() =>
@@ -52,7 +50,8 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
     focusLabel.addListener(() {
       if (!focusLabel.hasFocus) {
         setState(() {
-            ref.read(providerOfHorizontalLine.notifier).label = controllerLabel.text;
+          ref.read(providerOfHorizontalLine.notifier).label =
+              controllerLabel.text;
         });
       }
     });
@@ -86,7 +85,7 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
             Wrap(
               children: [
                 TextButton(
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: () {
                       setState(() {
                         activeTab = 0;
@@ -150,99 +149,110 @@ class _EditorLineHorizontalState extends ConsumerState<HorizontalLineEditor> {
                         child: const Center(child: Text('Time Aggregation')))),
               ],
             ),
-            const SizedBox(height: 16,),
-            if (activeTab == 0) SizedBox(
-              height: 240,
-              child: Column(children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 120,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 8),
-                      child: const Text(
-                        'Y intercept',
-                      ),
-                    ),
-                    Container(
-                      color: MyApp.background,
-                      width: 120,
-                      child: TextField(
-                        controller: controllerYValue,
-                        focusNode: focusYValue,
-                        decoration: const InputDecoration(
-                          isDense: true,
-                          contentPadding: EdgeInsets.all(8),
-                          enabledBorder: InputBorder.none,
-                        ),
-                        onEditingComplete: () {
-                          setState(() {
-                            try {
-                              var value = num.parse(controllerYValue.text);
-                              ref.read(providerOfHorizontalLine.notifier).yIntercept = value;
-                              ref.read(providerOfHorizontalLine.notifier).label = 'h=$value';
-                            } catch (_) {
-                              _errorYValue = 'Field needs to be a number';
-                              ref.read(providerOfHorizontalLine.notifier).yIntercept = 0.0;
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                    Text(
-                      _errorYValue ?? '',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: [
-                    Container(
-                      width: 120,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 8),
-                      child: const Text(
-                        'Label',
-                      ),
-                    ),
-                    Container(
-                      color: MyApp.background,
-                      width: 120,
-                      child: TextField(
-                        controller: controllerLabel,
-                        focusNode: focusLabel,
-                        decoration: const InputDecoration(
-                          isDense: true,
-                          contentPadding: EdgeInsets.all(8),
-                          enabledBorder: InputBorder.none,
-                        ),
-                        onEditingComplete: () {
-                          setState(() {
-                              ref.read(providerOfHorizontalLine.notifier).label = controllerLabel.text;
-                          });
-                        },
-                      ),
-                    ),
-                    Text(
-                      _errorYValue ?? '',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-              ],),
+            const SizedBox(
+              height: 16,
             ),
-            if (activeTab == 1) const SizedBox(
+            if (activeTab == 0)
+              SizedBox(
                 height: 240,
-                child: TimeFilterEditor()),
-            if (activeTab == 2) const SizedBox(
-              height: 240,
-                child: TimeAggregationEditor()),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 8),
+                          child: const Text(
+                            'Y intercept',
+                          ),
+                        ),
+                        Container(
+                          color: MyApp.background,
+                          width: 120,
+                          child: TextField(
+                            controller: controllerYValue,
+                            focusNode: focusYValue,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(8),
+                              enabledBorder: InputBorder.none,
+                            ),
+                            onEditingComplete: () {
+                              setState(() {
+                                try {
+                                  var value = num.parse(controllerYValue.text);
+                                  ref
+                                      .read(providerOfHorizontalLine.notifier)
+                                      .yIntercept = value;
+                                  ref
+                                      .read(providerOfHorizontalLine.notifier)
+                                      .label = 'h=$value';
+                                } catch (_) {
+                                  _errorYValue = 'Field needs to be a number';
+                                  ref
+                                      .read(providerOfHorizontalLine.notifier)
+                                      .yIntercept = 0.0;
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        Text(
+                          _errorYValue ?? '',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 120,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 8),
+                          child: const Text(
+                            'Label',
+                          ),
+                        ),
+                        Container(
+                          color: MyApp.background,
+                          width: 120,
+                          child: TextField(
+                            controller: controllerLabel,
+                            focusNode: focusLabel,
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(8),
+                              enabledBorder: InputBorder.none,
+                            ),
+                            onEditingComplete: () {
+                              setState(() {
+                                ref
+                                    .read(providerOfHorizontalLine.notifier)
+                                    .label = controllerLabel.text;
+                              });
+                            },
+                          ),
+                        ),
+                        Text(
+                          _errorYValue ?? '',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                  ],
+                ),
+              ),
+            if (activeTab == 1)
+              const SizedBox(height: 240, child: TimeFilterEditor()),
+            if (activeTab == 2)
+              const SizedBox(height: 240, child: TimeAggregationEditor()),
           ],
         ),
         // ElevatedButton(

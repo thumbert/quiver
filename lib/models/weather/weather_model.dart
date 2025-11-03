@@ -1,5 +1,3 @@
-library models.weather;
-
 import 'package:date/date.dart';
 import 'package:elec/calculators/weather.dart';
 import 'package:elec/risk_system.dart';
@@ -13,7 +11,6 @@ import 'package:elec_server/client/weather/noaa_daily_summary.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 import 'package:tuple/tuple.dart';
-import 'package:elec/src/weather/lib_weather_utils.dart';
 
 class WeatherModel extends ChangeNotifier {
   WeatherModel() {

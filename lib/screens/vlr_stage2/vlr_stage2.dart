@@ -1,5 +1,3 @@
-library screens.vlr_stage2.vlr_stage2;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/widgets.dart' hide Interval;
@@ -12,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 class VlrStage2 extends StatefulWidget {
-  const VlrStage2({Key? key}) : super(key: key);
+  const VlrStage2({super.key});
 
   static const route = '/vlr_stage2';
 

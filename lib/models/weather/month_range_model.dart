@@ -1,5 +1,3 @@
-library models.weather.month_range_model;
-
 import 'package:flutter/material.dart';
 
 class MonthRangeModel extends ChangeNotifier {

@@ -1,15 +1,13 @@
-library screens.polygraph.utils.autocomplete_field;
-
 import 'package:flutter/material.dart';
 
 class AutocompleteField extends StatelessWidget {
   const AutocompleteField({
-    Key? key,
+    super.key,
     required this.focusNode,
     required this.textEditingController,
     required this.onFieldSubmitted,
     required this.options,
-  }) : super(key: key);
+  });
 
   final FocusNode focusNode;
 

@@ -1,11 +1,9 @@
-library screens.common.entity_with_checkbox;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/entity_with_checkbox_model.dart';
 import 'package:provider/provider.dart';
 
 class EntityWithCheckbox extends StatefulWidget {
-  const EntityWithCheckbox({Key? key}) : super(key: key);
+  const EntityWithCheckbox({super.key});
 
   @override
   _EntityWithCheckboxState createState() => _EntityWithCheckboxState();

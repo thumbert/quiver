@@ -1,5 +1,3 @@
-library models.date_with_checkbox_model;
-
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 

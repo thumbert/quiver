@@ -1,9 +1,7 @@
-library error404;
-
 import 'package:flutter/material.dart';
 
 class Error404 extends StatelessWidget {
-  const Error404({Key? key}) : super(key: key);
+  const Error404({super.key});
 
   @override
   Widget build(BuildContext context) {

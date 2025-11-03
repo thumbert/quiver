@@ -1,5 +1,3 @@
-library models.entity_model;
-
 import 'package:flutter/material.dart';
 
 class EntityModel extends ChangeNotifier {

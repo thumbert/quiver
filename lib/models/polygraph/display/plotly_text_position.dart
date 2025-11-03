@@ -1,5 +1,3 @@
-library models.polygraph.display.plotly_text_position;
-
 enum PlotlyTextPosition {
   bottomCenter('bottom center'),
   bottomLeft('bottom left'),

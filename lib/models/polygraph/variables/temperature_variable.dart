@@ -1,5 +1,3 @@
-library models.polygraph.variables.temperature_variable;
-
 import 'package:date/date.dart';
 import 'package:flutter_quiver/models/polygraph/data_service/data_service.dart';
 import 'package:flutter_quiver/models/polygraph/variables/variable.dart';
@@ -41,11 +39,11 @@ class TemperatureVariable extends PolygraphVariable {
     String? label,
   }) =>
       TemperatureVariable(
-          airportCode: airportCode ?? this.airportCode,
-          variable: variable ?? this.variable,
-          frequency: frequency ?? this.frequency,
-          isForecast: isForecast ?? this.isForecast,
-          dataSource: dataSource ?? this.dataSource,
+        airportCode: airportCode ?? this.airportCode,
+        variable: variable ?? this.variable,
+        frequency: frequency ?? this.frequency,
+        isForecast: isForecast ?? this.isForecast,
+        dataSource: dataSource ?? this.dataSource,
         label: label ?? this.label,
       );
 
@@ -54,7 +52,7 @@ class TemperatureVariable extends PolygraphVariable {
     return service.getTemperature(this, term);
   }
 
-  static TemperatureVariable fromJson(Map<String,dynamic> x) {
+  static TemperatureVariable fromJson(Map<String, dynamic> x) {
     throw UnimplementedError();
   }
 

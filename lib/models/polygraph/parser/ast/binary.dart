@@ -1,5 +1,3 @@
-library ast.binary;
-
 import 'dart:math';
 import 'package:flutter_quiver/models/polygraph/parser/common.dart';
 import 'package:timeseries/timeseries.dart';
@@ -38,7 +36,8 @@ class BinaryAdd extends Expression {
       ((num x, num y)) => x + y,
       ((num x, TimeSeries<num> y)) => y.apply((e) => e + x),
       ((TimeSeries<num> x, num y)) => x.apply((e) => e + y),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => x! + y!),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => x! + y!),
       _ => throw StateError('Don\'t know how to add $x and $y'),
     };
   }
@@ -61,7 +60,8 @@ class BinarySubtract extends Expression {
       ((num x, num y)) => x - y,
       ((num x, TimeSeries<num> y)) => y.apply((e) => x - e),
       ((TimeSeries<num> x, num y)) => x.apply((e) => e - y),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => x! - y!),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => x! - y!),
       _ => throw StateError('Don\'t know how to subtract $x and $y'),
     };
   }
@@ -84,7 +84,8 @@ class BinaryMultiply extends Expression {
       ((num x, num y)) => x * y,
       ((num x, TimeSeries<num> y)) => y.apply((e) => e * x),
       ((TimeSeries<num> x, num y)) => x.apply((e) => e * y),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => x! * y!),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => x! * y!),
       _ => throw StateError('Don\'t know how to multiply $x and $y'),
     };
   }
@@ -107,7 +108,8 @@ class BinaryDivide extends Expression {
       ((num x, num y)) => x / y,
       ((num x, TimeSeries<num> y)) => y.apply((e) => x / e),
       ((TimeSeries<num> x, num y)) => x.apply((e) => e / y),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => x! / y!),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => x! / y!),
       _ => throw StateError('Don\'t know how to divide $x and $y'),
     };
   }
@@ -149,8 +151,10 @@ class BinaryGreaterThan extends Expression {
     var y = right.eval(variables);
     return switch ((x, y)) {
       ((num x, num y)) => x > y,
-      ((num x, TimeSeries<num> y)) => y.where((e) => x > e.value).toTimeSeries(),
-      ((TimeSeries<num> x, num y)) => x.where((e) => e.value > y).toTimeSeries(),
+      ((num x, TimeSeries<num> y)) =>
+        y.where((e) => x > e.value).toTimeSeries(),
+      ((TimeSeries<num> x, num y)) =>
+        x.where((e) => e.value > y).toTimeSeries(),
       ((TimeSeries<num> x, TimeSeries<num> y)) => x
           .merge(y, f: (x, y) => [x!, y!])
           .where((e) => e.value.first > e.value.last)
@@ -176,8 +180,10 @@ class BinaryGreaterThanEqual extends Expression {
     var y = right.eval(variables);
     return switch ((x, y)) {
       ((num x, num y)) => x >= y,
-      ((num x, TimeSeries<num> y)) => y.where((e) => x >= e.value).toTimeSeries(),
-      ((TimeSeries<num> x, num y)) => x.where((e) => e.value >= y).toTimeSeries(),
+      ((num x, TimeSeries<num> y)) =>
+        y.where((e) => x >= e.value).toTimeSeries(),
+      ((TimeSeries<num> x, num y)) =>
+        x.where((e) => e.value >= y).toTimeSeries(),
       ((TimeSeries<num> x, TimeSeries<num> y)) => x
           .merge(y, f: (x, y) => [x!, y!])
           .where((e) => e.value.first >= e.value.last)
@@ -203,10 +209,14 @@ class BinaryLessThan extends Expression {
     var y = right.eval(variables);
     return switch ((x, y)) {
       ((num x, num y)) => x < y,
-      ((num x, TimeSeries<num> y)) => y.where((e) => x < e.value).toTimeSeries(),
-      ((TimeSeries<num> x, num y)) => x.where((e) => e.value < y).toTimeSeries(),
-      ((TimeSeries<num> x, TimeSeries<num> y)) =>
-        x.merge(y, f: (x, y) => [x!, y!]).where((e) => e.value.first < e.value.last).toTimeSeries(),
+      ((num x, TimeSeries<num> y)) =>
+        y.where((e) => x < e.value).toTimeSeries(),
+      ((TimeSeries<num> x, num y)) =>
+        x.where((e) => e.value < y).toTimeSeries(),
+      ((TimeSeries<num> x, TimeSeries<num> y)) => x
+          .merge(y, f: (x, y) => [x!, y!])
+          .where((e) => e.value.first < e.value.last)
+          .toTimeSeries(),
       _ => throw StateError('Don\'t know how to compare $x and $y'),
     };
   }
@@ -227,10 +237,14 @@ class BinaryLessThanEqual extends Expression {
     var y = right.eval(variables);
     return switch ((x, y)) {
       ((num x, num y)) => x <= y,
-      ((num x, TimeSeries<num> y)) => y.where((e) => x <= e.value).toTimeSeries(),
-      ((TimeSeries<num> x, num y)) => x.where((e) => e.value <= y).toTimeSeries(),
-      ((TimeSeries<num> x, TimeSeries<num> y)) =>
-        x.merge(y, f: (x, y) => [x!, y!]).where((e) => e.value.first <= e.value.last).toTimeSeries(),
+      ((num x, TimeSeries<num> y)) =>
+        y.where((e) => x <= e.value).toTimeSeries(),
+      ((TimeSeries<num> x, num y)) =>
+        x.where((e) => e.value <= y).toTimeSeries(),
+      ((TimeSeries<num> x, TimeSeries<num> y)) => x
+          .merge(y, f: (x, y) => [x!, y!])
+          .where((e) => e.value.first <= e.value.last)
+          .toTimeSeries(),
       _ => throw StateError('Don\'t know how to compare $x and $y'),
     };
   }
@@ -253,8 +267,10 @@ class BinaryMax extends Expression {
       ((num x, num y)) => max(x, y),
       ((num x, TimeSeries<num> y)) => y.apply((e) => max(x, e)),
       ((TimeSeries<num> x, num y)) => x.apply((e) => max(y, e)),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => max(x!, y!)),
-      _ => throw StateError('Don\'t know how to calculate the max of $x and $y'),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => max(x!, y!)),
+      _ =>
+        throw StateError('Don\'t know how to calculate the max of $x and $y'),
     };
   }
 
@@ -276,8 +292,10 @@ class BinaryMin extends Expression {
       ((num x, num y)) => min(x, y),
       ((num x, TimeSeries<num> y)) => y.apply((e) => min(x, e)),
       ((TimeSeries<num> x, num y)) => x.apply((e) => min(y, e)),
-      ((TimeSeries<num> x, TimeSeries<num> y)) => x.merge(y, f: (x, y) => min(x!, y!)),
-      _ => throw StateError('Don\'t know how to calculate the min of $x and $y'),
+      ((TimeSeries<num> x, TimeSeries<num> y)) =>
+        x.merge(y, f: (x, y) => min(x!, y!)),
+      _ =>
+        throw StateError('Don\'t know how to calculate the min of $x and $y'),
     };
   }
 
@@ -295,10 +313,12 @@ class ToMonthly extends Expression {
   dynamic eval(Map<String, dynamic> variables) {
     var ts = x.eval(variables);
     if (ts is! TimeSeries<num>) {
-      throw StateError('First argument to function toMonthly needs to be a timeseries');
+      throw StateError(
+          'First argument to function toMonthly needs to be a timeseries');
     }
     if (!baseFunctions.containsKey(function)) {
-      throw StateError('Can\'t find $function in the pre-defined aggregation functions list');
+      throw StateError(
+          'Can\'t find $function in the pre-defined aggregation functions list');
     }
     return toMonthly(ts, baseFunctions[function]!);
   }

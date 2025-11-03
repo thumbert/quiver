@@ -1,5 +1,3 @@
-library screens.polygraph.other.plotly_layout_ui;
-
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/polygraph/display/plotly_layout.dart';
@@ -12,7 +10,7 @@ final providerOfPlotlyLayout =
     StateProvider((ref) => PlotlyLayout()..legend = PlotlyLegend.getDefault());
 
 class PlotlyLayoutUi extends ConsumerStatefulWidget {
-  const PlotlyLayoutUi({Key? key}) : super(key: key);
+  const PlotlyLayoutUi({super.key});
 
   @override
   ConsumerState<PlotlyLayoutUi> createState() => _PlotlyLayoutUiState();
@@ -688,7 +686,6 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
             )
           ],
         ),
-
       ],
     );
   }
@@ -771,7 +768,6 @@ class _PlotlyLayoutUiState extends ConsumerState<PlotlyLayoutUi> {
 
   @override
   Widget build(BuildContext context) {
-
     var layout = ref.watch(providerOfPlotlyLayout);
 
     return Column(

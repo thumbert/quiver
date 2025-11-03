@@ -1,5 +1,3 @@
-library models.polygraph.transforms.time_filter;
-
 import 'package:date/date.dart';
 import 'package:elec/time.dart';
 import 'package:flutter_quiver/models/polygraph/transforms/transform.dart';

@@ -1,12 +1,9 @@
-library models.polygraph.variables.variable_selection;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 class VariableSelection {
   VariableSelection(this.categories);
 
-  /// the current selection 
+  /// the current selection
   List<String> categories;
 
   String get selection => categories.join(',');
@@ -41,10 +38,10 @@ class VariableSelection {
   List<String> getCategoriesForNextLevel() {
     var level = categories.length;
     var xs = allCategories.where((element) => true);
-    for (var i=0; i<level; i++) {
+    for (var i = 0; i < level; i++) {
       xs = xs.where((e) => e[i] == categories[i]);
     }
-    if (xs.length == 1) return <String>[];  // fully specified
+    if (xs.length == 1) return <String>[]; // fully specified
     return xs.map((e) => e[level]).toSet().toList();
   }
 
@@ -61,4 +58,3 @@ class VariableSelectionNotifier extends StateNotifier<VariableSelection> {
     state = VariableSelection(categories);
   }
 }
-

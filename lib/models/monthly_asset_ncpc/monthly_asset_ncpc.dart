@@ -1,5 +1,3 @@
-library models.monthly_asset_ncpc;
-
 import 'package:elec/risk_system.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

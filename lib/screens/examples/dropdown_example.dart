@@ -3,7 +3,7 @@ import 'package:flutter_quiver/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as rp;
 import 'package:signals/signals_flutter.dart';
 
-final selection = 'State'.toSignal();
+final selection = signal('State');
 
 final choices = futureSignal(() async {
   await Future.delayed(const Duration(seconds: 2));
