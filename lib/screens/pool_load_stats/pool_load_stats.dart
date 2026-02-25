@@ -1,5 +1,5 @@
 import 'package:date/date.dart';
-import 'package:elec_server/utils.dart';
+import 'package:elec_server/utils.dart' hide Column;
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/pool_load_stats/pool_load_stats_model.dart';

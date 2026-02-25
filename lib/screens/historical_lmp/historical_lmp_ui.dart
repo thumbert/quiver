@@ -42,12 +42,6 @@ class _State extends State<HistoricalLmp> {
   void dispose() {
     scrollControllerV.dispose();
     scrollControllerH.dispose();
-    //     controllerLocationSink.dispose();
-    // focusNodeLocationSink.dispose();
-    // controllerLocationSource.dispose();
-    // focusNodeLocationSource.dispose();
-    // controllerTerm.dispose();
-    // focusNodeTerm.dispose();
     super.dispose();
   }
 
@@ -196,15 +190,8 @@ class _State extends State<HistoricalLmp> {
                                         model.bucketNames,
                                     setSelection: (String value) {
                                       final current = state.value;
-                                      state.value = HistoricalLmpModel(
-                                        sink: current.sink,
-                                        source: current.source,
-                                        bucketNames: value,
-                                        lmpComponent: current.lmpComponent,
-                                        historicalTerm: current.historicalTerm,
-                                        timeAggregation:
-                                            current.timeAggregation,
-                                      );
+                                      state.value =
+                                          current.copyWith(bucketNames: value);
                                     })),
                           ],
                         ),
@@ -582,17 +569,14 @@ class _LocationRowSinkWidgetState extends State<LocationRowSinkWidget> {
                             model.sink.region,
                         setSelection: (String value) {
                           final current = state.value;
-                          state.value = HistoricalLmpModel(
+                          state.value = current.copyWith(
                             sink: LocationRow(
                               region: value,
-                              location: current.sink.location,
-                              market: current.sink.market,
+                              location: HistoricalLmpModel
+                                  .regionDefaults[value]!['location'],
+                              market: Market.parse(HistoricalLmpModel
+                                  .regionDefaults[value]!['dart']!),
                             ),
-                            source: current.source,
-                            bucketNames: current.bucketNames,
-                            lmpComponent: current.lmpComponent,
-                            historicalTerm: current.historicalTerm,
-                            timeAggregation: current.timeAggregation,
                           );
                         })),
 
@@ -786,45 +770,6 @@ class _LocationRowSourceWidgetState extends State<LocationRowSourceWidget> {
                             child: CircularProgressIndicator(),
                           ),
                       }),
-
-                  // child: Watch((_) => switch (locations.value) {
-                  //       AsyncData<List<String>>() => AutocompleteUi(
-                  //           model: state,
-                  //           getSelection: (HistoricalLmpModel model) =>
-                  //               model.sink.location,
-                  //           setSelection: (String value) {
-                  //             final current = state.value;
-                  //             state.value = HistoricalLmpModel(
-                  //               sink: current.sink,
-                  //               source: LocationRow(
-                  //                 region: current.source?.region,
-                  //                 location: value,
-                  //                 market: current.source?.market,
-                  //               ),
-                  //               buckets: current.buckets,
-                  //               lmpComponent: current.lmpComponent,
-                  //               historicalTerm: current.historicalTerm,
-                  //               timeAggregation: current.timeAggregation,
-                  //             );
-                  //           },
-                  //           choices: LocationRow
-                  //               .ptidCache[state.value.source?.region]!
-                  //               .toSet(),
-                  //           width: 300,
-                  //           key: ValueKey(state.value.source
-                  //               ?.location), // needed to wipe the textfield on icon clear
-                  //         ),
-                  //       AsyncError<List<String>>() => Row(children: [
-                  //           const Icon(Icons.error_outline, color: Colors.red),
-                  //           Text(
-                  //             'Error getting location data for region ${state.value.source?.region}',
-                  //             style: const TextStyle(fontSize: 16),
-                  //           )
-                  //         ]),
-                  //       AsyncLoading<List<String>>() => const Center(
-                  //           child: CircularProgressIndicator(),
-                  //         ),
-                  //     }),
                 ),
 
                 ///

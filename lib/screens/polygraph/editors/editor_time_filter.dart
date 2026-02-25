@@ -1,5 +1,5 @@
 import 'package:elec/time.dart';
-import 'package:elec_server/utils.dart';
+import 'package:elec_server/utils.dart' hide Column;
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quiver/main.dart';

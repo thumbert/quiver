@@ -4,7 +4,7 @@ import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:elec/ftr.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
+import 'package:flutter_quiver/models/ftr_path/ftr_path_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart';
 

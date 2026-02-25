@@ -4,7 +4,7 @@ import 'dart:js_interop_unsafe';
 import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
+import 'package:flutter_quiver/models/ftr_path/ftr_path_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 

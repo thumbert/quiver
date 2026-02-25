@@ -20,6 +20,9 @@
 
 ## BUGS
 
+## Release 2026-02-25
+- Bump Flutter to 3.41.2
+
 ## Release 2025-11-03
 - Bump up Flutter to 3.35.6
 - Switch MCC surfer to use the new DuckDB backend + API
@@ -27,7 +30,6 @@
 - Working version of Historical LMP, congestion, spreads.  Good clean example  <--------
   of an app with signals.    <--------
 - Made several of the signal widgets generic. 
-
 
 ## Release 2025-06-20
 - Migrate to flutter_web_plotly 1.0.0

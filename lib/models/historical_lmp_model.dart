@@ -38,6 +38,7 @@ final class LocationRow {
   /// Map from region -> List of locations,
   /// e.g. for 'ISONE' : ['.H.INTERNAL HUB, ptid: 4000', ...]
   static Map<String, List<String>> ptidCache = <String, List<String>>{
+    'CAISO': ['TH_NP15_GEN-APND'],
     'IESO': [],
     'ISONE': ['.H.INTERNAL_HUB, ptid: 4000'],
     'NYISO': ['Zone G, ptid: 61758'],
@@ -58,35 +59,44 @@ final class LocationRow {
     return int.parse(ptidStr);
   }
 
-  static Future<void> populatePtidCache(String region) async {
-    if (ptidCache[region]!.length == 1) {
-      var xs = <String>[];
-      if (region == 'IESO') {
-        var res = await get(
-            Uri.parse('${dotenv.env['RUST_SERVER']}/ieso/node_table/all'));
-        var aux = (json.decode(res.body) as List).cast<Map<String, dynamic>>();
-        ptidCache[region] = aux.map((e) => e['name'] as String).toList();
-        return;
-      }
+  /// A utility function to get all locations for a given ISO.
+  /// For ISONE, the returned location names are like:
+  ///    ".H.INTERNAL_HUB, ptid: 4000"
+  ///
+  static Future<List<String>> getLocations(Iso iso) async {
+    var xs = <String>[];
+    if (iso == Iso.ieso || iso == Iso.caiso) {
+      var res = await get(Uri.parse(
+          '${dotenv.env['RUST_SERVER']}/${iso.name.toLowerCase()}/node_table/all'));
+      var aux = (json.decode(res.body) as List).cast<Map<String, dynamic>>();
+      xs.addAll(aux.map<String>((e) => e['name']));
+      return xs;
+    }
 
-      Iterable<Map> aux =
-          await ptidClient.getPtidTable(region: region.toLowerCase());
-      if (region == 'NYISO') {
-        /// add the zones first, in a spoken form
-        var zones = aux.where((e) => e['type'] == 'zone');
-        for (var zone in zones) {
-          if (zone.containsKey('spokenName')) {
-            var label = '${zone['spokenName']}, ptid: ${zone['ptid']}';
-            xs.add(label);
-          }
+    Iterable<Map> aux =
+        await ptidClient.getPtidTable(region: iso.name.toLowerCase());
+    if (iso == Iso.newYork) {
+      /// add the zones first, in a spoken form
+      var zones = aux.where((e) => e['type'] == 'zone');
+      for (var zone in zones) {
+        if (zone.containsKey('spokenName')) {
+          var label = '${zone['spokenName']}, ptid: ${zone['ptid']}';
+          xs.add(label);
         }
       }
-      if (region == 'ISONE') {
-        aux = aux.where((e) => e['ptid'] < 7000 || e['ptid'] >= 8000);
-      }
-      xs.addAll(aux.map((e) => '${e['name']}, ptid: ${e['ptid']}'));
+    }
+    if (iso == Iso.newEngland) {
+      aux = aux.where((e) => e['ptid'] < 7000 || e['ptid'] >= 8000);
+    }
+    xs.addAll(aux.map((e) => '${e['name']}, ptid: ${e['ptid']}'));
+
+    return xs;
+  }
+
+  static Future<void> populatePtidCache(String region) async {
+    if (ptidCache[region]!.length == 1) {
+      var xs = await getLocations(Iso.parse(region));
       ptidCache[region] = xs;
-      // print('Populated ${xs.length} locations for region $region');
     }
   }
 }
@@ -145,6 +155,7 @@ class HistoricalLmpModel {
   static const allTimeAggregations = ['Monthly', 'Daily', 'Hourly'];
 
   static final regionDefaults = <String, Map<String, String>>{
+    'CAISO': {'location': 'TH_NP15_GEN-APND', 'dart': 'DA'},
     // 'IESO': {
     //   'location': 'ONTARIO',
     //   'dart': 'DA',
@@ -301,7 +312,7 @@ class HistoricalLmpModel {
   /// If [buckets] contains a list of buckets separated by, return one table
   ///   for each bucket.
   /// If [buckets] contains a ratio of buckets, return one table for the ratio.
-  /// 
+  ///
   Map<String, List<Map<String, dynamic>>> makeTables(
       Map<Bucket, TimeSeries<num>> xs) {
     var out = <String, List<Map<String, dynamic>>>{};
@@ -399,6 +410,24 @@ class HistoricalLmpModel {
         'showlegend': true,
         'hovermode': 'closest',
       };
+
+  HistoricalLmpModel copyWith({
+    LocationRow? sink,
+    LocationRow? source,
+    String? bucketNames,
+    String? lmpComponent,
+    Term? historicalTerm,
+    String? timeAggregation,
+  }) {
+    return HistoricalLmpModel(
+      sink: sink ?? this.sink,
+      source: source ?? this.source,
+      bucketNames: bucketNames ?? this.bucketNames,
+      lmpComponent: lmpComponent ?? this.lmpComponent,
+      historicalTerm: historicalTerm ?? this.historicalTerm,
+      timeAggregation: timeAggregation ?? this.timeAggregation,
+    );
+  }
 }
 
 final state = signal(getDefaultHistoricalLmpModel());
@@ -426,7 +455,7 @@ final hourlyLmp = futureSignal(() async {
 }, dependencies: [state]);
 
 Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
-  final lmp = Lmp(Client(), rustServer: dotenv.env['RUST_SERVER']!);
+  // final lmp = Lmp(Client(), rustServer: dotenv.env['RUST_SERVER']!);
   final hTerm = Term.fromInterval(
       state.historicalTerm.interval.withTimeZone(IsoNewEngland.location));
 
@@ -436,14 +465,10 @@ Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
     market: state.sink.market!,
     lmpComponent: state.lmpComponent
   );
+
   if (!HistoricalLmpModel.cache.containsKey(sink)) {
-    // print('getting data for $sink');
-    var ts = await lmp.getHourlyLmp(
-        iso: Iso.newEngland,
-        ptid: LocationRow.getPtid(state.sink.location!),
-        component: LmpComponent.parse(state.lmpComponent),
-        term: hTerm,
-        market: state.sink.market!);
+    var ts = await getLmpDataForRow(sink.region, sink.market, sink.location,
+        LmpComponent.parse(sink.lmpComponent), hTerm);
     HistoricalLmpModel.cache[sink] = ts;
   }
   var ts = HistoricalLmpModel.cache[sink]!;
@@ -458,15 +483,10 @@ Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
     late TimeSeries<num> tsSource;
     if (!HistoricalLmpModel.cache.containsKey(source)) {
       // print('getting data for $source');
-      tsSource = await lmp.getHourlyLmp(
-          iso: Iso.newEngland,
-          ptid: LocationRow.getPtid(state.source!.location!),
-          component: LmpComponent.parse(state.lmpComponent),
-          term: hTerm,
-          market: state.source!.market!);
-      HistoricalLmpModel.cache[source] = tsSource;
+      tsSource = await getLmpDataForRow(source.region, source.market,
+          source.location, LmpComponent.parse(source.lmpComponent), hTerm);
     }
-    tsSource = HistoricalLmpModel.cache[source]!;
+    HistoricalLmpModel.cache[source] = tsSource;
     ts = ts - tsSource;
   }
 
@@ -488,6 +508,43 @@ Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
   }
 
   return ts;
+}
+
+Future<TimeSeries<num>> getLmpDataForRow(String region, Market market,
+    String locationName, LmpComponent lmpComponent, Term hTerm) async {
+  return switch (region) {
+    'CAISO' => await getHourlyLmpCaiso(
+        market: market,
+        locationName: locationName,
+        component: lmpComponent,
+        term: hTerm,
+        rustServer: dotenv.env['RUST_SERVER']!),
+    'IESO' => await getHourlyLmpIeso(
+        market: market,
+        locationName: locationName,
+        component: lmpComponent,
+        term: hTerm,
+        rustServer: dotenv.env['RUST_SERVER']!),
+    'ISONE' => await getHourlyLmpIsone(
+        market: market,
+        ptid: LocationRow.getPtid(locationName),
+        component: lmpComponent,
+        term: hTerm,
+        rustServer: dotenv.env['RUST_SERVER']!),
+    'NYISO' => await getHourlyLmpIsone(
+        market: market,
+        ptid: LocationRow.getPtid(locationName),
+        component: lmpComponent,
+        term: hTerm,
+        rustServer: dotenv.env['RUST_SERVER']!),
+    // 'PJM' => await getHourlyLmpPjm(
+    //     market: market,
+    //     ptid: LocationRow.getPtid(locationName),
+    //     component: lmpComponent,
+    //     term: hTerm,
+    //     rustServer: dotenv.env['RUST_SERVER']!),
+    _ => throw UnimplementedError(),
+  };
 }
 
 HistoricalLmpModel getDefaultHistoricalLmpModel() {

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
+import 'package:flutter_quiver/models/ftr_path/ftr_path_model.dart';
 import 'package:flutter_quiver/models/ftr_path/region_source_sink_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

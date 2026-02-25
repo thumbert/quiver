@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' hide Interval;
-import 'package:flutter_quiver/models/ftr_path/data_model.dart';
-import 'package:flutter_quiver/screens/ftr_path/congestion_chart.dart';
-import 'package:flutter_quiver/screens/ftr_path/region_source_sink.dart';
-import 'package:flutter_quiver/screens/ftr_path/table_binding_constraints.dart';
-import 'package:flutter_quiver/screens/ftr_path/table_cpsp.dart';
+import 'package:flutter_quiver/models/ftr_path/ftr_path_model.dart';
+import 'package:flutter_quiver/screens/ftr_path_old/congestion_chart.dart';
+import 'package:flutter_quiver/screens/ftr_path_old/region_source_sink.dart';
+import 'package:flutter_quiver/screens/ftr_path_old/table_binding_constraints.dart';
+import 'package:flutter_quiver/screens/ftr_path_old/table_cpsp.dart';
 import 'package:provider/provider.dart';
 
 class FtrPathUi extends StatefulWidget {
