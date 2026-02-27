@@ -116,13 +116,13 @@ class _FtrPathState extends State<FtrPath> {
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
-                            SizedBox(
-                              width: 80,
-                              child: Text(
-                                'Market',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                            ),
+                            // SizedBox(
+                            //   width: 80,
+                            //   child: Text(
+                            //     'Market',
+                            //     style: TextStyle(fontSize: 14),
+                            //   ),
+                            // ),
                             SizedBox(
                               width: 150,
                               child: Text(
@@ -295,32 +295,32 @@ class _FtrPathState extends State<FtrPath> {
                                       );
                                     })),
 
-                            /// Market
-                            Container(
-                                width: 80,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: Colors.amber.shade100,
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                child: DropdownUi2<FtrPathAnalysisModel>(
-                                    model: model,
-                                    width: 80,
-                                    choices: {'DA', 'RT'},
-                                    getSelection:
-                                        (FtrPathAnalysisModel model) =>
-                                            model.market.name,
-                                    setSelection: (String value) {
-                                      final current = model.value;
-                                      model.value = FtrPathAnalysisModel(
-                                        iso: current.iso,
-                                        sourceLocation: current.sourceLocation,
-                                        sinkLocation: current.sinkLocation,
-                                        bucket: current.bucket,
-                                        market: Market.parse(value),
-                                        term: current.term,
-                                      );
-                                    })),
+                            // /// Market
+                            // Container(
+                            //     width: 80,
+                            //     height: 36,
+                            //     decoration: BoxDecoration(
+                            //       color: Colors.amber.shade100,
+                            //       borderRadius: BorderRadius.circular(4.0),
+                            //     ),
+                            //     child: DropdownUi2<FtrPathAnalysisModel>(
+                            //         model: model,
+                            //         width: 80,
+                            //         choices: {'DA', 'RT'},
+                            //         getSelection:
+                            //             (FtrPathAnalysisModel model) =>
+                            //                 model.market.name,
+                            //         setSelection: (String value) {
+                            //           final current = model.value;
+                            //           model.value = FtrPathAnalysisModel(
+                            //             iso: current.iso,
+                            //             sourceLocation: current.sourceLocation,
+                            //             sinkLocation: current.sinkLocation,
+                            //             bucket: current.bucket,
+                            //             market: Market.parse(value),
+                            //             term: current.term,
+                            //           );
+                            //         })),
 
                             /// Historical term
                             Container(

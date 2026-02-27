@@ -233,7 +233,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: acae579e52081f5a8496e60f23b8c9254ba280e9
+      resolved-ref: "0f3425dd3120055fe2baf72f3ad66dead934232a"
       url: "https://github.com/thumbert/elec.git"
     source: git
     version: "2.2.0"
@@ -242,7 +242,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "9a930a1b1041fc870d171887cabe978e6a672b29"
+      resolved-ref: f0a32270753bbeb985b2031ff6d314c9844ad23d
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"
@@ -388,18 +388,18 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: e1a30a66d734f9e498b1b6522d6a75ded28242bad2359a9158df38a1c30bcf1f
+      sha256: "7974313e217a7771557add6ff2238acb63f635317c35fa590d348fb238f00896"
       url: "https://pub.dev"
     source: hosted
-    version: "10.2.0"
+    version: "17.1.0"
   google_fonts:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: "2776c66b3e97c6cdd58d1bd3281548b074b64f1fd5c8f82391f7456e38849567"
+      sha256: db9df7a5898d894eeda4c78143f35c30a243558be439518972366880b80bf88e
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.5"
+    version: "8.0.2"
   gtk:
     dependency: transitive
     description:
