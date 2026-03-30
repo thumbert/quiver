@@ -2,7 +2,7 @@
 
 Keep all your arrows in one place
 
-```
+```bash
 flutter build web --base-href=/quiver/
 rm -r ~/Software/Apps/public/quiver/*
 cp -r build/web/* ~/Software/Apps/public/quiver
