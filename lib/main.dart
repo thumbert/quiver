@@ -37,6 +37,7 @@ import 'package:timezone/data/latest.dart';
 void main() async {
   initializeTimeZones();
   await dotenv.load(fileName: '.env');
+  
   runApp(ProviderScope(child: MyApp()));
 }
 

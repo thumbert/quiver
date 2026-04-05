@@ -20,6 +20,11 @@
 
 ## BUGS
 
+
+## Release 2026-04-05
+- Bump Flutter to 3.41.6
+- Set canvaskit to be the renderer on the web app.  Plotly js does not work with wasm.
+
 ## Release 2026-02-25
 - Bump Flutter to 3.41.2
 
