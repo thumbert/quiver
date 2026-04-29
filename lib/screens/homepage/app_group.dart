@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/eod_settlements/eod_settlements.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -54,6 +55,7 @@ class AppGroup extends StatefulWidget {
     //
     'Other': [
       MenuItem(url: Connect4.route, title: 'Connect4'),
+      MenuItem(url: EodSettlements.route, title: 'EOD Settlements'),
       MenuItem(url: HistoricalGas.route, title: 'Historical gas prices'),
       MenuItem(url: HistoricalLmp.route, title: 'Historical LMP'),
       MenuItem(

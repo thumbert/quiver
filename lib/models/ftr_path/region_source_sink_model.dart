@@ -1,3 +1,4 @@
+import 'package:date/date.dart';
 import 'package:elec/elec.dart';
 import 'package:http/http.dart' as http;
 import 'package:elec_server/client/other/ptids.dart';
@@ -17,7 +18,10 @@ class RegionSourceSinkModel extends ChangeNotifier {
         sinkPtid: initialValues[region]!['sinkPtid'] as int,
         bucket: _bucket,
         iso: iso,
-        rootUrl: dotenv.env['ROOT_URL']!);
+        term: Term(Date.today(location: IsoNewEngland.location).subtract(400),
+            Date.today(location: IsoNewEngland.location)),
+        rootUrl: dotenv.env['ROOT_URL']!,
+        rustServer: dotenv.env['RUST_SERVER']!);
   }
 
   late final PtidsApi client;
@@ -97,7 +101,10 @@ class RegionSourceSinkModel extends ChangeNotifier {
         sinkPtid: initialValues[region]!['sinkPtid'] as int,
         bucket: _bucket,
         iso: iso,
-        rootUrl: dotenv.env['ROOT_URL']!);
+        term: Term(Date.today(location: IsoNewEngland.location).subtract(400),
+            Date.today(location: IsoNewEngland.location)),
+        rootUrl: dotenv.env['ROOT_URL']!,
+        rustServer: dotenv.env['RUST_SERVER']!);
     notifyListeners();
   }
 
@@ -110,7 +117,10 @@ class RegionSourceSinkModel extends ChangeNotifier {
         sinkPtid: sinkPtid,
         bucket: _bucket,
         iso: iso,
-        rootUrl: dotenv.env['ROOT_URL']!);
+        term: Term(Date.today(location: IsoNewEngland.location).subtract(400),
+            Date.today(location: IsoNewEngland.location)),
+        rootUrl: dotenv.env['ROOT_URL']!,
+        rustServer: dotenv.env['RUST_SERVER']!);
     notifyListeners();
   }
 
@@ -123,7 +133,10 @@ class RegionSourceSinkModel extends ChangeNotifier {
         sinkPtid: sinkPtid,
         bucket: _bucket,
         iso: iso,
-        rootUrl: dotenv.env['ROOT_URL']!);
+        term: Term(Date.today(location: IsoNewEngland.location).subtract(400),
+            Date.today(location: IsoNewEngland.location)),
+        rootUrl: dotenv.env['ROOT_URL']!,
+        rustServer: dotenv.env['RUST_SERVER']!);
     notifyListeners();
   }
 
@@ -139,7 +152,10 @@ class RegionSourceSinkModel extends ChangeNotifier {
         sinkPtid: sinkPtid,
         bucket: _bucket,
         iso: iso,
-        rootUrl: dotenv.env['ROOT_URL']!);
+        term: Term(Date.today(location: IsoNewEngland.location).subtract(400),
+            Date.today(location: IsoNewEngland.location)),
+        rootUrl: dotenv.env['ROOT_URL']!,
+        rustServer: dotenv.env['RUST_SERVER']!);
     notifyListeners();
   }
 

@@ -20,6 +20,8 @@
 
 ## BUGS
 
+## Release 2026-04-29
+- Some work on the eod_settlement
 
 ## Release 2026-04-05
 - Bump Flutter to 3.41.6

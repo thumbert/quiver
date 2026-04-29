@@ -3,6 +3,7 @@ import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
+import 'package:flutter_quiver/screens/eod_settlements/eod_settlements.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: DropdownExample.route,
         builder: (context, state) => const DropdownExample()),
+    GoRoute(path: EodSettlements.route, builder: (context, state) => const EodSettlements()),
     GoRoute(path: ExchangeTradesUi.route, builder: (context, state) => const ExchangeTradesUi()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
     GoRoute(path: ExpansionPanelExample.route, builder: (context, state) => const ExpansionPanelExample()),
