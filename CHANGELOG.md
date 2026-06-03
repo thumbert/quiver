@@ -20,6 +20,12 @@
 
 ## BUGS
 
+## 2026-06-03
+- EPA emissions page working
+
+## 2026-05-07
+- First sketch for the masked_demand_bids page
+
 ## Release 2026-04-29
 - Some work on the eod_settlement
 

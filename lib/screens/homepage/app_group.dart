@@ -3,6 +3,7 @@ import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/eod_settlements/eod_settlements.dart';
+import 'package:flutter_quiver/screens/epa/epa_hourly_emissions.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
+import 'package:flutter_quiver/screens/masked_demand_bids/masked_demand_bids_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -56,12 +58,17 @@ class AppGroup extends StatefulWidget {
     'Other': [
       MenuItem(url: Connect4.route, title: 'Connect4'),
       MenuItem(url: EodSettlements.route, title: 'EOD Settlements'),
+      MenuItem(url: EpaHourlyEmissions.route, title: 'EPA Hourly Emissions'),
       MenuItem(url: HistoricalGas.route, title: 'Historical gas prices'),
       MenuItem(url: HistoricalLmp.route, title: 'Historical LMP'),
       MenuItem(
           url: HistoricalOptionPricing.route,
           title: 'Historical option pricing'),
       MenuItem(url: FtrPath.route, title: 'FTR path analysis'),
+      MenuItem(
+          url: MaskedDemandBidsUi.route,
+          title: 'ISONE Masked Demand Bids ',
+          icon: const Icon(Icons.theater_comedy)),
       MenuItem(
           url: MccSurfer.route,
           title: 'MCC surfer ',

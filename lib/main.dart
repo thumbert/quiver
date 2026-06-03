@@ -4,6 +4,7 @@ import 'package:flutter_quiver/screens/connect4/connect4.dart';
 import 'package:flutter_quiver/screens/ct_suppliers_backlog/ct_suppliers_backlog.dart';
 import 'package:flutter_quiver/screens/demand_bids/demand_bids.dart';
 import 'package:flutter_quiver/screens/eod_settlements/eod_settlements.dart';
+import 'package:flutter_quiver/screens/epa/epa_hourly_emissions.dart';
 import 'package:flutter_quiver/screens/examples/daterange_example.dart';
 import 'package:flutter_quiver/screens/examples/dropdown_example.dart';
 import 'package:flutter_quiver/screens/examples/expansion_panel.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_quiver/screens/historical_gas/historical_gas_ui.dart';
 import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
+import 'package:flutter_quiver/screens/masked_demand_bids/masked_demand_bids_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -38,7 +40,7 @@ import 'package:timezone/data/latest.dart';
 void main() async {
   initializeTimeZones();
   await dotenv.load(fileName: '.env');
-  
+
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -73,10 +75,19 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: DropdownExample.route,
         builder: (context, state) => const DropdownExample()),
-    GoRoute(path: EodSettlements.route, builder: (context, state) => const EodSettlements()),
-    GoRoute(path: ExchangeTradesUi.route, builder: (context, state) => const ExchangeTradesUi()),
+    GoRoute(
+        path: EodSettlements.route,
+        builder: (context, state) => const EodSettlements()),
+    GoRoute(
+        path: EpaHourlyEmissions.route,
+        builder: (context, state) => const EpaHourlyEmissions()),
+    GoRoute(
+        path: ExchangeTradesUi.route,
+        builder: (context, state) => const ExchangeTradesUi()),
     GoRoute(path: FtrPath.route, builder: (context, state) => const FtrPath()),
-    GoRoute(path: ExpansionPanelExample.route, builder: (context, state) => const ExpansionPanelExample()),
+    GoRoute(
+        path: ExpansionPanelExample.route,
+        builder: (context, state) => const ExpansionPanelExample()),
     GoRoute(
         path: HistoricalGas.route,
         builder: (context, state) => const HistoricalGas()),
@@ -96,6 +107,9 @@ class MyApp extends StatelessWidget {
         path: InheritedWidgetExample.route,
         builder: (context, state) =>
             const InheritedWidgetExample(child: MyStorePage())),
+    GoRoute(
+        path: MaskedDemandBidsUi.route,
+        builder: (context, state) => const MaskedDemandBidsUi()),
     GoRoute(
         path: MccSurfer.route, builder: (context, state) => const MccSurfer()),
     GoRoute(
