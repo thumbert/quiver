@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/common/region_load_zone_model.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:provider/provider.dart';
 
 class RegionLoadZone extends StatefulWidget {
@@ -11,7 +12,73 @@ class RegionLoadZone extends StatefulWidget {
 
 class _RegionLoadZoneState extends State<RegionLoadZone> {
   final _background = Colors.orange[100]!;
-  final maxOptionsHeight = 350.0;
+  final _regionMenuController = MenuController();
+  final _zoneMenuController = MenuController();
+
+  Widget _buildMenuAnchor({
+    required MenuController controller,
+    required String? value,
+    required List<String> items,
+    required void Function(String) onSelected,
+  }) {
+    return MenuAnchor(
+      controller: controller,
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(Colors.grey[300]!),
+        minimumSize: const WidgetStatePropertyAll(Size(100, 0)),
+        maximumSize: const WidgetStatePropertyAll(Size(100, double.infinity)),
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+      ),
+      menuChildren: [
+        PointerInterceptor(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: items
+                .map(
+                  (e) => InkWell(
+                    onTap: () {
+                      onSelected(e);
+                      controller.close();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: SizedBox(width: 100, child: Text(e)),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+      builder: (context, controller, _) => PointerInterceptor(
+        child: GestureDetector(
+          onTap: () =>
+              controller.isOpen ? controller.close() : controller.open(),
+          child: Container(
+            color: _background,
+            padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
+            width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    value ?? 'Filter',
+                    overflow: TextOverflow.ellipsis,
+                    style: value == null
+                        ? const TextStyle(color: Colors.grey)
+                        : null,
+                  ),
+                ),
+                const Icon(Icons.expand_more),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,28 +95,11 @@ class _RegionLoadZoneState extends State<RegionLoadZone> {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        Container(
-          color: _background,
-          padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
-          width: 100,
-          child: DropdownButtonFormField(
-            value: model.region,
-            icon: const Icon(Icons.expand_more),
-            hint: const Text('Filter'),
-            decoration: const InputDecoration(
-              isDense: true,
-              enabledBorder: InputBorder.none,
-            ),
-            elevation: 16,
-            onChanged: (String? newValue) {
-              setState(() {
-                model.region = newValue!;
-              });
-            },
-            items: RegionLoadZoneModel.allowedRegions.keys
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-          ),
+        _buildMenuAnchor(
+          controller: _regionMenuController,
+          value: model.region,
+          items: RegionLoadZoneModel.allowedRegions.keys.toList(),
+          onSelected: (v) => setState(() => model.region = v),
         ),
 
         //
@@ -61,28 +111,11 @@ class _RegionLoadZoneState extends State<RegionLoadZone> {
             style: TextStyle(fontSize: 16),
           ),
         ),
-        Container(
-          color: _background,
-          padding: const EdgeInsetsDirectional.only(start: 6, end: 6),
-          width: 100,
-          child: DropdownButtonFormField(
-            value: model.zoneName,
-            icon: const Icon(Icons.expand_more),
-            hint: const Text('Filter'),
-            decoration: const InputDecoration(
-              isDense: true,
-              enabledBorder: InputBorder.none,
-            ),
-            elevation: 16,
-            onChanged: (String? newValue) {
-              setState(() {
-                model.zoneName = newValue!;
-              });
-            },
-            items: ['(All)', ...model.getZoneNames()]
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-          ),
+        _buildMenuAnchor(
+          controller: _zoneMenuController,
+          value: model.zoneName,
+          items: ['(All)', ...model.getZoneNames()],
+          onSelected: (v) => setState(() => model.zoneName = v),
         ),
       ],
     );

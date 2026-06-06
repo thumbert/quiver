@@ -20,6 +20,9 @@
 
 ## BUGS
 
+## 2026-06-06
+- Fixed several issues with MCC surfer for NYISO
+
 ## 2026-06-03
 - EPA emissions page working
 
