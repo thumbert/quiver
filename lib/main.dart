@@ -1,3 +1,4 @@
+import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/models/polygraph/polygraph_variable.dart';
 import 'package:flutter_quiver/screens/connect4/connect4.dart';
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
   static final rootUrl = dotenv.env['ROOT_URL']!;
   static final rustServer = dotenv.env['RUST_SERVER']!;
   static final client = Client();
+
+
 
   final _router = GoRouter(routes: [
     GoRoute(

@@ -192,7 +192,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "19782dbab67ada7bbf337faa0f667182cdf1d7bf"
+      resolved-ref: "1057821be324f1ebd245396e1afd86615b7c70c6"
       url: "https://github.com/thumbert/date.git"
     source: git
     version: "3.2.0"
@@ -242,7 +242,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "1eab56662895ef0ac47504ccdd7434836daedf9e"
+      resolved-ref: "6fcc856388834988153e626d2548e2da26ec8107"
       url: "https://github.com/thumbert/elec-server.git"
     source: git
     version: "2.0.2"
@@ -332,10 +332,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: "38d1c268de9097ff59cf0e844ac38759fc78f76836d37edad06fa21e182055a0"
+      sha256: "3854fe5e3bff0b113c658f260b90c95dea17c92db0f2addeac2e343dd9969785"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.34"
+    version: "2.0.35"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -380,10 +380,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "92d8cee7c57dff0a6c409c05597b460002434eccf7424a712283225b3962d03f"
+      sha256: "5922b2861e2235a3504896f0d6fa07d84141b480cf52eecd2f42cd25585a9e8a"
       url: "https://pub.dev"
     source: hosted
-    version: "17.2.3"
+    version: "17.3.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -412,10 +412,10 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: a41af4e8fc687cd6d33de9751eb936c8c0204ebe2bcb6c15ecf707504bf47f31
+      sha256: "9a62a50b50b769a737bc0a8ff381f333529df3ab746b2f6b02e83760231455ba"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.2"
   html:
     dependency: transitive
     description:
@@ -561,10 +561,10 @@ packages:
     dependency: "direct main"
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: "1741988757a65eb6b36abe716829688cf01910bbf91c34354ff7ec1c3de2b349"
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.18.0"
   mongo_dart:
     dependency: transitive
     description:
@@ -826,7 +826,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "8f89b4ccd30c5f55dc4c3430965aa5f9169d943a"
+      resolved-ref: "2c1899d5ede446f0d5281e1375a4d7882cb941f1"
       url: "https://github.com/thumbert/quiver_core.git"
     source: git
     version: "0.2.0"
@@ -851,7 +851,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: f63d888baa7bf13d256058a167f3e672d2eda58e
+      resolved-ref: "7d43574c1f56778cb37c4bd608a1d3aacc704e62"
       url: "https://github.com/thumbert/reduct.git"
     source: git
     version: "0.3.5"
@@ -1049,10 +1049,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
+      sha256: "949a932224383300f01be9221c39180316445ecb8e7547f70a41a35bf421fb9e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.10"
+    version: "0.7.11"
   timeseries:
     dependency: "direct main"
     description:

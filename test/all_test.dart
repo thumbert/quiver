@@ -10,9 +10,9 @@ Future<void> main() async {
   initializeTimeZones();
   dotenv.testLoad(fileInput: File('.env').readAsStringSync());
   final rootUrl = dotenv.env['ROOT_URL'] as String;
-  final rustServer = dotenv.env['RUST_SERVER'] as String;
+  // final rustServer = dotenv.env['RUST_SERVER'] as String;
 
-  mcc_surfer.tests(rootUrl, rustServer);
+  mcc_surfer.tests();
   unmasked_energy_offers.tests(rootUrl);
   weather_model.tests(rootUrl);
 }

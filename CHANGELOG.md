@@ -20,6 +20,12 @@
 
 ## BUGS
 
+## 2026-06-08
+- Made progress on rewrite of mcc_surfer
+
+## 2026-06-07
+- Updated index.html to use plotly-3.6.0.min.js
+
 ## 2026-06-06
 - Fixed several issues with MCC surfer for NYISO
 
