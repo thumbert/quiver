@@ -26,6 +26,11 @@ Future<void> tests() async {
       var rTraces = reduceTraces(traces, 100);
       expect(rTraces.length, 100);
       expect((rTraces[0]['y'] as List).length, 720);
+
+      // get top constraints
+      var constraints = await getTopConstraints();
+      expect(constraints.length, 20);
+      constraints.forEach(print);
     });
     // test('make traces for IESO', () async {
     //   traces = await model.makeHourlyTraces(term,

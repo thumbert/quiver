@@ -117,6 +117,7 @@ class _EpaHourlyEmissionsState extends State<EpaHourlyEmissions> {
                         switch (traces.value) {
                           // ignore: unused_local_variable
                           case AsyncData data:
+                            layout['yaxis']['title'] = {'text': rows.value[0].variableName};
                             plotly.react(
                                 traces.requireValue, layout, plotly.config);
                             return Column(
@@ -211,8 +212,6 @@ class _Row2State extends State<Row2> {
 
   @override
   Widget build(BuildContext context) {
-    checkErrorLocation();
-
     return MouseRegion(
       onEnter: (_) {
         setState(() {
@@ -282,6 +281,9 @@ class _Row2State extends State<Row2> {
                           getSelection: (model) =>
                               rows.value[widget.index].facilityName,
                           clearSelection: () {
+                            if (rows.value[widget.index].facilityName.isEmpty) {
+                              return;
+                            }
                             final rs = rows.value;
                             rs[widget.index] =
                                 rs[widget.index].copyWith(facilityName: '');
@@ -413,13 +415,5 @@ class _Row2State extends State<Row2> {
             )),
       ),
     );
-  }
-
-  void checkErrorLocation() {
-    // if (!tab1.allLocations().contains(locationController.text)) {
-    //   locationError.value = 'Invalid location';
-    // } else {
-    //   locationError.value = '';
-    // }
   }
 }

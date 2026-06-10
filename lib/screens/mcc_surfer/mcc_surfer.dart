@@ -5,6 +5,8 @@ import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:quiver_core/quiver_core.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 
+import 'constraint_table.dart';
+
 class MccSurfer extends StatefulWidget {
   const MccSurfer({super.key});
 
@@ -18,7 +20,7 @@ class _MccSurferState extends State<MccSurfer> {
   late ScrollController _scrollController;
   late ScrollController _scrollControllerH;
   late Plotly plotly;
-  late EffectCleanup _termEffect;
+  late EffectCleanup _clearCacheEffect;
 
   @override
   void initState() {
@@ -30,9 +32,11 @@ class _MccSurferState extends State<MccSurfer> {
       traces: const [],
       layout: layout,
     );
-    _termEffect = effect(() {
+    _clearCacheEffect = effect(() {
       term.value; // subscribe
-      cacheTs.clear();
+      region.value; // subscribe
+      cacheTraces.clear();
+      cacheConstraints.clear();
     });
 
     super.initState();
@@ -40,7 +44,7 @@ class _MccSurferState extends State<MccSurfer> {
 
   @override
   void dispose() {
-    _termEffect();
+    _clearCacheEffect();
     _scrollController.dispose();
     _scrollControllerH.dispose();
     super.dispose();
@@ -119,6 +123,7 @@ class _MccSurferState extends State<MccSurfer> {
                     controller: _scrollControllerH,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12,
                       children: [
                         Watch((context) {
                           switch (traces.value) {
@@ -157,10 +162,7 @@ class _MccSurferState extends State<MccSurfer> {
                               );
                           }
                         }),
-
-                        // SizedBox(
-                        //     width: 900, height: 700, child: CongestionChart()),
-                        // ConstraintTable(),
+                        ConstraintTable(),
                       ],
                     ),
                   ),
@@ -225,7 +227,7 @@ class _MccSurferState extends State<MccSurfer> {
         ),
 
         ///
-        /// Load Zone
+        /// Load Zones
         ///
         Text(
           'Load Zone',

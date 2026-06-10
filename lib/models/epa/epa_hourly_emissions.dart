@@ -8,14 +8,14 @@ import 'package:timezone/timezone.dart';
 import 'package:elec_server/client/epa/hourly_emissions.dart' as he;
 
 final term = signal(getDefaultTerm());
-final rows = ListSignal<FacilityRow>([
+final rows = signal<List<FacilityRow>>([
   FacilityRow(
     state: 'MA',
     facilityName: 'Fore River Energy Center',
     variableName: 'Gross Load (MW)',
     aggregateUnits: false,
   )
-]);
+], debugLabel: 'rows');
 
 /// Derived signal that only changes when the set of states changes,
 /// not when facilityName/variableName/etc. change.
@@ -211,7 +211,7 @@ Term getDefaultTerm() {
 }
 
 final Map<String, dynamic> layout = {
-  'width': 900,
+  'width': 1100,
   'height': 600,
   'title': '',
   'xaxis': {
@@ -221,7 +221,7 @@ final Map<String, dynamic> layout = {
   'yaxis': {
     'showgrid': true,
     'zeroline': false,
-    // 'title': 'Price, \$/MMBtu',
+    'title': {'text': 'Value'},
   },
   'showlegend': true,
   'legend': {

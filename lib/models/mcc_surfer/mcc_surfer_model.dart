@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:dama/stat/descriptive/summary.dart';
 import 'package:date/date.dart';
 import 'package:elec/elec.dart';
@@ -5,10 +6,9 @@ import 'package:elec_server/client/dacongestion.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-// import 'package:flutter_quiver/main.dart';
 import 'package:signals_flutter/signals_flutter.dart';
-import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
+import 'package:elec_server/client/nyiso/binding_constraints.dart' as ny_bc;
 
 final term = signal(getDefaultTerm(), debugLabel: 'term');
 final region = signal('NYISO', debugLabel: 'region');
@@ -25,7 +25,13 @@ final displayedCurvesCount = signal(0, debugLabel: 'displayedCurvesCount');
 final projectionCount = signal(100, debugLabel: 'projectionCount');
 
 final traces = FutureSignal<List<Map<String, dynamic>>>(makeTraces,
-    dependencies: [region, term]);
+    dependencies: [region, term, zones], debugLabel: 'traces');
+
+final topConstraintsTable = FutureSignal<List<Map<String, dynamic>>>(
+  () async => getTopConstraints(),
+  dependencies: [region, term],
+  debugLabel: 'topConstraintsTable',
+);
 
 /// Get the data and make the Plotly hourly traces.
 /// For reference, getting one full month takes less than 800 ms, the first
@@ -40,27 +46,33 @@ final traces = FutureSignal<List<Map<String, dynamic>>>(makeTraces,
 Future<List<Map<String, dynamic>>> makeTraces() async {
   var ptidMap = await getPtidMap(region.value);
 
-  var currentTerm = term.value;
-  var rawTraces = await mccClient.value
-      .getHourlyTraces(currentTerm.startDate, currentTerm.endDate);
-  // customize the display on hover
-  for (var e in rawTraces) {
-    var ptid = e['ptid'] as int;
-    if (ptidMap.containsKey(ptid)) {
-      var entry = ptidMap[ptid]!;
-      e['name'] = '';
-      e['text'] = '${entry['name']}, ptid: ${e['ptid']}';
-      if (entry.containsKey('zonePtid')) {
-        e['zonePtid'] = entry['zonePtid']; // need it for the zone filter
-        e['text'] += ', zone: ${ptidMap[entry['zonePtid']]!['name']}';
+  late List<Map<String, dynamic>> rawTraces;
+  if (cacheTraces.isNotEmpty) {
+    rawTraces = cacheTraces;
+  } else {
+    rawTraces = await mccClient.value
+        .getHourlyTraces(term.value.startDate, term.value.endDate);
+    // customize the display on hover
+    for (var e in rawTraces) {
+      var ptid = e['ptid'] as int;
+      if (ptidMap.containsKey(ptid)) {
+        var entry = ptidMap[ptid]!;
+        e['name'] = '';
+        e['text'] = '${entry['name']}, ptid: ${e['ptid']}';
+        if (entry.containsKey('zonePtid')) {
+          e['zonePtid'] = entry['zonePtid']; // need it for the zone filter
+          e['text'] += ', zone: ${ptidMap[entry['zonePtid']]!['name']}';
+        }
+        if (entry.containsKey('rspArea')) {
+          e['text'] += ', subzone: ${entry['rspArea']}';
+        }
+      } else {
+        e['text'] = 'ptid: ${e['ptid']}';
       }
-      if (entry.containsKey('rspArea')) {
-        e['text'] += ', subzone: ${entry['rspArea']}';
-      }
-    } else {
-      e['text'] = 'ptid: ${e['ptid']}';
+      e['mode'] = 'lines';
     }
-    e['mode'] = 'lines';
+    cacheTraces.clear();
+    cacheTraces.addAll(rawTraces);
   }
 
   var filteredTraces = List<Map<String, dynamic>>.from(rawTraces);
@@ -70,7 +82,8 @@ Future<List<Map<String, dynamic>>> makeTraces() async {
         .map((zoneName) => Iso.parse(region.value).loadZones[zoneName]!)
         .toSet();
     filteredTraces = filteredTraces
-        .where((e) => zonalPtids.contains(e['zonePtid'] as int))
+        .where((e) =>
+            e['zonePtid'] != null && zonalPtids.contains(e['zonePtid'] as int))
         .toList();
   }
   return reduceTraces(filteredTraces, projectionCount.value);
@@ -144,6 +157,62 @@ final mccClient = computed(() {
       rustServer: dotenv.env['RUST_SERVER'] as String);
 }, debugLabel: 'mccClient');
 
+/// Get the constraints for the [term] from the database.
+/// Show the top constraints in the focusTerm.
+/// [focusTerm] can be a sub-interval of the [term] that you get from
+/// zooming into the plot.
+///
+Future<List<Map<String, dynamic>>> getTopConstraints() async {
+  var xs = await getDaConstraints();
+
+  var groups = groupBy(
+      xs,
+      (Map e) =>
+          (e['Constraint Name'].toString(), e['Contingency Name'].toString()));
+  var table = <Map<String, dynamic>>[
+    for (var group in groups.entries)
+      {
+        'Constraint Name': group.key.$1,
+        'Contingency Name': group.key.$2,
+        'Marginal Value':
+            group.value.map((Map e) => e['Marginal Value'] as num).sum,
+        'Hours Count': group.value.length,
+      }
+  ];
+
+  /// sort descending by absolute Marginal Value
+  table.sort((a, b) =>
+      -(a['Marginal Value'].abs()).compareTo(b['Marginal Value'].abs()));
+
+  // if (selected.isEmpty) {
+  //   selected = List.filled(_table.length, false);
+  // }
+  table = table.take(15).toList();
+
+  return table;
+}
+
+Future<List<Map<String, dynamic>>> getDaConstraints() async {
+  if (cacheConstraints.isEmpty) {
+    if (region.value == 'NYISO') {
+      var aux = await ny_bc.queryRecords(
+        filter: ny_bc.QueryFilter(
+          hourBeginningGte: term.value.start,
+          hourBeginningLt: term.value.end,
+        ),
+        rootUrl: dotenv.env['RUST_SERVER']!,
+      );
+      cacheConstraints.addAll(aux.map((e) => {
+            'hourBeginning': e.hourBeginning,
+            'Constraint Name': e.limitingFacility,
+            'Contingency Name': e.contingency,
+            'Marginal Value': e.constraintCost,
+          }));
+    }
+  }
+  return cacheConstraints;
+}
+
 ///
 Future<Map<int, Map<String, dynamic>>> getPtidMap(String region) async {
   if (!_cachePtidMap.containsKey(region)) {
@@ -168,9 +237,11 @@ List<String> getAllZoneNames() {
   }
 }
 
-/// (ptid -> hourly timeseries of mcc).
 /// Cache clears when term or region changes.
-final cacheTs = <int, TimeSeries<num>>{};
+final cacheTraces = <Map<String, dynamic>>[];
+
+/// Cache clears when term or region changes.  Pulls all the DA constraints.
+final cacheConstraints = <Map<String, dynamic>>[];
 
 /// A cache with Region -> ptid -> data
 final _cachePtidMap = <String, Map<int, Map<String, dynamic>>>{};
