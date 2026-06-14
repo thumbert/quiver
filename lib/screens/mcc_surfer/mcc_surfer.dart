@@ -19,7 +19,8 @@ class MccSurfer extends StatefulWidget {
 class _MccSurferState extends State<MccSurfer> {
   late ScrollController _scrollController;
   late ScrollController _scrollControllerH;
-  late Plotly plotly;
+  late Plotly plotlyMcc;
+  late Plotly plotlyConstraint;
   late EffectCleanup _clearCacheEffect;
 
   @override
@@ -27,10 +28,15 @@ class _MccSurferState extends State<MccSurfer> {
     _scrollController = ScrollController();
     _scrollControllerH = ScrollController();
     var aux = DateTime.now().hashCode;
-    plotly = Plotly(
+    plotlyMcc = Plotly(
       viewId: 'plotly-mcc-surfer-$aux',
       traces: const [],
-      layout: layout,
+      layout: layoutMcc.value,
+    );
+    plotlyConstraint = Plotly(
+      viewId: 'plotly-constraint-$aux',
+      traces: const [],
+      layout: layoutConstraint,
     );
     _clearCacheEffect = effect(() {
       term.value; // subscribe
@@ -129,15 +135,18 @@ class _MccSurferState extends State<MccSurfer> {
                           switch (traces.value) {
                             // ignore: unused_local_variable
                             case AsyncData data:
-                              plotly.react(
-                                  traces.requireValue, layout, plotly.config);
+                              plotlyMcc.react(traces.requireValue,
+                                  layoutMcc.value, plotlyMcc.config);
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(children: [
-                                    SizedBox(
-                                        width: 900, height: 600, child: plotly),
-                                  ]),
+                                  SizedBox(
+                                      width: layoutMcc.value['width'],
+                                      height: layoutMcc.value['height'],
+                                      child: plotlyMcc),
+                                      Text('Curve resolution: \$${resolution.value}.  Curves displayed: ${displayedCurvesCount.value} out of ${filteredTracesCount.value}.'),
+                                  SizedBox(height: 12),    
+                                  ...nodeMccVsConstraintCost(),
                                 ],
                               );
                             case AsyncError error:
@@ -150,9 +159,9 @@ class _MccSurferState extends State<MccSurfer> {
                                 )
                               ]);
                             case AsyncLoading():
-                              return const SizedBox(
-                                width: 900,
-                                height: 600,
+                              return SizedBox(
+                                width: layoutMcc.value['width'],
+                                height: layoutMcc.value['height'],
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -173,11 +182,11 @@ class _MccSurferState extends State<MccSurfer> {
     );
   }
 
-  ///
+  /// Top control widgets: term, region, load zones
   Widget controlWidgets() {
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 12,
+      spacing: 8,
       children: [
         Text(
           'Term',
@@ -195,7 +204,7 @@ class _MccSurferState extends State<MccSurfer> {
             getTerm: (model) => term.value,
           )),
         ),
-        const SizedBox(
+        SizedBox(
           width: 12,
         ),
 
@@ -222,7 +231,7 @@ class _MccSurferState extends State<MccSurfer> {
             width: 100,
           ),
         ),
-        const SizedBox(
+        SizedBox(
           width: 12,
         ),
 
@@ -253,7 +262,93 @@ class _MccSurferState extends State<MccSurfer> {
             width: 140,
           ),
         ),
+        SizedBox(
+          width: 12,
+        ),
+
+        ///
+        /// Focus node
+        ///
+        Text(
+          'Focus Node',
+          style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
+        ),
+        Watch((context) {
+          return Container(
+            width: 350,
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade50,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: AutocompleteUi(
+              model: focusNodeMcc,
+              setSelection: (value) => focusNodeMcc.value = value,
+              getSelection: (model) => focusNodeMcc.value,
+              clearSelection: () => focusNodeMcc.value = null,
+              choices: nodeNameChoices.value,
+              width: 350,
+            ),
+          );
+        }),
       ],
     );
+  }
+
+  /// Node MCC price vs. Constraint cost controls + plot
+  List<Widget> nodeMccVsConstraintCost() {
+    var tracesConstraint = makeTracesConstraintCost();
+    plotlyConstraint.react(
+        tracesConstraint, layoutConstraint, plotlyConstraint.config);
+    return [
+      Row(spacing: 12, children: [
+        Text(
+          'Focus Node',
+          style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
+        ),
+        Watch((context) {
+          return Container(
+            width: 350,
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade50,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: AutocompleteUi(
+              model: focusNodeConstraint,
+              setSelection: (value) => focusNodeConstraint.value = value,
+              getSelection: (model) => focusNodeConstraint.value,
+              clearSelection: () => focusNodeConstraint.value = null,
+              choices: nodeNameChoices.value,
+              width: 350,
+            ),
+          );
+        }),
+        //
+        Text(
+          'Constraint',
+          style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
+        ),
+        Container(
+          width: 300,
+          decoration: BoxDecoration(
+            color: Colors.blueGrey.shade50,
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          child: AutocompleteUi(
+            model: focusConstraint,
+            setSelection: (value) => focusConstraint.value = value,
+            getSelection: (model) => focusConstraint.value,
+            clearSelection: () => focusConstraint.value = null,
+            choices: cacheConstraints.map((e) => e.limitingFacility).toSet(),
+            width: 300,
+          ),
+        ),
+      ]),
+      SizedBox(height: 12),
+      SizedBox(
+        width: layoutConstraint['width'],
+        height: layoutConstraint['height'],
+        child: plotlyConstraint,
+      ),
+    ];
   }
 }

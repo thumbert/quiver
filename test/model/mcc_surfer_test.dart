@@ -13,24 +13,31 @@ Future<void> tests() async {
       region.value = 'ISONE';
       zones.value = getAllZoneNames();
       term.value = Term.parse('Sep25', UTC);
-      var traces = await makeTraces();
+      var traces = await makeTracesMcc();
       var rTraces = reduceTraces(traces, 100);
       expect(rTraces.length, 100);
       expect((rTraces[0]['y'] as List).length, 720);
     });
     test('make traces for NYISO', () async {
       region.value = 'NYISO';
-      term.value = Term.parse('Sep25', UTC);
+      term.value = Term.parse('1Jun26-10Jun26', UTC);
       zones.value = getAllZoneNames();
-      var traces = await makeTraces();
+      var traces = await makeTracesMcc();
       var rTraces = reduceTraces(traces, 100);
       expect(rTraces.length, 100);
-      expect((rTraces[0]['y'] as List).length, 720);
+      expect((rTraces[0]['y'] as List).length, 240);
 
       // get top constraints
       var constraints = await getTopConstraints();
-      expect(constraints.length, 20);
-      constraints.forEach(print);
+      expect(constraints.length, 15);
+
+      // make trace for lower plot (mcc vs. constraint cost)
+      focusNodeConstraint.value = 'NINE_MILE_1, ptid: 23575';
+      focusConstraint.value = 'MEYER    230 MEYER      1 1';
+
+      var constraintCostTraces = makeTracesConstraintCost();
+      expect(constraintCostTraces.length, 1);
+      // print(constraintCostTraces);
     });
     // test('make traces for IESO', () async {
     //   traces = await model.makeHourlyTraces(term,

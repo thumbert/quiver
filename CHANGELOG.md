@@ -20,6 +20,12 @@
 
 ## BUGS
 
+## 2026-06-14
+- 
+
+## 2026-06-12
+- Improvement on mcc_surfer for NY.  Have lower chart working.
+
 ## 2026-06-08
 - Made progress on rewrite of mcc_surfer
 

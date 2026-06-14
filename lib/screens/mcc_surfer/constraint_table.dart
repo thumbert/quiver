@@ -89,16 +89,22 @@ class _DataTableSource extends DataTableSource {
   @override
   DataRow? getRow(int index) {
     var x = model[index];
+    final constraintName = x['Constraint Name'] as String;
     return DataRow(
+        selected: selectedConstraints.value.contains(x['Constraint Name']),
         cells: [
           DataCell(Text(x['Constraint Name'])),
           DataCell(Text(x['Contingency Name'])),
           DataCell(Text(_fmt.format(x['Marginal Value']))),
           DataCell(Text(x['Hours Count'].toString())),
         ],
-        selected: false,
         onSelectChanged: (bool? value) {
-          // Handle row selection if needed
+          if (value == true) {
+            selectedConstraints.value = {...selectedConstraints.value, constraintName};
+          } else {
+            selectedConstraints.value = {...selectedConstraints.value}..remove(constraintName);
+          }
+          notifyListeners();
         });
   }
 
@@ -109,5 +115,5 @@ class _DataTableSource extends DataTableSource {
   int get rowCount => model.length;
 
   @override
-  int get selectedRowCount => 0;
+  int get selectedRowCount => selectedConstraints.value.length;
 }
