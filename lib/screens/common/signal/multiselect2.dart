@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 /// A variation on multiselect.dart without the summary (All), (Some), (None).
 class Selection2Model {
@@ -78,7 +78,7 @@ class _MultiselectUiState extends State<Multiselect2Ui> {
           },
           child: Row(
             children: [
-              Watch((context) => widget.label),
+              SignalBuilder(builder: (context) => widget.label),
               const Spacer(),
               const Icon(
                 Icons.keyboard_arrow_down,
@@ -98,7 +98,7 @@ class _MultiselectUiState extends State<Multiselect2Ui> {
       out.add(MenuItemButton(
           style:
               ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
-          child: Watch((_) => SizedBox(
+          child: SignalBuilder(builder: (_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(
                   child: CheckboxListTile(

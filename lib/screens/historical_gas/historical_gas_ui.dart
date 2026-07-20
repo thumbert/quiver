@@ -31,8 +31,8 @@ class _State extends State<HistoricalGas> {
         scrollDirection: Axis.horizontal,
         child: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-            child: Watch(
-              (context) => Column(
+            child: SignalBuilder(
+              builder: (context) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(

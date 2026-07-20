@@ -8,7 +8,7 @@ import 'package:flutter_quiver/screens/common/signal/autocomplete2.dart';
 import 'package:flutter_quiver/screens/common/signal/dropdown2.dart';
 import 'package:flutter_quiver/screens/common/signal/term2.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 
 class FtrPath extends StatefulWidget {
@@ -79,8 +79,8 @@ class _FtrPathState extends State<FtrPath> {
               scrollDirection: Axis.horizontal,
               child: Padding(
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-                  child: Watch(
-                    (context) => Column(
+                  child: SignalBuilder(
+                    builder: (context) => Column(
                       spacing: 6,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -177,7 +177,7 @@ class _FtrPathState extends State<FtrPath> {
                                 color: Colors.amber.shade100,
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
-                              child: Watch((_) => switch (locations.value) {
+                              child: SignalBuilder(builder: (_) => switch (locations.value) {
                                     AsyncData<List<String>>() => AutocompleteUi(
                                         model: model,
                                         getSelection:
@@ -227,7 +227,7 @@ class _FtrPathState extends State<FtrPath> {
                                 color: Colors.amber.shade100,
                                 borderRadius: BorderRadius.circular(4.0),
                               ),
-                              child: Watch((_) => switch (locations.value) {
+                              child: SignalBuilder(builder: (_) => switch (locations.value) {
                                     AsyncData<List<String>>() => AutocompleteUi(
                                         model: model,
                                         getSelection:
@@ -355,7 +355,7 @@ class _FtrPathState extends State<FtrPath> {
                             SizedBox(
                               width: 12,
                             ),
-                            Watch((context) {
+                            SignalBuilder(builder: (context) {
                               switch (dailyLmp.value) {
                                 // ignore: unused_local_variable
                                 case AsyncData<TimeSeries<num>> data:

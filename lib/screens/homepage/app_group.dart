@@ -16,6 +16,7 @@ import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/masked_demand_bids/masked_demand_bids_ui.dart';
+import 'package:flutter_quiver/screens/masked_monthly_capacity/masked_monthly_capacity.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
 import 'package:flutter_quiver/screens/historical_plc/historical_plc.dart';
 import 'package:flutter_quiver/screens/mcc_surfer/mcc_surfer.dart';
@@ -49,9 +50,26 @@ class AppGroup extends StatefulWidget {
     'Reports': [
       MenuItem(url: ExchangeTradesUi.route, title: 'Exchange trades'),
       MenuItem(
-          url: '/realized_ancillaries_load',
-          title: 'Realized ancillaries load'),
-      MenuItem(url: '/gen_revenues', title: 'Generation revenues'),
+          url: MaskedMonthlyCapacity.route,
+          title: 'Masked Capacity Bids/Offers ',
+          icon: Icon(
+            Icons.theater_comedy,
+            color: Colors.amber.shade800,
+          )),
+      MenuItem(
+          url: MaskedDemandBidsUi.route,
+          title: 'Masked Demand Bids ',
+          icon: Icon(
+            Icons.theater_comedy,
+            color: Colors.lightGreen.shade800,
+          )),
+      MenuItem(
+          url: MaskedEnergyOffers.route,
+          title: 'Masked Energy Offers',
+          icon: Icon(
+            Icons.theater_comedy,
+            color: Colors.purple.shade800,
+          )),
       MenuItem(url: MonthlyAssetNcpc.route, title: 'Monthly asset NCPC (all)'),
     ],
     //
@@ -66,10 +84,6 @@ class AppGroup extends StatefulWidget {
           title: 'Historical option pricing'),
       MenuItem(url: FtrPath.route, title: 'FTR path analysis'),
       MenuItem(
-          url: MaskedDemandBidsUi.route,
-          title: 'ISONE Masked Demand Bids ',
-          icon: const Icon(Icons.theater_comedy)),
-      MenuItem(
           url: MccSurfer.route,
           title: 'MCC surfer ',
           icon: const Icon(Icons.surfing)),
@@ -81,7 +95,6 @@ class AppGroup extends StatefulWidget {
             Icons.dashboard_outlined,
             color: Colors.purple,
           )),
-      MenuItem(url: UnmaskedEnergyOffers.route, title: 'Energy Offers (all)'),
       MenuItem(url: Weather.route, title: 'Weather'),
     ],
     'Examples': [
@@ -159,49 +172,52 @@ class _AppGroupState extends State<AppGroup> {
           ),
         ],
       ),
-      child: MouseRegion(
-        onEnter: (_) {
-          setState(() {
-            item.isHighlighted = true;
-          });
-        },
-        onExit: (_) {
-          setState(() {
-            item.isHighlighted = false;
-          });
-        },
-        child: ListTile(
-          visualDensity: const VisualDensity(vertical: -4),
-          dense: true,
-          leading: Icon(
-            item.isHighlighted
-                ? Icons.label_important
-                : Icons.label_important_outline,
-            color:
-                item.isHighlighted ? Colors.orange : Colors.blueGrey.shade400,
-          ),
-          // trailing: item.icon,
-          title: Transform.translate(
-            offset: const Offset(-12, 0),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  item.title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: item.isHighlighted
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                  ),
-                ),
-                if (item.icon != null) item.icon!,
-              ],
-            ),
-          ),
-          onTap: () {
-            context.go(item.url);
+      child: Material(
+        color: Colors.transparent,
+        child: MouseRegion(
+          onEnter: (_) {
+            setState(() {
+              item.isHighlighted = true;
+            });
           },
+          onExit: (_) {
+            setState(() {
+              item.isHighlighted = false;
+            });
+          },
+          child: ListTile(
+            visualDensity: const VisualDensity(vertical: -4),
+            dense: true,
+            leading: Icon(
+              item.isHighlighted
+                  ? Icons.label_important
+                  : Icons.label_important_outline,
+              color:
+                  item.isHighlighted ? Colors.orange : Colors.blueGrey.shade400,
+            ),
+            // trailing: item.icon,
+            title: Transform.translate(
+              offset: const Offset(-12, 0),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    item.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: item.isHighlighted
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (item.icon != null) item.icon!,
+                ],
+              ),
+            ),
+            onTap: () {
+              context.go(item.url);
+            },
+          ),
         ),
       ),
     );

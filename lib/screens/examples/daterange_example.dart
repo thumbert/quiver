@@ -2,7 +2,7 @@ import 'package:date/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/screens/common/signal/date_field.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timezone/timezone.dart';
 
 /// NOTE: Implementation done with signals.
@@ -54,8 +54,8 @@ class _DateRangePickerExampleState extends State<DateRangePickerExample> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Text('A date range picker'),
-              Watch(
-                (context) => Padding(
+              SignalBuilder(
+                builder: (context) => Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -129,8 +129,8 @@ class _DateRangePickerExampleState extends State<DateRangePickerExample> {
               const SizedBox(
                 height: 400,
               ),
-              Watch((context) => Text('Start ${startDate.value.toString()}')),
-              Watch((context) => Text('End ${endDate.value.toString()}')),
+              SignalBuilder(builder: (context) => Text('Start ${startDate.value.toString()}')),
+              SignalBuilder(builder: (context) => Text('End ${endDate.value.toString()}')),
             ],
           ),
         ),

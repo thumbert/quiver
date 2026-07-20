@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 /// A performant autocomplete widget.
 ///
@@ -53,7 +53,7 @@ class _AutocompleteUiState extends State<AutocompleteUi> {
   @override
   Widget build(BuildContext context) {
     controller.text = widget.selection.value;
-    return Watch((_) => RawAutocomplete(
+    return SignalBuilder(builder: (_) => RawAutocomplete(
         focusNode: focusNode,
         textEditingController: controller,
         fieldViewBuilder: (BuildContext context,

@@ -15,14 +15,14 @@ final rows = signal<List<FacilityRow>>([
     variableName: 'Gross Load (MW)',
     aggregateUnits: false,
   )
-], debugLabel: 'rows');
+], options: SignalOptions(name: 'rows'));
 
 /// Derived signal that only changes when the set of states changes,
 /// not when facilityName/variableName/etc. change.
 final _rowStates = computed(() => rows.value.map((e) => e.state).toSet());
 
 final traces = FutureSignal<List<Map<String, dynamic>>>(makeTraces,
-    dependencies: [rows, term]);
+    options: AsyncSignalOptions(dependencies: [rows, term]));
 
 Future<List<Map<String, dynamic>>> makeTraces() async {
   var out = <Map<String, dynamic>>[];
@@ -77,7 +77,7 @@ final class FacilityRow {
     final states = _rowStates.value;
     await Future.wait(states.map((state) => getFacilities(state)));
     return 0;
-  }, dependencies: [_rowStates]);
+  }, options: AsyncSignalOptions(dependencies: [_rowStates]));
 
   static Future<Set<String>> getFacilities(String state) async {
     if (!cacheFacilities.containsKey(state)) {

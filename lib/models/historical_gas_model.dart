@@ -55,10 +55,7 @@ final traces = futureSignal(() async {
     rethrow;
   }
   return makeTraces(rows.value, termSignal.value);
-}, dependencies: [
-  termSignal,
-  rows,
-]);
+}, options: AsyncSignalOptions(dependencies: [termSignal, rows]));
 
 const mappedLocations = <String, List<String>>{
   'NorthEast': [

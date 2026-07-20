@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 enum SelectionState {
   all('(All)'),
@@ -110,7 +110,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
           },
           child: Row(
             children: [
-              Watch((context) => Text(widget.model.selectionState.toString())),
+              SignalBuilder(builder: (context) => Text(widget.model.selectionState.toString())),
               const Spacer(),
               const Icon(
                 Icons.keyboard_arrow_down,
@@ -128,8 +128,8 @@ class _MultiselectUiState extends State<MultiselectUi> {
     var out = <MenuItemButton>[];
     out.add(MenuItemButton(
         style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
-        child: Watch(
-          (context) => SizedBox(
+        child: SignalBuilder(
+          builder: (context) => SizedBox(
             width: widget.width,
             child: PointerInterceptor(
               child: CheckboxListTile(
@@ -153,7 +153,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
     for (final value in widget.model.choices) {
       out.add(MenuItemButton(
           style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
-          child: Watch((_) => SizedBox(
+          child: SignalBuilder(builder: (_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(
                   child: CheckboxListTile(

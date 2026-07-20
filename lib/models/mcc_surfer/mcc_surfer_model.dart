@@ -10,40 +10,48 @@ import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 import 'package:elec_server/client/nyiso/binding_constraints.dart' as ny_bc;
+import 'package:elec_server/client/isoexpress/binding_constraints.dart'
+    as ne_bc;
 
-final term = signal(getDefaultTerm(), debugLabel: 'term');
-final region = signal('NYISO', debugLabel: 'region');
-final zones = signal<List<String>>(getAllZoneNames(), debugLabel: 'zones');
-final selectedConstraints =
-    signal<Set<String>>({}, debugLabel: 'selectedConstraints');
-final focusNodeMcc = signal<String?>(null, debugLabel: 'focusNodeMcc');
+final term = signal(getDefaultTerm(), options: SignalOptions(name: 'term'));
+final region = signal<String>('NYISO', options: SignalOptions(name: 'region'));
+final zones = signal<List<String>>(getAllZoneNames(),
+    options: SignalOptions(name: 'zones'));
+final selectedConstraints = signal<Set<String>>({},
+    options: SignalOptions(name: 'selectedConstraints'));
+final focusNodeMcc =
+    signal<String?>(null, options: SignalOptions(name: 'focusNodeMcc'));
 
 /// For the lower plot of MCC vs. constraint cost
 final focusNodeConstraint = signal<String?>('NINE_MILE_1, ptid: 23575',
-    debugLabel: 'focusNodeConstraint');
+    options: SignalOptions(name: 'focusNodeConstraint'));
 final focusConstraint = signal<String?>('SCRIBA   345 VOLNEY   345 1',
-    debugLabel: 'focusConstraint');
+    options: SignalOptions(name: 'focusConstraint'));
 
 /// How precise is the series resolution for the selected interval.
 /// Value is in $ lost over the term.  Less is better.
-final resolution = signal(0, debugLabel: 'resolution');
+final resolution = signal(0, options: SignalOptions(name: 'resolution'));
 
 /// How many curves are currently displayed
-final displayedCurvesCount = signal(0, debugLabel: 'displayedCurvesCount');
+final displayedCurvesCount =
+    signal(0, options: SignalOptions(name: 'displayedCurvesCount'));
 
 ///
-final projectionCount = signal(100, debugLabel: 'projectionCount');
+final projectionCount =
+    signal<int>(100, options: SignalOptions(name: 'projectionCount'));
 
 ///
-final filteredTracesCount = signal(0, debugLabel: 'filteredTracesCount');
+final filteredTracesCount =
+    signal<int>(0, options: SignalOptions(name: 'filteredTracesCount'));
 
 final traces = FutureSignal<List<Map<String, dynamic>>>(makeTracesMcc,
-    dependencies: [region, term, zones, focusNodeMcc], debugLabel: 'traces');
+    options: AsyncSignalOptions(
+        dependencies: [region, term, zones, focusNodeMcc], name: 'traces'));
 
 final topConstraintsTable = FutureSignal<List<Map<String, dynamic>>>(
   () async => getTopConstraints(),
-  dependencies: [region, term],
-  debugLabel: 'topConstraintsTable',
+  options: AsyncSignalOptions(
+      dependencies: [region, term], name: 'topConstraintsTable'),
 );
 
 /// The set of all node key-name strings for the current region.
@@ -58,7 +66,7 @@ final nodeNameChoices = computed<Set<String>>(() {
         {};
   }
   return {};
-}, debugLabel: 'nodeNameChoices');
+}, options: ComputedOptions(name: 'nodeNameChoices'));
 
 /// Get the data and make the Plotly hourly traces.
 /// For reference, getting one full month takes less than 800 ms, the first
@@ -71,14 +79,25 @@ final nodeNameChoices = computed<Set<String>>(() {
 /// Return only the top [projectionCount] most 'dissimilar' curves.
 ///
 Future<List<Map<String, dynamic>>> makeTracesMcc() async {
-  var ptidMap = await getPtidMap(region.value);
+  // Read all signals synchronously before the first await so they are
+  // auto-tracked by _computedFuture.  Signals read after an await are NOT
+  // tracked, and relying on the dependencies list fails when a signal's
+  // initial value is null (the _listenToDeps subscriber skips the first
+  // notification when oldPrev == null).
+  final currentRegion = region.value;
+  final currentTerm = term.value;
+  final currentZones = zones.value;
+  final currentFocusNode = focusNodeMcc.value;
+  final currentProjectionCount = projectionCount.value;
+
+  final ptidMap = await getPtidMap(currentRegion);
 
   late List<Map<String, dynamic>> rawTraces;
   if (cacheTraces.isNotEmpty) {
     rawTraces = cacheTraces;
   } else {
     rawTraces = await mccClient.value
-        .getHourlyTraces(term.value.startDate, term.value.endDate);
+        .getHourlyTraces(currentTerm.startDate, currentTerm.endDate);
     // customize the display on hover
     for (var e in rawTraces) {
       var ptid = e['ptid'] as int;
@@ -92,8 +111,10 @@ Future<List<Map<String, dynamic>>> makeTracesMcc() async {
         if (entry.containsKey('rspArea')) {
           e['text'] += ', subzone: ${entry['rspArea']}';
         }
+        e['keyName'] = entry['keyName'] ?? 'ptid: ${e['ptid']}';
       } else {
         e['text'] = 'ptid: ${e['ptid']}';
+        e['keyName'] = 'ptid: ${e['ptid']}';
       }
       e['mode'] = 'lines';
     }
@@ -102,10 +123,10 @@ Future<List<Map<String, dynamic>>> makeTracesMcc() async {
   }
 
   var filteredTraces = List<Map<String, dynamic>>.from(rawTraces);
-  if (zones.value.length != getAllZoneNames().length) {
+  if (currentZones.length != getAllZoneNames().length) {
     // get only the ptids in the selected zones
-    final zonalPtids = zones.value
-        .map((zoneName) => Iso.parse(region.value).loadZones[zoneName]!)
+    final zonalPtids = currentZones
+        .map((zoneName) => Iso.parse(currentRegion).loadZones[zoneName]!)
         .toSet();
     filteredTraces = filteredTraces
         .where((e) =>
@@ -116,16 +137,16 @@ Future<List<Map<String, dynamic>>> makeTracesMcc() async {
 
   // if you have a focus location
   var focusTrace =
-      rawTraces.firstWhereOrNull((e) => e['text'] == focusNodeMcc.value);
+      rawTraces.firstWhereOrNull((e) => e['keyName'] == currentFocusNode);
   if (focusTrace != null) {
     focusTrace['line'] = {
       'color': 'black',
-      'size': 3,
+      'width': 3,
     };
   }
 
   return [
-    ...reduceTraces(filteredTraces, projectionCount.value),
+    ...reduceTraces(filteredTraces, currentProjectionCount),
     if (focusTrace != null) focusTrace
   ];
 }
@@ -196,7 +217,7 @@ final mccClient = computed(() {
       iso: Iso.parse(region.value),
       rootUrl: dotenv.env['ROOT_URL'] as String,
       rustServer: dotenv.env['RUST_SERVER'] as String);
-}, debugLabel: 'mccClient');
+}, options: ComputedOptions(name: 'mccClient'));
 
 /// Get the constraints for the [term] from the database.
 /// Show the top constraints in the focusTerm.
@@ -204,33 +225,43 @@ final mccClient = computed(() {
 /// zooming into the plot.
 ///
 Future<List<Map<String, dynamic>>> getTopConstraints() async {
-  var xs = await getDaConstraints();
-
-  var groups = groupBy(xs, (e) => (e.limitingFacility, e.contingency));
-  var table = <Map<String, dynamic>>[
-    for (var group in groups.entries)
-      {
-        'Constraint Name': group.key.$1,
-        'Contingency Name': group.key.$2,
-        'Marginal Value': group.value.map((e) => e.constraintCost).sum,
-        'Hours Count': group.value.length,
-      }
-  ];
+  var table = <Map<String, dynamic>>[];
+  if (region.value == 'NYISO') {
+    var xs = await getDaConstraintsNy();
+    var groups = groupBy(xs, (e) => (e.limitingFacility, e.contingency));
+    table.addAll([
+      for (var group in groups.entries)
+        {
+          'Constraint Name': group.key.$1,
+          'Contingency Name': group.key.$2,
+          'Marginal Value': group.value.map((e) => e.constraintCost).sum,
+          'Hours Count': group.value.length,
+        }
+    ]);
+  } else if (region.value == 'ISONE') {
+    var xs = await getDaConstraintsNe();
+    var groups = groupBy(xs, (e) => (e.constraintName, e.contingencyName));
+    table.addAll([
+      for (var group in groups.entries)
+        {
+          'Constraint Name': group.key.$1,
+          'Contingency Name': group.key.$2,
+          'Marginal Value': group.value.map((e) => e.marginalValue).sum,
+          'Hours Count': group.value.length,
+        }
+    ]);
+  }
 
   /// sort descending by absolute Marginal Value
   table.sort((a, b) =>
       -(a['Marginal Value'].abs()).compareTo(b['Marginal Value'].abs()));
-
-  // if (selected.isEmpty) {
-  //   selected = List.filled(_table.length, false);
-  // }
   table = table.take(15).toList();
 
   return table;
 }
 
-Future<List<ny_bc.Record>> getDaConstraints() async {
-  if (cacheConstraints.isEmpty) {
+Future<List<ny_bc.Record>> getDaConstraintsNy() async {
+  if (cacheConstraintsNy.isEmpty) {
     if (region.value == 'NYISO') {
       var aux = await ny_bc.queryRecords(
         filter: ny_bc.QueryFilter(
@@ -239,10 +270,26 @@ Future<List<ny_bc.Record>> getDaConstraints() async {
         ),
         rootUrl: dotenv.env['RUST_SERVER']!,
       );
-      cacheConstraints.addAll(aux);
+      cacheConstraintsNy.addAll(aux);
     }
   }
-  return cacheConstraints;
+  return cacheConstraintsNy;
+}
+
+Future<List<ne_bc.Record>> getDaConstraintsNe() async {
+  if (cacheConstraintsNe.isEmpty) {
+    if (region.value == 'ISONE') {
+      final aux = await ne_bc.queryRecords(
+        filter: ne_bc.QueryFilter(
+          hourBeginningGte: term.value.start,
+          hourBeginningLt: term.value.end,
+        ),
+        rootUrl: dotenv.env['RUST_SERVER']!,
+      );
+      cacheConstraintsNe.addAll(aux);
+    }
+  }
+  return cacheConstraintsNe;
 }
 
 ///
@@ -303,7 +350,8 @@ List<String> getAllZoneNames() {
 final cacheTraces = <Map<String, dynamic>>[];
 
 /// Cache clears when term or region changes.  Pulls all the DA constraints.
-final cacheConstraints = <ny_bc.Record>[];
+final cacheConstraintsNy = <ny_bc.Record>[];
+final cacheConstraintsNe = <ne_bc.Record>[];
 
 /// A cache with Region -> ptid -> data
 final cachePtidMap = <String, Map<int, Map<String, dynamic>>>{};
@@ -318,10 +366,20 @@ final highlightedBlocks = computed(() {
   if (selectedConstraints.value.isEmpty) {
     return <Interval>[];
   }
-  var xs = cacheConstraints
-      .where((e) => selectedConstraints.value.contains(e.limitingFacility))
-      .map((e) => (e.limitingFacility, e.hourBeginning))
-      .toList();
+  var xs = <(String, TZDateTime)>[];
+  if (region.value == 'NYISO') {
+    xs = cacheConstraintsNy
+        .where((e) => selectedConstraints.value.contains(e.limitingFacility))
+        .map((e) => (e.limitingFacility, e.hourBeginning))
+        .toList();
+  } else if (region.value == 'ISONE') {
+    xs = cacheConstraintsNe
+        .where((e) => selectedConstraints.value.contains(e.constraintName))
+        .map((e) => (e.constraintName, e.hourBeginning))
+        .toList();
+  } else {
+    throw ArgumentError('Unknown region: ${region.value}');
+  }
   var groups = groupBy(xs, (e) => e.$1);
   var blocks = <Interval>[];
   for (var group in groups.entries) {
@@ -347,7 +405,7 @@ final highlightedBlocks = computed(() {
     blocks.addAll(intervals);
   }
   return blocks;
-}, debugLabel: 'highlightedBlocks');
+}, options: ComputedOptions(name: 'highlightedBlocks'));
 
 /// Make the layout for the plot.  It depends on the highlighted constraints,
 /// so it will update when the user selects/unselects constraints from the
@@ -383,7 +441,7 @@ final layoutMcc = computed(() {
         .toList(),
     'displaylogo': false,
   };
-}, debugLabel: 'layout');
+}, options: ComputedOptions(name: 'layout'));
 
 List<Map<String, dynamic>> makeTracesConstraintCost() {
   if (focusNodeConstraint.value == null || focusConstraint.value == null) {
@@ -406,15 +464,28 @@ List<Map<String, dynamic>> makeTracesConstraintCost() {
   );
 
   // sum up the constraint costs by hour for all limiting facilities.
-  var bc = cacheConstraints
-      .where((e) => e.limitingFacility == focusConstraint.value);
-  var groups = groupBy(bc, (e) => e.hourBeginning);
-  var bux = groups.entries
-      .map((e) => IntervalTuple(
-          Hour.beginning(e.key), e.value.map((e) => e.constraintCost).sum))
-      .toList()
-    ..sort((a, b) => a.interval.start.compareTo(b.interval.start));
-  var constraintCost = TimeSeries.fromIterable(bux);
+  late TimeSeries<num> constraintCost;
+  if (region.value == 'NYISO') {
+    var bc = cacheConstraintsNy
+        .where((e) => e.limitingFacility == focusConstraint.value);
+    var groups = groupBy(bc, (e) => e.hourBeginning);
+    var bux = groups.entries
+        .map((e) => IntervalTuple(
+            Hour.beginning(e.key), e.value.map((e) => e.constraintCost).sum))
+        .toList()
+      ..sort((a, b) => a.interval.start.compareTo(b.interval.start));
+    constraintCost = TimeSeries.fromIterable(bux);
+  } else if (region.value == 'ISONE') {
+    var bc = cacheConstraintsNe
+        .where((e) => e.constraintName == focusConstraint.value);
+    var groups = groupBy(bc, (e) => e.hourBeginning);
+    var bux = groups.entries
+        .map((e) => IntervalTuple(
+            Hour.beginning(e.key), e.value.map((e) => e.marginalValue).sum))
+        .toList()
+      ..sort((a, b) => a.interval.start.compareTo(b.interval.start));
+    constraintCost = TimeSeries.fromIterable(bux);
+  }
 
   var data = constraintCost.merge(mcc, f: (x, y) => [x, y]);
   // print(data);

@@ -14,8 +14,8 @@ class _State extends State<Connect4> {
     return Scaffold(
         body: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-            child: Watch(
-              (context) => Row(
+            child: SignalBuilder(
+              builder: (context) => Row(
                 children: [
                   Container(
                     width: 100,

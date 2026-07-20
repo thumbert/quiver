@@ -15,7 +15,7 @@ class ConstraintTable extends StatefulWidget {
 class _ConstraintTable extends State<ConstraintTable> {
   @override
   Widget build(BuildContext context) {
-    return Watch((_) {
+    return SignalBuilder(builder: (_) {
       switch (topConstraintsTable.value) {
         case AsyncData<List<Map<String, dynamic>>>():
           var tbl = topConstraintsTable.requireValue;

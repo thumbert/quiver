@@ -1,5 +1,5 @@
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 final data = <Map<String, dynamic>>[
   {'iso': 'PJM', 'location': 'WH', 'strip': 'Cal24', 'price': 10},

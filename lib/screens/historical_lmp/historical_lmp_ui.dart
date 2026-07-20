@@ -87,8 +87,8 @@ class _State extends State<HistoricalLmp> {
               scrollDirection: Axis.horizontal,
               child: Padding(
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-                  child: Watch(
-                    (context) => Column(
+                  child: SignalBuilder(
+                    builder: (context) => Column(
                       spacing: 6,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -319,7 +319,7 @@ class _State extends State<HistoricalLmp> {
                             SizedBox(
                               width: 12,
                             ),
-                            Watch((context) {
+                            SignalBuilder(builder: (context) {
                               switch (hourlyLmp.value) {
                                 // ignore: unused_local_variable
                                 case AsyncData<TimeSeries<num>> data:
@@ -543,8 +543,8 @@ class _LocationRowSinkWidgetState extends State<LocationRowSinkWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -590,7 +590,7 @@ class _LocationRowSinkWidgetState extends State<LocationRowSinkWidget> {
                     color: Colors.blueGrey.shade50,
                     borderRadius: BorderRadius.circular(4.0),
                   ),
-                  child: Watch((_) => switch (locationsSink.value) {
+                  child: SignalBuilder(builder: (_) => switch (locationsSink.value) {
                         AsyncData<List<String>>() => AutocompleteUi(
                             model: state,
                             getSelection: (HistoricalLmpModel model) =>
@@ -678,8 +678,8 @@ class LocationRowSourceWidget extends StatefulWidget {
 class _LocationRowSourceWidgetState extends State<LocationRowSourceWidget> {
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -730,7 +730,7 @@ class _LocationRowSourceWidgetState extends State<LocationRowSourceWidget> {
                     color: Colors.blueGrey.shade50,
                     borderRadius: BorderRadius.circular(4.0),
                   ),
-                  child: Watch((_) => switch (locationsSource.value) {
+                  child: SignalBuilder(builder: (_) => switch (locationsSource.value) {
                         AsyncData<List<String>>() => AutocompleteUi(
                             model: state,
                             getSelection: (HistoricalLmpModel model) =>

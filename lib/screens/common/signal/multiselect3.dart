@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// The recommended version to use for a dropdown widget with multi-selection!
@@ -83,8 +83,8 @@ class _MultiselectUiState extends State<MultiselectUi> {
     var out = <MenuItemButton>[];
     out.add(MenuItemButton(
         style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
-        child: Watch(
-          (context) => SizedBox(
+        child: SignalBuilder(
+          builder: (context) => SizedBox(
             width: widget.width,
             child: PointerInterceptor(
               child: CheckboxListTile(
@@ -110,7 +110,7 @@ class _MultiselectUiState extends State<MultiselectUi> {
       out.add(MenuItemButton(
           style:
               ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
-          child: Watch((_) => SizedBox(
+          child: SignalBuilder(builder: (_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(
                   child: CheckboxListTile(

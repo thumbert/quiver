@@ -8,7 +8,7 @@ import 'package:elec_server/client/lmp.dart';
 import 'package:flutter/material.dart' hide Interval;
 import 'package:flutter_quiver/models/historical_lmp_model.dart'
     show LocationRow;
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,7 +23,7 @@ final locations = futureSignal(() async {
     LocationRow.ptidCache[iso.name] = locations;
   }
   return LocationRow.ptidCache[iso.name]!;
-}, dependencies: [model]);
+}, options: AsyncSignalOptions<List<String>>(dependencies: [model]));
 
 /// What to plot
 final dailyLmp = futureSignal(() async {
@@ -36,7 +36,7 @@ final dailyLmp = futureSignal(() async {
   } catch (e) {
     rethrow;
   }
-}, dependencies: [model]);
+}, options: AsyncSignalOptions<TimeSeries<num>>(dependencies: [model]));
 
 class FtrPathAnalysisModel {
   FtrPathAnalysisModel(
@@ -114,7 +114,6 @@ class FtrPathAnalysisModel {
       TimeSeries<num>>{};
 }
 
-
 Future<TimeSeries<num>> getLmpData(FtrPathAnalysisModel model) async {
   final hTerm = Term.fromInterval(
       model.term.interval.withTimeZone(IsoNewEngland.location));
@@ -129,7 +128,7 @@ Future<TimeSeries<num>> getLmpData(FtrPathAnalysisModel model) async {
         ptid: FtrPathAnalysisModel.getPtid(model.sinkLocation),
         component: LmpComponent.congestion,
         term: hTerm,
-        market: model.market, 
+        market: model.market,
         rustServer: dotenv.env['RUST_SERVER']!);
     FtrPathAnalysisModel.cache[sink] = ts;
   }
@@ -153,9 +152,6 @@ Future<TimeSeries<num>> getLmpData(FtrPathAnalysisModel model) async {
 
   return model.iso == Iso.newYork ? sourceTs - sinkTs : sinkTs - sourceTs;
 }
-
-
-
 
 // class DataModel extends ChangeNotifier {
 //   DataModel() {

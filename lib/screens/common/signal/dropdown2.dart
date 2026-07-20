@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 class DropdownUi2<T> extends StatefulWidget {
   const DropdownUi2(
@@ -43,7 +43,7 @@ class _DropdownUi2State<T> extends State<DropdownUi2<T>> {
           },
           child: Row(
             children: [
-              Watch((context) => Text(widget.getSelection(widget.model.value) ?? '')),
+              SignalBuilder(builder: (context) => Text(widget.getSelection(widget.model.value) ?? '')),
               const Spacer(),
               const Icon(
                 Icons.keyboard_arrow_down,
@@ -71,7 +71,7 @@ class _DropdownUi2State<T> extends State<DropdownUi2<T>> {
             visualDensity: const VisualDensity(vertical: -4.0),
             padding: WidgetStateProperty.all(const EdgeInsets.all(0.0)),
           ),
-          child: Watch((_) => SizedBox(
+          child: SignalBuilder(builder: (_) => SizedBox(
               width: widget.width,
               child: PointerInterceptor(
                   child: ListTile(

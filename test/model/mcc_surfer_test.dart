@@ -12,11 +12,26 @@ Future<void> tests() async {
     test('make traces for ISONE', () async {
       region.value = 'ISONE';
       zones.value = getAllZoneNames();
-      term.value = Term.parse('Sep25', UTC);
+      term.value = Term.parse('1Jun26-10Jun26', UTC);
       var traces = await makeTracesMcc();
       var rTraces = reduceTraces(traces, 100);
       expect(rTraces.length, 100);
-      expect((rTraces[0]['y'] as List).length, 720);
+      expect((rTraces[0]['y'] as List).length, 240);
+
+      // set a focus node
+      focusNodeMcc.value = 'UN.WESTBRK 18.0WE1A, ptid: 14177';
+      traces = await makeTracesMcc();
+      expect(traces.length, 101);
+
+      // get top constraints
+      var constraints = await getTopConstraints();
+      expect(constraints.length, 14);
+      expect(constraints.first.keys.toSet(), {
+        'Constraint Name',
+        'Contingency Name',
+        'Marginal Value',
+        'Hours Count'
+      });
     });
     test('make traces for NYISO', () async {
       region.value = 'NYISO';
@@ -27,6 +42,12 @@ Future<void> tests() async {
       expect(rTraces.length, 100);
       expect((rTraces[0]['y'] as List).length, 240);
 
+      // set a focus node
+      focusNodeMcc.value = 'NINE_MILE_1, ptid: 23575';
+      traces = await makeTracesMcc();
+      expect(traces.length, 101);
+      expect(traces.last['keyName'], 'NINE_MILE_1, ptid: 23575');
+
       // get top constraints
       var constraints = await getTopConstraints();
       expect(constraints.length, 15);
@@ -34,18 +55,10 @@ Future<void> tests() async {
       // make trace for lower plot (mcc vs. constraint cost)
       focusNodeConstraint.value = 'NINE_MILE_1, ptid: 23575';
       focusConstraint.value = 'MEYER    230 MEYER      1 1';
-
       var constraintCostTraces = makeTracesConstraintCost();
       expect(constraintCostTraces.length, 1);
-      // print(constraintCostTraces);
+
     });
-    // test('make traces for IESO', () async {
-    //   traces = await model.makeHourlyTraces(term,
-    //       region: 'IESO', projectionCount: 100);
-    //   var rTraces = model.reduceTraces(traces, 100);
-    //   expect(rTraces.length, 100);
-    //   expect((rTraces[0]['y'] as List).length, 720);
-    // });
   });
 }
 

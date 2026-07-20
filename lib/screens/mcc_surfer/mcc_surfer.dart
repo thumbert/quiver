@@ -22,6 +22,7 @@ class _MccSurferState extends State<MccSurfer> {
   late Plotly plotlyMcc;
   late Plotly plotlyConstraint;
   late EffectCleanup _clearCacheEffect;
+  late EffectCleanup _onRegionChangeEffect;
 
   @override
   void initState() {
@@ -40,9 +41,21 @@ class _MccSurferState extends State<MccSurfer> {
     );
     _clearCacheEffect = effect(() {
       term.value; // subscribe
-      region.value; // subscribe
       cacheTraces.clear();
-      cacheConstraints.clear();
+    });
+    _onRegionChangeEffect = effect(() {
+      region.value; // subscribe
+      if (region.value == 'NYISO') {
+        focusNodeMcc.value = null;
+        focusNodeConstraint.value = 'NINE_MILE_1, ptid: 23575';
+        focusConstraint.value = 'SCRIBA   345 VOLNEY   345 1';
+      } else if (region.value == 'ISONE') {
+        focusNodeMcc.value = null;
+        focusNodeConstraint.value = '.Z.MAINE, ptid: 4001';
+        focusConstraint.value = 'MENH';
+      }
+      cacheTraces.clear();
+      zones.value = getAllZoneNames();
     });
 
     super.initState();
@@ -51,6 +64,7 @@ class _MccSurferState extends State<MccSurfer> {
   @override
   void dispose() {
     _clearCacheEffect();
+    _onRegionChangeEffect();
     _scrollController.dispose();
     _scrollControllerH.dispose();
     super.dispose();
@@ -121,6 +135,7 @@ class _MccSurferState extends State<MccSurfer> {
                 controlWidgets(),
                 const SizedBox(
                   height: 16,
+                  width: 3600,
                 ),
                 Scrollbar(
                   controller: _scrollControllerH,
@@ -131,7 +146,7 @@ class _MccSurferState extends State<MccSurfer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 12,
                       children: [
-                        Watch((context) {
+                        SignalBuilder(builder: (context) {
                           switch (traces.value) {
                             // ignore: unused_local_variable
                             case AsyncData data:
@@ -144,8 +159,9 @@ class _MccSurferState extends State<MccSurfer> {
                                       width: layoutMcc.value['width'],
                                       height: layoutMcc.value['height'],
                                       child: plotlyMcc),
-                                      Text('Curve resolution: \$${resolution.value}.  Curves displayed: ${displayedCurvesCount.value} out of ${filteredTracesCount.value}.'),
-                                  SizedBox(height: 12),    
+                                  Text(
+                                      'Curve resolution: \$${resolution.value}.  Curves displayed: ${displayedCurvesCount.value} out of ${filteredTracesCount.value}.'),
+                                  SizedBox(height: 12),
                                   ...nodeMccVsConstraintCost(),
                                 ],
                               );
@@ -242,26 +258,27 @@ class _MccSurferState extends State<MccSurfer> {
           'Load Zone',
           style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
         ),
-        Container(
-          width: 140,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.shade50,
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-          child: MultiSelectAutocompleteUi(
-            model: zones,
-            setSelection: (value) => zones.value = [...value],
-            getSelection: (model) => zones.value,
-            choices: getAllZoneNames().toSet(),
-            hintTextBuilder: () {
-              final count = zones.value.length;
-              if (count == 0) return '(None)';
-              if (count == getAllZoneNames().length) return '(All)';
-              return '$count zone${count == 1 ? '' : 's'} selected';
-            },
-            width: 140,
-          ),
-        ),
+        SignalBuilder(
+            builder: (context) => Container(
+                  width: 140,
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey.shade50,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: MultiSelectAutocompleteUi(
+                    model: zones,
+                    setSelection: (value) => zones.value = [...value],
+                    getSelection: (model) => zones.value,
+                    choices: getAllZoneNames().toSet(),
+                    hintTextBuilder: () {
+                      final count = zones.value.length;
+                      if (count == 0) return '(None)';
+                      if (count == getAllZoneNames().length) return '(All)';
+                      return '$count zone${count == 1 ? '' : 's'} selected';
+                    },
+                    width: 140,
+                  ),
+                )),
         SizedBox(
           width: 12,
         ),
@@ -273,7 +290,7 @@ class _MccSurferState extends State<MccSurfer> {
           'Focus Node',
           style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
         ),
-        Watch((context) {
+        SignalBuilder(builder: (context) {
           return Container(
             width: 350,
             decoration: BoxDecoration(
@@ -305,7 +322,7 @@ class _MccSurferState extends State<MccSurfer> {
           'Focus Node',
           style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
         ),
-        Watch((context) {
+        SignalBuilder(builder: (context) {
           return Container(
             width: 350,
             decoration: BoxDecoration(
@@ -338,7 +355,7 @@ class _MccSurferState extends State<MccSurfer> {
             setSelection: (value) => focusConstraint.value = value,
             getSelection: (model) => focusConstraint.value,
             clearSelection: () => focusConstraint.value = null,
-            choices: cacheConstraints.map((e) => e.limitingFacility).toSet(),
+            choices: cacheConstraintsNy.map((e) => e.limitingFacility).toSet(),
             width: 300,
           ),
         ),

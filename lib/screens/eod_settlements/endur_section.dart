@@ -180,7 +180,7 @@ class _EndurSectionState extends State<EndurSection> {
             children: [
               Padding(
                   padding: const EdgeInsets.only(left: 16.0), child: header()),
-              Watch((_) => switch (getRecords.value) {
+              SignalBuilder(builder: (_) => switch (getRecords.value) {
                     AsyncLoading() => const CircularProgressIndicator(),
                     AsyncError() =>
                       const Text('Error loading records from database'),

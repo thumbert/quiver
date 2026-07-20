@@ -3,7 +3,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/scheduler.dart';
 // import 'package:pointer_interceptor/pointer_interceptor.dart';
-// import 'package:signals/signals_flutter.dart';
+// import 'package:signals_flutter/signals_flutter.dart';
 
 
 /// LEFT FOR ANOTHER DAY.  <------------

@@ -1,5 +1,5 @@
 import 'package:date/date.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timezone/timezone.dart';
 
 final cache = <Map<String, dynamic>>[].toSignal();
@@ -104,10 +104,7 @@ final rows = futureSignal(() async {
   } catch (e) {
     rethrow;
   }
-}, dependencies: [
-  startDate,
-  endDate,
-], debugLabel: 'rows');
+}, options: AsyncSignalOptions<List<Map<String, dynamic>>>(dependencies: [startDate, endDate], name: 'rows'));
 
 /// All filtering is done functionally (stateless, on the fly) on the entire
 /// local cache.
@@ -162,7 +159,7 @@ final cachedTerm = computed(() {
     if (trade['tradeDate'].compareTo(end) < 0) start = trade['tradeDate'];
   }
   return Term(Date.fromIsoString(start), Date.fromIsoString(end));
-}, debugLabel: 'cachedTerm');
+}, options: ComputedOptions(name: 'cachedTerm'));
 
 //
 final getAllIsos = futureSignal(() async {
@@ -173,7 +170,7 @@ final getAllIsos = futureSignal(() async {
   isos.sort();
   return isos.toSet();
 });
-final isos = ListSignal(<String>['PJM'], debugLabel: 'isos');
+final isos = ListSignal(<String>['PJM'], options: ListSignalOptions<String>(name: 'isos'));
 
 //
 final getAllLocations = futureSignal(() async {
@@ -184,7 +181,7 @@ final getAllLocations = futureSignal(() async {
   locations.sort();
   return locations.toSet();
 });
-final locations = ListSignal(<String>[], debugLabel: 'locations');
+final locations = ListSignal(<String>[], options: ListSignalOptions<String>(name: 'locations'));
 
 //
 final getAllStrips = futureSignal(() async {
@@ -195,7 +192,7 @@ final getAllStrips = futureSignal(() async {
   strips.sort();
   return strips.toSet();
 });
-final strips = ListSignal(<String>[], debugLabel: 'strips');
+final strips = ListSignal(<String>[], options: ListSignalOptions<String>(name: 'strips'));
 
 //
 final getAllBuckets = futureSignal(() async {
@@ -206,7 +203,7 @@ final getAllBuckets = futureSignal(() async {
   strips.sort();
   return strips.toSet();
 });
-final buckets = ListSignal(<String>[], debugLabel: 'buckets');
+final buckets = ListSignal(<String>[], options: ListSignalOptions<String>(name: 'buckets'));
 
 // Trade kind
 final allTradeKinds = ['Outright', 'Spread', 'Option'];

@@ -6,7 +6,7 @@ import 'package:flutter_quiver/models/hourly_shape/hourly_shape_model.dart';
 import 'package:flutter_quiver/models/hourly_shape/settings.dart';
 import 'package:flutter_quiver/screens/common/signal/day_filter.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 
 class HourlyShapeApp extends StatefulWidget {
@@ -38,11 +38,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
       rethrow;
     }
     return HourlyShapeModel.getTraces(dayFilter.value, settings.value);
-  }, dependencies: [
-    seriesName,
-    dayFilter,
-    settings,
-  ]);
+  }, options: AsyncSignalOptions(dependencies: [seriesName, dayFilter, settings]));
 
   final scrollControllerV = ScrollController();
   final scrollControllerH = ScrollController();
@@ -135,7 +131,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                         Padding(
                           padding:
                               const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                          child: Watch((context) => DropdownMenu<String>(
+                          child: SignalBuilder(builder: (context) => DropdownMenu<String>(
                                 width: 300.0,
                                 menuHeight: 600.0,
                                 trailingIcon:
@@ -193,7 +189,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                                     'Settings',
                                     style: TextStyle(fontSize: 16),
                                   ),
-                                  Watch((context) => DropdownMenu<String>(
+                                  SignalBuilder(builder: (context) => DropdownMenu<String>(
                                         label: const Text('Analysis'),
                                         controller: analysisNameController,
                                         textStyle:
@@ -270,7 +266,7 @@ class _HourlyShapeAppState extends State<HourlyShapeApp> {
                       ]),
                 ),
                 const SizedBox(width: 15),
-                Watch((context) {
+                SignalBuilder(builder: (context) {
                   switch (traces.value) {
                     // ignore: unused_local_variable
                     case AsyncData data:

@@ -71,8 +71,8 @@ class _State extends State<MaskedDemandBidsUi> {
               scrollDirection: Axis.horizontal,
               child: Padding(
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-                  child: Watch(
-                    (context) => Column(
+                  child: SignalBuilder(
+                    builder: (context) => Column(
                       spacing: 6,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -201,7 +201,7 @@ class _State extends State<MaskedDemandBidsUi> {
                             SizedBox(
                               width: 12,
                             ),
-                            Watch((context) {
+                            SignalBuilder(builder: (context) {
                               switch (data.value) {
                                 // ignore: unused_local_variable
                                 case AsyncData():

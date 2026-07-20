@@ -127,7 +127,7 @@ class _SummaryTableOptionState extends State<SummaryTableOption> {
   }
 
   Widget tableDailyOption() {
-    return Watch((context) => Column(
+    return SignalBuilder(builder: (context) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: _rows.value,
         ));

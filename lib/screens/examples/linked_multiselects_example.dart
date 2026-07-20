@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_quiver/models/examples/linked_multiselects_model.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect3.dart';
 
 
@@ -61,8 +61,8 @@ class _LinkedMultiSelectsExampleState extends State<LinkedMultiSelectsExample> {
               const Text(
                   'Three linked dropdowns.  Select an ISO in the first one '
                   'to see a narrow the list of locations in the second dropdown, etc.'),
-              Watch(
-                (context) => Row(
+              SignalBuilder(
+                builder: (context) => Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -78,7 +78,7 @@ class _LinkedMultiSelectsExampleState extends State<LinkedMultiSelectsExample> {
                       child: Container(
                         width: 160,
                         color: MyApp.background,
-                        child: Watch((context) => MultiselectUi(
+                        child: SignalBuilder(builder: (context) => MultiselectUi(
                             allValues: allIsos,
                             selectedValues: selectedIsos,
                             label: labelIsos,
@@ -99,7 +99,7 @@ class _LinkedMultiSelectsExampleState extends State<LinkedMultiSelectsExample> {
                       child: Container(
                         width: 200,
                         color: MyApp.background,
-                        child: Watch((context) => MultiselectUi(
+                        child: SignalBuilder(builder: (context) => MultiselectUi(
                             allValues: allLocations,
                             selectedValues: selectedLocations,
                             label: labelLocations,
@@ -120,7 +120,7 @@ class _LinkedMultiSelectsExampleState extends State<LinkedMultiSelectsExample> {
                       child: Container(
                         width: 200,
                         color: MyApp.background,
-                        child: Watch((context) => MultiselectUi(
+                        child: SignalBuilder(builder: (context) => MultiselectUi(
                             allValues: allStrips,
                             selectedValues: selectedStrips,
                             label: labelStrips,
@@ -138,16 +138,16 @@ class _LinkedMultiSelectsExampleState extends State<LinkedMultiSelectsExample> {
               const SizedBox(
                 height: 400,
               ),
-              Watch((context) => Text('All ISOs: ${allIsos.value.join(', ')}')),
-              Watch((context) =>
+              SignalBuilder(builder: (context) => Text('All ISOs: ${allIsos.value.join(', ')}')),
+              SignalBuilder(builder: (context) =>
                   Text('ISO selection: ${selectedIsos.value.join(', ')}')),
-              Watch((context) =>
+              SignalBuilder(builder: (context) =>
                   Text('All locations: ${allLocations.value.join(', ')}')),
-              Watch((context) => Text(
+              SignalBuilder(builder: (context) => Text(
                   'Location selection: ${selectedLocations.value.join(', ')}')),
-              Watch((context) =>
+              SignalBuilder(builder: (context) =>
                   Text('All strips: ${allStrips.value.join(', ')}')),
-              Watch((context) =>
+              SignalBuilder(builder: (context) =>
                   Text('Strip selection: ${selectedStrips.value.join(', ')}')),
             ],
           ),

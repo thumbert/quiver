@@ -17,6 +17,7 @@ import 'package:flutter_quiver/screens/historical_lmp/historical_lmp_ui.dart';
 import 'package:flutter_quiver/screens/historical_option_pricing/historical_option_pricing_ui.dart';
 import 'package:flutter_quiver/screens/hourly_shape/hourly_shape.dart';
 import 'package:flutter_quiver/screens/masked_demand_bids/masked_demand_bids_ui.dart';
+import 'package:flutter_quiver/screens/masked_monthly_capacity/masked_monthly_capacity.dart';
 import 'package:flutter_quiver/screens/polygraph/other/add_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/other/edit_variable_ui.dart';
 import 'package:flutter_quiver/screens/polygraph/polygraph.dart';
@@ -45,15 +46,13 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  MyApp({super.key}); 
 
   static final background = Colors.orange[100]!;
   static final background2 = Colors.green[100]!;
   static final rootUrl = dotenv.env['ROOT_URL']!;
   static final rustServer = dotenv.env['RUST_SERVER']!;
   static final client = Client();
-
-
 
   final _router = GoRouter(routes: [
     GoRoute(
@@ -110,6 +109,9 @@ class MyApp extends StatelessWidget {
         builder: (context, state) =>
             const InheritedWidgetExample(child: MyStorePage())),
     GoRoute(
+        path: MaskedMonthlyCapacity.route,
+        builder: (context, state) => const MaskedMonthlyCapacity()),
+    GoRoute(
         path: MaskedDemandBidsUi.route,
         builder: (context, state) => const MaskedDemandBidsUi()),
     GoRoute(
@@ -145,9 +147,9 @@ class MyApp extends StatelessWidget {
       builder: (context, state) => const ProviderScope(child: RateBoard()),
     ),
     GoRoute(
-        path: UnmaskedEnergyOffers.route,
+        path: MaskedEnergyOffers.route,
         builder: (context, state) =>
-            const ProviderScope(child: UnmaskedEnergyOffers())),
+            const ProviderScope(child: MaskedEnergyOffers())),
     // GoRoute(
     //     path: VlrStage2.route, builder: (context, state) => const VlrStage2()),
     GoRoute(path: Weather.route, builder: (context, state) => const Weather()),

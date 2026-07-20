@@ -91,18 +91,7 @@ final traces = futureSignal(() async {
       callPut.value,
       optionType.value,
       showD.value.selection.value);
-}, dependencies: [
-  term,
-  historicalTerm,
-  location,
-  market,
-  bucket,
-  strike,
-  callPut,
-  optionType,
-  showD,
-  show,
-]);
+}, options: AsyncSignalOptions(dependencies: [term, historicalTerm, location, market, bucket, strike, callPut, optionType, showD, show]));
 
 /// Keep hourly historical data
 final cache = <({Location location, Market market}), TimeSeries<double>>{};

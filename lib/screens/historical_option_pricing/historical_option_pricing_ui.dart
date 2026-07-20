@@ -48,8 +48,8 @@ class _State extends State<HistoricalOptionPricing> {
         scrollDirection: Axis.horizontal,
         child: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-            child: Watch(
-              (context) => Column(
+            child: SignalBuilder(
+              builder: (context) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   /// column header
@@ -231,7 +231,7 @@ class _State extends State<HistoricalOptionPricing> {
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child:
-                                Watch((context) => const SummaryTableOption()),
+                                SignalBuilder(builder: (context) => const SummaryTableOption()),
                           ),
                         ],
                       ),
@@ -239,7 +239,7 @@ class _State extends State<HistoricalOptionPricing> {
                       ///
                       /// plot
                       ///
-                      Watch((context) {
+                      SignalBuilder(builder: (context) {
                         switch (traces.value) {
                           // ignore: unused_local_variable
                           case AsyncData data:
@@ -292,8 +292,8 @@ class OptionRow extends StatefulWidget {
 class _OptionRowState extends State<OptionRow> {
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(

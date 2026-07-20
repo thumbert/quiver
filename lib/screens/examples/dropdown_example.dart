@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as rp;
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 final selection = signal('State');
 
@@ -12,7 +12,7 @@ final choices = futureSignal(() async {
   } else {
     return ['Atlanta', 'Boston', 'Chicago', 'Denver'];
   }
-}, dependencies: [selection]);
+}, options: AsyncSignalOptions(dependencies: [selection]));
 
 final providerOfExampleData = rp.FutureProvider((ref) async {
   return getData();
@@ -202,7 +202,7 @@ class _DropdownExampleState extends rp.ConsumerState<DropdownExample> {
                     const SizedBox(
                       width: 24,
                     ),
-                    Watch((context) => MenuAnchor(
+                    SignalBuilder(builder: (context) => MenuAnchor(
                             menuChildren: [
                               for (var e in choices.value.value ?? [])
                                 MenuItemButton(child: Text(e))

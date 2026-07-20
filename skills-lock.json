@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "signals-dart": {
+      "source": "rodydavis/signals.dart",
+      "sourceType": "github",
+      "skillPath": "skills/signals-dart/SKILL.md",
+      "computedHash": "48a655c59acad45b30f520e66f5f0cb5056e1b16b39b3be9553b73d402491943"
+    },
+    "signals-flutter": {
+      "source": "rodydavis/signals.dart",
+      "sourceType": "github",
+      "skillPath": "skills/signals-flutter/SKILL.md",
+      "computedHash": "dd242d260f773e5f9aed495bf713a65228328c439f69a318a3bb699db256ab73"
+    },
+    "signals-hooks": {
+      "source": "rodydavis/signals.dart",
+      "sourceType": "github",
+      "skillPath": "skills/signals-hooks/SKILL.md",
+      "computedHash": "0142f2f6e5dd016b83138ed403af54576d70cce301581ad0e5fb0b3176a49282"
+    },
+    "signals-lint": {
+      "source": "rodydavis/signals.dart",
+      "sourceType": "github",
+      "skillPath": "skills/signals-lint/SKILL.md",
+      "computedHash": "55b1fe9b695be019eb5a3e07eb488adb6448d0de5eb790a3861ba086fb5bc001"
+    },
+    "signals-migration-6-to-7": {
+      "source": "rodydavis/signals.dart",
+      "sourceType": "github",
+      "skillPath": "skills/signals-migration-6-to-7/SKILL.md",
+      "computedHash": "193e9ca2f44f4d80d0c5708fb081379b12afdd09193bbe742ea456b9f98a0e56"
+    }
+  }
+}

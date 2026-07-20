@@ -50,7 +50,7 @@ final data = futureSignal(() async {
     cache.addAll(aux);
     return aux;
   }
-}, dependencies: [term, participant, zoneName]);
+}, options: AsyncSignalOptions(dependencies: [term, participant, zoneName]));
 
 final cache = <({int maskedParticipantId, String zoneName}), TimeSeries<num>>{};
 

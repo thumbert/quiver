@@ -17,8 +17,8 @@ class TabNodalExchange extends StatefulWidget {
 class _State extends State<TabNodalExchange> {
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ///
@@ -123,7 +123,7 @@ class _State extends State<TabNodalExchange> {
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           var allIsos = switch (nodal.getAllIsos.value) {
                             AsyncData<Set<String>> data => data.value,
                             _ => <String>{},
@@ -149,7 +149,7 @@ class _State extends State<TabNodalExchange> {
                       ),
                       SizedBox(
                         width: 150,
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           return Wrap(
                               direction: Axis.vertical,
                               spacing: 5.0,
@@ -200,7 +200,7 @@ class _State extends State<TabNodalExchange> {
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           var allLocations =
                               switch (nodal.getAllLocations.value) {
                             AsyncData<Set<String>> data => data.value,
@@ -227,7 +227,7 @@ class _State extends State<TabNodalExchange> {
                       ),
                       SizedBox(
                         width: 150,
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           return Wrap(
                               direction: Axis.vertical,
                               spacing: 5.0,
@@ -278,7 +278,7 @@ class _State extends State<TabNodalExchange> {
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           var allStrips = switch (nodal.getAllStrips.value) {
                             AsyncData<Set<String>> data => data.value,
                             _ => <String>{},
@@ -304,7 +304,7 @@ class _State extends State<TabNodalExchange> {
                       ),
                       SizedBox(
                         width: 150,
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           return Wrap(
                               direction: Axis.vertical,
                               spacing: 5.0,
@@ -355,7 +355,7 @@ class _State extends State<TabNodalExchange> {
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           var allBuckets = switch (nodal.getAllBuckets.value) {
                             AsyncData<Set<String>> data => data.value,
                             _ => <String>{},
@@ -381,7 +381,7 @@ class _State extends State<TabNodalExchange> {
                       ),
                       SizedBox(
                         width: 150,
-                        child: Watch((context) {
+                        child: SignalBuilder(builder: (context) {
                           return Wrap(
                               direction: Axis.vertical,
                               spacing: 5.0,
@@ -423,7 +423,7 @@ class _State extends State<TabNodalExchange> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Watch((context) {
+              SignalBuilder(builder: (context) {
                 switch (nodal.rows.value) {
                   // ignore: unused_local_variable
                   case AsyncData<List<Map<String, dynamic>>> data:

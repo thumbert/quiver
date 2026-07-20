@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 /// NOTES: Use signals 🤷‍♂️
 /// The easiest implementation!  Uses a StatelessWidget!
@@ -48,7 +48,7 @@ class _ExpansionPanelExampleState extends State<ExpansionPanelExample> {
                       color: Colors.amber.shade500,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
-                    child: Watch((_) => ExpansionPanelList(
+                    child: SignalBuilder(builder: (_) => ExpansionPanelList(
                           expandedHeaderPadding: EdgeInsets.zero,
                           materialGapSize: 0.0,
                           expansionCallback: (int index, bool isExpanded) {
@@ -83,9 +83,9 @@ class _ExpansionPanelExampleState extends State<ExpansionPanelExample> {
                 const SizedBox(
                   height: 200,
                 ),
-                // Watch((context) => Text(
+                // SignalBuilder(builder: (context) => Text(
                 //     'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
-                // Watch((context) => Text(
+                // SignalBuilder(builder: (context) => Text(
                 //     'Selected cities: ${model.selection.value.join(', ')}')),
               ],
             ),

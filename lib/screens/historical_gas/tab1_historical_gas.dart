@@ -45,8 +45,8 @@ class _State extends State<Tab1HistoricalGas> {
 
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -164,7 +164,7 @@ class _State extends State<Tab1HistoricalGas> {
               Column(
                 children: _rows.value,
               ),
-              Watch((context) {
+              SignalBuilder(builder: (context) {
                 switch (tab1.traces.value) {
                   // ignore: unused_local_variable
                   case AsyncData data:
@@ -262,8 +262,8 @@ class _Row2State extends State<Row2> {
         child: SizedBox(
             // I use this to increase the MouseRegion
             width: 525,
-            child: Watch(
-              (context) => Row(
+            child: SignalBuilder(
+              builder: (context) => Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ///
@@ -322,7 +322,7 @@ class _Row2State extends State<Row2> {
                         },
                       ),
                       if (locationError.value != '')
-                        Watch((context) => Text(
+                        SignalBuilder(builder: (context) => Text(
                               locationError.value,
                               style: const TextStyle(
                                   color: Colors.red,

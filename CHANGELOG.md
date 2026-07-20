@@ -20,8 +20,9 @@
 
 ## BUGS
 
-## 2026-06-14
-- 
+## 2026-07-20
+- Updated MCC surfer for ISONE
+- Migrated to Signals 7.0
 
 ## 2026-06-12
 - Improvement on mcc_surfer for NY.  Have lower chart working.

@@ -40,8 +40,8 @@ class _State extends State<TabIceExchange> {
 
   @override
   Widget build(BuildContext context) {
-    return Watch(
-      (context) => Column(
+    return SignalBuilder(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ///
@@ -120,7 +120,7 @@ class _State extends State<TabIceExchange> {
           //         color: Colors.blueGrey.shade50,
           //         borderRadius: BorderRadius.circular(4.0),
           //       ),
-          //       child: Watch((context) => MultiselectUi(
+          //       child: SignalBuilder(builder: (context) => MultiselectUi(
           //           allValues: nodal.allIsos,
           //           selectedValues: nodal.selectedIsos,
           //           label: nodal.labelIsos,
@@ -147,7 +147,7 @@ class _State extends State<TabIceExchange> {
           //         color: Colors.blueGrey.shade50,
           //         borderRadius: BorderRadius.circular(4.0),
           //       ),
-          //       child: Watch((context) => MultiselectUi(
+          //       child: SignalBuilder(builder: (context) => MultiselectUi(
           //           allValues: nodal.allLocations,
           //           selectedValues: nodal.selectedLocations,
           //           label: nodal.labelLocations,
@@ -174,7 +174,7 @@ class _State extends State<TabIceExchange> {
           //         color: Colors.blueGrey.shade50,
           //         borderRadius: BorderRadius.circular(4.0),
           //       ),
-          //       child: Watch((context) => MultiselectUi(
+          //       child: SignalBuilder(builder: (context) => MultiselectUi(
           //           allValues: nodal.allStrips,
           //           selectedValues: nodal.selectedStrips,
           //           label: nodal.labelStrips,
@@ -201,7 +201,7 @@ class _State extends State<TabIceExchange> {
           //         color: Colors.blueGrey.shade50,
           //         borderRadius: BorderRadius.circular(4.0),
           //       ),
-          //       child: Watch((context) => MultiselectUi(
+          //       child: SignalBuilder(builder: (context) => MultiselectUi(
           //           allValues: nodal.allBuckets,
           //           selectedValues: nodal.selectedBuckets,
           //           label: nodal.labelBuckets,

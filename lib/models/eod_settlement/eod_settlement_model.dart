@@ -2,8 +2,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:signals_flutter/signals_flutter.dart';
 import 'package:elec_server/client/ui/eod_settlements/views_asof_date.dart';
 
-final userName = signal<String?>('adrian', debugLabel: 'userName');
-final viewName = signal<String?>('mass hub', debugLabel: 'viewName');
+final userName = signal<String?>('adrian', options: SignalOptions(name: 'userName'));
+final viewName = signal<String?>('mass hub', options: SignalOptions(name: 'viewName'));
 
 class Model {
   Model() {
@@ -23,7 +23,7 @@ final uniqueUsersViews = futureSignal(() async {
     cacheUsersViews.addAll(uniqueViews);
   }
   return cacheUsersViews;
-}, debugLabel: 'uniqueUsersViews');
+}, options: AsyncSignalOptions(name: 'uniqueUsersViews'));
 
 final getRecords = futureSignal(() async {
   if (cacheRecords.isEmpty) {
@@ -34,7 +34,7 @@ final getRecords = futureSignal(() async {
   return cacheRecords
       .where((e) => e.userId == userName.value && e.viewName == viewName.value)
       .toList();
-}, debugLabel: 'getRecords', dependencies: [userName, viewName]);
+}, options: AsyncSignalOptions(name: 'getRecords', dependencies: [userName, viewName]));
 
 final cacheUsersViews = <({String userId, String viewName})>[
   (userId: 'adrian', viewName: 'mass hub')

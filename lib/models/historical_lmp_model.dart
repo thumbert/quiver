@@ -8,7 +8,7 @@ import 'package:elec/time.dart';
 import 'package:elec_server/client/lmp.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import 'package:timeseries/timeseries.dart';
 import 'package:timezone/timezone.dart';
 import 'package:elec/risk_system.dart';
@@ -436,14 +436,14 @@ final locationsSink = futureSignal(() async {
   final region = state.value.sink.region!;
   await LocationRow.populatePtidCache(region);
   return LocationRow.ptidCache[region]!;
-}, dependencies: [state]);
+}, options: AsyncSignalOptions<List<String>>(dependencies: [state]));
 
 final locationsSource = futureSignal(() async {
   final region = state.value.source?.region;
   if (region == null) return <String>[];
   await LocationRow.populatePtidCache(region);
   return LocationRow.ptidCache[region]!;
-}, dependencies: [state]);
+}, options: AsyncSignalOptions<List<String>>(dependencies: [state]));
 
 /// What to plot
 final hourlyLmp = futureSignal(() async {
@@ -452,7 +452,7 @@ final hourlyLmp = futureSignal(() async {
   } catch (e) {
     rethrow;
   }
-}, dependencies: [state]);
+}, options: AsyncSignalOptions<TimeSeries<num>>(dependencies: [state]));
 
 Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
   // final lmp = Lmp(Client(), rustServer: dotenv.env['RUST_SERVER']!);

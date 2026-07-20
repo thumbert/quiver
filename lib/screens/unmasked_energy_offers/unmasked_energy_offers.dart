@@ -7,17 +7,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plotly/flutter_web_plotly.dart';
 import 'package:intl/intl.dart';
 
-class UnmaskedEnergyOffers extends ConsumerStatefulWidget {
-  const UnmaskedEnergyOffers({super.key});
+class MaskedEnergyOffers extends ConsumerStatefulWidget {
+  const MaskedEnergyOffers({super.key});
 
   static const route = '/unmasked_energy_offers';
 
   @override
-  ConsumerState<UnmaskedEnergyOffers> createState() =>
+  ConsumerState<MaskedEnergyOffers> createState() =>
       _UnmaskedEnergyOffersState();
 }
 
-class _UnmaskedEnergyOffersState extends ConsumerState<UnmaskedEnergyOffers> {
+class _UnmaskedEnergyOffersState extends ConsumerState<MaskedEnergyOffers> {
   var fmt = NumberFormat.currency(decimalDigits: 0, symbol: '\$');
   late ScrollController _scrollController;
   late Plotly plotly;

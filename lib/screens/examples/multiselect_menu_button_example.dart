@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:flutter_quiver/screens/common/signal/autocomplete.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect_search.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 import '../../data/locations.dart';
 
 /// NOTES: Use signals 🤷‍♂️
@@ -33,7 +33,7 @@ class MultiSelectMenuButtonExample extends StatefulWidget {
 class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
   static final model =
       SelectionModel(initialSelection: cities, choices: cities);
-  static final location = Signal<String>('', debugLabel: 'location');
+  static final location = Signal<String>('', options: SignalOptions(name: 'location'));
   static final hubs = ['PJM WH RT', 'NI Hub RT', 'AD Hub DA'].toSignal();
 
   @override
@@ -63,8 +63,8 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                             color: Colors.blueGrey.shade50,
                             borderRadius: BorderRadius.circular(4.0),
                           ),
-                          child: Watch(
-                            (_) => MultiselectUi(
+                          child: SignalBuilder(
+                            builder: (_) => MultiselectUi(
                               model: model,
                               width: 226,
                             ),
@@ -72,9 +72,9 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                       const SizedBox(
                         height: 500,
                       ),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Selected cities: ${model.selection.value.join(', ')}')),
                     ],
                   ),
@@ -98,8 +98,8 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                             color: Colors.blueGrey.shade50,
                             borderRadius: BorderRadius.circular(4.0),
                           ),
-                          child: Watch(
-                            (_) => MultiselectSearchUi(
+                          child: SignalBuilder(
+                            builder: (_) => MultiselectSearchUi(
                               model: model,
                               width: 226,
                             ),
@@ -107,9 +107,9 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                       const SizedBox(
                         height: 500,
                       ),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Currently selected cities: ${model.currentSelection.value.join(', ')}')),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Selected cities: ${model.selection.value.join(', ')}')),
                     ],
                   ),
@@ -133,7 +133,7 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                               color: Colors.blueGrey.shade50,
                               borderRadius: BorderRadius.circular(4.0),
                             ),
-                            child: Watch((_) => AutocompleteUi(
+                            child: SignalBuilder(builder: (_) => AutocompleteUi(
                                   selection: location,
                                   choices: locations.toSet(),
                                   width: 300,
@@ -152,7 +152,7 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                       const SizedBox(
                         height: 500,
                       ),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Currently selected location: ${location.value}')),
                     ],
                   ),
@@ -173,8 +173,8 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                           color: Colors.blueGrey.shade50,
                           borderRadius: BorderRadius.circular(4.0),
                         ),
-                        child: Watch(
-                          (_) => AutocompleteUi(
+                        child: SignalBuilder(
+                          builder: (_) => AutocompleteUi(
                             selection: location,
                             choices: locations.toSet(),
                             accumulatedSelection: hubs,
@@ -185,7 +185,7 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                       const SizedBox(
                         height: 32,
                       ),
-                      Watch((context) {
+                      SignalBuilder(builder: (context) {
                         return Wrap(
                           direction: Axis.vertical,
                           spacing: 5.0,
@@ -206,7 +206,7 @@ class _MultiSelectExampleState extends State<MultiSelectMenuButtonExample> {
                       const SizedBox(
                         height: 400,
                       ),
-                      Watch((context) => Text(
+                      SignalBuilder(builder: (context) => Text(
                           'Currently selected locations: ${hubs.value.join(', ')}')),
                     ],
                   ),

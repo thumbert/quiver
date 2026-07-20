@@ -311,7 +311,7 @@ class _DayFilterEditorState extends State<DayFilterWidget> {
               ),
               SizedBox(
                 width: 150,
-                child: Watch((context) {
+                child: SignalBuilder(builder: (context) {
                   return ListTileTheme(
                     // tileColor: Colors.pink,
                     horizontalTitleGap: 0.0,

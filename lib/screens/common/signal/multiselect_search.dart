@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quiver/screens/common/signal/multiselect.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:signals_flutter/signals_flutter.dart';
 
 class MultiselectSearchUi extends StatefulWidget {
   const MultiselectSearchUi(
@@ -62,7 +62,7 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
           },
           child: Row(
             children: [
-              Watch((context) {
+              SignalBuilder(builder: (context) {
                 if (widget.model.selection.value.length == 1) {
                   return Text(widget.model.selection.value.first);
                 } else {
@@ -107,8 +107,8 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
       // only show the (All) checkbox when there is nothing in the search box
       out.add(MenuItemButton(
           style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
-          child: Watch(
-            (context) => SizedBox(
+          child: SignalBuilder(
+            builder: (context) => SizedBox(
               width: widget.width,
               child: PointerInterceptor(
                 child: CheckboxListTile(
@@ -135,7 +135,7 @@ class _MultiselectSearchUiState extends State<MultiselectSearchUi> {
         out.add(MenuItemButton(
           style: ButtonStyle(padding: WidgetStateProperty.all(EdgeInsets.zero)),
           key: UniqueKey(), // need this to display the correct values
-          child: Watch((_) => SizedBox(
+          child: SignalBuilder(builder: (_) => SizedBox(
                 width: widget.width,
                 child: PointerInterceptor(
                   child: CheckboxListTile(

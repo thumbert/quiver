@@ -74,8 +74,8 @@ class _EpaHourlyEmissionsState extends State<EpaHourlyEmissions> {
             scrollDirection: Axis.horizontal,
             child: Padding(
                 padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-                child: Watch(
-                  (context) => Column(
+                child: SignalBuilder(
+                  builder: (context) => Column(
                     spacing: 6,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -113,7 +113,7 @@ class _EpaHourlyEmissionsState extends State<EpaHourlyEmissions> {
                       const SizedBox(
                         height: 24,
                       ),
-                      Watch((context) {
+                      SignalBuilder(builder: (context) {
                         switch (traces.value) {
                           // ignore: unused_local_variable
                           case AsyncData data:
@@ -228,8 +228,8 @@ class _Row2State extends State<Row2> {
         child: SizedBox(
             // I use this to increase the MouseRegion
             width: 825,
-            child: Watch(
-              (context) => Row(
+            child: SignalBuilder(
+              builder: (context) => Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ///
