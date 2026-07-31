@@ -225,6 +225,10 @@ final mccClient = computed(() {
 /// zooming into the plot.
 ///
 Future<List<Map<String, dynamic>>> getTopConstraints() async {
+  // Clear stale caches so term/region changes always trigger a fresh fetch.
+  cacheConstraintsNy.clear();
+  cacheConstraintsNe.clear();
+
   var table = <Map<String, dynamic>>[];
   if (region.value == 'NYISO') {
     var xs = await getDaConstraintsNy();

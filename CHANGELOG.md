@@ -20,6 +20,9 @@
 
 ## BUGS
 
+## 2026-07-31
+- Make the Top constraints table responsive when the term changes.
+
 ## 2026-07-20
 - Updated MCC surfer for ISONE
 - Migrated to Signals 7.0
