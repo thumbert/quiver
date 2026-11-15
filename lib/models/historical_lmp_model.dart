@@ -5,6 +5,8 @@ import 'package:date/date.dart';
 import 'package:elec/analysis.dart' as seasonal;
 import 'package:elec/elec.dart';
 import 'package:elec/time.dart';
+import 'package:elec_server/client/isone/ptid_table.dart' as isone_ptid;
+import 'package:elec_server/client/nyiso/ptid_table.dart' as nyiso_ptid;
 import 'package:elec_server/client/lmp.dart';
 import 'package:elec_server/client/other/ptids.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -73,22 +75,19 @@ final class LocationRow {
       return xs;
     }
 
-    Iterable<Map> aux =
-        await ptidClient.getPtidTable(region: iso.name.toLowerCase());
     if (iso == Iso.newYork) {
-      /// add the zones first, in a spoken form
-      var zones = aux.where((e) => e['type'] == 'zone');
-      for (var zone in zones) {
-        if (zone.containsKey('spokenName')) {
-          var label = '${zone['spokenName']}, ptid: ${zone['ptid']}';
-          xs.add(label);
-        }
-      }
+      Iterable<nyiso_ptid.Record> records = await nyiso_ptid.queryRecords(
+          filter: nyiso_ptid.QueryFilter(),
+          rootUrl: dotenv.env['RUST_SERVER']!);
+      xs.addAll(records.map((e) => '${e.name}, ptid: ${e.ptid}'));
     }
     if (iso == Iso.newEngland) {
-      aux = aux.where((e) => e['ptid'] < 7000 || e['ptid'] >= 8000);
+      Iterable<isone_ptid.Record> records = await isone_ptid.queryRecords(
+          filter: isone_ptid.QueryFilter(),
+          rootUrl: dotenv.env['RUST_SERVER']!);
+      records = records.where((e) => e.ptid < 7000 || e.ptid >= 8000);
+      xs.addAll(records.map((e) => '${e.name}, ptid: ${e.ptid}'));
     }
-    xs.addAll(aux.map((e) => '${e['name']}, ptid: ${e['ptid']}'));
 
     return xs;
   }
@@ -466,12 +465,16 @@ Future<TimeSeries<num>> getLmpData(HistoricalLmpModel state) async {
     lmpComponent: state.lmpComponent
   );
 
-  if (!HistoricalLmpModel.cache.containsKey(sink)) {
-    var ts = await getLmpDataForRow(sink.region, sink.market, sink.location,
+  var ts = HistoricalLmpModel.cache[sink];
+  if (ts == null || ts.isEmpty) {
+    ts = await getLmpDataForRow(sink.region, sink.market, sink.location,
         LmpComponent.parse(sink.lmpComponent), hTerm);
-    HistoricalLmpModel.cache[sink] = ts;
+    if (ts.isNotEmpty) {
+      HistoricalLmpModel.cache[sink] = ts;
+    } else {
+      HistoricalLmpModel.cache.remove(sink);
+    }
   }
-  var ts = HistoricalLmpModel.cache[sink]!;
 
   if (state.source != null && state.source!.isValid()) {
     var source = (
@@ -531,7 +534,7 @@ Future<TimeSeries<num>> getLmpDataForRow(String region, Market market,
         component: lmpComponent,
         term: hTerm,
         rustServer: dotenv.env['RUST_SERVER']!),
-    'NYISO' => await getHourlyLmpIsone(
+    'NYISO' => await getHourlyLmpNyiso(
         market: market,
         ptid: LocationRow.getPtid(locationName),
         component: lmpComponent,

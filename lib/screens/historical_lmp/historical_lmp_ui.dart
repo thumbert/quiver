@@ -362,6 +362,10 @@ class _State extends State<HistoricalLmp> {
   }
 
   Widget updatePlotAndTable(TimeSeries<num> ts) {
+    if (ts.isEmpty) {
+      return const Text('No prices found for the selected criteria.');
+    }
+
     var xs = state.value.aggregateData(ts);
     var tables = state.value.makeTables(xs);
     var fmt = state.value.lmpComponent == 'Loss%' ? _fmtPercent : _fmt2;

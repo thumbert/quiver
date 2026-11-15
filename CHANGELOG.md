@@ -20,6 +20,9 @@
 
 ## BUGS
 
+## 2026-11-15
+- Fixed some bugs in Historical LMPs app.  NYISO wasn't working, etc. 
+
 ## 2026-07-31
 - Make the Top constraints table responsive when the term changes.
 
